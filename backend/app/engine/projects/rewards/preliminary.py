@@ -43,6 +43,7 @@ class PreliminaryProjectRewards(ProjectRewards):
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
         (
+            _,
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(

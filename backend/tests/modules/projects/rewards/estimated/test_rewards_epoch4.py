@@ -52,11 +52,11 @@ def test_estimated_project_rewards_with_allocations(
     project_rewards = result.rewards
 
     assert len(project_rewards) == 10
-    assert project_rewards[0].allocated == 305373797847597
+    assert project_rewards[0].allocated == USER1_BUDGET
     for project in project_rewards[1:]:
         assert project.allocated == 0
         assert project.matched == 0
 
-    assert result.total_allocated == 305373797847597
-    assert result.rewards_sum == 44023185036898097278
+    assert result.total_allocated == USER1_BUDGET
+    assert result.rewards_sum == 44024406532089487668
     assert result.threshold is None

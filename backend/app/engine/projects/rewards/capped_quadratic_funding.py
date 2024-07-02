@@ -37,16 +37,16 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
     def _calculate_matched_rewards(
         self,
         allocated_by_addr: List[ProjectSumAllocationsDTO],
-        total_allocated: Decimal,
+        total_plain_qf: Decimal,
         payload,
     ) -> List[ProjectMatchedRewardsDTO]:
         allocated_by_addr_with_matched = []
         for allocation in allocated_by_addr:
-            if total_allocated == 0:
+            if total_plain_qf == 0:
                 calc_matched = Decimal(0)
             else:
                 calc_matched = Decimal(
-                    allocation.amount / total_allocated * payload.matched_rewards
+                    allocation.amount / total_plain_qf * payload.matched_rewards
                 )
 
             allocated_by_addr_with_matched.append(
@@ -62,8 +62,9 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         Calculate rewards for projects using plain quadratic funding formula with capped funding.
         """
         (
-            allocated_by_addr,
-            total_allocated,
+            grouped_allocations,
+            plain_qf_by_addr,
+            total_plain_qf,
         ) = self.projects_allocations.group_allocations_by_projects(
             ProjectAllocationsPayload(allocations=payload.allocations)
         )
@@ -72,25 +73,26 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         }
 
         matched_allocated_by_addr = self._calculate_matched_rewards(
-            allocated_by_addr, total_allocated, payload
+            plain_qf_by_addr, total_plain_qf, payload
         )
         capped_matched_by_addr = self.funding_cap.apply_capped_distribution(
             matched_allocated_by_addr, payload.matched_rewards
         )
 
         project_rewards_sum = 0
+        total_allocated = 0
         for address, capped_matched in capped_matched_by_addr.items():
-            plain_quadratic_allocated = next(
-                filter(
-                    lambda allocation: allocation.project_address == address,
-                    allocated_by_addr,
-                )
-            ).amount
+            project_allocations = grouped_allocations[address]
+            plain_allocation = sum(
+                project_allocation.amount for project_allocation in project_allocations
+            )
 
-            project_rewards_sum += plain_quadratic_allocated + capped_matched
+            project_rewards_sum += plain_allocation + capped_matched
             project_rewards = rewards[address]
-            project_rewards.allocated = int(plain_quadratic_allocated)
+            project_rewards.allocated = int(plain_allocation)
             project_rewards.matched = int(capped_matched)
+
+            total_allocated += plain_allocation
 
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),

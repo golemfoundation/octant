@@ -28,6 +28,7 @@ def test_applying_percent_funding_cap_calculations_when_exceeds_cap(
         computed_matched_rewards,
         expected_distribution,
     ) = matched_rewards_with_capped_distribution
+    CAPPED_MF = 9000
 
     calculator = FundingCapPercentCalculator(MR_FUNDING_CAP_PERCENT)
 
@@ -36,3 +37,4 @@ def test_applying_percent_funding_cap_calculations_when_exceeds_cap(
     )
 
     assert capped_distribution == expected_distribution
+    assert sum(capped_distribution.values()) == CAPPED_MF
