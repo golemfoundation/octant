@@ -9,6 +9,7 @@ export default interface ModalProps {
   header?: string | ReactNode;
   headerClassName?: string;
   isCloseButtonDisabled?: boolean;
+  isConnectWalletModal?: boolean;
   isFullScreen?: boolean;
   isOpen: boolean;
   isOverflowEnabled?: boolean;

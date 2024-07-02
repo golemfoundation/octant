@@ -1,0 +1,17 @@
+.secondaryAddress,
+.lowScoreInfoBox {
+  margin-top: 1.6rem;
+}
+
+.lowScoreInfoBox {
+  padding: 0 2.5rem 0 2rem;
+  height: 7.2rem;
+  align-items: center;
+}
+
+.lowScoreInfo {
+  margin-left: 1.2rem;
+  color: $color-octant-dark;
+  line-height: 1.8rem;
+  font-weight: $font-weight-semibold;
+}

@@ -19,9 +19,12 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
-  const { isInitialized: isSettingsInitialized } = useSettingsStore(state => ({
-    isInitialized: state.meta.isInitialized,
-  }));
+  const { isInitialized: isSettingsInitialized, isDelegationInProgress } = useSettingsStore(
+    state => ({
+      isDelegationInProgress: state.data.isDelegationInProgress,
+      isInitialized: state.meta.isInitialized,
+    }),
+  );
   const { isInitialized: isTipsStoreInitialized } = useTipsStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
@@ -29,6 +32,10 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     isInitialized: state.meta.isInitialized,
   }));
   const { isFetching: isFetchingIsContract } = useIsContract();
+
+  if (isDelegationInProgress) {
+    return false;
+  }
 
   return (
     isLoadingCurrentEpoch ||

@@ -189,38 +189,21 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('should show correct setting links', () => {
-      if (isDesktop) {
-        cy.get('[data-test=SettingsLinksInfoBox__Button]').each(($button, index) => {
-          const expectedOrderAndContentLinksDesktop = [
-            { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
-            { href: OCTANT_DOCS, text: 'User Docs' },
-            { href: DISCORD_LINK, text: 'Discord Community' },
-            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
-          ];
+      cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
+        const expectedOrderAndContentLinksMobile = [
+          { href: OCTANT_BUILD_LINK, text: isDesktop ? 'Visit the website' : 'Website' },
+          { href: OCTANT_DOCS, text: isDesktop ? 'Check out the docs' : 'Docs' },
+          { href: DISCORD_LINK, text: isDesktop ? 'Join our Discord' : 'Discord' },
+        ];
 
-          cy.wrap($button)
-            .should('have.text', expectedOrderAndContentLinksDesktop[index].text)
-            .should('have.attr', 'href', expectedOrderAndContentLinksDesktop[index].href);
-        });
-      }
+        cy.wrap($button)
+          .should('have.text', expectedOrderAndContentLinksMobile[index].text)
+          .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
 
-      if (!isDesktop) {
-        cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
-          const expectedOrderAndContentLinksMobile = [
-            { href: OCTANT_BUILD_LINK, text: 'Website' },
-            { href: OCTANT_DOCS, text: 'Docs' },
-            { href: DISCORD_LINK, text: 'Discord' },
-          ];
-
-          cy.wrap($button)
-            .should('have.text', expectedOrderAndContentLinksMobile[index].text)
-            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
-
-          cy.get('[data-test=SettingsMainInfoBox__Button]')
-            .should('have.text', 'Terms & Conditions')
-            .and('have.attr', 'href', TERMS_OF_USE);
-        });
-      }
+        cy.get('[data-test=SettingsMainInfoBox__Button]')
+          .should('have.text', 'Terms & Conditions')
+          .and('have.attr', 'href', TERMS_OF_USE);
+      });
     });
   });
 });

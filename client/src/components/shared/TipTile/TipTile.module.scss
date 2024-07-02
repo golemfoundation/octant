@@ -7,6 +7,10 @@
   height: 20rem;
   align-items: center;
 
+  &.isClickable {
+    cursor: pointer;
+  }
+
   @media #{$desktop-up} {
     height: 19.2rem;
   }

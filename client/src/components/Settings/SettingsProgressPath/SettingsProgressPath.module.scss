@@ -1,0 +1,81 @@
+.root {
+  position: relative;
+  width: 100%;
+  background-color: $color-octant-grey3;
+  padding: 2.4rem;
+  border-radius: 0 0 $border-radius-16 $border-radius-16;
+
+  &::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0.1rem;
+    background-color: $color-octant-grey1;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .insideCircle {
+      fill: transparent;
+    }
+
+    .outsideCircle {
+      stroke: $color-octant-grey2;
+      stroke-width: 0.2rem;
+    }
+
+    &.isInProgress {
+      .outsideCircle {
+        stroke: $color-octant-green3;
+      }
+
+      .insideCircle {
+        fill: $color-octant-green;
+      }
+    }
+
+    &.isDone {
+      .outsideCircle {
+        stroke: $color-octant-green3;
+      }
+
+      .insideCircle {
+        fill: $color-octant-green3;
+      }
+    }
+
+    &:not(:last-child) {
+      &.isDone {
+        &::after {
+          background-color: $color-octant-green3;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        content: '';
+        height: 1.6rem;
+        width: 0.2rem;
+        background-color: $color-octant-grey2;
+        left: 0.7rem;
+        top: 1.6rem;
+      }
+    }
+
+    &:not(:first-child) {
+      margin-top: 1.6rem;
+    }
+  }
+
+  .stepLabel {
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    color: $color-octant-green3;
+    margin-left: 1.6rem;
+  }
+}

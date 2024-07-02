@@ -19,6 +19,7 @@ const TipTile: React.FC<TipTileProps> = ({
   infoLabel,
   isOpen,
   onClose,
+  onClick,
   text,
   title,
 }) => {
@@ -39,7 +40,7 @@ const TipTile: React.FC<TipTileProps> = ({
                 }
               : {}
           }
-          className={cx(styles.root, className)}
+          className={cx(styles.root, !!onClick && styles.isClickable, className)}
           data-test={dataTest}
           exit={{
             height: isDesktop ? ['22.4rem', '22.4rem', '0'] : ['20rem', '20rem', '0'],
@@ -55,6 +56,7 @@ const TipTile: React.FC<TipTileProps> = ({
                 }
               : {}
           }
+          onClick={onClick}
           transition={{
             delay: 0.01,
             duration: 0.3,

@@ -36,16 +36,14 @@ const SettingsMainInfoBox = (): ReactNode => {
           {t('golemFoundationProject')}
         </div>
         <div className={cx(styles.info, styles.poweredBy)}>{t('poweredByCoinGeckoApi')}</div>
-        {!isDesktop && (
-          <Button
-            className={styles.buttonLink}
-            dataTest="SettingsMainInfoBox__Button"
-            href={TERMS_OF_USE}
-            variant="link3"
-          >
-            {t('termsAndConditions')}
-          </Button>
-        )}
+        <Button
+          className={styles.buttonLink}
+          dataTest="SettingsMainInfoBox__Button"
+          href={TERMS_OF_USE}
+          variant="link3"
+        >
+          {t('termsAndConditions')}
+        </Button>
       </div>
     </BoxRounded>
   );
