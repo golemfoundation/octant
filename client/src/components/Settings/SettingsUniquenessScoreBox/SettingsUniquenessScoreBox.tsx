@@ -87,11 +87,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
+            isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
-            isHigh
-            // TODO: add support for delegation recalculation OCT-1735 (https://linear.app/golemfoundation/issue/OCT-1735/add-support-for-delegation-recalculation)
-            isDisabled={isDelegationCompleted}
           >
             {t('recalculate')}
           </Button>

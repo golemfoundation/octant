@@ -11,32 +11,44 @@ import useSettingsStore from 'store/settings/store';
 
 import SettingsRecalculatingScoreProps from './types';
 
-// TODO: add support for delegation recalculation OCT-1735 (https://linear.app/golemfoundation/issue/OCT-1735/add-support-for-delegation-recalculation)
 const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLastStepDone }) => {
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
   const { data: currentEpoch } = useCurrentEpoch();
+
+  const { address } = useAccount();
+
+  const {
+    setPrimaryAddressScore,
+    setSecondaryAddressScore,
+    isDelegationCompleted,
+    delegationSecondaryAddress,
+  } = useSettingsStore(state => ({
+    delegationSecondaryAddress: state.data.delegationSecondaryAddress,
+    isDelegationCompleted: state.data.isDelegationCompleted,
+    setPrimaryAddressScore: state.setPrimaryAddressScore,
+    setSecondaryAddressScore: state.setSecondaryAddressScore,
+  }));
+
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus();
+    useRefreshAntisybilStatus(isDelegationCompleted ? delegationSecondaryAddress! : address!);
+
   const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
-    useAntisybilStatusScore({ enabled: isSuccessRefreshAntisybilStatus });
+    useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
+      enabled: isSuccessRefreshAntisybilStatus,
+    });
   const { data: uqScore, isSuccess: isSuccessUqScore } = useUqScore(currentEpoch!, {
     enabled: isSuccessAntisybilStatusScore,
   });
-  const { address } = useAccount();
 
   const calculatedUqScore = useMemo(() => {
     if (antisybilStatusScore === undefined || uqScore === undefined || !lastDoneStep) {
       return 0;
     }
-    if (antisybilStatusScore < 20 && uqScore === 100n) {
+    if (!isDelegationCompleted && antisybilStatusScore < 20 && uqScore === 100n) {
       return 20;
     }
     return antisybilStatusScore;
-  }, [antisybilStatusScore, uqScore, lastDoneStep]);
-
-  const { setPrimaryAddressScore } = useSettingsStore(state => ({
-    setPrimaryAddressScore: state.setPrimaryAddressScore,
-  }));
+  }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted]);
 
   useEffect(() => {
     if (!isSuccessAntisybilStatusScore) {
@@ -66,9 +78,15 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
     if (antisybilStatusScore === undefined || uqScore === undefined) {
       return;
     }
+
+    if (isDelegationCompleted) {
+      setSecondaryAddressScore(calculatedUqScore);
+      return;
+    }
+
     setPrimaryAddressScore(calculatedUqScore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculatedUqScore]);
+  }, [antisybilStatusScore, uqScore, calculatedUqScore, isDelegationCompleted]);
 
   useEffect(() => {
     refreshAntisybilStatus('');
@@ -78,9 +96,9 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
   return (
     <>
       <SettingsAddressScore
-        address={address!}
+        address={isDelegationCompleted ? delegationSecondaryAddress! : address!}
         areBottomCornersRounded={false}
-        badge="primary"
+        badge={isDelegationCompleted ? 'secondary' : 'primary'}
         mode="score"
         score={calculatedUqScore}
         scoreHighlight={scoreHighlight}
