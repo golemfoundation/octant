@@ -82,9 +82,7 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         project_rewards_sum = 0
         total_allocated = 0
         for address, capped_matched in capped_matched_by_addr.items():
-            project_allocations = next(
-                filter(lambda allocation: allocation[0] == address, grouped_allocations)
-            )[1]
+            project_allocations = grouped_allocations[address]
             plain_allocation = sum(
                 project_allocation.amount for project_allocation in project_allocations
             )
