@@ -58,6 +58,7 @@ const Modal: FC<ModalProps> = ({
   isCloseButtonDisabled = false,
   isOverflowOnClickDisabled = false,
   overflowClassName,
+  isConnectWalletModal,
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -98,7 +99,12 @@ const Modal: FC<ModalProps> = ({
         <motion.div
           key="modal-root"
           animate="visible"
-          className={cx(styles.root, className, styles[`variant--${variant}`])}
+          className={cx(
+            styles.root,
+            className,
+            styles[`variant--${variant}`],
+            isConnectWalletModal && styles.isConnectWalletModal,
+          )}
           data-test={dataTest}
           exit="showHide"
           initial="showHide"

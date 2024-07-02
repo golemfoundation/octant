@@ -28,31 +28,30 @@ export default getStoreWithMeta<TipsData, TipsMethods>({
     setValuesFromLocalStorage: () =>
       set({
         data: {
-          
           wasAddFavouritesAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP) || 'false',
           ),
-          
-wasAllocateRewardsAlreadyClosed: JSON.parse(
+
+          wasAllocateRewardsAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP) || 'false',
           ),
-          
-wasConnectWalletAlreadyClosed: JSON.parse(
+
+          wasConnectWalletAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP) || 'false',
           ),
-          
-wasLockGLMAlreadyClosed: JSON.parse(
+
+          wasLockGLMAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_LOCK_GLM_ALREADY_CLOSED_TIP) || 'false',
           ),
-          
-wasRewardsAlreadyClosed: JSON.parse(
+
+          wasRewardsAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_REWARDS_ALREADY_CLOSED_TIP) || 'false',
           ),
           /**
            * As per AC for OCT-1646 this tip tile disregards what is store in localStorage,
            * showing every time after refresh when other requirements are met.
            */
-wasUqTooLowAlreadyClosed: false,
+          wasUqTooLowAlreadyClosed: false,
           wasWithdrawAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP) || 'false',
           ),
@@ -86,15 +85,15 @@ wasUqTooLowAlreadyClosed: false,
       localStorage.setItem(WAS_REWARDS_ALREADY_CLOSED_TIP, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, wasRewardsAlreadyClosed: payload } }));
     },
-    
+
     // eslint-disable-next-line @typescript-eslint/naming-convention
-setWasUqTooLowAlreadyClosed: payload => {
+    setWasUqTooLowAlreadyClosed: payload => {
       localStorage.setItem(WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, wasUqTooLowAlreadyClosed: payload } }));
     },
-    
+
     // eslint-disable-next-line @typescript-eslint/naming-convention
-setWasWithdrawAlreadyClosed: payload => {
+    setWasWithdrawAlreadyClosed: payload => {
       localStorage.setItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, wasWithdrawAlreadyClosed: payload } }));
     },

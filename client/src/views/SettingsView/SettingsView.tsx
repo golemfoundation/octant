@@ -24,7 +24,7 @@ const SettingsView = (): ReactElement => {
       {!isProjectAdminMode && (
         <div className={styles.boxesWrapper}>
           <SettingsMainInfoBox />
-          <SettingsUniquenessScoreBox />
+          {isConnected && <SettingsUniquenessScoreBox />}
         </div>
       )}
       <SettingsCurrencyBox />
