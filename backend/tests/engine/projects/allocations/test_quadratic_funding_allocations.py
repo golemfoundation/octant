@@ -14,9 +14,18 @@ def test_quadratic_funding_grouping(projects, data_for_qf_max_uq_score):
     payload = ProjectAllocationsPayload(allocations=allocations)
 
     (
+        grouped_allocations,
         result_allocations,
         total_allocated,
     ) = QuadraticFundingAllocations().group_allocations_by_projects(payload)
+
+    grouped_allocations_keys = list(grouped_allocations.keys())
+
+    assert len(grouped_allocations) == 3
+
+    assert grouped_allocations_keys[0] == projects[1]
+    assert grouped_allocations_keys[1] == projects[0]
+    assert grouped_allocations_keys[2] == projects[2]
 
     assert total_allocated == Decimal("24356.29135849481011578840500")
 

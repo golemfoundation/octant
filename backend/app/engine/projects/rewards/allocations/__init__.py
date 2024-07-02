@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict
 
 from dataclass_wizard import JSONWizard
 
@@ -35,18 +35,22 @@ class ProjectAllocations(ABC):
 
     def group_allocations_by_projects(
         self, payload: ProjectAllocationsPayload
-    ) -> (List[ProjectSumAllocationsDTO], Union[int, Decimal]):
+    ) -> (Dict[str, List], List[ProjectSumAllocationsDTO], Union[int, Decimal]):
         result_allocations = []
-        total_allocated = 0
-        grouped_allocations = groupby(
-            sorted(payload.allocations, key=lambda a: a.project_address),
-            key=lambda a: a.project_address,
-        )
-        for project_address, project_allocations in grouped_allocations:
+        grouped_allocations = {
+            key: list(group)
+            for key, group in groupby(
+                sorted(payload.allocations, key=lambda a: a.project_address),
+                key=lambda a: a.project_address,
+            )
+        }
+
+        total_plain_qf = 0
+        for project_address, project_allocations in grouped_allocations.items():
             project_allocations = self._calc_allocations(project_allocations)
             result_allocations.append(
                 ProjectSumAllocationsDTO(project_address, project_allocations)
             )
-            total_allocated += project_allocations
+            total_plain_qf += project_allocations
 
-        return result_allocations, total_allocated
+        return grouped_allocations, result_allocations, total_plain_qf

@@ -45,36 +45,14 @@ class FundingCapPercentCalculator:
         if not matched_allocated_by_addr:
             return {}
 
-        matched_allocated_by_addr = pd.DataFrame(matched_allocated_by_addr)
-        grouped_allocated_by_addr = matched_allocated_by_addr.groupby(
-            "project_address"
-        )["amount"].sum()
-        capped_quadratic_distribution = grouped_allocated_by_addr.copy()
-
-        surplus = Decimal(0)
         cap_amount = matched_rewards * self.FUNDING_CAP_PERCENT
+        matched_allocated_by_addr = pd.DataFrame(matched_allocated_by_addr)
+        grouped_matched_by_addr = matched_allocated_by_addr.groupby("project_address")[
+            "amount"
+        ].sum()
 
-        for project in capped_quadratic_distribution.index:
-            if capped_quadratic_distribution[project] > cap_amount:
-                surplus += Decimal(capped_quadratic_distribution[project] - cap_amount)
-                capped_quadratic_distribution[project] = cap_amount
+        for project in grouped_matched_by_addr.index:
+            if grouped_matched_by_addr[project] > cap_amount:
+                grouped_matched_by_addr[project] = cap_amount
 
-        while surplus > 0:
-            uncapped_projects = capped_quadratic_distribution[
-                capped_quadratic_distribution < cap_amount
-            ]
-
-            left_uncapped_projects = uncapped_projects.sum()
-            if left_uncapped_projects == 0:
-                break
-
-            uncapped_distribution = (
-                uncapped_projects / Decimal(left_uncapped_projects) * surplus
-            ).apply(Decimal)
-
-            new_surplus = self._calculate_surplus_to_project(
-                cap_amount, capped_quadratic_distribution, uncapped_distribution
-            )
-            surplus = new_surplus
-
-        return capped_quadratic_distribution.to_dict()
+        return grouped_matched_by_addr.to_dict()

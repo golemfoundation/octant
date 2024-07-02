@@ -29,6 +29,7 @@ class QuadraticFundingProjectRewards(ProjectRewards):
         Calculate rewards for projects using plain quadratic funding formula without capping.
         """
         (
+            _,
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(
