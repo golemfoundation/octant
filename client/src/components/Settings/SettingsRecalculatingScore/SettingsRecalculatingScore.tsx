@@ -11,7 +11,7 @@ import useSettingsStore from 'store/settings/store';
 
 import SettingsRecalculatingScoreProps from './types';
 
-// TODO: add support for delegation recalculation
+// TODO: add support for delegation recalculation OCT-1735 (https://linear.app/golemfoundation/issue/OCT-1735/add-support-for-delegation-recalculation)
 const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLastStepDone }) => {
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
   const { data: currentEpoch } = useCurrentEpoch();

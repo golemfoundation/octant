@@ -45,7 +45,6 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   const {
     data: secondaryAddressSignature,
     signMessageAsync: signSecondaryAddressMessage,
-    // isPending: isSigningSecondaryAddressMessage,
     isSuccess: isSecondaryAddressMessageSigned,
   } = useSignMessage();
 
@@ -66,15 +65,13 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
       setLastDoneStep(1);
       setTimeout(() => {
         setLastDoneStep(2);
-        setTimeout(() => {
-          if (secondaryAddressAntisybilStatusScore < 15) {
-            setShowCloseButton(true);
-            setIsDelegationInProgress(false);
-            return;
-          }
-          setSecondaryAddressScore(secondaryAddressAntisybilStatusScore);
-          setCalculatingUQScoreMode('sign');
-        }, 2500);
+        if (secondaryAddressAntisybilStatusScore < 20) {
+          setShowCloseButton(true);
+          setIsDelegationInProgress(false);
+          return;
+        }
+        setSecondaryAddressScore(secondaryAddressAntisybilStatusScore);
+        setCalculatingUQScoreMode('sign');
       }, 2500);
     }, 2500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,25 +80,27 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   const {
     data: primaryAddressSignature,
     signMessageAsync: signPrimaryAddressMessage,
-    // isPending: isSigningPrimaryAddressMessage,
     isSuccess: isPrimaryAddressMessageSigned,
   } = useSignMessage();
 
   const { mutateAsync: delegate } = useDelegate();
 
-  const messageToSign = `Delegation of UQ score from ${delegationSecondaryAddress} to ${delegationPrimaryAddress}`;
+  const messageToSign = t('delegationMessageToSign', {
+    delegationPrimaryAddress,
+    delegationSecondaryAddress,
+  });
 
   const isScoreHighlighted = !!(lastDoneStep && lastDoneStep >= 1);
   const showLowScoreInfo =
     isScoreHighlighted &&
     secondaryAddressAntisybilStatusScore !== undefined &&
-    secondaryAddressAntisybilStatusScore < 15;
+    secondaryAddressAntisybilStatusScore < 20;
 
   const scoreHighlight = useMemo(() => {
     if (!isScoreHighlighted || secondaryAddressAntisybilStatusScore === undefined) {
       return undefined;
     }
-    if (secondaryAddressAntisybilStatusScore < 15) {
+    if (secondaryAddressAntisybilStatusScore < 20) {
       return 'red';
     }
     return 'black';

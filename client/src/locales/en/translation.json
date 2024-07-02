@@ -530,7 +530,8 @@
       "calculatingYourUniquenessStep2": "You can go to Passport and add stamps to the score connected to your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 20+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
       "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy guide to <0>scoring 20, for humans.</0>",
       "primary": "Primary",
-      "delegationFailedText": "Delegation failed — your score needs to be 15 or higher. Please try another address",
+      "delegationFailedText": "Delegation failed — your score needs to be 20 or higher. Please try another address",
+      "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
       "signMessage": "Sign message",
       "signMessages": "Sign messages",
       "switchAccount": "Switch account"
