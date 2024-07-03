@@ -59,13 +59,15 @@ def test_simulate_allocation_with_user_uq_score(service, mock_users_db):
         context, next_allocations, user1.address
     )
     sorted_projects = sorted(projects)
-    assert leverage == 5502859957.887531
+    assert (
+        leverage == 1100571991.5775063
+    )  # TODO Change this to the correct value FOR QF and UQ: https://linear.app/golemfoundation/issue/OCT-1656/implement-max-mr-funding-cap-leverage-in-history
     assert threshold is None
     assert rewards == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
         ProjectRewardDTO(
-            sorted_projects[2], 40000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
+            sorted_projects[2], 200000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
         ),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
         ProjectRewardDTO(sorted_projects[4], 0, 0),
@@ -98,13 +100,15 @@ def test_simulate_allocation_user_uq_score_with_passed_param(service, mock_users
         context, next_allocations, user1.address, LOW_UQ_SCORE
     )
     sorted_projects = sorted(projects)
-    assert leverage == 5502859957.887531
+    assert (
+        leverage == 1100571991.5775063
+    )  # TODO Change this to the correct value FOR QF and UQ: https://linear.app/golemfoundation/issue/OCT-1656/implement-max-mr-funding-cap-leverage-in-history
     assert threshold is None
     assert rewards == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
         ProjectRewardDTO(
-            sorted_projects[2], 40000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
+            sorted_projects[2], 200000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
         ),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
         ProjectRewardDTO(sorted_projects[4], 0, 0),
