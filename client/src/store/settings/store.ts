@@ -45,11 +45,13 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setDelegationPrimaryAddress: payload => {
+      localStorage.setItem(DELEGATION_PRIMARY_ADDRESS, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, delegationPrimaryAddress: payload } }));
     },
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setDelegationSecondaryAddress: payload => {
+      localStorage.setItem(DELEGATION_SECONDARY_ADDRESS, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, delegationSecondaryAddress: payload } }));
     },
 
@@ -127,8 +129,10 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
           isDelegationCompleted: JSON.parse(
             localStorage.getItem(IS_DELEGATION_COMPLETED) || 'false',
           ),
-          primaryAddressScore: JSON.parse(localStorage.getItem(PRIMARY_ADDRESS_SCORE) || '0'),
-          secondaryAddressScore: JSON.parse(localStorage.getItem(SECONDARY_ADDRESS_SCORE) || '0'),
+          primaryAddressScore: JSON.parse(localStorage.getItem(PRIMARY_ADDRESS_SCORE) || 'null'),
+          secondaryAddressScore: JSON.parse(
+            localStorage.getItem(SECONDARY_ADDRESS_SCORE) || 'null',
+          ),
         },
         meta: {
           isInitialized: true,

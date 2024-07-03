@@ -30,7 +30,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
   }));
 
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus(isDelegationCompleted ? delegationSecondaryAddress! : address!);
+    useRefreshAntisybilStatus();
 
   const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
     useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
@@ -89,7 +89,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
   }, [antisybilStatusScore, uqScore, calculatedUqScore, isDelegationCompleted]);
 
   useEffect(() => {
-    refreshAntisybilStatus('');
+    refreshAntisybilStatus(isDelegationCompleted ? delegationSecondaryAddress! : address!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

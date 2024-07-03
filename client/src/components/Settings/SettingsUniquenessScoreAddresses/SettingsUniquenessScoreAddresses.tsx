@@ -1,4 +1,5 @@
-import React, { ReactNode, memo } from 'react';
+import cx from 'classnames';
+import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -7,8 +8,11 @@ import useSettingsStore from 'store/settings/store';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './SettingsUniquenessScoreAddresses.module.scss';
+import SettingsUniquenessScoreAddressesProps from './types';
 
-const SettingsUniquenessScoreAddresses = (): ReactNode => {
+const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps> = ({
+  showScoreLoader,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
 
   const { address: accountAddress } = useAccount();
@@ -53,8 +57,10 @@ const SettingsUniquenessScoreAddresses = (): ReactNode => {
           {showMoreThanOneAddress ? `${addresses?.length} ${t('addresses')}` : t('primary')}
         </div>
       </div>
-      <div className={styles.score}>
-        {isDelegationCompleted ? secondaryAddressScore : primaryAddressScore}
+      <div className={cx(styles.score, showScoreLoader && styles.showScoreLoader)}>
+        {!showScoreLoader && (
+          <span> {isDelegationCompleted ? secondaryAddressScore : primaryAddressScore}</span>
+        )}
       </div>
     </div>
   );

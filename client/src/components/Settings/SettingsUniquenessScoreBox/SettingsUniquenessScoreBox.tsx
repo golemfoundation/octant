@@ -1,7 +1,8 @@
 import { watchAccount } from '@wagmi/core';
+import uniq from 'lodash/uniq';
 import React, { ReactNode, memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnectors } from 'wagmi';
 
 import { wagmiConfig } from 'api/clients/client-wagmi';
 import ModalSettingsCalculatingUQScore from 'components/Settings/ModalSettingsCalculatingUQScore';
@@ -10,6 +11,9 @@ import ModalSettingsRecalculatingScore from 'components/Settings/ModalSettingsRe
 import SettingsUniquenessScoreAddresses from 'components/Settings/SettingsUniquenessScoreAddresses';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
+import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
+import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
+import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './SettingsUniquenessScoreBox.module.scss';
@@ -17,26 +21,61 @@ import styles from './SettingsUniquenessScoreBox.module.scss';
 const SettingsUniquenessScoreBox = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const {
+    delegationSecondaryAddress,
+    primaryAddressScore,
     isDelegationInProgress,
     isDelegationCalculatingUQScoreModalOpen,
     isDelegationCompleted,
+    setPrimaryAddressScore,
+    setSecondaryAddressScore,
     setIsDelegationInProgress,
     setIsDelegationConnectModalOpen,
     setDelegationPrimaryAddress,
     setDelegationSecondaryAddress,
     setIsDelegationCalculatingUQScoreModalOpen,
+    setIsDelegationCompleted,
   } = useSettingsStore(state => ({
+    delegationSecondaryAddress: state.data.delegationSecondaryAddress,
     isDelegationCalculatingUQScoreModalOpen: state.data.isDelegationCalculatingUQScoreModalOpen,
     isDelegationCompleted: state.data.isDelegationCompleted,
     isDelegationInProgress: state.data.isDelegationInProgress,
+    primaryAddressScore: state.data.primaryAddressScore,
     setDelegationPrimaryAddress: state.setDelegationPrimaryAddress,
     setDelegationSecondaryAddress: state.setDelegationSecondaryAddress,
     setIsDelegationCalculatingUQScoreModalOpen: state.setIsDelegationCalculatingUQScoreModalOpen,
+    setIsDelegationCompleted: state.setIsDelegationCompleted,
     setIsDelegationConnectModalOpen: state.setIsDelegationConnectModalOpen,
     setIsDelegationInProgress: state.setIsDelegationInProgress,
+    setPrimaryAddressScore: state.setPrimaryAddressScore,
+    setSecondaryAddressScore: state.setSecondaryAddressScore,
   }));
   const [isRecalculatingScoreModalOpen, setIisRecalculatingScoreModalOpen] = useState(false);
   const { address } = useAccount();
+  const connectors = useConnectors();
+  const [showScoreSkeleton, setShowScoreSkeleton] = useState(
+    isDelegationCompleted ? delegationSecondaryAddress === null : primaryAddressScore === null,
+  );
+  const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
+  const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
+    useRefreshAntisybilStatus();
+
+  const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
+    useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
+      enabled: isSuccessRefreshAntisybilStatus,
+    });
+
+  useEffect(() => {
+    if (!isSuccessAntisybilStatusScore) {
+      return;
+    }
+    if (isDelegationCompleted) {
+      setSecondaryAddressScore(antisybilStatusScore);
+    } else {
+      setPrimaryAddressScore(antisybilStatusScore);
+    }
+    setShowScoreSkeleton(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccessAntisybilStatusScore]);
 
   const [isCalculatingYourUniquenessModalOpen, setIsCalculatingYourUniquenessModalOpen] =
     useState(false);
@@ -63,6 +102,34 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDelegationInProgress]);
 
+  const checkDelegation = async () => {
+    const accountsPromises = connectors.map(connector => connector.getAccounts());
+    const addresses = await Promise.all(accountsPromises);
+    const uniqAddresses = uniq(addresses.flat());
+    checkDelegationMutation(uniqAddresses)
+      .then(({ primary, secondary }) => {
+        setDelegationPrimaryAddress(primary);
+        setDelegationSecondaryAddress(secondary);
+        setIsDelegationCompleted(true);
+        refreshAntisybilStatus(secondary);
+      })
+      .catch(() => {
+        if (primaryAddressScore !== null) {
+          setShowScoreSkeleton(false);
+          return;
+        }
+        refreshAntisybilStatus(address!);
+      });
+  };
+
+  useEffect(() => {
+    if (isDelegationCompleted) {
+      return;
+    }
+    checkDelegation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <BoxRounded
       alignment="left"
@@ -83,7 +150,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       }
     >
       <>
-        <SettingsUniquenessScoreAddresses />
+        <SettingsUniquenessScoreAddresses showScoreLoader={showScoreSkeleton} />
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}

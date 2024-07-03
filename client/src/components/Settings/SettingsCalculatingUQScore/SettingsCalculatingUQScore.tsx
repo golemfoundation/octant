@@ -49,7 +49,7 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   } = useSignMessage();
 
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus(address!);
+    useRefreshAntisybilStatus();
   const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore(address!, {
     enabled: isSuccessRefreshAntisybilStatus,
   });
@@ -107,7 +107,7 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   }, [isScoreHighlighted, secondaryAddressAntisybilStatusScore]);
 
   useEffect(() => {
-    refreshAntisybilStatus('');
+    refreshAntisybilStatus(address!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
