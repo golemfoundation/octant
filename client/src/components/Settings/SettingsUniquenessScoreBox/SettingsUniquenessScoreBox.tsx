@@ -14,6 +14,8 @@ import Button from 'components/ui/Button';
 import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useUqScore from 'hooks/queries/useUqScore';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './SettingsUniquenessScoreBox.module.scss';
@@ -55,6 +57,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   const [showScoreSkeleton, setShowScoreSkeleton] = useState(
     isDelegationCompleted ? delegationSecondaryAddress === null : primaryAddressScore === null,
   );
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
   const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
     useRefreshAntisybilStatus();
@@ -106,6 +111,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     const accountsPromises = connectors.map(connector => connector.getAccounts());
     const addresses = await Promise.all(accountsPromises);
     const uniqAddresses = uniq(addresses.flat());
+    if (uniqAddresses.length < 2) {return;}
     checkDelegationMutation(uniqAddresses)
       .then(({ primary, secondary }) => {
         setDelegationPrimaryAddress(primary);
@@ -168,7 +174,8 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
               showScoreSkeleton ||
               primaryAddressScore === null ||
               primaryAddressScore === undefined ||
-              primaryAddressScore < 20
+              isFetchingUqScore ||
+              uqScore === 100n
             }
             isHigh
             onClick={() => {
