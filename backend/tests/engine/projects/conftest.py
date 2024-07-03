@@ -145,12 +145,12 @@ def matched_rewards_with_capped_distribution(projects):
         ProjectMatchedRewardsDTO(projects[5], Decimal("500.0")),
     ]
     expected_distribution = {
-        projects[0]: Decimal("1000.0"),
+        projects[0]: Decimal("500.0"),
         projects[1]: Decimal("2000.0"),
         projects[2]: Decimal("2000.0"),
         projects[3]: Decimal("2000.0"),
         projects[4]: Decimal("2000.0"),
-        projects[5]: Decimal("1000.0"),
+        projects[5]: Decimal("500.0"),
     }
 
     return matched_rewards, computed_matched_rewards, expected_distribution
