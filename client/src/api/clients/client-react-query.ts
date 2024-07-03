@@ -24,7 +24,7 @@ const clientReactQuery = new QueryClient({
        * https://docs.metamask.io/wallet/reference/rpc-api/#returns-2
        */
       // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
-      const hasUserRejectedTransaction = error?.cause?.code === 4001;
+      const hasUserRejectedTransaction = error?.cause?.code === 4001 || error?.code === 4001;
       // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
       const reason = hasUserRejectedTransaction ? 4001 : error.reason;
       return handleError(reason, query);
