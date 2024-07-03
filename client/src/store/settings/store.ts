@@ -25,8 +25,8 @@ export const initialState: SettingsData = {
   isDelegationCompleted: false,
   isDelegationConnectModalOpen: false,
   isDelegationInProgress: false,
-  primaryAddressScore: 0,
-  secondaryAddressScore: 0,
+  primaryAddressScore: undefined,
+  secondaryAddressScore: undefined,
 };
 
 export default getStoreWithMeta<SettingsData, SettingsMethods>({

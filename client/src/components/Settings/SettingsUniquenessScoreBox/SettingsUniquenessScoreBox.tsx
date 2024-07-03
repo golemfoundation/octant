@@ -114,7 +114,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         refreshAntisybilStatus(secondary);
       })
       .catch(() => {
-        if (primaryAddressScore !== null) {
+        if (primaryAddressScore !== null && primaryAddressScore !== undefined) {
           setShowScoreSkeleton(false);
           return;
         }
@@ -154,6 +154,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
+            isDisabled={showScoreSkeleton}
             isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
@@ -162,7 +163,13 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
           </Button>
           <Button
             className={styles.button}
-            isDisabled={isDelegationCompleted}
+            isDisabled={
+              isDelegationCompleted ||
+              showScoreSkeleton ||
+              primaryAddressScore === null ||
+              primaryAddressScore === undefined ||
+              primaryAddressScore < 20
+            }
             isHigh
             onClick={() => {
               setIsDelegationInProgress(true);
