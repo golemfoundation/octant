@@ -10,10 +10,7 @@ const clientReactQuery = new QueryClient({
     },
   },
   mutationCache: new MutationCache({
-    onError: (error, query, _context, mutation) => {
-      if (mutation?.meta?.shouldGlobalErrorBeIgnored) {
-        return;
-      }
+    onError: (error, query) => {
       // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
       if (error.code === 'ERR_CANCELED') {
         // When request is canceled by the client, do nothing.
