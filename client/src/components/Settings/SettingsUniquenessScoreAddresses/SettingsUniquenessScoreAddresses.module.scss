@@ -59,5 +59,11 @@
     font-weight: $font-weight-bold;
     color: $color-octant-dark;
     margin-left: auto;
+
+    &.showScoreLoader {
+      @include skeleton($color-octant-grey1, $color-octant-grey12);
+      width: 3rem;
+      height: 3rem;
+    }
   }
 }

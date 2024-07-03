@@ -8,6 +8,6 @@ export type Response = {
 
 export async function apiGetDelegationCheck(addresses: NonNullable<string[]>): Promise<Response> {
   return apiService
-    .get(`${env.cryptoValuesEndpoint}/delegation/check/${addresses}`)
+    .get(`${env.serverEndpoint}/delegation/check/${addresses}`)
     .then(({ data }) => data);
 }
