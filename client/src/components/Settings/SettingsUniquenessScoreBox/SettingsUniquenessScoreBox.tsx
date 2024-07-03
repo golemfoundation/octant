@@ -16,6 +16,7 @@ import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useUqScore from 'hooks/queries/useUqScore';
+import toastService from 'services/toastService';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './SettingsUniquenessScoreBox.module.scss';
@@ -111,7 +112,18 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     const accountsPromises = connectors.map(connector => connector.getAccounts());
     const addresses = await Promise.all(accountsPromises);
     const uniqAddresses = uniq(addresses.flat());
-    if (uniqAddresses.length < 2) {return;}
+    if (uniqAddresses.length < 2) {
+      return;
+    }
+    if (uniqAddresses.length > 10) {
+      toastService.showToast({
+        message: t('delegationTooManyUniqueAddressesToast.message'),
+        name: 'delegationTooManyUniqueAddresses',
+        title: t('delegationTooManyUniqueAddressesToast.title'),
+        type: 'error',
+      });
+      return;
+    }
     checkDelegationMutation(uniqAddresses)
       .then(({ primary, secondary }) => {
         setDelegationPrimaryAddress(primary);

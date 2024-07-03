@@ -534,7 +534,11 @@
       "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
       "signMessage": "Sign message",
       "signMessages": "Sign messages",
-      "switchAccount": "Switch account"
+      "switchAccount": "Switch account",
+      "delegationTooManyUniqueAddressesToast": {
+        "title": "Too many accounts",
+        "message": "Please connect up to 10 accounts to check your delegation status"
+      }
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

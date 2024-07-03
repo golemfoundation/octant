@@ -12,6 +12,7 @@ export const TOAST_NAMES = [
   'projectForbiddenOperation',
   'projectLoadingProblem',
   'allocationMultisigInitialSignature',
+  'delegationTooManyUniqueAddresses',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 
