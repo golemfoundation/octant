@@ -16,7 +16,7 @@ const IGNORED_QUERIES: IgnoredQueries = [
 
 const errors: QueryMutationErrorConfig = {
   4001: {
-    message: i18n.t('api.errorMessage.userRejectedTransaction'),
+    message: i18n.t('api.errorMessage.userRejectedWalletOperation'),
     type: 'toast',
   },
   'HN:Allocations/allocate-above-rewards-budget': {

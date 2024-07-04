@@ -13,7 +13,7 @@
       "history": {
         "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
       },
-      "userRejectedTransaction": "User rejected transaction",
+      "userRejectedWalletOperation": "User rejected wallet operation",
       "default": {
         "title": "Sorry, something went wrong there",
         "message": "Please reload the app and try again"
