@@ -4,7 +4,7 @@ from sqlalchemy import desc
 from typing_extensions import deprecated
 
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.extensions import db
+from app.extensions import db, cache
 from app import exceptions
 
 from decimal import Decimal
@@ -20,10 +20,12 @@ def get_by_epoch_num(epoch) -> PendingEpochSnapshot:
     return snapshot
 
 
+@cache.memoize(timeout=15)
 def get_by_epoch(epoch: int) -> Optional[PendingEpochSnapshot]:
     return PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
 
 
+@cache.memoize(timeout=15)
 def get_last_snapshot() -> PendingEpochSnapshot:
     snapshot = (
         db.session.query(PendingEpochSnapshot)

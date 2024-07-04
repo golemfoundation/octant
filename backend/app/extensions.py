@@ -11,7 +11,7 @@ from web3._utils.caching import (
     generate_cache_key,
 )
 
-from functools import wraps, partial
+from functools import partial
 import lru
 import threading
 import time
