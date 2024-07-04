@@ -48,6 +48,12 @@ export const connectWallet = ({
   cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
+  cy.intercept('GET', '/user/*/antisybil-status', { body: {
+    'expires_at': null,
+    'score': null,
+    'status': 'Unknown',
+  }});
+  cy.intercept('PUT', '/user/*/antisybil-status', { statusCode: 204 });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
   cy.intercept('POST', '/allocations/leverage/*', {
     body: { leverage: '100', matched: [], threshold: null },
@@ -56,9 +62,7 @@ export const connectWallet = ({
    * Setting intercepts here is too late. It should be done before view loads.
    * Making a reload is hack to skip that.
    */
-  cy.location().then(({ pathname }) => {
-    cy.visit(pathname);
-  });
+  cy.reload();
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
