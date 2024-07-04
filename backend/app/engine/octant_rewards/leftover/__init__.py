@@ -4,13 +4,13 @@ from dataclasses import dataclass
 
 @dataclass
 class LeftoverPayload:
-    staking_proceeds: int = None
-    operational_cost: int = None
-    community_fund: int = None
-    ppf: int = None
-    total_withdrawals: int = None
-    total_matched_rewards: int = None
-    used_matched_rewards: int = None
+    staking_proceeds: int = 0
+    operational_cost: int = 0
+    community_fund: int = 0
+    ppf: int = 0
+    total_withdrawals: int = 0
+    total_matched_rewards: int = 0
+    used_matched_rewards: int = 0
 
 
 @dataclass
