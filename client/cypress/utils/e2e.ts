@@ -56,8 +56,8 @@ export const connectWallet = ({
    * Setting intercepts here is too late. It should be done before view loads.
    * Making a reload is hack to skip that.
    */
-  cy.url().then(url => {
-    cy.visit(url);
+  cy.location().then(({ pathname }) => {
+    cy.visit(pathname);
   });
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
