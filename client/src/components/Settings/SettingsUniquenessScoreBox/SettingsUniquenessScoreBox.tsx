@@ -113,9 +113,11 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     const addresses = await Promise.all(accountsPromises);
     const uniqAddresses = uniq(addresses.flat());
     if (uniqAddresses.length < 2) {
+      refreshAntisybilStatus(address!);
       return;
     }
     if (uniqAddresses.length > 10) {
+      refreshAntisybilStatus(address!);
       toastService.showToast({
         message: t('delegationTooManyUniqueAddressesToast.message'),
         name: 'delegationTooManyUniqueAddresses',
