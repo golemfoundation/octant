@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 
 import SettingsAddressScore from 'components/Settings/SettingsAddressScore';
 import SettingsProgressPath from 'components/Settings/SettingsProgressPath';
+import { DELEGATION_MIN_SCORE } from 'constants/delegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -12,10 +13,10 @@ import useSettingsStore from 'store/settings/store';
 import SettingsRecalculatingScoreProps from './types';
 
 const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLastStepDone }) => {
-  const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
   const { data: currentEpoch } = useCurrentEpoch();
-
   const { address } = useAccount();
+
+  const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
 
   const {
     setPrimaryAddressScore,
@@ -44,11 +45,13 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
     if (antisybilStatusScore === undefined || uqScore === undefined || !lastDoneStep) {
       return 0;
     }
-    if (!isDelegationCompleted && antisybilStatusScore < 20 && uqScore === 100n) {
+    if (!isDelegationCompleted && antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n) {
       return 20;
     }
     return antisybilStatusScore;
   }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted]);
+
+  const scoreHighlight = lastDoneStep && lastDoneStep >= 1 ? 'black' : undefined;
 
   useEffect(() => {
     if (!isSuccessAntisybilStatusScore) {
@@ -71,8 +74,6 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
     }, 2500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastDoneStep, isSuccessUqScore]);
-
-  const scoreHighlight = lastDoneStep && lastDoneStep >= 1 ? 'black' : undefined;
 
   useEffect(() => {
     if (antisybilStatusScore === undefined || uqScore === undefined) {
