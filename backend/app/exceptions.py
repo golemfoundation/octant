@@ -322,3 +322,11 @@ class AntisybilScoreTooLow(OctantException):
 
     def __init__(self, score: float, min_score: float):
         super().__init__(self.description.format(score, min_score), self.code)
+
+
+class IndividualLeverageNotImplementedError(OctantException):
+    code = 500
+    description = "Individual leverage calculation is not implemented for given epoch"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

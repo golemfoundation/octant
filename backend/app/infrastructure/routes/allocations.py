@@ -232,6 +232,19 @@ class AllocationLeverage(OctantResource):
             ns.payload, user_address
         )
 
+        # Get matched rewards for projects that user wants to allocate
+        # allocate / matched_rewards
+        """
+        projekt1 --- przypisane 80 eth matched rewardów
+        gość chce zaalokować 1 wei (10^-18 ETH)
+
+        simulate_allocation called from:
+            /leverage/ (this)
+            /allocate/
+
+        Czy alokacje wysłane w jednym request dla jednego usera mają mieć ten sam leverage?
+        """
+
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Estimated threshold: {threshold}")
         app.logger.debug(f"Matched rewards:  {matched}")

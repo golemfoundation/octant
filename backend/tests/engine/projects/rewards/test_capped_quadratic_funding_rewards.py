@@ -8,7 +8,6 @@ from app.engine.projects.rewards import (
 from app.engine.projects.rewards.capped_quadratic_funding import (
     CappedQuadraticFundingProjectRewards,
 )
-from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from tests.helpers.constants import (
     MATCHED_REWARDS,
     MR_FUNDING_CAP_PERCENT,
@@ -18,11 +17,11 @@ from tests.helpers.constants import (
 def test_compute_capped_qf_rewards_for_none_allocations():
     allocations = []
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, [])
-    uut = QuadraticFundingProjectRewards()
+    uut = CappedQuadraticFundingProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result == ProjectRewardsResult([], 0, 0, threshold=None)
+    assert result == ProjectRewardsResult([], 0, 0, threshold=None, leverage=0)
 
 
 def test_compute_capped_qf_rewards_for_allocations_to_one_project_max_uq_score(

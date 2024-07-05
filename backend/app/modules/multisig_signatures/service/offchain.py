@@ -8,7 +8,7 @@ from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
 
 from app.infrastructure.external_api.common import retry_request
-from app.modules.common.allocation_deserializer import deserialize_payload
+from app.modules.common.allocations.deserializer import deserialize_payload
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
     EncodingStandardFor,

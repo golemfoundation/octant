@@ -5,7 +5,6 @@ from app.context.manager import Context
 from app.engine.octant_rewards.leftover import LeftoverPayload
 from app.infrastructure import database
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO, AccountFundsDTO, AllocationDTO
 from app.modules.snapshots.finalized.core import FinalizedProjectRewards
 from app.pydantic import Model
@@ -75,6 +74,10 @@ class PendingOctantRewards(Model):
             context.epoch_details.epoch_num
         )
         matched_rewards = self.get_matched_rewards(context)
+
+        calculate_leverage = (
+            context.epoch_settings.project.rewards.leverage.calculate_leverage
+        )
 
         return calculate_leverage(matched_rewards, allocations_sum)
 

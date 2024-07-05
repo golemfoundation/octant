@@ -6,8 +6,7 @@ from app.context.manager import Context
 from app.engine.projects import ProjectSettings
 from app.infrastructure.database.models import AllocationRequest
 from app.legacy.crypto.eip712 import build_allocations_eip712_structure, recover_address
-from app.modules.common.leverage import calculate_leverage
-from app.modules.common.project_rewards import get_projects_rewards
+from app.modules.common.project_rewards import get_projects_rewards, AllocationsPayload
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload, AllocationItem
 
 
@@ -17,24 +16,28 @@ def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) 
 
 def simulate_allocation(
     projects_settings: ProjectSettings,
-    all_allocations_before: List[AllocationDTO],
-    user_allocations: List[AllocationDTO],
+    allocations: AllocationsPayload,
     user_address: str,
     all_projects: List[str],
     matched_rewards: int,
 ):
-    simulated_allocations = _replace_user_allocation(
-        all_allocations_before, user_allocations, user_address
+    allocations_without_user = _replace_user_allocation(
+        allocations.before_allocations, user_address
+    )
+
+    allocations = AllocationsPayload(
+        before_allocations=allocations_without_user,
+        user_new_allocations=allocations.user_new_allocations,
     )
 
     simulated_rewards = get_projects_rewards(
         projects_settings,
-        simulated_allocations,
+        allocations,
         all_projects,
         matched_rewards,
     )
 
-    leverage = calculate_leverage(matched_rewards, simulated_rewards.total_allocated)
+    leverage = simulated_rewards.leverage
 
     return (
         leverage,
@@ -124,12 +127,10 @@ def _verify_allocations_within_budget(allocations: List[AllocationItem], budget:
 
 def _replace_user_allocation(
     all_allocations_before: List[AllocationDTO],
-    user_allocations: List[AllocationDTO],
     user_address: str,
 ) -> List[AllocationDTO]:
     allocations_without_user = [
         alloc for alloc in all_allocations_before if alloc.user_address != user_address
     ]
-    allocations_after_replacement = allocations_without_user + user_allocations
 
-    return allocations_after_replacement
+    return allocations_without_user
