@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
@@ -7,7 +7,7 @@ import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
 import { GITCOIN_PASSPORT, SCORING_20_FOR_HUMANS_GUIDE } from 'constants/urls';
-import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 
 import styles from './ModalSettingsCalculatingYourUniqueness.module.scss';
 import ModalSettingsCalculatingYourUniquenessProps from './types';
@@ -15,11 +15,7 @@ import ModalSettingsCalculatingYourUniquenessProps from './types';
 const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUniquenessProps> = ({
   modalProps,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { isDesktop } = useMediaQuery();
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
-
-  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const steps = [
     <Trans
@@ -40,79 +36,13 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
     />,
   ];
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    const touchDown = e.touches[0].clientX;
-
-    setTouchStart(touchDown);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStart) {
-      return;
-    }
-
-    const currentTouch = e.touches[0].clientX;
-    const diff = touchStart - currentTouch;
-    const touchMoveXDiff = 5;
-
-    const canChangeToNextStep = diff >= touchMoveXDiff && currentStep !== steps.length - 1;
-    const canChangeToPrevStep = diff <= -touchMoveXDiff && currentStep > 0;
-
-    if (canChangeToNextStep) {
-      setCurrentStep(prev => prev + 1);
-    }
-
-    if (canChangeToPrevStep) {
-      setCurrentStep(prev => prev - 1);
-    }
-
-    setTouchStart(null);
-  };
-
-  const handleModalEdgeClick: React.MouseEventHandler<HTMLDivElement> = e => {
-    const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
-    const offsetLeftParent = offsetParent.offsetLeft;
-    const onboardingModalWidth = isDesktop
-      ? (e.target as HTMLDivElement).offsetParent!.clientWidth!
-      : window.innerWidth;
-    const { clientX } = e;
-
-    const clickDiff = 25;
-
-    const isLeftEdgeClick = clientX - offsetLeftParent <= clickDiff;
-    const isRightEdgeClick =
-      Math.abs(clientX - offsetLeftParent - onboardingModalWidth) <= clickDiff;
-
-    const canChangeToPrevStep = isLeftEdgeClick && currentStep > 0;
-    const canChangeToNextStep = isRightEdgeClick && currentStep !== steps.length - 1;
-
-    if (canChangeToNextStep) {
-      setCurrentStep(prev => prev + 1);
-    }
-
-    if (canChangeToPrevStep) {
-      setCurrentStep(prev => prev - 1);
-    }
-  };
-
-  useEffect(() => {
-    const listener = ({ key }: KeyboardEvent) => {
-      if (key === 'ArrowRight' && currentStep !== steps.length - 1) {
-        setCurrentStep(prev => prev + 1);
-      }
-
-      if (key === 'ArrowLeft' && currentStep > 0) {
-        setCurrentStep(prev => prev - 1);
-      }
-    };
-
-    window.addEventListener('keydown', listener);
-
-    return () => {
-      window.removeEventListener('keydown', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
+  const {
+    currentStepIndex,
+    setCurrentStepIndex,
+    handleModalEdgeClick,
+    handleTouchMove,
+    handleTouchStart,
+  } = useModalStepperNavigation({ steps });
 
   return (
     <Modal
@@ -128,23 +58,23 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
       onClick={handleModalEdgeClick}
       onClosePanel={() => {
         modalProps.onClosePanel();
-        setCurrentStep(0);
+        setCurrentStepIndex(0);
       }}
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
-      <Text className={styles.text}>{steps[currentStep]}</Text>
+      <Text className={styles.text}>{steps[currentStepIndex]}</Text>
       <ProgressStepperSlim
         className={styles.stepper}
-        currentStepIndex={currentStep}
+        currentStepIndex={currentStepIndex}
         dataTest="ModalSettingsCalculatingYourUniqueness__ProgressStepperSlim"
         numberOfSteps={steps.length}
         onStepClick={stepIndex => {
-          if (stepIndex === currentStep && stepIndex !== steps.length - 1) {
-            setCurrentStep(stepIndex + 1);
+          if (stepIndex === currentStepIndex && stepIndex !== steps.length - 1) {
+            setCurrentStepIndex(stepIndex + 1);
             return;
           }
-          setCurrentStep(stepIndex);
+          setCurrentStepIndex(stepIndex);
         }}
       />
     </Modal>
