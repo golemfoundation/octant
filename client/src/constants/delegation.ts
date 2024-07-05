@@ -1,1 +1,1 @@
-export const DELEGATION_MIN_SCORE = 20;
+export const DELEGATION_MIN_SCORE = 1;

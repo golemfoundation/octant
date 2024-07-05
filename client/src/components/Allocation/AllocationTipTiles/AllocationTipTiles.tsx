@@ -43,7 +43,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const isEpoch1 = currentEpoch === 1;
 
   const isUqTooLowTipVisible =
-    !!isDecisionWindowOpen && uqScore === 20n && !wasUqTooLowAlreadyClosed;
+    !!isDecisionWindowOpen && uqScore === 1n && !wasUqTooLowAlreadyClosed;
 
   const isRewardsTipVisible =
     !isEpoch1 &&

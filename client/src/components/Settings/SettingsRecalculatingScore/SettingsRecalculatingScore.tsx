@@ -48,7 +48,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
       return 0;
     }
     if (!isDelegationCompleted && antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n) {
-      return 20;
+      return 1;
     }
     return antisybilStatusScore;
   }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted]);
