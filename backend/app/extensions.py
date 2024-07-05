@@ -6,7 +6,6 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_caching import Cache
 from web3 import Web3, middleware
-from web3._utils.rpc_abi import RPC
 from web3._utils.caching import (
     generate_cache_key,
 )
@@ -112,21 +111,20 @@ def init_web3(app):
     w3.provider = app.config["WEB3_PROVIDER"]
     if middleware.geth_poa_middleware not in w3.middleware_onion:
         w3.middleware_onion.inject(middleware.geth_poa_middleware, layer=0)
-
-    middleware.validation.METHODS_TO_VALIDATE.remove(RPC.eth_call)
-
-    w3.middleware_onion.add(middleware.time_based_cache_middleware)
-    w3.middleware_onion.add(middleware.latest_block_based_cache_middleware)
-    w3.middleware_onion.add(middleware.simple_cache_middleware)
-    w3.middleware_onion.add(
-        _create_cache(app, 600, is_glm_or_projects_contract, _generic_should_cache_web3)
-    )
-    w3.middleware_onion.add(
-        _create_cache(app, 60, is_epochs_or_deposits_contract, (lambda x: True))
-    )
-    w3.middleware_onion.add(
-        _create_cache(app, 20, is_get_block_by_number, _generic_should_cache_web3)
-    )
+        w3.middleware_onion.add(middleware.time_based_cache_middleware)
+        w3.middleware_onion.add(middleware.latest_block_based_cache_middleware)
+        w3.middleware_onion.add(middleware.simple_cache_middleware)
+        w3.middleware_onion.add(
+            _create_cache(
+                app, 600, is_glm_or_projects_contract, _generic_should_cache_web3
+            )
+        )
+        w3.middleware_onion.add(
+            _create_cache(app, 60, is_epochs_or_deposits_contract, (lambda x: True))
+        )
+        w3.middleware_onion.add(
+            _create_cache(app, 20, is_get_block_by_number, _generic_should_cache_web3)
+        )
 
     glm.init_web3(w3, app.config["GLM_CONTRACT_ADDRESS"])
     epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
