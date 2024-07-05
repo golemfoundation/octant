@@ -67,7 +67,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   }));
 
   const [showScoreSkeleton, setShowScoreSkeleton] = useState(
-    isDelegationCompleted ? delegationSecondaryAddress === null : primaryAddressScore === null,
+    isDelegationCompleted
+      ? delegationSecondaryAddress === null
+      : primaryAddressScore === null || primaryAddressScore !== address,
   );
 
   const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
@@ -108,7 +110,11 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         refreshAntisybilStatus(secondary);
       })
       .catch(() => {
-        if (primaryAddressScore !== null && primaryAddressScore !== undefined) {
+        if (
+          primaryAddressScore !== null &&
+          primaryAddressScore !== undefined &&
+          delegationPrimaryAddress === address
+        ) {
           setShowScoreSkeleton(false);
           return;
         }
@@ -123,7 +129,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     if (isDelegationCompleted) {
       setSecondaryAddressScore(antisybilStatusScore);
     } else {
-      setPrimaryAddressScore(antisybilStatusScore);
+      setPrimaryAddressScore(uqScore === 100n ? 20 : antisybilStatusScore);
     }
     setShowScoreSkeleton(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,7 +167,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     }
     checkDelegation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserTOSAccepted]);
+  }, [isUserTOSAccepted, address]);
 
   return (
     <BoxRounded
