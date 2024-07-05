@@ -21,7 +21,7 @@ const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> 
   return (
     <div className={styles.root} data-test={dataTest}>
       <div className={styles.daysSelectorLabel} data-test={`${dataTest}__label`}>
-        UQ Score 20+
+        {t('header')}
       </div>
       <div className={styles.daysSelector}>
         <div className={styles.daysWrapper}>
