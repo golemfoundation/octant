@@ -8,6 +8,7 @@ import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useUqScore from 'hooks/queries/useUqScore';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import useSettingsStore from 'store/settings/store';
 
 import SettingsRecalculatingScoreProps from './types';
@@ -15,6 +16,7 @@ import SettingsRecalculatingScoreProps from './types';
 const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLastStepDone }) => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { address } = useAccount();
+  const { data: isUserTOSAccepted } = useUserTOS();
 
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
 
@@ -90,9 +92,12 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
   }, [antisybilStatusScore, uqScore, calculatedUqScore, isDelegationCompleted]);
 
   useEffect(() => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
     refreshAntisybilStatus(isDelegationCompleted ? delegationSecondaryAddress! : address!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isUserTOSAccepted]);
 
   return (
     <>
