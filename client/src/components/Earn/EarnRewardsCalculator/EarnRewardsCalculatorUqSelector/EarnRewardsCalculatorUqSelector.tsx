@@ -16,7 +16,7 @@ const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> 
 
   const selectorOptions = [true, false]; // isUqScoreOver20
 
-  const dataTest = 'EarnRewardsCalculatorEpochDaysSelector';
+  const dataTest = 'EarnRewardsCalculatorUqSelector';
 
   return (
     <div className={styles.root} data-test={dataTest}>

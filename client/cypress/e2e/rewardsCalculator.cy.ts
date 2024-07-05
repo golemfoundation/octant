@@ -85,6 +85,30 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         .should('eq', 'Days');
     });
 
+    it('UQ selector is visible, has 2 options (Yes, No), "Yes" as a default value', () => {
+      cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
+      cy.get('[data-test=EarnRewardsCalculatorUqSelector]').should('be.visible');
+      cy.get('[data-test*=EarnRewardsCalculatorUqSelector__option--]').then(options => {
+        for (let i = 1; i <= options.length; i++) {
+          cy.get(`[data-test=EarnRewardsCalculatorUqSelector__option--${i}]`)
+            .then($el => $el.css('color'))
+            .should('be.colored', i === 1 ? '#171717' : '#cdd1cd');
+          cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionBackground--${i}]`).should(
+            i === 1 ? 'exist' : 'not.exist',
+          );
+
+          if (i === 1) {
+            cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionBackground--${i}]`)
+              .then($el => $el.css('background-color'))
+              .should('be.colored', '#ebebeb');
+          }
+          cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionLabel--${i}]`)
+            .invoke('text')
+            .should('eq', i === 1 ? 'Yes' : 'No');
+        }
+      });
+    });
+
     it('Estimates box is visibile and has "Rewards" and "Match funding" fields', () => {
       cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
       cy.get('[data-test=EarnRewardsCalculatorEstimates]').should('be.visible');
