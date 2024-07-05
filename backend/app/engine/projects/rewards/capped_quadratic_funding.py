@@ -89,7 +89,12 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
             self.projects_allocations, self.funding_cap
         )
 
-    def _aggregate_rewards(self, capped_matched_by_addr, grouped_allocations, payload):
+    def _aggregate_rewards(
+        self,
+        payload: ProjectRewardsPayload,
+        capped_matched_by_addr: Dict[str, Decimal],
+        grouped_allocations: Dict[str, List],
+    ):
         rewards = {
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
         }
@@ -125,7 +130,7 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         )
 
         rewards, project_rewards_sum, total_allocated = self._aggregate_rewards(
-            capped_matched_by_addr, grouped_allocations, payload
+            payload, capped_matched_by_addr, grouped_allocations
         )
 
         project_addresses = list(
