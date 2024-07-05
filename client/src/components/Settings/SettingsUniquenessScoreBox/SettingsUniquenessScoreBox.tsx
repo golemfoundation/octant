@@ -153,14 +153,15 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
 
   useEffect(() => {
     if (
-      isDelegationCompleted &&
-      (delegationPrimaryAddress === address || delegationSecondaryAddress === address)
+      (isDelegationCompleted &&
+        (delegationPrimaryAddress === address || delegationSecondaryAddress === address)) ||
+      !isUserTOSAccepted
     ) {
       return;
     }
     checkDelegation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isUserTOSAccepted]);
 
   return (
     <BoxRounded
