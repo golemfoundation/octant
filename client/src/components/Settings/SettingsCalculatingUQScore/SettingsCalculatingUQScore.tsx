@@ -11,6 +11,7 @@ import { DELEGATION_MIN_SCORE } from 'constants/delegation';
 import useDelegate from 'hooks/mutations/useDelegate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import useSettingsStore from 'store/settings/store';
 import { notificationIconWarning } from 'svg/misc';
 
@@ -23,6 +24,7 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { address } = useAccount();
 
+  const { data: isUserTOSAccepted } = useUserTOS();
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
     useRefreshAntisybilStatus();
   const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore(address!, {
@@ -109,9 +111,12 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   };
 
   useEffect(() => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
     refreshAntisybilStatus(address!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isUserTOSAccepted]);
 
   useEffect(() => {
     if (secondaryAddressAntisybilStatusScore === undefined) {

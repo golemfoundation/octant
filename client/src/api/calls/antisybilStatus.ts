@@ -1,10 +1,6 @@
 import env from 'env';
 import apiService from 'services/apiService';
 
-export type ApiPatronModeResponse = {
-  status: boolean;
-};
-
 export type Response = {
   expires_at: string;
   score: string;

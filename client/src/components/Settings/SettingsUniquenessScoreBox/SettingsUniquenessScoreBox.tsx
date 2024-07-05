@@ -16,6 +16,7 @@ import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useUqScore from 'hooks/queries/useUqScore';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import toastService from 'services/toastService';
 import useSettingsStore from 'store/settings/store';
 
@@ -26,6 +27,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   const { address } = useAccount();
   const connectors = useConnectors();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isUserTOSAccepted } = useUserTOS();
   const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
 
   const [isRecalculatingScoreModalOpen, setIisRecalculatingScoreModalOpen] = useState(false);
@@ -78,6 +80,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     });
 
   const checkDelegation = async () => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
     const accountsPromises = connectors.map(connector => connector.getAccounts());
     const addresses = await Promise.all(accountsPromises);
     const uniqAddresses = uniq(addresses.flat());
