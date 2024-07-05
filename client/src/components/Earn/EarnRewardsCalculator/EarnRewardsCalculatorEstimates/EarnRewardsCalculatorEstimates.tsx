@@ -6,8 +6,8 @@ import styles from './EarnRewardsCalculatorEstimates.module.scss';
 import { EarnRewardsCalculatorEstimatesProps } from './types';
 
 const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = ({
-  rewardsFiat,
-  matchFundingFiat,
+  estimatedRewards,
+  matchFunding,
   isLoading,
 }) => {
   const { i18n, t } = useTranslation('translation', {
@@ -30,7 +30,7 @@ const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = 
             className={cx(styles.value, isLoading && styles.showSkeleton)}
             data-test={`${dataTest}__rewardsFiat${isLoading ? '--skeleton' : ''}`}
           >
-            {rewardsFiat}
+            {estimatedRewards.primary}
           </div>
         </div>
         <div className={styles.row} data-test={`${dataTest}__matchFunding`}>
@@ -41,7 +41,7 @@ const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = 
             className={cx(styles.value, isLoading && styles.showSkeleton)}
             data-test={`${dataTest}__matchFundingFiat${isLoading ? '--skeleton' : ''}`}
           >
-            {matchFundingFiat}
+            {matchFunding.primary}
           </div>
         </div>
       </div>

@@ -15,11 +15,13 @@ export type GetValuesToDisplayProps = {
   valueString?: string;
 } & GetValueCryptoToDisplayProps;
 
-type GetValuesToDisplay = (props: GetValuesToDisplayProps) => {
+export type GetValuesToDisplayReturnType = {
   cryptoSuffix?: 'WEI' | 'GWEI' | 'ETH' | 'GLM';
   primary: string;
   secondary?: string;
 };
+
+type GetValuesToDisplay = (props: GetValuesToDisplayProps) => GetValuesToDisplayReturnType;
 
 export default function useGetValuesToDisplay(): GetValuesToDisplay {
   const {

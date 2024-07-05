@@ -6,17 +6,16 @@ import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/ui/BoxRounded';
 import InputText from 'components/ui/InputText';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
 import EarnRewardsCalculatorEpochDaysSelector from './EarnRewardsCalculatorEpochDaysSelector';
 import EarnRewardsCalculatorEstimates from './EarnRewardsCalculatorEstimates';
+import EarnRewardsCalculatorUqSelector from './EarnRewardsCalculatorUqSelector';
 import { FormFields } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
@@ -24,14 +23,9 @@ const EarnRewardsCalculator: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-    },
-  }));
-  const { data: cryptoValues } = useCryptoValues(displayCurrency);
+
+  const getValuesToDisplay = useGetValuesToDisplay();
+
   const {
     data: calculateRewards,
     mutateAsync: mutateAsyncRewardsCalculator,
@@ -70,23 +64,24 @@ const EarnRewardsCalculator: FC = () => {
     formik.setFieldValue('valueCrypto', valueComma || '');
   };
 
-  const estimatedRewardsFiat =
+  const estimatedRewards =
     calculateRewards && isEmpty(formik.errors) && !isEmpty(formik.values.valueCrypto)
-      ? getValueFiatToDisplay({
+      ? getValuesToDisplay({
           cryptoCurrency: 'ethereum',
-          cryptoValues,
-          displayCurrency,
+          showCryptoSuffix: true,
           valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
         })
       : '';
 
-  const matchFundingFiat =
+  const matchFunding =
     calculateRewards && isEmpty(formik.errors) && !isEmpty(formik.values.valueCrypto)
-      ? getValueFiatToDisplay({
+      ? getValuesToDisplay({
           cryptoCurrency: 'ethereum',
-          cryptoValues,
-          displayCurrency,
-          valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
+          showCryptoSuffix: true,
+          valueCrypto:
+            (parseUnitsBigInt(calculateRewards.matchedFunding, 'wei') *
+              (formik.values.isUqScoreOver20 ? 100n : 20n)) /
+            100n,
         })
       : '';
 
@@ -133,10 +128,16 @@ const EarnRewardsCalculator: FC = () => {
           formik.setFieldValue('numberOfEpochs', epoch);
         }}
       />
+      <EarnRewardsCalculatorUqSelector
+        isUqScoreOver20={formik.values.isUqScoreOver20}
+        onChange={isUqScoreOver20 => {
+          formik.setFieldValue('isUqScoreOver20', isUqScoreOver20);
+        }}
+      />
       <EarnRewardsCalculatorEstimates
+        estimatedRewards={estimatedRewards}
         isLoading={isPendingCalculateRewards}
-        matchFundingFiat={matchFundingFiat}
-        rewardsFiat={estimatedRewardsFiat}
+        matchFunding={matchFunding}
       />
     </BoxRounded>
   );
