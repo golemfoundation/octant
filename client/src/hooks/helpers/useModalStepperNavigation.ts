@@ -4,7 +4,7 @@ import useMediaQuery from './useMediaQuery';
 
 type UseModalStepperProps = {
   initialCurrentStepIndex?: number;
-  steps: any;
+  steps: any[];
 };
 
 type UseModalStepperNavigation = {
