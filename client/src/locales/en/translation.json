@@ -91,6 +91,11 @@
         "lockForEpoch_one": "Lock for {{count}} epoch",
         "lockForEpoch_other": "Lock for {{count}} epochs",
         "estimatedRewards": "Estimated rewards",
+        "uqSelector": {
+          "header": "UQ Score 20+",
+          "isUqScoreOver20_true": "Yes",
+          "isUqScoreOver20_false": "No"
+        },
         "errors": {
           "valueCryptoTooBig": "That isn’t a valid amount"
         }
