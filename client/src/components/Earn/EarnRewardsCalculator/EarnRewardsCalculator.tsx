@@ -71,7 +71,7 @@ const EarnRewardsCalculator: FC = () => {
           showCryptoSuffix: true,
           valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
         })
-      : '';
+      : undefined;
 
   const matchFunding =
     calculateRewards && isEmpty(formik.errors) && !isEmpty(formik.values.valueCrypto)
@@ -83,7 +83,7 @@ const EarnRewardsCalculator: FC = () => {
               (formik.values.isUqScoreOver20 ? 100n : 20n)) /
             100n,
         })
-      : '';
+      : undefined;
 
   useEffect(() => {
     if (!formik.values.valueCrypto || !formik.values.numberOfEpochs) {
