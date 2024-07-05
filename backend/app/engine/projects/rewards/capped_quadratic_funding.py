@@ -116,7 +116,6 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         """
         Calculate rewards for projects using plain quadratic funding formula with capped funding.
         """
-
         before_capped_matched_by_addr, _ = self.capped_mr.compute(
             payload, payload.before_allocations
         )
@@ -136,10 +135,6 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
             list(map(lambda x: x.amount, payload.user_new_allocations))
         )
 
-        print("BEFORE CAPPED", before_capped_matched_by_addr, flush=True)
-        print("AFTER CAPPED", capped_matched_by_addr, flush=True)
-        print("PROJECT ADDRESSES", project_addresses, flush=True)
-        print("user_new_allocations", user_new_allocations, flush=True)
         leverage = self.leverage.calculate_individual_leverage(
             before_capped_matched_by_addr,
             capped_matched_by_addr,
