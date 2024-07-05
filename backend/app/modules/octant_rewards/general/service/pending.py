@@ -75,11 +75,9 @@ class PendingOctantRewards(Model):
         )
         matched_rewards = self.get_matched_rewards(context)
 
-        calculate_leverage = (
-            context.epoch_settings.project.rewards.leverage.calculate_leverage
+        return context.epoch_settings.project.rewards.leverage.calculate_leverage(
+            matched_rewards, allocations_sum
         )
-
-        return calculate_leverage(matched_rewards, allocations_sum)
 
     def get_leftover(
         self,

@@ -14,6 +14,9 @@ class MRCapAndUQLeverage(Leverage):
         project_addresses: List[str],
         user_new_allocations: int,
     ) -> float:
+        if user_new_allocations == 0:
+            return 0.0
+
         total_difference = 0
         for project_address in project_addresses:
             before_capped_matched = before_capped_matched_rewards.get(
@@ -24,8 +27,6 @@ class MRCapAndUQLeverage(Leverage):
             difference = abs(before_capped_matched - capped_matched_amount)
             total_difference += difference
 
-        leverage = (
-            total_difference / user_new_allocations if user_new_allocations > 0 else 0
-        )
+        leverage = total_difference / user_new_allocations
 
         return float(leverage)

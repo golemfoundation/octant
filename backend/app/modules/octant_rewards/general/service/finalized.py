@@ -39,8 +39,6 @@ class FinalizedOctantRewards(Model):
         )
         matched_rewards = int(finalized_snapshot.matched_rewards)
 
-        calculate_leverage = (
-            context.epoch_settings.project.rewards.leverage.calculate_leverage
+        return context.epoch_settings.project.rewards.leverage.calculate_leverage(
+            matched_rewards, allocations_sum
         )
-
-        return calculate_leverage(matched_rewards, allocations_sum)
