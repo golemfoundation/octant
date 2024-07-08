@@ -105,7 +105,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
-  const { data: uqScore } = useUqScore(currentEpoch! - 1);
+  const { data: uqScore } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
 
   const { data: projectDonors } = useProjectDonors(address);
 

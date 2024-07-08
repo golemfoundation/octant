@@ -15,6 +15,7 @@ import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import toastService from 'services/toastService';
@@ -28,7 +29,11 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   const connectors = useConnectors();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isUserTOSAccepted } = useUserTOS();
-  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(
+    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+  );
 
   const [isRecalculatingScoreModalOpen, setIisRecalculatingScoreModalOpen] = useState(false);
   const [isCalculatingYourUniquenessModalOpen, setIsCalculatingYourUniquenessModalOpen] =
@@ -115,7 +120,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   };
 
   useEffect(() => {
-    if (!isSuccessAntisybilStatusScore) {
+    if (!isSuccessAntisybilStatusScore || isDelegationInProgress) {
       return;
     }
     if (isDelegationCompleted) {
@@ -199,6 +204,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
               showScoreSkeleton ||
               primaryAddressScore === null ||
               primaryAddressScore === undefined ||
+              primaryAddressScore >= 20 ||
               isFetchingUqScore ||
               uqScore === 100n
             }

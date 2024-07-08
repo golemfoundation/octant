@@ -36,12 +36,12 @@
 
       &.isActive {
         .activeDotCircle {
-          fill: $color-octant-grey2;
+          fill: $color-octant-green;
         }
       }
 
       .activeDotCircle {
-        fill: $color-octant-green;
+        fill: $color-octant-grey2;
         stroke: $color-octant-grey3;
         stroke-width: 0.2rem;
       }
