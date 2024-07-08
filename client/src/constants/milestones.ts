@@ -147,10 +147,10 @@ export default function getMilestones(): Milestone[] {
       label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
     },
     {
-      from: new Date('2024-06-10T00:00:00+0200'),
+      from: new Date('2024-06-17T00:00:00+0200'),
       id: 'e4-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
-      to: new Date('2024-06-15T00:00:00+0200'),
+      to: new Date('2024-06-21T00:00:00+0200'),
     },
     {
       from: new Date('2024-07-15T18:00:00+0200'),

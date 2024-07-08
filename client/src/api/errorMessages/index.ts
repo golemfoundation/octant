@@ -8,10 +8,10 @@ import toastService from 'services/toastService';
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
 const IGNORED_QUERIES: IgnoredQueries = [
+  QUERY_KEYS.withdrawals,
   ROOTS.cryptoValues,
   ROOTS.individualReward,
   ROOTS.projectsIpfsResults,
-  QUERY_KEYS.withdrawals,
 ];
 
 const errors: QueryMutationErrorConfig = {
