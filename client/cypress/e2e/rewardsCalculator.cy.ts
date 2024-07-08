@@ -1,7 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  ETH_USD,
+  GLM_USD,
+  changeMainValueToFiat,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -10,9 +16,63 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
+import getValueFiatToDisplay from 'src/utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'src/utils/parseUnitsBigInt';
 
 chai.use(chaiColors);
+
+const rendersWithCorrectValues = (
+  isCryptoAsAMainValue: boolean,
+  budget: string,
+  matchedFunding: string,
+) => {
+  if (!isCryptoAsAMainValue) {
+    changeMainValueToFiat(ROOT_ROUTES.earn.absolute);
+  }
+
+  cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
+
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('be.visible');
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+    'be.visible',
+  );
+
+  const rewardsCrypto = getValueCryptoToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: parseUnitsBigInt(budget, 'wei'),
+  });
+  const rewardsFiat = getValueFiatToDisplay({
+    cryptoCurrency: 'ethereum',
+    cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+    displayCurrency: 'usd',
+    valueCrypto: parseUnitsBigInt(budget, 'wei'),
+  });
+
+  const matchFundingCrypto = getValueCryptoToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
+  });
+  const matchFundingFiat = getValueFiatToDisplay({
+    cryptoCurrency: 'ethereum',
+    cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+    displayCurrency: 'usd',
+    valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
+  });
+  const rewards = isCryptoAsAMainValue ? rewardsCrypto : rewardsFiat;
+  const matchFunding = isCryptoAsAMainValue ? matchFundingCrypto : matchFundingFiat;
+
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('not.exist');
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+    'not.exist',
+  );
+
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
+    .invoke('text')
+    .should('eq', rewards);
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
+    .invoke('text')
+    .should('eq', matchFunding);
+};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`rewards calculator: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -182,29 +242,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(budget, 'wei'),
-          });
-
-          const matchFundingUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-          });
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-            'not.exist',
-          );
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
-            .invoke('text')
-            .should('eq', rewardsUsd);
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-            .invoke('text')
-            .should('eq', matchFundingUsd);
+          rendersWithCorrectValues(true, budget, matchedFunding);
+          rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
 
@@ -224,29 +263,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(budget, 'wei'),
-          });
-
-          const matchFundingUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-          });
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-            'not.exist',
-          );
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
-            .invoke('text')
-            .should('eq', rewardsUsd);
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-            .invoke('text')
-            .should('eq', matchFundingUsd);
+          rendersWithCorrectValues(true, budget, matchedFunding);
+          rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
 
@@ -266,29 +284,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(budget, 'wei'),
-          });
-
-          const matchFundingUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-          });
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-            'not.exist',
-          );
-
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
-            .invoke('text')
-            .should('eq', rewardsUsd);
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-            .invoke('text')
-            .should('eq', matchFundingUsd);
+          rendersWithCorrectValues(true, budget, matchedFunding);
+          rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
     });
@@ -323,22 +320,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(budget, 'wei'),
-          });
+          rendersWithCorrectValues(true, budget, matchedFunding);
 
-          const matchFundingUsd = getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-          });
+          cy.get('[data-test=EarnRewardsCalculator__InputText--glm]')
+            .clear()
+            .type('1000000001')
+            .should('have.css', 'border-color', 'rgb(255, 97, 87)');
+          cy.get('[data-test=EarnRewardsCalculator__InputText--glm__error]')
+            .should('be.visible')
+            .invoke('text')
+            .should('eq', 'That isn’t a valid amount');
 
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
-            .invoke('text')
-            .should('eq', rewardsUsd);
-          cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-            .invoke('text')
-            .should('eq', matchFundingUsd);
+          rendersWithCorrectValues(false, budget, matchedFunding);
 
           cy.get('[data-test=EarnRewardsCalculator__InputText--glm]')
             .clear()
@@ -368,6 +361,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Estimates section shows correct fiat values', () => {
+      changeMainValueToFiat(ROOT_ROUTES.earn.absolute);
+
       cy.intercept('POST', '/rewards/estimated_budget', {
         body: { budget: '18829579190901', matchedFunding: '18829579190901' },
         delay: 500,
