@@ -110,14 +110,6 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         refreshAntisybilStatus(secondary);
       })
       .catch(() => {
-        if (
-          primaryAddressScore !== null &&
-          primaryAddressScore !== undefined &&
-          delegationPrimaryAddress === address
-        ) {
-          setShowScoreSkeleton(false);
-          return;
-        }
         refreshAntisybilStatus(address!);
       });
   };
