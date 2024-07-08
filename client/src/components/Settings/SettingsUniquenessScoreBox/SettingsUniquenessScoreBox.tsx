@@ -120,7 +120,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   };
 
   useEffect(() => {
-    if (!isSuccessAntisybilStatusScore) {
+    if (!isSuccessAntisybilStatusScore || isDelegationInProgress) {
       return;
     }
     if (isDelegationCompleted) {
@@ -204,6 +204,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
               showScoreSkeleton ||
               primaryAddressScore === null ||
               primaryAddressScore === undefined ||
+              primaryAddressScore >= 20 ||
               isFetchingUqScore ||
               uqScore === 100n
             }

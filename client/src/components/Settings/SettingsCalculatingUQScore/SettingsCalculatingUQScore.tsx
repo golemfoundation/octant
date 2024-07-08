@@ -27,9 +27,6 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   const { data: isUserTOSAccepted } = useUserTOS();
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
     useRefreshAntisybilStatus();
-  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore(address!, {
-    enabled: isSuccessRefreshAntisybilStatus,
-  });
 
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
 
@@ -54,6 +51,13 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
     setIsDelegationInProgress: state.setIsDelegationInProgress,
     setSecondaryAddressScore: state.setSecondaryAddressScore,
   }));
+
+  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore(
+    delegationSecondaryAddress!,
+    {
+      enabled: isSuccessRefreshAntisybilStatus,
+    },
+  );
 
   const messageToSign = t('delegationMessageToSign', {
     delegationPrimaryAddress,
