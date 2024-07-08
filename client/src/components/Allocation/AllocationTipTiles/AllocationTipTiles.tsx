@@ -25,7 +25,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
-  const { data: uqScore } = useUqScore(currentEpoch! - 1);
+  const { data: uqScore } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
   const {
     wasRewardsAlreadyClosed,
     setWasRewardsAlreadyClosed,
