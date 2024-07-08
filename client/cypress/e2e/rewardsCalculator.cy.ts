@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { ETH_USD, GLM_USD, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -9,7 +9,7 @@ import {
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-import getValueFiatToDisplay from 'src/utils/getValueFiatToDisplay';
+import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 import { parseUnitsBigInt } from 'src/utils/parseUnitsBigInt';
 
 chai.use(chaiColors);
@@ -109,7 +109,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
     });
 
-    it('Estimates box is visibile and has "Rewards" and "Match funding" fields', () => {
+    it('Estimates box is visible and has "Rewards" and "Match funding" fields', () => {
       cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
       cy.get('[data-test=EarnRewardsCalculatorEstimates]').should('be.visible');
       cy.get('[data-test=EarnRewardsCalculatorEstimates__label]')
@@ -182,17 +182,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueFiatToDisplay({
+          const rewardsUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(budget, 'wei'),
           });
 
-          const matchFundingUsd = getValueFiatToDisplay({
+          const matchFundingUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
           });
 
@@ -228,17 +224,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueFiatToDisplay({
+          const rewardsUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(budget, 'wei'),
           });
 
-          const matchFundingUsd = getValueFiatToDisplay({
+          const matchFundingUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
           });
 
@@ -274,17 +266,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueFiatToDisplay({
+          const rewardsUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(budget, 'wei'),
           });
 
-          const matchFundingUsd = getValueFiatToDisplay({
+          const matchFundingUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
           });
 
@@ -335,17 +323,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             body: { budget, matchedFunding },
           },
         }) => {
-          const rewardsUsd = getValueFiatToDisplay({
+          const rewardsUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(budget, 'wei'),
           });
 
-          const matchFundingUsd = getValueFiatToDisplay({
+          const matchFundingUsd = getValueCryptoToDisplay({
             cryptoCurrency: 'ethereum',
-            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-            displayCurrency: 'usd',
             valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
           });
 

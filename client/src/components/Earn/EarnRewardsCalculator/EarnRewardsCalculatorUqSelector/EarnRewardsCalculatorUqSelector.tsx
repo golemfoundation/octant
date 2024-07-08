@@ -26,11 +26,12 @@ const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> 
       <div className={styles.daysSelector}>
         <div className={styles.daysWrapper}>
           {/* eslint-disable-next-line @typescript-eslint/naming-convention */}
-          {selectorOptions.map(option => (
+          {selectorOptions.map((option, index) => (
             <div
-              key={`${option}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
               className={cx(styles.day, isUqScoreOver20 === option && styles.isSelected)}
-              data-test={`${dataTest}__option--${option}`}
+              data-test={`${dataTest}__option--${index}`}
               onClick={() => onChange(option)}
             >
               <span className={styles.dayLabel} data-test={`${dataTest}__optionLabel--${option}`}>
