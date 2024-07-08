@@ -162,6 +162,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     ) {
       return;
     }
+    setIsDelegationCompleted(false);
     checkDelegation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserTOSAccepted, address]);
