@@ -25,7 +25,7 @@ const motionAnimationProps: AnimationProps = {
 
 const ModalOnboarding: FC = () => {
   const { isConnected } = useAccount();
-  const { data: isUserTOSAccepted } = useUserTOS();
+  const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
 
   const {
     setIsOnboardingDone,
@@ -62,7 +62,8 @@ const ModalOnboarding: FC = () => {
     handleTouchStart,
   } = useModalStepperNavigation({ initialCurrentStepIndex: lastSeenStep - 1, steps: stepsToUse });
 
-  const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
+  const currentStep =
+    !isFetchingUserTOS && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;

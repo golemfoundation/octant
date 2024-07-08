@@ -39,26 +39,26 @@ const variantsBottom = {
 const durationOfTransition = 0.1;
 
 const Modal: FC<ModalProps> = ({
+  Image,
   bodyClassName,
-  headerClassName,
-  variant = 'standard',
-  className,
   children,
+  className,
   dataTest = 'Modal',
   header,
-  Image,
+  headerClassName,
+  isCloseButtonDisabled = false,
+  isConnectWalletModal,
+  isFullScreen,
   isOpen,
   isOverflowEnabled = true,
-  isFullScreen,
+  isOverflowOnClickDisabled = false,
+  onClick,
   onClosePanel,
   onTouchMove,
   onTouchStart,
-  onClick,
-  showCloseButton = true,
-  isCloseButtonDisabled = false,
-  isOverflowOnClickDisabled = false,
   overflowClassName,
-  isConnectWalletModal,
+  showCloseButton = true,
+  variant = 'standard',
 }) => {
   const { isDesktop } = useMediaQuery();
 
