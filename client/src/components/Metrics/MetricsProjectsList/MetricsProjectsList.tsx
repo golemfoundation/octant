@@ -32,6 +32,10 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
                 value={
                   getValuesToDisplay({
                     cryptoCurrency: 'ethereum',
+                    getFormattedEthValueProps: {
+                      shouldIgnoreGwei: true,
+                      shouldIgnoreWei: true,
+                    },
                     valueCrypto: project.value,
                   }).primary
                 }
