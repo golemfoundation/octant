@@ -1,6 +1,7 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { handleError } from 'api/errorMessages';
+import { ROOTS } from 'api/queryKeys';
 
 const clientReactQuery = new QueryClient({
   defaultOptions: {
@@ -32,6 +33,10 @@ const clientReactQuery = new QueryClient({
   }),
   queryCache: new QueryCache({
     onError: (error, query) => {
+      if (query.queryKey.includes(ROOTS.uqScore)) {
+        return;
+      }
+
       // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
       return handleError(error.reason, query);
     },
