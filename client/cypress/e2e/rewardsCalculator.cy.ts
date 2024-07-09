@@ -152,7 +152,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         for (let i = 1; i <= options.length; i++) {
           cy.get(`[data-test=EarnRewardsCalculatorUqSelector__option--${i}]`)
             .then($el => $el.css('color'))
-            .should('be.colored', i === 1 ? '#171717' : '#cdd1cd');
+            .should('be.colored', '#cdd1cd');
           cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionBackground--${i}]`).should(
             i === 1 ? 'exist' : 'not.exist',
           );
