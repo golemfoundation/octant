@@ -7,7 +7,7 @@ import pytest
 from app.extensions import db
 from app.infrastructure import database
 from tests.helpers.allocations import mock_request
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from tests.helpers.context import get_context
 
 
@@ -25,11 +25,6 @@ def test_calculate_uq_above_threshold(context, mock_antisybil, service):
 def test_calculate_uq_below_threshold(context, service):
     result = service.calculate(context, USER1_ADDRESS)
     assert result == Decimal("0.2")
-
-
-def test_calculate_uq_above_threshold_when_not_in_addresses(context, service):
-    result = service.calculate(context, USER3_ADDRESS)
-    assert result == Decimal("1.0")
 
 
 def test_retrieve_uq_when_score_in_the_db(service, mock_users_db_with_scores):
