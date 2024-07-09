@@ -6,7 +6,8 @@ from app.exceptions import (
     DelegationAlreadyExists,
     InvalidSignature,
     DelegationDoesNotExist,
-    AntisybilScoreTooLow, InvalidRecalculationRequest,
+    AntisybilScoreTooLow,
+    InvalidRecalculationRequest,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -96,7 +97,9 @@ def _verify_hashed_addresses(
             if hashed_both not in all_hashes:
                 raise DelegationDoesNotExist()
 
-            if hashed_secondary in all_hashes:  # E4 score for secondary_address is stoned
+            if (
+                hashed_secondary in all_hashes
+            ):  # E4 score for secondary_address is stoned
                 raise InvalidRecalculationRequest()
         case _:
             raise ValueError(f"Invalid action type: {action}")

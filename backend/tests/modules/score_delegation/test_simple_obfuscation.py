@@ -42,7 +42,9 @@ def test_delegation(context, payload, tos_users, patch_is_contract):
     assert len(delegations) == 3
 
 
-def test_disable_recalculation_when_secondary_address_is_used(context, payload, patch_is_contract):
+def test_disable_recalculation_when_secondary_address_is_used(
+    context, payload, patch_is_contract
+):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
