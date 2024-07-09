@@ -96,7 +96,7 @@ const useModalStepperNavigation = ({
       window.removeEventListener('keydown', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStepIndex]);
+  }, [currentStepIndex, steps.length]);
 
   return useMemo(
     () => ({
