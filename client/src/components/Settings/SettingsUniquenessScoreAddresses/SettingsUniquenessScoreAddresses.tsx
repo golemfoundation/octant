@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import React, { FC, memo } from 'react';
+import { animate } from 'framer-motion';
+import React, { FC, memo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -11,9 +12,10 @@ import styles from './SettingsUniquenessScoreAddresses.module.scss';
 import SettingsUniquenessScoreAddressesProps from './types';
 
 const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps> = ({
-  showScoreLoader,
+  isFetchingScore,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
+  const ref = useRef<HTMLDivElement>(null);
 
   const { address: accountAddress } = useAccount();
 
@@ -38,6 +40,24 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
 
   const showMoreThanOneAddress = addresses.length > 1;
 
+  useEffect(() => {
+    if (isFetchingScore || !ref?.current) {
+      return;
+    }
+    const controls = animate(
+      0,
+      isDelegationCompleted ? secondaryAddressScore! : primaryAddressScore!,
+      {
+        duration: 1,
+        onUpdate(value) {
+          ref.current!.textContent = value.toFixed(0);
+        },
+      },
+    );
+
+    return () => controls.complete();
+  }, [isFetchingScore, isDelegationCompleted, secondaryAddressScore, primaryAddressScore]);
+
   return (
     <div className={styles.root}>
       <div className={styles.avatarsGroup}>
@@ -57,10 +77,8 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
           {showMoreThanOneAddress ? `${addresses?.length} ${t('addresses')}` : t('primary')}
         </div>
       </div>
-      <div className={cx(styles.score, showScoreLoader && styles.showScoreLoader)}>
-        {!showScoreLoader && (
-          <span> {isDelegationCompleted ? secondaryAddressScore : primaryAddressScore}</span>
-        )}
+      <div ref={ref} className={cx(styles.score, isFetchingScore && styles.isFetchingScore)}>
+        0
       </div>
     </div>
   );
