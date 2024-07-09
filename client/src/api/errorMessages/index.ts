@@ -12,6 +12,7 @@ const IGNORED_QUERIES: IgnoredQueries = [
   ROOTS.cryptoValues,
   ROOTS.individualReward,
   ROOTS.projectsIpfsResults,
+  ROOTS.uqScore,
 ];
 
 const errors: QueryMutationErrorConfig = {

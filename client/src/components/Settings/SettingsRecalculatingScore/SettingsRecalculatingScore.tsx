@@ -42,22 +42,27 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
     });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  const { data: uqScore, isSuccess: isSuccessUqScore } = useUqScore(
-    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
-    {
-      enabled: isSuccessAntisybilStatusScore,
-    },
-  );
+  const {
+    data: uqScore,
+    isFetching: isFetchingUqScore,
+    isError: isErrorUqScore,
+  } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!, {
+    enabled: isSuccessAntisybilStatusScore,
+  });
 
   const calculatedUqScore = useMemo(() => {
-    if (antisybilStatusScore === undefined || uqScore === undefined || !lastDoneStep) {
+    if (
+      antisybilStatusScore === undefined ||
+      (uqScore === undefined && !isErrorUqScore) ||
+      !lastDoneStep
+    ) {
       return 0;
     }
     if (!isDelegationCompleted && antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n) {
       return 20;
     }
     return antisybilStatusScore;
-  }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted]);
+  }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted, isErrorUqScore]);
 
   const scoreHighlight = lastDoneStep && lastDoneStep >= 1 ? 'black' : undefined;
 
@@ -69,7 +74,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
   }, [isSuccessAntisybilStatusScore]);
 
   useEffect(() => {
-    if (lastDoneStep !== 0 || !isSuccessUqScore) {
+    if (lastDoneStep !== 0 || isFetchingUqScore) {
       return;
     }
     setLastDoneStep(1);
@@ -81,7 +86,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
       }, 2500);
     }, 2500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastDoneStep, isSuccessUqScore]);
+  }, [lastDoneStep, isFetchingUqScore]);
 
   useEffect(() => {
     if (antisybilStatusScore === undefined || uqScore === undefined) {
