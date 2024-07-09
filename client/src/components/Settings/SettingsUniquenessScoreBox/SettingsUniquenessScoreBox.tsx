@@ -71,7 +71,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     setSecondaryAddressScore: state.setSecondaryAddressScore,
   }));
 
-  const [showScoreSkeleton, setShowScoreSkeleton] = useState(
+  const [isFetchingScore, setIsFetchingScore] = useState(
     isDelegationCompleted
       ? delegationSecondaryAddress === null
       : primaryAddressScore === null || primaryAddressScore !== address,
@@ -120,7 +120,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   };
 
   useEffect(() => {
-    if (!isSuccessAntisybilStatusScore || isDelegationInProgress) {
+    if (!isSuccessAntisybilStatusScore || isDelegationInProgress || isFetchingUqScore) {
       return;
     }
     if (isDelegationCompleted) {
@@ -128,9 +128,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     } else {
       setPrimaryAddressScore(uqScore === 100n ? 20 : antisybilStatusScore);
     }
-    setShowScoreSkeleton(false);
+    setIsFetchingScore(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessAntisybilStatusScore]);
+  }, [isSuccessAntisybilStatusScore, isFetchingUqScore]);
 
   useEffect(() => {
     if (
@@ -187,11 +187,11 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       }
     >
       <>
-        <SettingsUniquenessScoreAddresses showScoreLoader={showScoreSkeleton} />
+        <SettingsUniquenessScoreAddresses isFetchingScore={isFetchingScore} />
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
-            isDisabled={showScoreSkeleton}
+            isDisabled={isDelegationCompleted || isFetchingScore || isFetchingUqScore}
             isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
@@ -202,7 +202,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
             className={styles.button}
             isDisabled={
               isDelegationCompleted ||
-              showScoreSkeleton ||
+              isFetchingScore ||
               primaryAddressScore === null ||
               primaryAddressScore === undefined ||
               primaryAddressScore >= 20 ||

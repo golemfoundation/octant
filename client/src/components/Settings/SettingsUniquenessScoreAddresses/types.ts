@@ -1,3 +1,3 @@
 export default interface SettingsUniquenessScoreAddressesProps {
-  showScoreLoader?: boolean;
+  isFetchingScore?: boolean;
 }
