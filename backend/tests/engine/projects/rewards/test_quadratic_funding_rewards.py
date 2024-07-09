@@ -18,7 +18,7 @@ def test_compute_qf_rewards_for_none_allocations():
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result == ProjectRewardsResult([], 0, 0, threshold=None)
+    assert result == ProjectRewardsResult([], 0, 0, threshold=None, leverage=0)
 
 
 def test_compute_qf_rewards_for_allocations_to_one_project(
