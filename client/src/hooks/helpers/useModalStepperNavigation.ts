@@ -39,8 +39,8 @@ const useModalStepperNavigation = ({
     const diff = touchStart - currentTouch;
     const touchMoveXDiff = 5;
 
-    const canChangeToNextStep = diff >= touchMoveXDiff && currentStepIndex !== steps.length - 1;
     const canChangeToPrevStep = diff <= -touchMoveXDiff && currentStepIndex > 0;
+    const canChangeToNextStep = diff >= touchMoveXDiff && currentStepIndex !== steps.length - 1;
 
     if (canChangeToNextStep) {
       setCurrentStepIndex(prev => prev + 1);
@@ -107,7 +107,7 @@ const useModalStepperNavigation = ({
       setCurrentStepIndex,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentStepIndex],
+    [currentStepIndex, touchStart],
   );
 };
 

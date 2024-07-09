@@ -243,6 +243,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           rendersWithCorrectValues(true, budget, matchedFunding);
+          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
           rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
@@ -264,6 +265,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           rendersWithCorrectValues(true, budget, matchedFunding);
+          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
           rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
@@ -285,6 +287,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           rendersWithCorrectValues(true, budget, matchedFunding);
+          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
           rendersWithCorrectValues(false, budget, matchedFunding);
         },
       );
@@ -330,6 +333,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             .should('be.visible')
             .invoke('text')
             .should('eq', 'That isn’t a valid amount');
+
+          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
 
           rendersWithCorrectValues(false, budget, matchedFunding);
 
