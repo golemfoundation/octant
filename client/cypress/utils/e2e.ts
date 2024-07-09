@@ -48,11 +48,13 @@ export const connectWallet = ({
   cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
-  cy.intercept('GET', '/user/*/antisybil-status', { body: {
-    'expires_at': null,
-    'score': null,
-    'status': 'Unknown',
-  }});
+  cy.intercept('GET', '/user/*/antisybil-status', {
+    body: {
+      expires_at: null,
+      score: null,
+      status: 'Unknown',
+    },
+  });
   cy.intercept('PUT', '/user/*/antisybil-status', { statusCode: 204 });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
   cy.intercept('POST', '/allocations/leverage/*', {
