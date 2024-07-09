@@ -1,12 +1,12 @@
 from enum import Enum
 from itertools import permutations
-from typing import Tuple
+from typing import Tuple, Set, List
 
 from app.exceptions import (
     DelegationAlreadyExists,
     InvalidSignature,
     DelegationDoesNotExist,
-    AntisybilScoreTooLow,
+    AntisybilScoreTooLow, InvalidRecalculationRequest,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -29,12 +29,12 @@ def build_score_delegation_message(primary_addr: str, secondary_addr: str) -> st
 
 
 def delegation_check(
-    addresses: list[str],
-    all_hashes: set[str],
+    addresses: List[str],
+    all_hashes: Set[str],
     salt: str,
     salt_primary: str,
     normalize=True,
-) -> set[Tuple[str, str]]:
+) -> Set[Tuple[str, str]]:
     result = []
     for secondary, primary in permutations(addresses, 2):
         _, _, both = hash_addresses(
@@ -47,7 +47,7 @@ def delegation_check(
 
 def verify_score_delegation(
     hashed_addresses: HashedAddresses,
-    all_hashes: set[str],
+    all_hashes: Set[str],
     score: float,
     action: ActionType,
 ):
@@ -84,17 +84,20 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
 
 
 def _verify_hashed_addresses(
-    action: ActionType, hashed_addresses: HashedAddresses, all_hashes: set[str]
+    action: ActionType, hashed_addresses: HashedAddresses, all_hashes: Set[str]
 ):
     hashed_primary, hashed_secondary, hashed_both = hashed_addresses
 
     match action:
         case ActionType.DELEGATION:
             if hashed_primary in all_hashes or hashed_secondary in all_hashes:
-                raise DelegationAlreadyExists
+                raise DelegationAlreadyExists()
         case ActionType.RECALCULATION:
             if hashed_both not in all_hashes:
-                raise DelegationDoesNotExist
+                raise DelegationDoesNotExist()
+
+            if hashed_secondary in all_hashes:  # E4 score for secondary_address is stoned
+                raise InvalidRecalculationRequest()
         case _:
             raise ValueError(f"Invalid action type: {action}")
 
