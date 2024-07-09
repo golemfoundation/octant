@@ -14,6 +14,7 @@ from app.engine.projects.rewards.allocations import (
 from app.engine.projects.rewards.allocations.quadratic_funding import (
     QuadraticFundingAllocations,
 )
+from app.engine.projects.rewards.leverage.preliminary import PreliminaryLeverage
 
 
 @dataclass
@@ -21,6 +22,7 @@ class QuadraticFundingProjectRewards(ProjectRewards):
     projects_allocations: ProjectAllocations = field(
         default_factory=QuadraticFundingAllocations
     )
+    leverage: PreliminaryLeverage = field(default_factory=PreliminaryLeverage)
 
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
@@ -33,7 +35,7 @@ class QuadraticFundingProjectRewards(ProjectRewards):
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(
-            ProjectAllocationsPayload(allocations=payload.allocations)
+            ProjectAllocationsPayload(allocations=payload.before_allocations)
         )
         rewards = {
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
@@ -52,9 +54,14 @@ class QuadraticFundingProjectRewards(ProjectRewards):
             project_rewards.allocated = int(quadratic_allocated)
             project_rewards.matched = int(matched)
 
+        leverage = self.leverage.calculate_leverage(
+            payload.matched_rewards, total_allocated
+        )
+
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             rewards_sum=int(project_rewards_sum),
             total_allocated=total_allocated,
             threshold=None,
+            leverage=leverage,
         )

@@ -2,7 +2,6 @@ from decimal import Decimal
 
 from app.context.manager import Context
 from app.infrastructure import database
-from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
 from app.pydantic import Model
 
@@ -40,4 +39,6 @@ class FinalizedOctantRewards(Model):
         )
         matched_rewards = int(finalized_snapshot.matched_rewards)
 
-        return calculate_leverage(matched_rewards, allocations_sum)
+        return context.epoch_settings.project.rewards.leverage.calculate_leverage(
+            matched_rewards, allocations_sum
+        )

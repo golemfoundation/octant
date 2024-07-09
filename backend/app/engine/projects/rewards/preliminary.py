@@ -1,5 +1,6 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
+from typing import List
 
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
@@ -21,6 +22,7 @@ from app.engine.projects.rewards.threshold import (
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
+from app.engine.projects.rewards.leverage.preliminary import PreliminaryLeverage
 
 
 @dataclass
@@ -31,8 +33,9 @@ class PreliminaryProjectRewards(ProjectRewards):
     projects_threshold: ProjectThreshold = field(
         default_factory=lambda: PreliminaryProjectThreshold(1)
     )
+    leverage: PreliminaryLeverage = field(default_factory=PreliminaryLeverage)
 
-    def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
+    def calculate_threshold(self, total_allocated: int, projects: List[str]) -> int:
         return self.projects_threshold.calculate_threshold(
             ProjectThresholdPayload(
                 total_allocated=total_allocated, projects_count=len(projects)
@@ -47,7 +50,9 @@ class PreliminaryProjectRewards(ProjectRewards):
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(
-            ProjectAllocationsPayload(allocations=payload.allocations)
+            ProjectAllocationsPayload(
+                allocations=payload.before_allocations + payload.user_new_allocations
+            )
         )
         threshold = self.calculate_threshold(total_allocated, payload.projects)
 
@@ -82,9 +87,14 @@ class PreliminaryProjectRewards(ProjectRewards):
             project_rewards.allocated = allocated
             project_rewards.matched = matched
 
+        leverage = self.leverage.calculate_leverage(
+            payload.matched_rewards, total_allocated
+        )
+
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             rewards_sum=project_rewards_sum,
             total_allocated=total_allocated,
             threshold=threshold,
+            leverage=leverage,
         )
