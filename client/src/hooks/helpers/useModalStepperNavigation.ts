@@ -120,7 +120,7 @@ const useModalStepperNavigation = ({
       setCurrentStepIndex,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentStepIndex, touchStart, steps.length, isDesktop],
+    [currentStepIndex, touchStart, steps.length, isDesktop, areHandlersEnabled],
   );
 };
 
