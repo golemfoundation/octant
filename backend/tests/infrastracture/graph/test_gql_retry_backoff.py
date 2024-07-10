@@ -1,18 +1,18 @@
 import pytest
-from datetime import datetime, timedelta
-
 
 from gql import gql
 from gql.transport.exceptions import TransportQueryError
 
 from app.extensions import gql_factory
 
+from app.infrastructure import Client as GQLClient
+
 
 def test_with_failure(mock_failing_gql):
     """
     1. mock gql to throw TransportQueryError
-    2. check if exception is being thrown
-    3. check if retry timeout is in place and call takes more than 2 seconds
+    2. mocks datetime.now() and time.sleep() to allow for checking backoff
+    3. check if execute_sync (request) was called at least 2 times (1st call + at least 1 retry)
     """
     query = gql(
         """
@@ -27,10 +27,11 @@ query {
 }
     """
     )
-    start = datetime.now()
     with pytest.raises(
         TransportQueryError, match="the chain was reorganized while executing the query"
     ):
         gql_factory.build().execute(query)
-    finish = datetime.now()
-    assert finish - start >= timedelta(seconds=2)
+
+    assert (
+        GQLClient.execute_sync.call_count > 2
+    ), f"Testing retry backoff, need more at least than 2 calls, got {GQLClient.execute_sync.call_count}"
