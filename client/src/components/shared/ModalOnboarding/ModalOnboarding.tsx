@@ -24,7 +24,8 @@ const motionAnimationProps: AnimationProps = {
 };
 
 const ModalOnboarding: FC = () => {
-  const { isConnected } = useAccount();
+  // const { isConnected } = useAccount();
+  const isConnected = true;
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
 
   const {
@@ -60,7 +61,11 @@ const ModalOnboarding: FC = () => {
     handleModalEdgeClick,
     handleTouchMove,
     handleTouchStart,
-  } = useModalStepperNavigation({ initialCurrentStepIndex: lastSeenStep - 1, steps: stepsToUse });
+  } = useModalStepperNavigation({
+    initialCurrentStepIndex: lastSeenStep - 1,
+    steps: stepsToUse,
+    isListenerEnabled: isConnected && isUserTOSAccepted,
+  });
 
   const currentStep =
     !isFetchingUserTOS && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
@@ -74,29 +79,6 @@ const ModalOnboarding: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsOnboardingDone, isUserTOSAccepted]);
-
-  useEffect(() => {
-    if (!isConnected || !isUserTOSAccepted) {
-      return;
-    }
-
-    const listener = ({ key }: KeyboardEvent) => {
-      if (key === 'ArrowRight' && currentStepIndex !== stepsToUse.length - 1) {
-        setCurrentStepIndex(prev => prev + 1);
-      }
-
-      if (key === 'ArrowLeft' && currentStepIndex > 0) {
-        setCurrentStepIndex(prev => prev - 1);
-      }
-    };
-
-    window.addEventListener('keydown', listener);
-
-    return () => {
-      window.removeEventListener('keydown', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, currentStepIndex, stepsToUse, isOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
     if (

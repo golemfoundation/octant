@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 
 import useMediaQuery from './useMediaQuery';
 
 type UseModalStepperProps = {
   initialCurrentStepIndex?: number;
   steps: any[];
+  isListenerEnabled: boolean;
 };
 
 type UseModalStepperNavigation = {
@@ -18,6 +19,7 @@ type UseModalStepperNavigation = {
 const useModalStepperNavigation = ({
   steps,
   initialCurrentStepIndex = 0,
+  isListenerEnabled = true,
 }: UseModalStepperProps): UseModalStepperNavigation => {
   const [currentStepIndex, setCurrentStepIndex] = useState(initialCurrentStepIndex);
   const { isDesktop } = useMediaQuery();
@@ -31,7 +33,7 @@ const useModalStepperNavigation = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStart) {
+    if (!touchStart || !isListenerEnabled) {
       return;
     }
 
@@ -54,6 +56,10 @@ const useModalStepperNavigation = ({
   };
 
   const handleModalEdgeClick: React.MouseEventHandler<HTMLDivElement> = e => {
+    if (!isListenerEnabled) {
+      return;
+    }
+
     const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
     const offsetLeftParent = offsetParent.offsetLeft;
     const onboardingModalWidth = isDesktop
@@ -79,16 +85,20 @@ const useModalStepperNavigation = ({
     }
   };
 
-  useEffect(() => {
-    const listener = ({ key }: KeyboardEvent) => {
-      if (key === 'ArrowRight' && currentStepIndex !== steps.length - 1) {
-        setCurrentStepIndex(prev => prev + 1);
-      }
+  const listener = useCallback(({ key }: KeyboardEvent) => {
+    if (key === 'ArrowRight' && currentStepIndex !== steps.length - 1) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
 
-      if (key === 'ArrowLeft' && currentStepIndex > 0) {
-        setCurrentStepIndex(prev => prev - 1);
-      }
-    };
+    if (key === 'ArrowLeft' && currentStepIndex > 0) {
+      setCurrentStepIndex(prev => prev - 1);
+    }
+  }, [currentStepIndex, steps.length])
+
+  useEffect(() => {
+    if (!isListenerEnabled) {
+      return;
+    }
 
     window.addEventListener('keydown', listener);
 
@@ -96,7 +106,7 @@ const useModalStepperNavigation = ({
       window.removeEventListener('keydown', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStepIndex, steps.length]);
+  }, [isListenerEnabled, currentStepIndex, steps.length]);
 
   return useMemo(
     () => ({

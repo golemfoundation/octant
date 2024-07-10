@@ -34,13 +34,13 @@ const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> 
               data-test={`${dataTest}__option--${index}`}
               onClick={() => onChange(option)}
             >
-              <span className={styles.dayLabel} data-test={`${dataTest}__optionLabel--${option}`}>
+              <span className={styles.dayLabel} data-test={`${dataTest}__optionLabel--${index}`}>
                 {option ? t('isUqScoreOver20_true') : t('isUqScoreOver20_false')}
               </span>
               {isUqScoreOver20 === option ? (
                 <motion.div
                   className={styles.selectedItemBackground}
-                  data-test={`${dataTest}__optionBackground--${option}`}
+                  data-test={`${dataTest}__optionBackground--${index}`}
                   layoutId="background_2"
                   transition={{ duration: 0.1 }}
                 />

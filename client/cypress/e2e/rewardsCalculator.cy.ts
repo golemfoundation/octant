@@ -6,7 +6,7 @@ import {
   GLM_USD,
   changeMainValueToFiat,
   mockCoinPricesServer,
-  visitWithLoader,
+  visitWithLoader, changeMainValueToCrypto,
 } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
@@ -19,59 +19,84 @@ import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'src/utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'src/utils/parseUnitsBigInt';
 
+import Chainable = Cypress.Chainable;
+
 chai.use(chaiColors);
 
 const rendersWithCorrectValues = (
   isCryptoAsAMainValue: boolean,
-  budget: string,
-  matchedFunding: string,
+  postAlias: string,
+  onAfterOpenCallback?: () => Chainable<any>,
 ) => {
   if (!isCryptoAsAMainValue) {
     changeMainValueToFiat(ROOT_ROUTES.earn.absolute);
   }
+  if (isCryptoAsAMainValue) {
+    changeMainValueToCrypto(ROOT_ROUTES.earn.absolute);
+  }
+
+  cy.intercept('POST', '/rewards/estimated_budget').as(postAlias);
 
   cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
 
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('be.visible');
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
+    'be.visible',
+  );
   cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
     'be.visible',
   );
 
-  const rewardsCrypto = getValueCryptoToDisplay({
-    cryptoCurrency: 'ethereum',
-    valueCrypto: parseUnitsBigInt(budget, 'wei'),
-  });
-  const rewardsFiat = getValueFiatToDisplay({
-    cryptoCurrency: 'ethereum',
-    cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-    displayCurrency: 'usd',
-    valueCrypto: parseUnitsBigInt(budget, 'wei'),
-  });
+  if (onAfterOpenCallback) {
+    onAfterOpenCallback();
+  }
 
-  const matchFundingCrypto = getValueCryptoToDisplay({
-    cryptoCurrency: 'ethereum',
-    valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-  });
-  const matchFundingFiat = getValueFiatToDisplay({
-    cryptoCurrency: 'ethereum',
-    cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
-    displayCurrency: 'usd',
-    valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
-  });
-  const rewards = isCryptoAsAMainValue ? rewardsCrypto : rewardsFiat;
-  const matchFunding = isCryptoAsAMainValue ? matchFundingCrypto : matchFundingFiat;
+  cy.wait(`@${postAlias}`);
 
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('not.exist');
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-    'not.exist',
+  cy.get(`@${postAlias}`).then(
+    ({
+       response: {
+         body: { budget, matchedFunding },
+       },
+     }) => {
+      const rewardsCrypto = getValueCryptoToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: parseUnitsBigInt(budget, 'wei'),
+      }).fullString;
+      const rewardsFiat = getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(budget, 'wei'),
+      });
+
+      const matchFundingCrypto = getValueCryptoToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
+      }).fullString;
+      const matchFundingFiat = getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(matchedFunding, 'wei'),
+      });
+      const rewards = isCryptoAsAMainValue ? rewardsCrypto : rewardsFiat;
+      const matchFunding = isCryptoAsAMainValue ? matchFundingCrypto : matchFundingFiat;
+
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('not.exist');
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+        'not.exist',
+      );
+
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
+        .invoke('text')
+        .should('eq', rewards);
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
+        .invoke('text')
+        .should('eq', matchFunding);
+    },
   );
 
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
-    .invoke('text')
-    .should('eq', rewards);
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-    .invoke('text')
-    .should('eq', matchFunding);
+  cy.get('[data-test=ModalRewardsCalculator__Button]').click();
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
@@ -149,22 +174,22 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
       cy.get('[data-test=EarnRewardsCalculatorUqSelector]').should('be.visible');
       cy.get('[data-test*=EarnRewardsCalculatorUqSelector__option--]').then(options => {
-        for (let i = 1; i <= options.length; i++) {
+        for (let i = 0; i < options.length; i++) {
           cy.get(`[data-test=EarnRewardsCalculatorUqSelector__option--${i}]`)
             .then($el => $el.css('color'))
-            .should('be.colored', '#cdd1cd');
+            .should('be.colored', i === 0 ? '#171717' : '#cdd1cd');
           cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionBackground--${i}]`).should(
-            i === 1 ? 'exist' : 'not.exist',
+            i === 0 ? 'exist' : 'not.exist',
           );
 
-          if (i === 1) {
+          if (i === 0) {
             cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionBackground--${i}]`)
               .then($el => $el.css('background-color'))
               .should('be.colored', '#ebebeb');
           }
           cy.get(`[data-test=EarnRewardsCalculatorUqSelector__optionLabel--${i}]`)
             .invoke('text')
-            .should('eq', i === 1 ? 'Yes' : 'No');
+            .should('eq', i === 0 ? 'Yes' : 'No');
         }
       });
     });
@@ -222,75 +247,27 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         .should('be.colored', '#ebebeb');
     });
 
-    it('Calculator shows "Rewards" and "Match funding" in USD based on GLM input value and days selector option', () => {
-      cy.intercept('POST', '/rewards/estimated_budget').as('postEstimatedRewards');
+    it.only('Calculator shows "Rewards" and "Match funding" in USD based on GLM input value and days selector option', () => {
+      rendersWithCorrectValues(true, 'postEstimatedRewards-true');
+      rendersWithCorrectValues(false, 'postEstimatedRewards-false');
 
-      cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
+      [true, false].forEach(isCryptoAsAMainValue => {
+        rendersWithCorrectValues(isCryptoAsAMainValue, 'postEstimatedRewardsGlmValueChange-true', () => {
+          return cy.get('[data-test=EarnRewardsCalculator__InputText--glm]').type('500000');
+        });
+        rendersWithCorrectValues(isCryptoAsAMainValue, 'postEstimatedRewardsGlmValueChange-false', () => {
+          return cy.get('[data-test=EarnRewardsCalculator__InputText--glm]').type('500000');
+        });
+      });
 
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-        'be.visible',
-      );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-        'be.visible',
-      );
-
-      cy.wait('@postEstimatedRewards');
-
-      cy.get('@postEstimatedRewards').then(
-        ({
-          response: {
-            body: { budget, matchedFunding },
-          },
-        }) => {
-          rendersWithCorrectValues(true, budget, matchedFunding);
-          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
-          rendersWithCorrectValues(false, budget, matchedFunding);
-        },
-      );
-
-      cy.intercept('POST', '/rewards/estimated_budget').as('postEstimatedRewardsGlmValueChange');
-      cy.get('[data-test=EarnRewardsCalculator__InputText--glm]').type('500000');
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-        'be.visible',
-      );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-        'be.visible',
-      );
-      cy.wait('@postEstimatedRewardsGlmValueChange');
-
-      cy.get('@postEstimatedRewardsGlmValueChange').then(
-        ({
-          response: {
-            body: { budget, matchedFunding },
-          },
-        }) => {
-          rendersWithCorrectValues(true, budget, matchedFunding);
-          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
-          rendersWithCorrectValues(false, budget, matchedFunding);
-        },
-      );
-
-      cy.intercept('POST', '/rewards/estimated_budget').as('postEstimatedRewardsDaysValueChange');
-      cy.get('[data-test=EarnRewardsCalculatorEpochDaysSelector__option--2]').click();
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
-        'be.visible',
-      );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
-        'be.visible',
-      );
-      cy.wait('@postEstimatedRewardsDaysValueChange');
-
-      cy.get('@postEstimatedRewardsDaysValueChange').then(
-        ({
-          response: {
-            body: { budget, matchedFunding },
-          },
-        }) => {
-          rendersWithCorrectValues(true, budget, matchedFunding);
-          cy.get('[data-test=ModalRewardsCalculator__Button]').click();
-          rendersWithCorrectValues(false, budget, matchedFunding);
-        },
-      );
+      [true, false].forEach(isCryptoAsAMainValue => {
+        rendersWithCorrectValues(isCryptoAsAMainValue, 'postEstimatedRewardsDaysValueChange-true', () => {
+          return cy.get('[data-test=EarnRewardsCalculatorEpochDaysSelector__option--2]').click();
+        });
+        rendersWithCorrectValues(isCryptoAsAMainValue, 'postEstimatedRewardsDaysValueChange-false', () => {
+          return cy.get('[data-test=EarnRewardsCalculatorEpochDaysSelector__option--2]').click();
+        });
+      });
     });
 
     it('If GLM input is empty estimates section fields are empty too', () => {

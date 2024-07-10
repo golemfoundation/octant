@@ -95,6 +95,12 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
 };
 
+export const changeMainValueToCrypto = (endUrl: string): Chainable<any> => {
+  navigateWithCheck(ROOT_ROUTES.settings.absolute);
+  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
+  return navigateWithCheck(endUrl);
+};
+
 export const changeMainValueToFiat = (endUrl: string): Chainable<any> => {
   navigateWithCheck(ROOT_ROUTES.settings.absolute);
   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
