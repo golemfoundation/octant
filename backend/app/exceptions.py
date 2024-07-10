@@ -328,6 +328,9 @@ class InvalidRecalculationRequest(OctantException):
     code = 400
     description = "Invalid recalculation request"
 
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
 
 class IndividualLeverageNotImplementedError(OctantException):
     code = 500
