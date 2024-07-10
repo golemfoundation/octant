@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import time
@@ -1528,6 +1529,7 @@ def mock_graphql(
 def mock_failing_gql(
     app,
     mocker,
+    monkeypatch,
 ):
     # this URL is not called in this test, but it needs to be a proper URL
     gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
@@ -1536,6 +1538,21 @@ def mock_failing_gql(
     GQLClient.execute_sync.side_effect = TransportQueryError(
         "the chain was reorganized while executing the query"
     )
+
+    # Return increments of 0.5 second for each call
+    start_time = datetime.datetime(2021, 1, 1, 0, 0, 0)
+    time_changes = (
+        start_time + datetime.timedelta(seconds=0.5 * i) for i in range(10000)
+    )
+
+    class mydatetime(datetime.datetime):
+        @classmethod
+        def now(cls):
+            return next(time_changes)
+
+    monkeypatch.setattr(datetime, "datetime", mydatetime)
+
+    mocker.patch.object(time, "sleep")
 
 
 @pytest.fixture(scope="function")
