@@ -3,7 +3,7 @@ from typing import Protocol, runtime_checkable
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardsResult
 from app.infrastructure import database
-from app.modules.common.project_rewards import get_projects_rewards
+from app.modules.common.project_rewards import get_projects_rewards, AllocationsPayload
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.pydantic import Model
 
@@ -25,9 +25,12 @@ class EstimatedProjectRewards(SavedProjectRewards, Model):
             context.epoch_details.epoch_num
         )
 
+        allocations_payload = AllocationsPayload(
+            before_allocations=allocations, user_new_allocations=[]
+        )
         projects_rewards = get_projects_rewards(
             project_settings,
-            allocations,
+            allocations_payload,
             all_projects,
             matched_rewards,
         )

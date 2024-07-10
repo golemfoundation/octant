@@ -106,11 +106,17 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
         primaryAddressSignature: isSecondaryAddress ? primaryAddressSignature! : data,
         secondaryAddress: delegationSecondaryAddress!,
         secondaryAddressSignature: isSecondaryAddress ? data : secondaryAddressSignature!,
-      }).then(() => {
-        setIsDelegationInProgress(false);
-        setIsDelegationCalculatingUQScoreModalOpen(false);
-        setIsDelegationCompleted(true);
-      });
+      })
+        .then(() => {
+          setIsDelegationInProgress(false);
+          setIsDelegationCalculatingUQScoreModalOpen(false);
+          setIsDelegationCompleted(true);
+        })
+        .catch(() => {
+          setIsDelegationInProgress(false);
+          setIsDelegationCalculatingUQScoreModalOpen(false);
+          setIsDelegationCompleted(false);
+        });
     });
   };
 

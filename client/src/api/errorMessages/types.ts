@@ -15,4 +15,5 @@ export type IgnoredQueries = [
   Root['cryptoValues'],
   Root['individualReward'],
   Root['projectsIpfsResults'],
+  Root['uqScore'],
 ];

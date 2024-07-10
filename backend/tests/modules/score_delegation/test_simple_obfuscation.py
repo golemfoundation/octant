@@ -8,7 +8,8 @@ from app.modules.score_delegation.service.simple_obfuscation import (
     SimpleObfuscationDelegation,
     SimpleObfuscationDelegationVerifier,
 )
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
+from app.exceptions import InvalidRecalculationRequest, DelegationDoesNotExist
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
 
 
 @pytest.fixture(autouse=True)
@@ -41,7 +42,9 @@ def test_delegation(context, payload, tos_users, patch_is_contract):
     assert len(delegations) == 3
 
 
-def test_recalculation(context, payload, patch_is_contract):
+def test_disable_recalculation_when_secondary_address_is_used(
+    context, payload, patch_is_contract
+):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
@@ -61,7 +64,35 @@ def test_recalculation(context, payload, patch_is_contract):
         primary_addr=USER1_ADDRESS, secondary_addr=USER2_ADDRESS
     )
 
-    service.recalculate(context, payload)
+    with pytest.raises(InvalidRecalculationRequest):
+        service.recalculate(context, payload)
+
+    delegations = database.score_delegation.get_all_delegations()
+    assert len(delegations) == 3
+
+
+def test_recalculation_when_delegation_is_not_done(context, payload, patch_is_contract):
+    verifier = SimpleObfuscationDelegationVerifier()
+    antisybil = Mock()
+    antisybil.fetch_antisybil_status.return_value = (
+        20,
+        "4024-05-22T14:46:46.810800+00:00",
+        ["stamp"],
+    )
+    service = SimpleObfuscationDelegation(verifier=verifier, antisybil=antisybil)
+    service.delegate(context, payload)
+
+    antisybil.fetch_antisybil_status.return_value = (
+        25,
+        "4024-05-22T14:46:46.810800+00:00",
+        ["stamp"],
+    )
+    payload = ScoreDelegationPayload(
+        primary_addr=USER1_ADDRESS, secondary_addr=USER3_ADDRESS
+    )
+
+    with pytest.raises(DelegationDoesNotExist):
+        service.recalculate(context, payload)
 
     delegations = database.score_delegation.get_all_delegations()
     assert len(delegations) == 3
