@@ -56,6 +56,12 @@ export const connectWallet = ({
     },
   });
   cy.intercept('PUT', '/user/*/antisybil-status', { statusCode: 204 });
+  cy.intercept('GET', '/delegation/check/*', {
+    body: {
+      primary: '',
+      secondary: '',
+    },
+  });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
   cy.intercept('POST', '/allocations/leverage/*', {
     body: { leverage: '100', matched: [], threshold: null },
