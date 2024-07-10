@@ -3,8 +3,8 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import useMediaQuery from './useMediaQuery';
 
 type UseModalStepperProps = {
+  areHandlersEnabled?: boolean;
   initialCurrentStepIndex?: number;
-  isListenerEnabled?: boolean;
   steps: any[];
 };
 
@@ -19,7 +19,7 @@ type UseModalStepperNavigation = {
 const useModalStepperNavigation = ({
   steps,
   initialCurrentStepIndex = 0,
-  isListenerEnabled = true,
+  areHandlersEnabled = true,
 }: UseModalStepperProps): UseModalStepperNavigation => {
   const [currentStepIndex, setCurrentStepIndex] = useState(initialCurrentStepIndex);
   const { isDesktop } = useMediaQuery();
@@ -33,7 +33,7 @@ const useModalStepperNavigation = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStart || !isListenerEnabled) {
+    if (!touchStart || !areHandlersEnabled) {
       return;
     }
 
@@ -56,7 +56,7 @@ const useModalStepperNavigation = ({
   };
 
   const handleModalEdgeClick: React.MouseEventHandler<HTMLDivElement> = e => {
-    if (!isListenerEnabled) {
+    if (!areHandlersEnabled) {
       return;
     }
 
@@ -99,7 +99,7 @@ const useModalStepperNavigation = ({
   );
 
   useEffect(() => {
-    if (!isListenerEnabled) {
+    if (!areHandlersEnabled) {
       return;
     }
 
@@ -109,7 +109,7 @@ const useModalStepperNavigation = ({
       window.removeEventListener('keydown', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isListenerEnabled, currentStepIndex, steps.length]);
+  }, [areHandlersEnabled, currentStepIndex, steps.length]);
 
   return useMemo(
     () => ({

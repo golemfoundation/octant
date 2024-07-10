@@ -61,8 +61,8 @@ const ModalOnboarding: FC = () => {
     handleTouchMove,
     handleTouchStart,
   } = useModalStepperNavigation({
+    areHandlersEnabled: isConnected && !!isUserTOSAccepted,
     initialCurrentStepIndex: lastSeenStep - 1,
-    isListenerEnabled: isConnected && !!isUserTOSAccepted,
     steps: stepsToUse,
   });
 

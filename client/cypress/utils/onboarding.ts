@@ -27,7 +27,7 @@ export const connectWallet = (
 
 export const beforeSetup = (): void => {
   mockCoinPricesServer();
-  // cy.setupMetamask();
+  cy.setupMetamask();
   window.innerWidth = Cypress.config().viewportWidth;
   window.innerHeight = Cypress.config().viewportHeight;
 };
