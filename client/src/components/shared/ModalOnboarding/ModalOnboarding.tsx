@@ -24,8 +24,7 @@ const motionAnimationProps: AnimationProps = {
 };
 
 const ModalOnboarding: FC = () => {
-  // const { isConnected } = useAccount();
-  const isConnected = true;
+  const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
 
   const {
@@ -63,8 +62,8 @@ const ModalOnboarding: FC = () => {
     handleTouchStart,
   } = useModalStepperNavigation({
     initialCurrentStepIndex: lastSeenStep - 1,
+    isListenerEnabled: isConnected && !!isUserTOSAccepted,
     steps: stepsToUse,
-    isListenerEnabled: isConnected && isUserTOSAccepted,
   });
 
   const currentStep =
