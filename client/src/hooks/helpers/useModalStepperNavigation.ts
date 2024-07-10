@@ -4,8 +4,8 @@ import useMediaQuery from './useMediaQuery';
 
 type UseModalStepperProps = {
   initialCurrentStepIndex?: number;
+  isListenerEnabled?: boolean;
   steps: any[];
-  isListenerEnabled: boolean;
 };
 
 type UseModalStepperNavigation = {
@@ -85,15 +85,18 @@ const useModalStepperNavigation = ({
     }
   };
 
-  const listener = useCallback(({ key }: KeyboardEvent) => {
-    if (key === 'ArrowRight' && currentStepIndex !== steps.length - 1) {
-      setCurrentStepIndex(prev => prev + 1);
-    }
+  const listener = useCallback(
+    ({ key }: KeyboardEvent) => {
+      if (key === 'ArrowRight' && currentStepIndex !== steps.length - 1) {
+        setCurrentStepIndex(prev => prev + 1);
+      }
 
-    if (key === 'ArrowLeft' && currentStepIndex > 0) {
-      setCurrentStepIndex(prev => prev - 1);
-    }
-  }, [currentStepIndex, steps.length])
+      if (key === 'ArrowLeft' && currentStepIndex > 0) {
+        setCurrentStepIndex(prev => prev - 1);
+      }
+    },
+    [currentStepIndex, steps.length],
+  );
 
   useEffect(() => {
     if (!isListenerEnabled) {
