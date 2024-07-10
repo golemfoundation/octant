@@ -13,6 +13,7 @@ from app.modules.common.crypto.signature import (
     encode_for_signing,
     EncodingStandardFor,
 )
+from app.modules.common.project_rewards import AllocationsPayload
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
@@ -155,10 +156,13 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             user_allocations, uq_score
         )
 
+        allocations_payload = AllocationsPayload(
+            before_allocations=all_allocations_before,
+            user_new_allocations=user_allocations,
+        )
         return core.simulate_allocation(
             projects_settings,
-            all_allocations_before,
-            user_allocations,
+            allocations_payload,
             user_address,
             projects,
             matched_rewards,

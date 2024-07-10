@@ -1,5 +1,5 @@
 from app.context.manager import Context
-from app.modules.common.project_rewards import get_projects_rewards
+from app.modules.common.project_rewards import get_projects_rewards, AllocationsPayload
 from app.modules.dto import AllocationDTO, ProjectAccountFundsDTO
 from app.modules.snapshots.finalized.core import FinalizedProjectRewards
 from app.pydantic import Model
@@ -13,8 +13,14 @@ class FinalizingProjectRewards(Model):
         all_projects: list[str],
         matched_rewards: int,
     ) -> FinalizedProjectRewards:
+        allocations_payload = AllocationsPayload(
+            before_allocations=allocations, user_new_allocations=[]
+        )
         project_rewards_result = get_projects_rewards(
-            context.epoch_settings.project, allocations, all_projects, matched_rewards
+            context.epoch_settings.project,
+            allocations_payload,
+            all_projects,
+            matched_rewards,
         )
 
         return FinalizedProjectRewards(

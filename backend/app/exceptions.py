@@ -328,5 +328,10 @@ class InvalidRecalculationRequest(OctantException):
     code = 400
     description = "Invalid recalculation request"
 
+
+class IndividualLeverageNotImplementedError(OctantException):
+    code = 500
+    description = "Individual leverage calculation is not implemented for given epoch"
+
     def __init__(self):
         super().__init__(self.description, self.code)

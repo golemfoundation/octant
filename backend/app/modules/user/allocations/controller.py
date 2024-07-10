@@ -7,7 +7,7 @@ from app.exceptions import (
     InvalidEpoch,
     NotInDecisionWindow,
 )
-from app.modules.common.allocation_deserializer import (
+from app.modules.common.allocations.deserializer import (
     deserialize_payload,
     deserialize_items,
 )

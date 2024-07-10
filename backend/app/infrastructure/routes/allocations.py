@@ -231,7 +231,6 @@ class AllocationLeverage(OctantResource):
         leverage, threshold, matched = controller.simulate_allocation(
             ns.payload, user_address
         )
-
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Estimated threshold: {threshold}")
         app.logger.debug(f"Matched rewards:  {matched}")
