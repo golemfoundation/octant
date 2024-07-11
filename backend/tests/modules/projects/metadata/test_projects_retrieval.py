@@ -60,7 +60,8 @@ def test_get_projects_metadata_epoch_3():
         == "QmSXcT18anMXKACTueom8GXw8zrxTBbHGB71atitf6gZ9V"
     )
     assert projects_metadata.projects_addresses == ["0x0", "0x1"]
-    
+
+
 def test_get_projects_metadata_epoch_4():
     context = get_context(4)
 
