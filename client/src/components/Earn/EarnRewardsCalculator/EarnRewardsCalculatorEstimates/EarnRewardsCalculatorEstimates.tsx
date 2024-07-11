@@ -28,7 +28,7 @@ const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = 
           </div>
           <div
             className={cx(styles.value, isLoading && styles.showSkeleton)}
-            data-test={`${dataTest}__rewardsFiat${isLoading ? '--skeleton' : ''}`}
+            data-test={`${dataTest}__rewards${isLoading ? '--skeleton' : ''}`}
           >
             {estimatedRewards ? estimatedRewards.primary : ''}
           </div>
@@ -39,7 +39,7 @@ const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = 
           </div>
           <div
             className={cx(styles.value, isLoading && styles.showSkeleton)}
-            data-test={`${dataTest}__matchFundingFiat${isLoading ? '--skeleton' : ''}`}
+            data-test={`${dataTest}__matchFunding${isLoading ? '--skeleton' : ''}`}
           >
             {matchFunding ? matchFunding.primary : ''}
           </div>

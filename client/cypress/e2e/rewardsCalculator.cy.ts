@@ -43,8 +43,8 @@ const rendersWithCorrectValues = ({
     onAfterOpenCallback();
   }
 
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should('be.visible');
-  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__rewards--skeleton]').should('be.visible');
+  cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding--skeleton]').should(
     'be.visible',
   );
 
@@ -80,17 +80,17 @@ const rendersWithCorrectValues = ({
       const rewards = isCryptoAsAMainValue ? rewardsCrypto : rewardsFiat;
       const matchFunding = isCryptoAsAMainValue ? matchFundingCrypto : matchFundingFiat;
 
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewards--skeleton]').should(
         'not.exist',
       );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding--skeleton]').should(
         'not.exist',
       );
 
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewards')
         .invoke('text')
         .should('eq', rewards);
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding]')
         .invoke('text')
         .should('eq', matchFunding);
 
@@ -298,15 +298,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('If GLM input is empty estimates section fields are empty too', () => {
       cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
       cy.get('[data-test=EarnRewardsCalculator__InputText--glm]').clear();
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat--skeleton]').should(
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__rewards--skeleton]').should(
         'not.exist',
       );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding--skeleton]').should(
         'not.exist',
       );
       // Debouce prevents value from being immediately loaded. Let's give it a chance to load.
       cy.wait(5000);
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
+      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding]')
         .invoke('text')
         .should('eq', '');
     });
@@ -380,10 +380,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.wait('@postEstimatedRewards');
 
       cy.get('@postEstimatedRewards').then(() => {
-        cy.get('[data-test=EarnRewardsCalculatorEstimates__rewardsFiat')
+        cy.get('[data-test=EarnRewardsCalculatorEstimates__rewards')
           .invoke('text')
           .should('eq', '$0.04');
-        cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
+        cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFunding]')
           .invoke('text')
           .should('eq', '$0.04');
       });
