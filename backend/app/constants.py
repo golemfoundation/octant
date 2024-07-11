@@ -23,7 +23,7 @@ GC_PASSPORT_SCORER_API = "https://api.scorer.gitcoin.co"
 SAFE_API_MAINNET = "https://safe-transaction-mainnet.safe.global/api/v1"
 SAFE_API_SEPOLIA = "https://safe-transaction-sepolia.safe.global/api/v1"
 
-DEFAULT_MAINNET_PROJECT_CIDS = "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
+DEFAULT_MAINNET_PROJECT_CIDS = "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe,QmSXcT18anMXKACTueom8GXw8zrxTBbHGB71atitf6gZ9V"
 
 EPOCH0_SYBILS = [
     "0xde19a6ce83cc934e5d4c4573f0f026c02c984fb2",
