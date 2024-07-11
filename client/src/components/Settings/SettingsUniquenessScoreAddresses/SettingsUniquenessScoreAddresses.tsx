@@ -41,7 +41,7 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
   const showMoreThanOneAddress = addresses.length > 1;
 
   useEffect(() => {
-    if (isFetchingScore || !ref || !ref.current) {
+    if (isFetchingScore || !ref?.current) {
       return;
     }
     const controls = animate(
