@@ -19,6 +19,7 @@ import {
 } from 'constants/navigationTabs/navigationTabs';
 import networkConfig from 'constants/networkConfig';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -26,6 +27,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useSettingsStore from 'store/settings/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
@@ -36,7 +38,6 @@ import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './Layout.module.scss';
 import LayoutProps from './types';
-import { getIndividualRewardText } from './utils';
 
 const Layout: FC<LayoutProps> = ({
   children,
@@ -50,7 +51,7 @@ const Layout: FC<LayoutProps> = ({
   showHeaderBlur = true,
 }) => {
   const { data: isPatronMode } = useIsPatronMode();
-  const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
   const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
   const { address, isConnected } = useAccount();
@@ -62,6 +63,13 @@ const Layout: FC<LayoutProps> = ({
   const navigate = useNavigate();
   const { data: isUserTOSAccepted } = useUserTOS();
   const isProjectAdminMode = useIsProjectAdminMode();
+  const {
+    data: { isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
@@ -69,6 +77,7 @@ const Layout: FC<LayoutProps> = ({
   const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
   const isProjectRoot = isUseMatchProject || isUseMatchProjectWithAddress;
   const isProjectsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const showAllocationPeriod = isAllocationRoot || isProjectRoot || isProjectsRoot;
 
@@ -116,6 +125,23 @@ const Layout: FC<LayoutProps> = ({
     return false;
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  const individualRewardText = useMemo(() => {
+    if (currentEpoch === 1 || individualReward === 0n || !isDecisionWindowOpen) {
+      return i18n.t('layouts.main.noRewardsYet');
+    }
+    if (currentEpoch === undefined || individualReward === undefined) {
+      return i18n.t('layouts.main.loadingRewardBudget');
+    }
+    return i18n.t('common.rewards', {
+      rewards: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        showCryptoSuffix: true,
+        valueCrypto: individualReward,
+      }).primary,
+    });
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
+  }, [individualReward, currentEpoch, isDecisionWindowOpen, isCryptoMainValueDisplay]);
+
   const onLogoClick = () => {
     if (pathname === ROOT_ROUTES.projects.absolute) {
       window.scrollTo({ behavior: 'smooth', top: 0 });
@@ -124,6 +150,7 @@ const Layout: FC<LayoutProps> = ({
 
     navigate(ROOT_ROUTES.projects.absolute);
   };
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentPeriod(getCurrentPeriod());
@@ -219,13 +246,7 @@ const Layout: FC<LayoutProps> = ({
                               />
                             </div>
                           ) : (
-                            <div className={styles.budget}>
-                              {getIndividualRewardText({
-                                currentEpoch,
-                                individualReward,
-                                isDecisionWindowOpen,
-                              })}
-                            </div>
+                            <div className={styles.budget}>{individualRewardText}</div>
                           ))}
                       </div>
                       <Button
