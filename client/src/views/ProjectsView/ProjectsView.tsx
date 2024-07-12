@@ -93,6 +93,7 @@ const ProjectsView = (): ReactElement => {
 
   return (
     <Layout dataTest="ProjectsView">
+      <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <TipTile
           className={styles.tip}
@@ -105,7 +106,6 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
-      <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
