@@ -26,12 +26,14 @@ from app.modules.staking.proceeds.service.contract_balance import (
     ContractBalanceStakingProceeds,
 )
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.deposits.service.contract_balance import (
@@ -48,6 +50,8 @@ from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosV
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.shared.blockchain_types import ChainTypes
+from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
+from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 
 
 def test_future_services_factory():
@@ -81,12 +85,17 @@ def test_current_services_factory():
     multisig_signatures = OffchainMultisigSignatures(
         verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=True
     )
-
+    user_budgets = UpcomingUserBudgets(
+        simulated_pending_snapshot_service=SimulatedPendingSnapshots(
+            effective_deposits=user_deposits, octant_rewards=octant_rewards
+        )
+    )
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
     assert result.history_service == history
     assert result.user_tos_service == user_tos
     assert result.multisig_signatures_service == multisig_signatures
+    assert result.user_budgets_service == user_budgets
 
 
 def test_pre_pending_services_factory_when_mainnet():
@@ -130,6 +139,9 @@ def test_pending_services_factory():
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
+    uniqueness_quotients = PreliminaryUQ(
+        antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
+    )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,
         user_budgets=saved_user_budgets,
@@ -139,7 +151,9 @@ def test_pending_services_factory():
         patrons_mode=events_based_patron_mode
     )
     user_allocations = PendingUserAllocations(
-        octant_rewards=octant_matched_rewards, verifier=allocations_verifier
+        octant_rewards=octant_matched_rewards,
+        verifier=allocations_verifier,
+        uniqueness_quotients=uniqueness_quotients,
     )
     user_rewards = CalculatedUserRewards(
         user_budgets=saved_user_budgets,
@@ -226,7 +240,7 @@ def test_finalized_services_factory():
         patrons_mode=events_based_patron_mode,
         allocations=saved_user_allocations,
     )
-    withdrawals_service = FinalizedWithdrawals(user_rewards=user_rewards)
+    withdrawals_service = FinalizedWithdrawals()
     project_rewards_service = SavedProjectRewards()
 
     assert result.user_deposits_service == SavedUserDeposits()

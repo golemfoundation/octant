@@ -12,7 +12,7 @@ def get_bitquery_header():
     headers = {
         "Content-Type": "application/json",
         "X-API-KEY": app.config["BITQUERY_API_KEY"],
-        "Authorization": app.config["BITQUERY_BEARER"],
+        "Authorization": f"Bearer {app.config['BITQUERY_BEARER']}",
     }
 
     return headers
@@ -27,19 +27,20 @@ def produce_payload(action_type: BitQueryActions, **query_values) -> str:
 def _block_rewards_payload(
     start_block: int, end_block: int, address: str, **kwargs
 ) -> str:
-    payload = json.dumps(
+    return json.dumps(
         {
             "query": f"""query {{
-          ethereum {{
-            blocks(
-                height: {{gteq: {start_block}, lteq: {end_block}}},
-                miner: {{is: "{address}"}}
-                ) {{
-              reward(blockReward: {{gt: 0}})
+            EVM(dataset: combined, network: eth) {{
+                MinerRewards(where: {{
+                    Block: {{
+                        Coinbase: {{is: "{address}"}},
+                        Number: {{ge: "{start_block}", le: "{end_block}"}}
+                    }}
+                }}) {{
+                    sum(of: Reward_Total)
+                }}
             }}
-          }}
-        }}"""
+        }}
+        """
         }
     )
-
-    return payload

@@ -26,6 +26,7 @@ class BasePrePendingSnapshots(Model):
 
     def _calculate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
         rewards = self.octant_rewards.get_octant_rewards(context)
+
         (
             user_deposits,
             _,

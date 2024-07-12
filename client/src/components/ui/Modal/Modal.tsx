@@ -13,14 +13,14 @@ import ModalProps from './types';
 
 const variantsCenter = {
   showHide: {
-    bottom: 'calc(50% + 20px)',
     opacity: 0,
-    y: `50%`,
+    top: 'calc(50% + 20px)',
+    y: `-50%`,
   },
   visible: {
-    bottom: '50%',
     opacity: 1,
-    y: '50%',
+    top: '50%',
+    y: '-50%',
   },
 };
 
@@ -39,25 +39,26 @@ const variantsBottom = {
 const durationOfTransition = 0.1;
 
 const Modal: FC<ModalProps> = ({
+  Image,
   bodyClassName,
-  headerClassName,
-  variant = 'standard',
-  className,
   children,
+  className,
   dataTest = 'Modal',
   header,
-  Image,
+  headerClassName,
+  isCloseButtonDisabled = false,
+  isConnectWalletModal,
+  isFullScreen,
   isOpen,
   isOverflowEnabled = true,
-  isFullScreen,
+  isOverflowOnClickDisabled = false,
+  onClick,
   onClosePanel,
   onTouchMove,
   onTouchStart,
-  onClick,
-  showCloseButton = true,
-  isCloseButtonDisabled = false,
-  isOverflowOnClickDisabled = false,
   overflowClassName,
+  showCloseButton = true,
+  variant = 'standard',
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -98,7 +99,12 @@ const Modal: FC<ModalProps> = ({
         <motion.div
           key="modal-root"
           animate="visible"
-          className={cx(styles.root, className, styles[`variant--${variant}`])}
+          className={cx(
+            styles.root,
+            className,
+            styles[`variant--${variant}`],
+            isConnectWalletModal && styles.isConnectWalletModal,
+          )}
           data-test={dataTest}
           exit="showHide"
           initial="showHide"

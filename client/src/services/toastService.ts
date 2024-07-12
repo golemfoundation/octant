@@ -11,6 +11,8 @@ export const TOAST_NAMES = [
   'ipfsError',
   'projectForbiddenOperation',
   'projectLoadingProblem',
+  'allocationMultisigInitialSignature',
+  'delegationTooManyUniqueAddresses',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 
@@ -20,7 +22,11 @@ interface ShowToast extends ToastProps {
 
 const ToastService = () => {
   let toastIds: { [key: string]: Id | undefined } = {};
-  const toastsVisibleUntilManuallyHidden: ToastName[] = ['confirmChanges', 'ipfsError'];
+  const toastsVisibleUntilManuallyHidden: ToastName[] = [
+    'confirmChanges',
+    'ipfsError',
+    'allocationMultisigInitialSignature',
+  ];
 
   const setToastIdValue = (name: ToastName, value: Id | undefined) => {
     toastIds = {

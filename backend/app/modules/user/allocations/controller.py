@@ -7,13 +7,13 @@ from app.exceptions import (
     InvalidEpoch,
     NotInDecisionWindow,
 )
-from app.modules.common.allocation_deserializer import (
+from app.modules.common.allocations.deserializer import (
     deserialize_payload,
     deserialize_items,
 )
 from app.modules.dto import (
     AccountFundsDTO,
-    ProposalDonationDTO,
+    ProjectDonationDTO,
 )
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
@@ -26,7 +26,7 @@ def get_user_next_nonce(user_address: str) -> int:
 
 def get_all_allocations(
     epoch_num: int, include_zero_allocations=True
-) -> List[ProposalDonationDTO]:
+) -> List[ProjectDonationDTO]:
     context = epoch_context(epoch_num)
     if context.epoch_state > EpochState.PENDING:
         raise NotImplementedForGivenEpochState()
@@ -36,7 +36,7 @@ def get_all_allocations(
 
 def get_all_donations_by_project(
     project_address: str, epoch_num: Optional[int] = None
-) -> List[ProposalDonationDTO]:
+) -> List[ProjectDonationDTO]:
     context = (
         state_context(EpochState.PENDING)
         if epoch_num is None

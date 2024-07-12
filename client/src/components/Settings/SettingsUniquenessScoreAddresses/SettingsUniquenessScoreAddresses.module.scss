@@ -1,0 +1,67 @@
+.root {
+  width: 100%;
+  height: 7.2rem;
+  padding: 0 2.4rem;
+  display: flex;
+  align-items: center;
+  border-radius: $border-radius-16;
+  background-color: $color-octant-grey3;
+  margin: 1.6rem 0 1.4rem;
+
+  .avatarsGroup {
+    position: relative;
+    display: flex;
+
+    .addressAvatar {
+      width: 2.4rem;
+      height: 2.4rem;
+      background-color: $color-white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $border-radius-16;
+
+      &:nth-child(n - 1) {
+        margin-left: -1rem;
+      }
+
+      .avatar {
+        width: 1.4rem;
+        height: 1.4rem;
+      }
+    }
+  }
+
+  .addresses {
+    margin-left: 0.8rem;
+
+    .addressesGroup {
+      font-size: $font-size-12;
+      font-weight: $font-weight-bold;
+      color: $color-octant-dark;
+      max-width: 10rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .numberOfAddresses {
+      color: $color-octant-grey5;
+      font-size: $font-size-10;
+      font-weight: $font-weight-bold;
+      letter-spacing: 0.03rem;
+      text-transform: uppercase;
+    }
+  }
+
+  .score {
+    font-size: $font-size-24;
+    font-weight: $font-weight-bold;
+    color: $color-octant-dark;
+    margin-left: auto;
+
+    &.isFetchingScore {
+      color: $color-octant-grey2;
+    }
+  }
+}

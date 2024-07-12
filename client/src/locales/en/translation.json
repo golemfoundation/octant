@@ -13,7 +13,7 @@
       "history": {
         "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
       },
-      "userRejectedTransaction": "User rejected transaction",
+      "userRejectedWalletOperation": "User rejected wallet operation",
       "default": {
         "title": "Sorry, something went wrong there",
         "message": "Please reload the app and try again"
@@ -27,7 +27,6 @@
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
     "estimateRewards": "Estimate rewards",
-    "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
     "copy": "Copy link",
@@ -92,6 +91,11 @@
         "lockForEpoch_one": "Lock for {{count}} epoch",
         "lockForEpoch_other": "Lock for {{count}} epochs",
         "estimatedRewards": "Estimated rewards",
+        "uqSelector": {
+          "header": "UQ Score 20+",
+          "isUqScoreOver20_true": "Yes",
+          "isUqScoreOver20_false": "No"
+        },
         "errors": {
           "valueCryptoTooBig": "That isn’t a valid amount"
         }
@@ -115,7 +119,8 @@
         "donateWithPercentage": "Donate {{percentage}}%",
         "personalWithPercentage": "Personal {{percentage}}%",
         "allocated": "Allocated",
-        "manual": "Manual"
+        "manual": "Manual",
+        "availableDuringAllocation": "Available during allocation"
       },
       "allocationSummary": {
         "totalImpact": "Total impact",
@@ -318,13 +323,15 @@
   },
   "views": {
     "allocation": {
+      "multisigSignatureToast": {
+        "title": "Multi-sig: signature needed",
+        "message": "At least one signature is required to start allocation. Please do not close Octant."
+      },
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
         "standard": "{{sum}} / {{threshold}}",
-        "simulate": {
-          "mobile": "{{value}} {{character}} {{matched}}",
-          "desktop": "{{value}} {{character}} {{matched}} matching"
-        }
+        "simulate": "Your impact {{value}}",
+        "simulateLoading": "Calculating..."
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
@@ -333,6 +340,16 @@
           "text": {
             "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
             "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
+          }
+        },
+        "uqTooLow": {
+          "title": {
+            "desktop": "Your uniqueness score is too low",
+            "mobile": "Your UQ score is too low"
+          },
+          "text": {
+            "desktop": "You will receive only 20% of the maximum match funding. Visit <0>Settings</0> to recalculate it before you allocate and improve your match funding",
+            "mobile": "You will receive only 20% of the max. match funding. Visit <0>Settings</0> to recalculate before you allocate"
           }
         }
       },
@@ -425,6 +442,10 @@
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them.",
           "waitingForWalletConfirmation": "Waiting for wallet confirmation"
+        },
+        "signingTheTerms": {
+          "header": "Signing the terms",
+          "text": "At least one signature is required to agree to the Terms of Service. Please do not close Octant until this is completed."
         }
       },
       "stepsDecisionWindowOpen": {
@@ -492,9 +513,37 @@
       "userDocs": "User Docs",
       "discordCommunity": "Discord Community",
       "website": "Website",
+      "visitWebsite": "Visit the website",
       "discord": "Discord",
+      "joinOurDiscord": "Join our Discord",
       "docs": "Docs",
-      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below."
+      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
+      "recalculatingScore": "Recalculating score",
+      "calculatingScore": "Calculating score",
+      "checkingPassportScore":"Checking Passport score",
+      "finished": "Finished",
+      "checkingAllowlist": "Checking allowlist",
+      "checkOutDocs": "Check out the docs",
+      "yourUniquenessScore": "Your uniqueness score",
+      "recalculate": "Recalculate",
+      "delegate": "Delegate",
+      "whatIsThis": "What is this?",
+      "addresses": "addresses",
+      "calculatingYourUniqueness": "Calculating your uniqueness",
+      "switchAccounts": "Switch accounts",
+      "calculatingYourUniquenessStep1": "To prove your uniqueness your need a<br/><0>Gitcoin Passport</0> score of 20 or higher.<br/><br/>If you have this your donations will attract the maximum amount of match funding. If not, maximum match funding will be set to 20%.<br/><br/>You can increase your score in a couple of different ways.",
+      "calculatingYourUniquenessStep2": "You can go to Passport and add stamps to the score connected to your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 20+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
+      "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy guide to <0>scoring 20, for humans.</0>",
+      "primary": "Primary",
+      "delegationFailedText": "Delegation failed — your score needs to be 20 or higher. Please try another address",
+      "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
+      "signMessage": "Sign message",
+      "signMessages": "Sign messages",
+      "switchAccount": "Switch account",
+      "delegationTooManyUniqueAddressesToast": {
+        "title": "Too many accounts",
+        "message": "Please connect up to 10 accounts to check your delegation status"
+      }
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

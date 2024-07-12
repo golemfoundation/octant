@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem/ProjectsListSkeletonItem';
 import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
-import Rewards from 'components/shared/Rewards';
+import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
+import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
 import Img from 'components/ui/Img';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
@@ -131,9 +132,17 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
               text={introDescription!}
             />
           </div>
-          {!isEpoch1 && (
-            <Rewards
+          {!isEpoch1 && epoch && epoch < 4 && (
+            <RewardsWithThreshold
               address={address}
+              className={styles.projectRewards}
+              epoch={epoch}
+              numberOfDonors={projectIpfsWithRewards.numberOfDonors}
+              totalValueOfAllocations={projectIpfsWithRewards.totalValueOfAllocations}
+            />
+          )}
+          {!isEpoch1 && (!epoch || epoch >= 4) && (
+            <RewardsWithoutThreshold
               className={styles.projectRewards}
               epoch={epoch}
               numberOfDonors={projectIpfsWithRewards.numberOfDonors}

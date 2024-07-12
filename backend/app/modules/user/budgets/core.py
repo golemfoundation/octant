@@ -1,12 +1,13 @@
 from typing import List
 
 from app.constants import ZERO_ADDRESS
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
 from app.context.manager import Context
 from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.effective_deposit import DepositEvent, EventType
 from app.modules.common.effective_deposits import calculate_effective_deposits
 from app.modules.dto import OctantRewardsDTO
+from app.modules.snapshots.pending import UserBudgetInfo
 
 
 def simulate_user_events(
@@ -58,7 +59,7 @@ def estimate_epoch_budget(
         UserBudgetPayload(
             user_effective_deposit=effective_deposit,
             total_effective_deposit=rewards.total_effective_deposit,
-            all_individual_rewards=rewards.individual_rewards,
+            vanilla_individual_rewards=rewards.vanilla_individual_rewards,
             ppf=rewards.ppf,
         )
     )
@@ -103,6 +104,21 @@ def estimate_budget(
         )
 
     return budget
+
+
+def get_upcoming_budget(
+    user_address: str, upcoming_user_budgets: List[UserBudgetInfo]
+) -> int:
+    user_budget = next(
+        filter(
+            lambda budget_info: budget_info.user_address == user_address,
+            upcoming_user_budgets,
+        ),
+        None,
+    )
+    if not user_budget:
+        return 0
+    return user_budget.budget
 
 
 def calculate_matching_fund(budget: int, leverage: float) -> int:

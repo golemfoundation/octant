@@ -19,6 +19,7 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     MultisigSignatures,
     ProjectsMetadataService,
+    UniquenessQuotients,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
@@ -31,10 +32,14 @@ from app.modules.projects.rewards.service.finalizing import FinalizingProjectRew
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
+)
+from app.modules.user.antisybil.service.initial import (
+    GitcoinPassportAntisybil,
 )
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
@@ -81,6 +86,7 @@ class PendingServices(Model):
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    uniqueness_quotients: UniquenessQuotients
 
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
@@ -88,6 +94,10 @@ class PendingServices(Model):
         project_rewards = FinalizingProjectRewards()
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
+        uniqueness_quotients = PreliminaryUQ(
+            antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
+        )
+
         allocations_verifier = PendingUserAllocationsVerifier(
             user_nonce=user_nonce,
             user_budgets=saved_user_budgets,
@@ -98,7 +108,9 @@ class PendingServices(Model):
         )
 
         pending_user_allocations = PendingUserAllocations(
-            octant_rewards=octant_matched_rewards, verifier=allocations_verifier
+            octant_rewards=octant_matched_rewards,
+            verifier=allocations_verifier,
+            uniqueness_quotients=uniqueness_quotients,
         )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
@@ -141,4 +153,5 @@ class PendingServices(Model):
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
             projects_metadata_service=StaticProjectsMetadataService(),
+            uniqueness_quotients=uniqueness_quotients,
         )

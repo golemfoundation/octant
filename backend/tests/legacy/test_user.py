@@ -22,19 +22,19 @@ from tests.conftest import (
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, patch_proposals, patch_is_contract, mock_epoch_details):
+def before(app, patch_epochs, patch_projects, patch_is_contract, mock_epoch_details):
     pass
 
 
 @pytest.fixture()
-def make_allocations(app, proposal_accounts):
+def make_allocations(app, project_accounts):
     def make_allocations(user, epoch):
         nonce = allocations_controller.get_user_next_nonce(user.address)
 
         allocation_items = [
-            AllocationItem(proposal_accounts[0].address, 10 * 10**18),
-            AllocationItem(proposal_accounts[1].address, 20 * 10**18),
-            AllocationItem(proposal_accounts[2].address, 30 * 10**18),
+            AllocationItem(project_accounts[0].address, 10 * 10**18),
+            AllocationItem(project_accounts[1].address, 20 * 10**18),
+            AllocationItem(project_accounts[2].address, 30 * 10**18),
         ]
 
         request = UserAllocationRequestPayload(

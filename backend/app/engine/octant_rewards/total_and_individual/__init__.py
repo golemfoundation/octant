@@ -20,7 +20,7 @@ class TotalAndAllIndividualRewards(ABC):
         pass
 
     @abstractmethod
-    def calculate_all_individual_rewards(
+    def calculate_vanilla_individual_rewards(
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         pass

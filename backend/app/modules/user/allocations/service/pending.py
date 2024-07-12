@@ -1,4 +1,5 @@
-from typing import List, Tuple, Protocol, runtime_checkable
+from decimal import Decimal
+from typing import List, Tuple, Protocol, runtime_checkable, Optional
 
 from app import exceptions
 from app.context.manager import Context
@@ -6,12 +7,14 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
+from app.infrastructure.database.uniqueness_quotient import get_uq_by_user, save_uq
+from app.legacy.crypto.eip712 import build_allocations_eip712_structure
 from app.modules.common.crypto.signature import (
     verify_signed_message,
     encode_for_signing,
     EncodingStandardFor,
 )
-from app.legacy.crypto.eip712 import build_allocations_eip712_structure
+from app.modules.common.project_rewards import AllocationsPayload
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
@@ -40,6 +43,17 @@ class GetPatronsAddressesProtocol(Protocol):
 @runtime_checkable
 class GetUserAllocationNonceProtocol(Protocol):
     def get_user_next_nonce(self, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
+class UniquenessQuotients(Protocol):
+    def calculate(self, context: Context, user_address: str) -> Decimal:
+        ...
+
+    def retrieve(
+        self, context: Context, user_address: str, should_save: bool = False
+    ) -> Decimal:
         ...
 
 
@@ -72,6 +86,19 @@ class PendingUserAllocationsVerifier(Verifier, Model):
 class PendingUserAllocations(SavedUserAllocations, Model):
     octant_rewards: OctantRewards
     verifier: Verifier
+    uniqueness_quotients: UniquenessQuotients
+
+    def _expand_user_allocations_with_score(
+        self, user_allocations: List[AllocationDTO], uq_score: Decimal
+    ) -> List[AllocationDTO]:
+        return [
+            AllocationDTO(
+                project_address=allocation.project_address,
+                amount=allocation.amount,
+                uq_score=uq_score,
+            )
+            for allocation in user_allocations
+        ]
 
     def allocate(
         self,
@@ -84,13 +111,24 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             context, user_address=user_address, payload=payload, **kwargs
         )
 
+        user = database.user.get_by_address(user_address)
+
+        uq_score = self.uniqueness_quotients.retrieve(
+            context, user_address, should_save=True
+        )
+
         leverage, _, _ = self.simulate_allocation(
-            context, payload.payload.allocations, user_address
+            context, payload.payload.allocations, user_address, uq_score
         )
 
         self.revoke_previous_allocation(context, user_address)
 
         user = database.user.get_by_address(user_address)
+
+        if not get_uq_by_user(user, context.epoch_details.epoch_num):
+            score = self.uniqueness_quotients.calculate(context, user_address)
+            save_uq(user, context.epoch_details.epoch_num, score)
+
         user.allocation_nonce = payload.payload.nonce
         database.allocations.store_allocation_request(
             user_address,
@@ -109,18 +147,29 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         context: Context,
         user_allocations: List[AllocationDTO],
         user_address: str,
+        uq_score: Optional[Decimal] = None,
     ) -> Tuple[float, int, List[ProjectRewardDTO]]:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
+        epoch_num = context.epoch_details.epoch_num
+
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
-        all_allocations_before = database.allocations.get_all(
-            context.epoch_details.epoch_num
+        all_allocations_before = database.allocations.get_all_with_uqs(epoch_num)
+
+        if uq_score is None:
+            uq_score = self.uniqueness_quotients.calculate(context, user_address)
+
+        user_allocations = self._expand_user_allocations_with_score(
+            user_allocations, uq_score
         )
 
+        allocations_payload = AllocationsPayload(
+            before_allocations=all_allocations_before,
+            user_new_allocations=user_allocations,
+        )
         return core.simulate_allocation(
             projects_settings,
-            all_allocations_before,
-            user_allocations,
+            allocations_payload,
             user_address,
             projects,
             matched_rewards,

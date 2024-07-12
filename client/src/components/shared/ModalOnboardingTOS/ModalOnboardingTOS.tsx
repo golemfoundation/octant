@@ -15,16 +15,26 @@ import useUserTOS from 'hooks/queries/useUserTOS';
 
 import styles from './ModalOnboardingTOS.module.scss';
 
-const ModalOnboardingTOS: FC = () => {
+type ModalOnboardingTOSProps = {
+  isWaitingForFirstMultisigSignature: boolean;
+  setIsWaitingForFirstMultisigSignature: (value: boolean) => void;
+};
+
+const ModalOnboardingTOS: FC<ModalOnboardingTOSProps> = ({
+  isWaitingForFirstMultisigSignature,
+  setIsWaitingForFirstMultisigSignature,
+}) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.onboarding.stepsCommon.usingTheApp',
   });
   const { address } = useAccount();
   const { data: isContract } = useIsContract();
   const { data: isUserTOSAccepted, refetch: refetchUserTOS } = useUserTOS();
-  const { mutateAsync } = useUserAcceptsTOS();
-  const [isWaitingForWalletConfirmationMultisig, setIsWaitingForWalletConfirmationMultisig] =
-    useState(false);
+  const [isWaitingForAllMultisigSignatures, setIsWaitingForAllMultisigSignatures] = useState(false);
+  const { mutateAsync: acceptTOSMutateAsync } = useUserAcceptsTOS(() => {
+    setIsWaitingForFirstMultisigSignature(false);
+    setIsWaitingForAllMultisigSignatures(true);
+  });
 
   const [isTOSChecked, setIsTOSChecked] = useState(isUserTOSAccepted);
 
@@ -32,8 +42,10 @@ const ModalOnboardingTOS: FC = () => {
     if (!e.target.checked) {
       return;
     }
+
+    setIsWaitingForFirstMultisigSignature(true);
     setIsTOSChecked(e.target.checked);
-    mutateAsync(null);
+    acceptTOSMutateAsync(null);
   };
 
   useEffect(() => {
@@ -43,7 +55,7 @@ const ModalOnboardingTOS: FC = () => {
 
     const getPendingMultisigSignatures = () => {
       apiGetPendingMultisigSignatures(address!, SignatureOpType.TOS).then(data => {
-        setIsWaitingForWalletConfirmationMultisig(!!data.hash);
+        setIsWaitingForAllMultisigSignatures(!!data.hash);
         refetchUserTOS();
       });
     };
@@ -60,7 +72,7 @@ const ModalOnboardingTOS: FC = () => {
 
   return (
     <BoxRounded className={styles.box} dataTest="ModalOnboardingTOS" hasPadding={false} isGrey>
-      {isWaitingForWalletConfirmationMultisig ? (
+      {isWaitingForAllMultisigSignatures || isWaitingForFirstMultisigSignature ? (
         <Loader />
       ) : (
         <InputCheckbox
@@ -73,7 +85,8 @@ const ModalOnboardingTOS: FC = () => {
       <label
         className={cx(
           styles.text,
-          isWaitingForWalletConfirmationMultisig && styles.isWaitingForWalletConfirmationMultisig,
+          (isWaitingForFirstMultisigSignature || isWaitingForAllMultisigSignatures) &&
+            styles.isWaitingForAllMultisigSignatures,
         )}
         htmlFor="tos-input"
       >
@@ -82,7 +95,7 @@ const ModalOnboardingTOS: FC = () => {
           i18nKey="components.dedicated.tos.text"
         />
       </label>
-      {isWaitingForWalletConfirmationMultisig && (
+      {isWaitingForAllMultisigSignatures && (
         <div className={styles.waitingForWalletConfirmation}>
           {t('waitingForWalletConfirmation')}
         </div>

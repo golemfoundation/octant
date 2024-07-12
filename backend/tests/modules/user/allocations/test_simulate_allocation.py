@@ -1,30 +1,36 @@
+from app import register_epoch_settings
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.modules.dto import AllocationDTO
 from app.modules.user.allocations.core import simulate_allocation
+from app.modules.common.project_rewards import AllocationsPayload
 from tests.helpers.constants import USER1_ADDRESS, MATCHED_REWARDS, USER2_ADDRESS
 from tests.helpers.context import get_context
 
 
 def test_simulate_allocation_single_user():
+    register_epoch_settings()
     context = get_context()
+
     project_settings = context.epoch_settings.project
     projects = context.projects_details.projects
     # Test data
     allocations_before = [
-        AllocationDTO(projects[0], 10 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 20 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[2], 30 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 10 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 20 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[2], 30 * 10**18, user_address=USER1_ADDRESS),
     ]
     user_allocation = [
-        AllocationDTO(projects[0], 40 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 50 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 40 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 50 * 10**18, user_address=USER1_ADDRESS),
     ]
 
+    allocations_payload = AllocationsPayload(
+        before_allocations=allocations_before, user_new_allocations=user_allocation
+    )
     # Call simulate allocation method
     leverage, threshold, result = simulate_allocation(
         project_settings,
-        allocations_before,
-        user_allocation,
+        allocations_payload,
         USER1_ADDRESS,
         projects,
         MATCHED_REWARDS,
@@ -54,22 +60,24 @@ def test_simulate_allocation_multiple_user():
     projects = context.projects_details.projects
     # Test data
     allocations_before = [
-        AllocationDTO(projects[0], 10 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 20 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[2], 30 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[0], 40 * 10**18, USER2_ADDRESS),
-        AllocationDTO(projects[1], 50 * 10**18, USER2_ADDRESS),
+        AllocationDTO(projects[0], 10 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 20 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[2], 30 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[0], 40 * 10**18, user_address=USER2_ADDRESS),
+        AllocationDTO(projects[1], 50 * 10**18, user_address=USER2_ADDRESS),
     ]
     user_allocation = [
-        AllocationDTO(projects[0], 60 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 70 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 60 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 70 * 10**18, user_address=USER1_ADDRESS),
     ]
 
+    allocations_payload = AllocationsPayload(
+        before_allocations=allocations_before, user_new_allocations=user_allocation
+    )
     # Call simulate allocation method
     leverage, threshold, result = simulate_allocation(
         project_settings,
-        allocations_before,
-        user_allocation,
+        allocations_payload,
         USER1_ADDRESS,
         projects,
         MATCHED_REWARDS,

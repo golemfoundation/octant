@@ -19,7 +19,7 @@ def context(projects):
 
 def build_allocations(allocs):
     return [
-        AllocationItem(proposal_address=project, amount=amount)
+        AllocationItem(project_address=project, amount=amount)
         for project, amount in allocs
     ]
 
@@ -99,7 +99,7 @@ def test_allocation_fails_with_empty_payload(alice, bob, context):
         )
 
 
-def test_allocation_fails_with_invalid_proposals(alice, bob, context, projects):
+def test_allocation_fails_with_invalid_projects(alice, bob, context, projects):
     valid_projects = context.projects_details.projects
     valid_allocations = [(p, 17 * 10**16) for p in valid_projects]
 
@@ -112,14 +112,14 @@ def test_allocation_fails_with_invalid_proposals(alice, bob, context, projects):
         )
 
 
-def test_allocation_fails_with_duplucated_proposals(alice, bob, context):
+def test_allocation_fails_with_duplicated_projects(alice, bob, context):
     projects = context.projects_details.projects
     allocations = build_allocations(
         [(p, 17 * 10**16) for p in projects] + [(projects[1], 1)]
     )
     request = build_request(allocations)
 
-    with pytest.raises(exceptions.DuplicatedProposals):
+    with pytest.raises(exceptions.DuplicatedProjects):
         core.verify_user_allocation_request(
             context, request, alice.address, 0, 10**18, [bob.address]
         )

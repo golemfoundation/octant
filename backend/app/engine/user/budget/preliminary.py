@@ -12,4 +12,4 @@ class PreliminaryUserBudget(UserBudget):
             payload.total_effective_deposit
         )
 
-        return int(payload.all_individual_rewards * individual_share)
+        return int(payload.vanilla_individual_rewards * individual_share)

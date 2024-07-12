@@ -14,10 +14,10 @@ def ire(staking_proceeds: int) -> int:
 
 
 def ppf(
-    staking_proceeds: int, all_individual_rewards: int, locked_ratio: Decimal
+    staking_proceeds: int, vanilla_individual_rewards: int, locked_ratio: Decimal
 ) -> int:
     if locked_ratio < Decimal("0.35"):
-        return ire(staking_proceeds) - all_individual_rewards
+        return ire(staking_proceeds) - vanilla_individual_rewards
     return 0
 
 

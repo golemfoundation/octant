@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  antisybilStatus: 'antisybilStatus',
   calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
@@ -20,12 +21,15 @@ export const ROOTS: Root = {
   projectRewardsThreshold: 'projectRewardsThreshold',
   projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
+  upcomingBudget: 'upcomingBudget',
+  uqScore: 'uqScore',
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
   userTOS: 'userTOS',
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
@@ -70,6 +74,8 @@ export const QUERY_KEYS: QueryKeys = {
   totalAddresses: ['totalAddresses'],
   totalWithdrawals: ['totalWithdrawals'],
   unlocks: ['unlocks'],
+  upcomingBudget: userAddress => [ROOTS.upcomingBudget, userAddress],
+  uqScore: epoch => [ROOTS.uqScore, epoch.toString()],
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],

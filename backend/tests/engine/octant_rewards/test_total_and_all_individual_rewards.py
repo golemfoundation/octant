@@ -35,17 +35,17 @@ from app.engine.octant_rewards.total_and_individual.double import (
         ),
     ],
 )
-def test_preliminary_total_and_all_individual_rewards(
+def test_preliminary_total_and_vanilla_individual_rewards(
     eth_proceeds, locked_ratio, exp_total, exp_all_individual
 ):
     payload = TotalAndAllIndividualPayload(eth_proceeds, Decimal(locked_ratio))
     uut = PreliminaryTotalAndAllIndividualRewards()
 
     total_rewards = uut.calculate_total_rewards(payload)
-    all_individual_rewards = uut.calculate_all_individual_rewards(payload)
+    vanilla_individual_rewards = uut.calculate_vanilla_individual_rewards(payload)
 
     assert total_rewards == exp_total
-    assert all_individual_rewards == exp_all_individual
+    assert vanilla_individual_rewards == exp_all_individual
 
 
 @pytest.mark.parametrize(
@@ -69,7 +69,7 @@ def test_preliminary_total_and_all_individual_rewards(
         ),
     ],
 )
-def test_all_proceeds_with_op_cost_total_and_all_individual_rewards(
+def test_all_proceeds_with_op_cost_total_and_vanilla_individual_rewards(
     eth_proceeds, locked_ratio, exp_total, exp_all_individual
 ):
     op_cost = int(eth_proceeds * Decimal("0.2"))
@@ -77,10 +77,10 @@ def test_all_proceeds_with_op_cost_total_and_all_individual_rewards(
     uut = AllProceedsWithOperationalCost()
 
     total_rewards = uut.calculate_total_rewards(payload)
-    all_individual_rewards = uut.calculate_all_individual_rewards(payload)
+    vanilla_individual_rewards = uut.calculate_vanilla_individual_rewards(payload)
 
     assert total_rewards == exp_total
-    assert all_individual_rewards == exp_all_individual
+    assert vanilla_individual_rewards == exp_all_individual
 
 
 @pytest.mark.parametrize(
@@ -106,14 +106,14 @@ def test_all_proceeds_with_op_cost_total_and_all_individual_rewards(
         ),
     ],
 )
-def test_double_total_and_all_individual_rewards(
+def test_double_total_and_vanilla_individual_rewards(
     eth_proceeds, locked_ratio, exp_total, exp_all_individual
 ):
     payload = TotalAndAllIndividualPayload(eth_proceeds, Decimal(locked_ratio))
     uut = DoubleTotalAndIndividualRewards()
 
     total_rewards = uut.calculate_total_rewards(payload)
-    all_individual_rewards = uut.calculate_all_individual_rewards(payload)
+    vanilla_individual_rewards = uut.calculate_vanilla_individual_rewards(payload)
 
     assert total_rewards == exp_total
-    assert all_individual_rewards == exp_all_individual
+    assert vanilla_individual_rewards == exp_all_individual

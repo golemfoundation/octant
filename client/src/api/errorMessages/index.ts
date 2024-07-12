@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Query } from '@tanstack/react-query';
 
-import { ROOTS } from 'api/queryKeys';
+import { QUERY_KEYS, ROOTS } from 'api/queryKeys';
 import i18n from 'i18n';
 import toastService from 'services/toastService';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
 const IGNORED_QUERIES: IgnoredQueries = [
+  QUERY_KEYS.withdrawals,
   ROOTS.cryptoValues,
-  ROOTS.projectsIpfsResults,
   ROOTS.individualReward,
+  ROOTS.projectsIpfsResults,
+  ROOTS.uqScore,
 ];
 
 const errors: QueryMutationErrorConfig = {
   4001: {
-    message: i18n.t('api.errorMessage.userRejectedTransaction'),
+    message: i18n.t('api.errorMessage.userRejectedWalletOperation'),
     type: 'toast',
   },
   'HN:Allocations/allocate-above-rewards-budget': {

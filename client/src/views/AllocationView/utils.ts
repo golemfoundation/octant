@@ -192,7 +192,7 @@ export function getAllocationsWithRewards({
     areAllocationsAvailableOrAlreadyDone;
   let allocationsWithRewards = isDataDefined
     ? allocationValues!.map(allocationValue => {
-        const project = projectsIpfsWithRewards.find(
+        const projectIpfsWithRewards = projectsIpfsWithRewards.find(
           ({ address }) => address === allocationValue.address,
         )!;
         const isAllocatedTo = !!userAllocationsElements?.find(
@@ -202,7 +202,7 @@ export function getAllocationsWithRewards({
         return {
           isAllocatedTo,
           ...allocationValue,
-          ...project,
+          ...projectIpfsWithRewards,
         };
       })
     : [];

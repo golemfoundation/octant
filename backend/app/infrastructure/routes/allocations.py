@@ -18,11 +18,11 @@ user_allocations_payload_item = api.model(
     {
         "proposalAddress": fields.String(
             required=True,
-            description="Proposal address",
+            description="Project address",
         ),
         "amount": fields.String(
             required=True,
-            description="Funds allocated by user for the proposal in WEI",
+            description="Funds allocated by user for the project in WEI",
         ),
     },
 )
@@ -84,11 +84,11 @@ user_allocation_item = api.model(
     {
         "address": fields.String(
             required=True,
-            description="Proposal address",
+            description="Project address",
         ),
         "amount": fields.String(
             required=True,
-            description="Funds allocated by user for the proposal in WEI",
+            description="Funds allocated by user for the project in WEI",
         ),
     },
 )
@@ -116,8 +116,8 @@ user_allocations_sum_model = api.model(
     },
 )
 
-proposal_donors_model = api.model(
-    "ProposalDonors",
+project_donors_model = api.model(
+    "ProjectDonors",
     {
         "address": fields.String(
             required=True,
@@ -125,7 +125,7 @@ proposal_donors_model = api.model(
         ),
         "amount": fields.String(
             required=True,
-            description="Funds allocated by donor for the proposal in WEI",
+            description="Funds allocated by donor for the project in WEI",
         ),
     },
 )
@@ -144,11 +144,11 @@ allocation_item = api.model(
         ),
         "amount": fields.String(
             required=True,
-            description="Funds allocated by donor for the proposal in WEI",
+            description="Funds allocated by donor for the project in WEI",
         ),
-        "proposal": fields.String(
+        "project": fields.String(
             required=True,
-            description="Proposal address",
+            description="Project address",
         ),
     },
 )
@@ -164,7 +164,7 @@ epoch_allocations_model = api.model(
 
 
 @ns.route("/allocate")
-@ns.doc(description="Allocates user's funds to proposals")
+@ns.doc(description="Allocates user's funds to projects")
 class Allocation(OctantResource):
     @ns.expect(user_allocation_request)
     @ns.response(201, "User allocated successfully")
@@ -182,15 +182,15 @@ class Allocation(OctantResource):
 
 
 matched_reward = api.model(
-    "Proposal",
+    "Project",
     {
         "address": fields.String(
             required=True,
-            description="Proposal address",
+            description="Project address",
         ),
         "value": fields.String(
             required=True,
-            description="Matched rewards funds for the proposal, wei",
+            description="Matched rewards funds for the project, wei",
         ),
     },
 )
@@ -231,7 +231,6 @@ class AllocationLeverage(OctantResource):
         leverage, threshold, matched = controller.simulate_allocation(
             ns.payload, user_address
         )
-
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Estimated threshold: {threshold}")
         app.logger.debug(f"Matched rewards:  {matched}")
@@ -296,26 +295,26 @@ class UserAllocations(OctantResource):
         }
 
 
-@ns.route("/proposal/<string:proposal_address>/epoch/<int:epoch>")
+@ns.route("/project/<string:project_address>/epoch/<int:epoch>")
 @ns.doc(
-    description="Returns list of donors for given proposal in particular epoch",
+    description="Returns list of donors for given project in particular epoch",
     params={
-        "proposal_address": "Proposal ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+        "project_address": "Project ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
         "epoch": "Epoch number",
     },
 )
-class ProposalDonors(OctantResource):
-    @ns.marshal_with(proposal_donors_model)
-    @ns.response(200, "Returns list of proposal donors")
-    def get(self, proposal_address: str, epoch: int):
+class ProjectDonors(OctantResource):
+    @ns.marshal_with(project_donors_model)
+    @ns.response(200, "Returns list of project donors")
+    def get(self, project_address: str, epoch: int):
         app.logger.debug(
-            f"Getting donors for proposal {proposal_address} in epoch {epoch}"
+            f"Getting donors for project {project_address} in epoch {epoch}"
         )
         donors = [
             {"address": w.donor, "amount": w.amount}
-            for w in controller.get_all_donations_by_project(proposal_address, epoch)
+            for w in controller.get_all_donations_by_project(project_address, epoch)
         ]
-        app.logger.debug(f"Proposal donors {donors}")
+        app.logger.debug(f"Project donors {donors}")
 
         return donors
 

@@ -51,7 +51,7 @@ channels:
                         description: Proposal ethereum address in hexadecimal format
                         type: string
                       amount:
-                        description: Amount of rewards donated for given proposal, BigNumber (WEI)
+                        description: Amount of rewards donated for given project, BigNumber (WEI)
                         type: string
             signature:
               description: EIP-712 signature of the allocation payload as a hexadecimal string

@@ -1,4 +1,4 @@
-import { Root } from 'api/queryKeys/types';
+import { Root, QueryKeys } from 'api/queryKeys/types';
 
 export type QueryMutationError = {
   message: string;
@@ -11,7 +11,9 @@ export type QueryMutationErrorConfig = {
 };
 
 export type IgnoredQueries = [
+  QueryKeys['withdrawals'],
   Root['cryptoValues'],
-  Root['projectsIpfsResults'],
   Root['individualReward'],
+  Root['projectsIpfsResults'],
+  Root['uqScore'],
 ];

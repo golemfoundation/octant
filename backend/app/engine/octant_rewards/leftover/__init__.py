@@ -9,6 +9,8 @@ class LeftoverPayload:
     community_fund: int = None
     ppf: int = None
     total_withdrawals: int = None
+    total_matched_rewards: int = None
+    used_matched_rewards: int = None
 
 
 @dataclass

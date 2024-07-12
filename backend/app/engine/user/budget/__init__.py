@@ -7,7 +7,7 @@ from typing import Optional
 class UserBudgetPayload:
     user_effective_deposit: int = None
     total_effective_deposit: int = None
-    all_individual_rewards: int = None
+    vanilla_individual_rewards: int = None
     ppf: Optional[int] = None
 
 

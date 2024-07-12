@@ -39,7 +39,7 @@ project_reward_model = api.model(
     "ProjectRewardModel",
     {
         "address": fields.String(),
-        "allocated": fields.String(),
+        "amount": fields.String(),
         "matched": fields.String(),
     },
 )
@@ -59,7 +59,7 @@ octant_rewards_model = api.model(
         "lockedRatio": fields.String(),
         "totalEffectiveDeposit": fields.String(),
         "totalRewards": fields.String(),
-        "individualRewards": fields.String(),
+        "vanillaIndividualRewards": fields.String(),
         "operationalCost": fields.String(),
         "communityFund": fields.String(),
         "ppf": fields.String(),

@@ -6,8 +6,7 @@ from app.context.manager import Context
 from app.engine.projects import ProjectSettings
 from app.infrastructure.database.models import AllocationRequest
 from app.legacy.crypto.eip712 import build_allocations_eip712_structure, recover_address
-from app.modules.common.leverage import calculate_leverage
-from app.modules.common.project_rewards import get_projects_rewards
+from app.modules.common.project_rewards import get_projects_rewards, AllocationsPayload
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload, AllocationItem
 
 
@@ -17,24 +16,28 @@ def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) 
 
 def simulate_allocation(
     projects_settings: ProjectSettings,
-    all_allocations_before: List[AllocationDTO],
-    user_allocations: List[AllocationDTO],
+    allocations: AllocationsPayload,
     user_address: str,
     all_projects: List[str],
     matched_rewards: int,
 ):
-    simulated_allocations = _replace_user_allocation(
-        all_allocations_before, user_allocations, user_address
+    allocations_without_user = _replace_user_allocation(
+        allocations.before_allocations, user_address
+    )
+
+    allocations = AllocationsPayload(
+        before_allocations=allocations_without_user,
+        user_new_allocations=allocations.user_new_allocations,
     )
 
     simulated_rewards = get_projects_rewards(
         projects_settings,
-        simulated_allocations,
+        allocations,
         all_projects,
         matched_rewards,
     )
 
-    leverage = calculate_leverage(matched_rewards, simulated_rewards.total_allocated)
+    leverage = simulated_rewards.leverage
 
     return (
         leverage,
@@ -95,7 +98,7 @@ def _verify_allocations_not_empty(allocations: List[AllocationItem]):
 def _verify_no_invalid_projects(
     allocations: List[AllocationItem], valid_projects: List[str]
 ):
-    projects_addresses = [a.proposal_address for a in allocations]
+    projects_addresses = [a.project_address for a in allocations]
     invalid_projects = list(set(projects_addresses) - set(valid_projects))
 
     if invalid_projects:
@@ -103,11 +106,11 @@ def _verify_no_invalid_projects(
 
 
 def _verify_no_duplicates(allocations: List[AllocationItem]):
-    proposal_addresses = [allocation.proposal_address for allocation in allocations]
-    [proposal_addresses.remove(p) for p in set(proposal_addresses)]
+    project_addresses = [allocation.project_address for allocation in allocations]
+    [project_addresses.remove(p) for p in set(project_addresses)]
 
-    if proposal_addresses:
-        raise exceptions.DuplicatedProposals(proposal_addresses)
+    if project_addresses:
+        raise exceptions.DuplicatedProjects(project_addresses)
 
 
 def _verify_user_not_a_project(user_address: str, projects: List[str]):
@@ -116,20 +119,18 @@ def _verify_user_not_a_project(user_address: str, projects: List[str]):
 
 
 def _verify_allocations_within_budget(allocations: List[AllocationItem], budget: int):
-    proposals_sum = sum([a.amount for a in allocations])
+    projects_sum = sum([a.amount for a in allocations])
 
-    if proposals_sum > budget:
+    if projects_sum > budget:
         raise exceptions.RewardsBudgetExceeded
 
 
 def _replace_user_allocation(
     all_allocations_before: List[AllocationDTO],
-    user_allocations: List[AllocationDTO],
     user_address: str,
 ) -> List[AllocationDTO]:
     allocations_without_user = [
         alloc for alloc in all_allocations_before if alloc.user_address != user_address
     ]
-    allocations_after_replacement = allocations_without_user + user_allocations
 
-    return allocations_after_replacement
+    return allocations_without_user

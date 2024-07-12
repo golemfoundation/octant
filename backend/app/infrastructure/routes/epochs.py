@@ -76,7 +76,7 @@ epoch_stats_model = api.model(
         "totalRewards": fields.String(
             required=True, description="Total rewards for the given epoch."
         ),
-        "individualRewards": fields.String(
+        "vanillaIndividualRewards": fields.String(
             required=True, description="Total rewards budget allocated to users rewards"
         ),
         "operationalCost": fields.String(

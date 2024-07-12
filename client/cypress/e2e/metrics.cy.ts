@@ -44,13 +44,6 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
     .invoke('text')
     .should(isCryptoAsAMainValue ? 'include' : 'not.include', '$');
 
-  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__value]')
-    .invoke('text')
-    .should('eq', '0');
-  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__subvalue]')
-    .invoke('text')
-    .should('eq', '$0.00');
-
   cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
     .invoke('text')
     .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
@@ -81,6 +74,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
@@ -126,7 +120,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         'MetricsEpochGridCurrentDonors',
         'MetricsEpochGridAverageLeverage',
         'MetricsEpochGridRewardsUnusedAndUnallocatedValue',
-        'MetricsEpochGridBelowThreshold',
       ];
 
       const metricsGeneralGridTilesDataTest = [

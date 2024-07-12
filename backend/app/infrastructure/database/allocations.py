@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
+from sqlalchemy import func
 from sqlalchemy.orm import Query, joinedload
 from typing_extensions import deprecated
 
@@ -36,8 +37,34 @@ def get_all(epoch: int) -> List[AllocationDTO]:
     return [
         AllocationDTO(
             amount=int(a.amount),
-            proposal_address=a.proposal_address,
+            project_address=a.project_address,
             user_address=a.user.address,
+        )
+        for a in allocations
+    ]
+
+
+def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
+        .all()
+    )
+
+    return [
+        AllocationDTO(
+            amount=int(a.amount),
+            project_address=a.project_address,
+            user_address=a.user.address,
+            uq_score=next(
+                (
+                    uq.validated_score
+                    for uq in a.user.uniqueness_quotients
+                    if uq.epoch == epoch
+                ),
+                None,
+            ),
         )
         for a in allocations
     ]
@@ -88,7 +115,7 @@ def get_all_by_user_addr_and_epoch(
 
     return [
         AccountFundsDTO(
-            address=alloc.proposal_address,
+            address=alloc.project_address,
             amount=int(alloc.amount),
         )
         for alloc in allocations
@@ -99,7 +126,7 @@ def get_all_by_project_addr_and_epoch(
     project_address: str, epoch: int, with_deleted=False
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
-        proposal_address=to_checksum_address(project_address), epoch=epoch
+        project_address=to_checksum_address(project_address), epoch=epoch
     ).options(joinedload(Allocation.user))
 
     if not with_deleted:
@@ -177,7 +204,7 @@ def store_allocation_request(
             epoch=epoch_num,
             user_id=user.id,
             nonce=request.payload.nonce,
-            proposal_address=to_checksum_address(a.proposal_address),
+            project_address=to_checksum_address(a.project_address),
             amount=str(a.amount),
         )
         for a in request.payload.allocations
@@ -238,3 +265,14 @@ def get_user_last_allocation_request(user_address: str) -> AllocationRequest | N
         .order_by(AllocationRequest.nonce.desc())
         .first()
     )
+
+
+def get_user_allocation_epoch_count(user_address: str) -> int:
+    epoch_count = (
+        db.session.query(func.count(AllocationRequest.epoch.distinct()))
+        .join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .scalar()
+    )
+
+    return epoch_count

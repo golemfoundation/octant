@@ -6,7 +6,9 @@ from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
-from app.modules.common.allocation_deserializer import deserialize_payload
+
+from app.infrastructure.external_api.common import retry_request
+from app.modules.common.allocations.deserializer import deserialize_payload
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
     EncodingStandardFor,
@@ -21,10 +23,7 @@ from app.modules.multisig_signatures.core import (
 )
 from app.modules.multisig_signatures.dto import Signature
 from app.pydantic import Model
-from app.infrastructure.external_api.safe.message_details import (
-    get_message_details,
-    retry_request,
-)
+from app.infrastructure.external_api.safe.message_details import get_message_details
 
 
 class OffchainMultisigSignatures(Model):
@@ -95,8 +94,7 @@ class OffchainMultisigSignatures(Model):
         message_hash = get_message_hash(user_address, safe_message_hash)
         msg_to_save = prepare_msg_to_save(message, op_type)
 
-        # TODO uncomment or change the behaviour of verification
-        # self._verify_owner(user_address, message_hash)
+        self._verify_owner(user_address, message_hash)
 
         database.multisig_signature.save_signature(
             user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip

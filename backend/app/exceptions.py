@@ -1,3 +1,5 @@
+from typing import List
+
 from flask import jsonify
 from requests.exceptions import RequestException
 
@@ -65,10 +67,10 @@ class NotInDecisionWindow(OctantException):
 
 class InvalidProjects(OctantException):
     code = 400
-    description = "The following proposals are not valid: {}"
+    description = "The following projects are not valid: {}"
 
-    def __init__(self, proposals):
-        super().__init__(self.description.format(proposals), self.code)
+    def __init__(self, projects):
+        super().__init__(self.description.format(projects), self.code)
 
 
 class ProjectAllocationToSelf(OctantException):
@@ -87,6 +89,14 @@ class RewardsBudgetExceeded(OctantException):
         super().__init__(self.description, self.code)
 
 
+class InvalidBudgetEstimationDetails(OctantException):
+    code = 400
+    description = "You must specify all required input details: {} for estimating the user budget."
+
+    def __init__(self, details: List[str]):
+        super().__init__(self.description.format(", ".join(details)), self.code)
+
+
 class BudgetNotFound(OctantException):
     code = 404
     description = "User {} does not have a budget for epoch {}"
@@ -95,12 +105,12 @@ class BudgetNotFound(OctantException):
         super().__init__(self.description.format(user_address, epoch_num), self.code)
 
 
-class DuplicatedProposals(OctantException):
+class DuplicatedProjects(OctantException):
     code = 400
-    description = "The following proposals are duplicated in the payload: {}"
+    description = "The following projects are duplicated in the payload: {}"
 
-    def __init__(self, proposals):
-        super().__init__(self.description.format(proposals), self.code)
+    def __init__(self, projects):
+        super().__init__(self.description.format(projects), self.code)
 
 
 class MissingSnapshot(OctantException):
@@ -269,6 +279,62 @@ class InvalidMatchedRewardsStrategy(OctantException):
     description = (
         "Can't calculate matched rewards when locked ratio is greater than TR percent"
     )
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class DelegationAlreadyExists(OctantException):
+    code = 400
+    description = "Delegation already exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class AddressAlreadyDelegated(OctantException):
+    code = 400
+    description = "Address is already used for delegation"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class DelegationDoesNotExist(OctantException):
+    code = 400
+    description = "Delegation does not exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class DelegationCheckWrongParams(OctantException):
+    code = 400
+    description = "Please specify at least 2 and not more than 10 addresses"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class AntisybilScoreTooLow(OctantException):
+    code = 400
+    description = "Antisybil score {} is lower then {}"
+
+    def __init__(self, score: float, min_score: float):
+        super().__init__(self.description.format(score, min_score), self.code)
+
+
+class InvalidRecalculationRequest(OctantException):
+    code = 400
+    description = "Invalid recalculation request"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class IndividualLeverageNotImplementedError(OctantException):
+    code = 500
+    description = "Individual leverage calculation is not implemented for given epoch"
 
     def __init__(self):
         super().__init__(self.description, self.code)

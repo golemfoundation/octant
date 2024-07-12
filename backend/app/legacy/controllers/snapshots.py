@@ -32,7 +32,7 @@ class PendingEpochSnapshot(JSONWizard):
     eth_proceeds: str
     total_effective_deposit: str
     total_rewards: str
-    all_individual_rewards: str
+    vanilla_individual_rewards: str
 
 
 @dataclass(frozen=True)
@@ -110,7 +110,7 @@ def get_pending_snapshot(epoch: Optional[int]) -> PendingEpochSnapshot:
         eth_proceeds=snapshot.eth_proceeds,
         total_effective_deposit=snapshot.total_effective_deposit,
         total_rewards=snapshot.total_rewards,
-        all_individual_rewards=snapshot.all_individual_rewards,
+        vanilla_individual_rewards=snapshot.vanilla_individual_rewards,
     )
 
 

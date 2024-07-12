@@ -10,7 +10,7 @@ def save_snapshot(epoch: int, rewards: OctantRewardsDTO):
         epoch=epoch,
         eth_proceeds=rewards.staking_proceeds,
         total_rewards=rewards.total_rewards,
-        all_individual_rewards=rewards.individual_rewards,
+        vanilla_individual_rewards=rewards.vanilla_individual_rewards,
         locked_ratio=rewards.locked_ratio,
         total_ed=rewards.total_effective_deposit,
         operational_cost=rewards.operational_cost,

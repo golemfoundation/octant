@@ -29,8 +29,15 @@ if os.getenv("SENTRY_DSN"):
     )
 
 from app import create_app  # noqa
+from app.extensions import db  # noqa
 
 app = create_app()
+
+
+@app.teardown_request
+def teardown_session(*args, **kwargs):
+    db.session.remove()
+
 
 if __name__ == "__main__":
     eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 5000)), app, log=app.logger)

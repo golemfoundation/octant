@@ -13,6 +13,6 @@ export async function apiGetProjectDonors(
   epoch: number,
 ): Promise<Response> {
   return apiService
-    .get(`${env.serverEndpoint}allocations/proposal/${projectAddress}/epoch/${epoch}`)
+    .get(`${env.serverEndpoint}allocations/project/${projectAddress}/epoch/${epoch}`)
     .then(({ data }) => data);
 }

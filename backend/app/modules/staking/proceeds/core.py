@@ -8,7 +8,7 @@ from app.extensions import w3
 ESTIMATED_STAKED_AMOUNT = 100000_000000000_000000000
 
 # TODO call an API to get a real value instead of hardcoding: https://linear.app/golemfoundation/issue/OCT-902/api-call-to-get-validators-api
-ESTIMATED_STAKING_APR = 0.0345
+ESTIMATED_STAKING_APR = 0.038
 
 
 def estimate_staking_proceeds(

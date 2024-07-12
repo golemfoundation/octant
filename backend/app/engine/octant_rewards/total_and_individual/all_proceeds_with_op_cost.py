@@ -8,7 +8,7 @@ class AllProceedsWithOperationalCost(TotalAndAllIndividualRewards):
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
         return int(payload.eth_proceeds - payload.operational_cost)
 
-    def calculate_all_individual_rewards(
+    def calculate_vanilla_individual_rewards(
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         total_rewards = self.calculate_total_rewards(payload)

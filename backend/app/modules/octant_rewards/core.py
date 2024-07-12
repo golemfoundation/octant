@@ -13,7 +13,7 @@ from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividual
 class OctantRewardsWrapper:
     locked_ratio: Decimal
     total_rewards: int
-    all_individual_rewards: int
+    vanilla_individual_rewards: int
     operational_cost: int
     ppf_value: int | None
     community_fund: int | None
@@ -26,7 +26,7 @@ def calculate_rewards(
 ) -> OctantRewardsWrapper:
     locked_ratio_calculator = octant_rewards_settings.locked_ratio
     op_cost_calculator = octant_rewards_settings.operational_cost
-    rewards_calculator = octant_rewards_settings.total_and_all_individual_rewards
+    rewards_calculator = octant_rewards_settings.total_and_vanilla_individual_rewards
 
     locked_ratio = locked_ratio_calculator.calculate_locked_ratio(
         LockedRatioPayload(total_effective_deposit)
@@ -38,8 +38,8 @@ def calculate_rewards(
         eth_proceeds, locked_ratio, operational_cost
     )
     total_rewards = rewards_calculator.calculate_total_rewards(rewards_payload)
-    all_individual_rewards = rewards_calculator.calculate_all_individual_rewards(
-        rewards_payload
+    vanilla_individual_rewards = (
+        rewards_calculator.calculate_vanilla_individual_rewards(rewards_payload)
     )
     individual_rewards_equilibrium = (
         rewards_calculator.calculate_individual_rewards_equilibrium(rewards_payload)
@@ -48,7 +48,7 @@ def calculate_rewards(
     ppf_calculator = octant_rewards_settings.ppf
     ppf_payload = PPFPayload(
         individual_rewards_equilibrium,
-        all_individual_rewards,
+        vanilla_individual_rewards,
         locked_ratio,
         rewards_calculator.IRE_PERCENT,
     )
@@ -61,7 +61,7 @@ def calculate_rewards(
     return OctantRewardsWrapper(
         locked_ratio=locked_ratio,
         total_rewards=total_rewards,
-        all_individual_rewards=all_individual_rewards,
+        vanilla_individual_rewards=vanilla_individual_rewards,
         operational_cost=operational_cost,
         ppf_value=ppf_value,
         community_fund=cf_value,
