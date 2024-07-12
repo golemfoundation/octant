@@ -49,6 +49,13 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     if (!address) {
       return;
     }
+    /**
+     * The initial value of UQ for every user is 0.2.
+     * It does not update automatically after delegation nor after change in Gitcoin Passport itself.
+     *
+     * We need to refreshAntisybilStatus to force BE to refetch current values from Gitcoin Passport
+     * and return true value.
+     */
     refreshAntisybilStatus(address!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
