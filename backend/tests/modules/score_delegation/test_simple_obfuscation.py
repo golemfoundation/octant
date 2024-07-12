@@ -2,21 +2,18 @@ from unittest.mock import Mock
 
 import pytest
 
+from app.exceptions import (
+    InvalidRecalculationRequest,
+    DelegationDoesNotExist,
+    InvalidDelegationForLockingAddress,
+)
 from app.infrastructure import database
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.score_delegation.service.simple_obfuscation import (
     SimpleObfuscationDelegation,
     SimpleObfuscationDelegationVerifier,
 )
-from app.exceptions import (
-    InvalidRecalculationRequest,
-    DelegationDoesNotExist,
-    InvalidDelegationForLockingAddress,
-)
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
-from app.modules.user.events_generator.service.db_and_graph import (
-    DbAndGraphEventsGenerator,
-)
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
 
 
@@ -35,9 +32,11 @@ def payload():
     )
 
 
-def test_delegation(context, payload, tos_users, patch_is_contract):
+def test_delegation(
+    context, mock_empty_events_generator, payload, tos_users, patch_is_contract
+):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
@@ -78,10 +77,10 @@ def test_delegation_disabled_when_secondary_is_locking(
 
 
 def test_disable_recalculation_when_secondary_address_is_used(
-    context, payload, patch_is_contract
+    context, mock_empty_events_generator, payload, patch_is_contract
 ):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
@@ -109,9 +108,11 @@ def test_disable_recalculation_when_secondary_address_is_used(
     assert len(delegations) == 3
 
 
-def test_recalculation_when_delegation_is_not_done(context, payload, patch_is_contract):
+def test_recalculation_when_delegation_is_not_done(
+    context, mock_empty_events_generator, payload, patch_is_contract
+):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
