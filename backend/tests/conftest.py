@@ -1411,6 +1411,14 @@ def mock_events_generator():
 
 
 @pytest.fixture(scope="function")
+def mock_empty_events_generator():
+    events_generator_mock = Mock()
+    events_generator_mock.get_all_users_events.return_value = {}
+    events_generator_mock.get_user_events.return_value = []
+    return events_generator_mock
+
+
+@pytest.fixture(scope="function")
 def mock_user_deposits():
     user_deposits_service_mock = Mock()
     user_deposits_service_mock.get_total_effective_deposit.return_value = TOTAL_ED

@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable
+from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable, Set
 
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO, ProjectRewardsResult
@@ -154,7 +154,7 @@ class SimulatePendingSnapshots(Protocol):
 class WithdrawalsService(Protocol):
     def get_withdrawable_eth(
         self, context: Context, address: str
-    ) -> list[WithdrawableEth]:
+    ) -> List[WithdrawableEth]:
         ...
 
 
@@ -187,7 +187,7 @@ class MultisigSignatures(Protocol):
 
     def approve_pending_signatures(
         self, context: Context, op_type: SignatureOpType
-    ) -> list[Signature]:
+    ) -> List[Signature]:
         ...
 
     def apply_staged_signatures(self, context: Context, signature_id: int):
@@ -240,7 +240,7 @@ class ScoreDelegation(Protocol):
     def recalculate(self, context: Context, payload: ScoreDelegationPayload):
         ...
 
-    def check(self, context: Context, addresses: list[str]) -> set[Tuple[str, str]]:
+    def check(self, context: Context, addresses: List[str]) -> Set[Tuple[str, str]]:
         ...
 
 

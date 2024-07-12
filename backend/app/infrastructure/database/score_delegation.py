@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.infrastructure.database.models import ScoreDelegation
+from typing import Set
 
 
 def save_delegation(
@@ -14,5 +15,5 @@ def save_delegation(
     db.session.add(delegation_both)
 
 
-def get_all_delegations() -> set[str]:
+def get_all_delegations() -> Set[str]:
     return {s.hashed_addr for s in ScoreDelegation.query.all()}

@@ -68,5 +68,4 @@ def _verify_eoa(
         recovered_address = Account.recover_message(encoded_msg, signature=signature)
     except BadSignature:
         return False
-
     return recovered_address == user_address
