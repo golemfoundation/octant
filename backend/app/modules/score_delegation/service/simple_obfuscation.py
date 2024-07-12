@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Protocol, runtime_checkable, Tuple, Container
+from typing import Protocol, runtime_checkable, Tuple, Container, List
 
 from app.context.manager import Context
 from app.extensions import db
@@ -12,6 +12,8 @@ from app.modules.score_delegation.core import ActionType
 from app.pydantic import Model
 
 from flask import current_app as app
+
+from app.modules.modules_factory.protocols import UserEffectiveDeposits
 
 
 @runtime_checkable
@@ -34,14 +36,15 @@ class Antisybil(Protocol):
 
 class SimpleObfuscationDelegationVerifier(Verifier, Model):
     def _verify_logic(self, context: Context, **kwargs):
-        hashed_addresses, action_type, score = (
+        hashed_addresses, action_type, score, secondary_budget = (
             kwargs["hashed_addresses"],
             kwargs["action_type"],
             kwargs["score"],
+            kwargs["secondary_budget"],
         )
         get_all_delegations = database.score_delegation.get_all_delegations()
         core.verify_score_delegation(
-            hashed_addresses, get_all_delegations, score, action_type
+            hashed_addresses, get_all_delegations, score, secondary_budget, action_type
         )
 
     def _verify_signature(self, _: Context, **kwargs):
@@ -52,6 +55,7 @@ class SimpleObfuscationDelegationVerifier(Verifier, Model):
 class SimpleObfuscationDelegation(Model):
     verifier: Verifier
     antisybil: Antisybil
+    user_deposits_service: UserEffectiveDeposits
 
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
         primary, secondary, both = get_hashed_addresses(
@@ -66,7 +70,7 @@ class SimpleObfuscationDelegation(Model):
         self._delegation(context, payload, ActionType.RECALCULATION)
         db.session.commit()
 
-    def check(self, _: Context, addresses: list[str]) -> Container[Tuple[str, str]]:
+    def check(self, _: Context, addresses: List[str]) -> Container[Tuple[str, str]]:
         all_hashes = database.score_delegation.get_all_delegations()
         return core.delegation_check(
             addresses,
@@ -84,12 +88,15 @@ class SimpleObfuscationDelegation(Model):
         score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
             context, payload.secondary_addr
         )
+        secondary_budget = self.user_deposits_service.get_user_effective_deposit(context,
+                                                                                 payload.secondary_addr)
         self.verifier.verify(
             context,
             hashed_addresses=hashed_addresses,
             payload=payload,
             score=score,
-            action_type=action,
+            secondary_budget=secondary_budget,
+            action_type=action
         )
         self.antisybil.update_antisybil_status(
             context, payload.primary_addr, score, expires_at, stamps
