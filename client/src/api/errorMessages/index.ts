@@ -12,11 +12,12 @@ const IGNORED_QUERIES: IgnoredQueries = [
   ROOTS.cryptoValues,
   ROOTS.individualReward,
   ROOTS.projectsIpfsResults,
+  ROOTS.uqScore,
 ];
 
 const errors: QueryMutationErrorConfig = {
   4001: {
-    message: i18n.t('api.errorMessage.userRejectedTransaction'),
+    message: i18n.t('api.errorMessage.userRejectedWalletOperation'),
     type: 'toast',
   },
   'HN:Allocations/allocate-above-rewards-budget': {

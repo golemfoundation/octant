@@ -8,7 +8,7 @@ import Loader from 'components/ui/Loader';
 import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
-import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
@@ -25,7 +25,7 @@ const motionAnimationProps: AnimationProps = {
 
 const ModalOnboarding: FC = () => {
   const { isConnected } = useAccount();
-  const { data: isUserTOSAccepted } = useUserTOS();
+  const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
 
   const {
     setIsOnboardingDone,
@@ -49,13 +49,25 @@ const ModalOnboarding: FC = () => {
   const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
-  const { isDesktop } = useMediaQuery();
-  const [currentStepIndex, setCurrentStepIndex] = useState<number>(lastSeenStep - 1);
+
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
-  const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
+  const {
+    currentStepIndex,
+    setCurrentStepIndex,
+    handleModalEdgeClick,
+    handleTouchMove,
+    handleTouchStart,
+  } = useModalStepperNavigation({
+    areHandlersEnabled: isConnected && !!isUserTOSAccepted,
+    initialCurrentStepIndex: lastSeenStep - 1,
+    steps: stepsToUse,
+  });
+
+  const currentStep =
+    !isFetchingUserTOS && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;
@@ -66,94 +78,6 @@ const ModalOnboarding: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsOnboardingDone, isUserTOSAccepted]);
-
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isUserTOSAccepted) {
-      return;
-    }
-    const touchDown = e.touches[0].clientX;
-
-    setTouchStart(touchDown);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStart || !isUserTOSAccepted) {
-      return;
-    }
-
-    const currentTouch = e.touches[0].clientX;
-    const diff = touchStart - currentTouch;
-    const touchMoveXDiff = 5;
-
-    const canChangeToNextStep =
-      diff >= touchMoveXDiff && currentStepIndex !== stepsToUse.length - 1;
-    const canChangeToPrevStep = diff <= -touchMoveXDiff && currentStepIndex > 0;
-
-    if (canChangeToNextStep) {
-      setCurrentStepIndex(prev => prev + 1);
-    }
-
-    if (canChangeToPrevStep) {
-      setCurrentStepIndex(prev => prev - 1);
-    }
-
-    setTouchStart(null);
-  };
-
-  const handleModalEdgeClick: React.MouseEventHandler<HTMLDivElement> = e => {
-    if (!isUserTOSAccepted) {
-      return;
-    }
-
-    const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
-    const offsetLeftParent = offsetParent.offsetLeft;
-    const onboardingModalWidth = isDesktop
-      ? (e.target as HTMLDivElement).offsetParent!.clientWidth!
-      : window.innerWidth;
-    const { clientX } = e;
-
-    const clickDiff = 25;
-
-    const isLeftEdgeClick = clientX - offsetLeftParent <= clickDiff;
-    const isRightEdgeClick =
-      Math.abs(clientX - offsetLeftParent - onboardingModalWidth) <= clickDiff;
-
-    const canChangeToPrevStep = isLeftEdgeClick && currentStepIndex > 0;
-    const canChangeToNextStep = isRightEdgeClick && currentStepIndex !== stepsToUse.length - 1;
-
-    if (canChangeToNextStep) {
-      setCurrentStepIndex(prev => prev + 1);
-    }
-
-    if (canChangeToPrevStep) {
-      setCurrentStepIndex(prev => prev - 1);
-    }
-  };
-
-  useEffect(() => {
-    if (!isConnected || !isUserTOSAccepted) {
-      return;
-    }
-
-    const listener = ({ key }: KeyboardEvent) => {
-      if (key === 'ArrowRight' && currentStepIndex !== stepsToUse.length - 1) {
-        setCurrentStepIndex(prev => prev + 1);
-      }
-
-      if (key === 'ArrowLeft' && currentStepIndex > 0) {
-        setCurrentStepIndex(prev => prev - 1);
-      }
-    };
-
-    window.addEventListener('keydown', listener);
-
-    return () => {
-      window.removeEventListener('keydown', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, currentStepIndex, stepsToUse, isOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
     if (

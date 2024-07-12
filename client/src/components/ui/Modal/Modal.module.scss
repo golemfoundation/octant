@@ -14,6 +14,10 @@ $desktop-width: 47.2rem;
   background: $color-octant-grey3;
   border-radius: $border-radius-20 $border-radius-20 0 0;
 
+  &.isConnectWalletModal {
+    z-index: $z-index-8;
+  }
+
   &.variant {
     &--small {
       width: calc(100% - 4.8rem);

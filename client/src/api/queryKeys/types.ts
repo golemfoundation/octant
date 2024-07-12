@@ -1,6 +1,7 @@
 import { SettingsData } from 'store/settings/types';
 
 export type Root = {
+  antisybilStatus: 'antisybilStatus';
   calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
@@ -28,6 +29,7 @@ export type Root = {
 };
 
 export type QueryKeys = {
+  antisybilStatus: (userAddress: string) => [Root['antisybilStatus'], string];
   blockNumber: ['blockNumber'];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
@@ -73,7 +75,7 @@ export type QueryKeys = {
   totalWithdrawals: ['totalWithdrawals'];
   unlocks: ['unlocks'];
   upcomingBudget: (userAddress: string) => [Root['upcomingBudget'], string];
-  uqScore: (epoch: number) => [Root['uqScore'], string];
+  uqScore: (epochNumber: number) => [Root['uqScore'], string];
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];

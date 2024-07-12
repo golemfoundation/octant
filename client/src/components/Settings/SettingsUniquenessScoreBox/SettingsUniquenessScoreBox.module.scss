@@ -1,0 +1,31 @@
+.root {
+  padding: 4.4rem 2.2rem 0.5rem;
+  height: 22.4rem;
+
+  @media #{$desktop-up} {
+    padding: 4.5rem 2.2rem 2.5rem;
+  }
+
+  .titleSuffix {
+    cursor: pointer;
+    color: $color-octant-green;
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+  }
+
+  .buttonsWrapper {
+    margin-bottom: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .button {
+      cursor: pointer;
+      flex: 1;
+
+      &:first-child {
+        margin-right: 1.2rem;
+      }
+    }
+  }
+}

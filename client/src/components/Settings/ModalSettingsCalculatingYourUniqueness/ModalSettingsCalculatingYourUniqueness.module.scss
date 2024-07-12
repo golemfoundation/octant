@@ -1,0 +1,55 @@
+.root {
+  min-width: 39rem;
+
+  .imageWrapper {
+    height: 22.6rem;
+    width: 100%;
+    padding: 6.4rem 14.8rem 0;
+
+    .image {
+      width: 17.6rem;
+      height: 16rem;
+    }
+  }
+
+  .text {
+    height: 19.8rem;
+    line-height: 2.2rem;
+  
+    &,
+    * {
+      font-size: $font-size-14;
+    }
+  
+    @media #{$desktop-up} {
+      height: 21.6rem;
+      line-height: 2.4rem;
+  
+      &,
+      * {
+        font-size: $font-size-16;
+      }
+    }
+  }
+
+  .link {
+    text-decoration: underline;
+  
+    @media #{$desktop-up} {
+      text-decoration: none;
+    }
+  }
+
+}
+
+.stepper {
+  > div {
+    margin-bottom: 0;
+  }
+
+  @media #{$desktop-up} {
+    > div {
+      width: 100%;
+    }
+  }
+}

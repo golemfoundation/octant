@@ -1,2 +1,2 @@
 // eslint-disable-next-line no-restricted-exports
-export { default } from './SettingsLinksInfoBox';
+export { default } from './SettingsProgressPath';

@@ -97,10 +97,15 @@
   margin-left: 1.2rem;
 }
 
-.infoBoxesWrapper {
+.boxesWrapper {
+  flex-direction: column;
   display: flex;
   gap: 1.6rem;
   width: 100%;
+
+  @media #{$desktop-up} {
+    flex-direction: row;
+  }
 }
 
 .arrowRight path {

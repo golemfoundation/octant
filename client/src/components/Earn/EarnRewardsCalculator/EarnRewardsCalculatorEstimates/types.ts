@@ -1,5 +1,7 @@
+import { GetValuesToDisplayReturnType } from 'hooks/helpers/useGetValuesToDisplay';
+
 export interface EarnRewardsCalculatorEstimatesProps {
+  estimatedRewards?: GetValuesToDisplayReturnType;
   isLoading?: boolean;
-  matchFundingFiat: string;
-  rewardsFiat: string;
+  matchFunding?: GetValuesToDisplayReturnType;
 }

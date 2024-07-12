@@ -8,6 +8,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
 import networkConfig from 'constants/networkConfig';
+import useSettingsStore from 'store/settings/store';
 import { browserWallet, walletConnect, ledgerConnect } from 'svg/wallet';
 
 import styles from './LayoutConnectWallet.module.scss';
@@ -16,6 +17,11 @@ const LayoutConnectWallet: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.connectWallet',
   });
+
+  const { isDelegationInProgress, setIsDelegationConnectModalOpen } = useSettingsStore(state => ({
+    isDelegationInProgress: state.data.isDelegationInProgress,
+    setIsDelegationConnectModalOpen: state.setIsDelegationConnectModalOpen,
+  }));
   const { connectors, status, connect: onConnectAnyConnector } = useConnect();
   const { connectModalOpen: isOpen } = useConnectModal();
 
@@ -30,6 +36,13 @@ const LayoutConnectWallet: FC = () => {
     if (!browserWalletConnector) {
       return;
     }
+
+    if (isDelegationInProgress) {
+      browserWalletConnector.connect();
+      setIsDelegationConnectModalOpen(false);
+      return;
+    }
+
     onConnectAnyConnector({ connector: browserWalletConnector });
   };
 
@@ -64,18 +77,27 @@ const LayoutConnectWallet: FC = () => {
         </BoxRounded>
       )}
       <WalletButton.Custom wallet="walletConnect">
-        {({ ready: isReady, connect: onConnect }) => (
+        {({ ready: isReady, connect: onConnect, connector }) => (
           <BoxRounded
             className={styles.walletTile}
             dataTest="ConnectWallet__BoxRounded--walletConnect"
             isGrey
             justifyContent="start"
             // In Cypress isReady is sometimes always false. To bypass that, we open modal regardless.
-            onClick={
-              window.Cypress === undefined && (!isReady || isOpen || isBrowserWalletConnecting)
-                ? undefined
-                : onConnect
-            }
+            onClick={() => {
+              if (isDelegationInProgress) {
+                return connector.showWalletConnectModal!();
+              }
+
+              if (
+                window.Cypress === undefined &&
+                (!isReady || isOpen || isBrowserWalletConnecting)
+              ) {
+                return undefined;
+              }
+
+              return onConnect();
+            }}
           >
             <Svg
               classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}

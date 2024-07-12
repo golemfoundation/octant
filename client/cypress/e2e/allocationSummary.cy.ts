@@ -1,7 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { visitWithLoader, mockCoinPricesServer, connectWallet, ETH_USD } from 'cypress/utils/e2e';
+import {
+  visitWithLoader,
+  mockCoinPricesServer,
+  connectWallet,
+  changeMainValueToFiat,
+  ETH_USD,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -11,12 +17,6 @@ import {
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
-
-const changeMainValueToFiat = () => {
-  cy.get('[data-test=Navbar__Button--Settings]').click();
-  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-  cy.get('[data-test=Navbar__Button--Allocate]').click();
-};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`allocation summary: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -78,7 +78,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .invoke('text')
         .should('eq', '0.003 ETH');
 
-      changeMainValueToFiat();
+      changeMainValueToFiat(ROOT_ROUTES.allocation.absolute);
 
       cy.get('[data-test=AllocationSummaryProject]')
         .eq(0)
