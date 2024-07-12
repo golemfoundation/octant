@@ -7,7 +7,8 @@ from app.exceptions import (
     InvalidSignature,
     DelegationDoesNotExist,
     AntisybilScoreTooLow,
-    InvalidRecalculationRequest, InvalidDelegationForLockingAddress,
+    InvalidRecalculationRequest,
+    InvalidDelegationForLockingAddress,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -110,6 +111,7 @@ def _verify_hashed_addresses(
 def _verify_score(score: float):
     if score < MIN_SCORE:
         raise AntisybilScoreTooLow(score, MIN_SCORE)
+
 
 def _verify_non_locking(secondary_budget):
     if secondary_budget > 0:

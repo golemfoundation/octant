@@ -342,7 +342,7 @@ class IndividualLeverageNotImplementedError(OctantException):
 
 class InvalidDelegationForLockingAddress(OctantException):
     code = 400
-    description = "Secondary address must be GLMs unlocking one"
+    description = "Secondary address cannot lock any GLMs"
 
     def __init__(self):
         super().__init__(self.description, self.code)

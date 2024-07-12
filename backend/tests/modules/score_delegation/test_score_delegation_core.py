@@ -38,7 +38,11 @@ def test_score_delegation_fails_when_secondary_is_locking():
     )
     with pytest.raises(InvalidDelegationForLockingAddress):
         core.verify_score_delegation(
-            hashed_addresses, set(), 20, BUDGET_GREATER_THAN_ZERO, core.ActionType.DELEGATION
+            hashed_addresses,
+            set(),
+            20,
+            BUDGET_GREATER_THAN_ZERO,
+            core.ActionType.DELEGATION,
         )
 
 

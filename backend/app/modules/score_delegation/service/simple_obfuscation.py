@@ -88,15 +88,16 @@ class SimpleObfuscationDelegation(Model):
         score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
             context, payload.secondary_addr
         )
-        secondary_budget = self.user_deposits_service.get_user_effective_deposit(context,
-                                                                                 payload.secondary_addr)
+        secondary_budget = self.user_deposits_service.get_user_effective_deposit(
+            context, payload.secondary_addr
+        )
         self.verifier.verify(
             context,
             hashed_addresses=hashed_addresses,
             payload=payload,
             score=score,
             secondary_budget=secondary_budget,
-            action_type=action
+            action_type=action,
         )
         self.antisybil.update_antisybil_status(
             context, payload.primary_addr, score, expires_at, stamps
