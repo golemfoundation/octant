@@ -1,12 +1,13 @@
 import hashlib
 from datetime import datetime, timedelta
-from typing import Tuple
+from typing import Tuple, Set, List
 
 import pytest
 
 from app import exceptions
 from app.modules.common.delegation import hash_addresses
 from app.modules.score_delegation import core
+from app.exceptions import InvalidDelegationForLockingAddress
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
 
 
@@ -17,7 +18,7 @@ def test_score_delegation_passes():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, {hashed_carol}, 20, core.ActionType.DELEGATION
+        hashed_addresses, {hashed_carol}, 20, 0, core.ActionType.DELEGATION
     )
 
 
@@ -26,8 +27,23 @@ def test_score_delegation_passes_when_there_are_no_other_delegations():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, set(), 20, core.ActionType.DELEGATION
+        hashed_addresses, set(), 20, 0, core.ActionType.DELEGATION
     )
+
+
+def test_score_delegation_fails_when_secondary_is_locking():
+    BUDGET_GREATER_THAN_ZERO = 100
+    hashed_addresses = hash_addresses(
+        USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
+    )
+    with pytest.raises(InvalidDelegationForLockingAddress):
+        core.verify_score_delegation(
+            hashed_addresses,
+            set(),
+            20,
+            BUDGET_GREATER_THAN_ZERO,
+            core.ActionType.DELEGATION,
+        )
 
 
 def test_score_delegation_fails():
@@ -40,6 +56,7 @@ def test_score_delegation_fails():
             hashed_addresses,
             {hashed_addresses.primary_addr_hash},
             20,
+            0,
             core.ActionType.DELEGATION,
         )
 
@@ -48,6 +65,7 @@ def test_score_delegation_fails():
             hashed_addresses,
             {hashed_addresses.secondary_addr_hash},
             20,
+            0,
             core.ActionType.DELEGATION,
         )
 
@@ -60,6 +78,7 @@ def test_score_recalculation_passes():
         hashed_addresses,
         {hashed_addresses.both_hash},
         20,
+        0,
         core.ActionType.RECALCULATION,
     )
 
@@ -70,7 +89,7 @@ def test_score_recalculation_fails_when_there_are_no_other_delegations():
     )
     with pytest.raises(exceptions.DelegationDoesNotExist):
         core.verify_score_delegation(
-            hashed_addresses, set(), 20, core.ActionType.RECALCULATION
+            hashed_addresses, set(), 20, 0, core.ActionType.RECALCULATION
         )
 
 
@@ -89,6 +108,7 @@ def test_score_recalculation_fails():
             hashed_addresses,
             {hashed_alice_and_carol},
             20,
+            0,
             core.ActionType.RECALCULATION,
         )
 
@@ -100,7 +120,7 @@ def test_score_is_too_low():
 
     with pytest.raises(exceptions.AntisybilScoreTooLow):
         core.verify_score_delegation(
-            hashed_addresses, set(), 19.9, core.ActionType.DELEGATION
+            hashed_addresses, set(), 19.9, 0, core.ActionType.DELEGATION
         )
 
 
@@ -109,11 +129,11 @@ def test_score_is_sufficient():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, set(), 20, core.ActionType.DELEGATION
+        hashed_addresses, set(), 20, 0, core.ActionType.DELEGATION
     )
 
 
-def _mk_db(delegations: list[Tuple[str, str]]) -> set[str]:
+def _mk_db(delegations: List[Tuple[str, str]]) -> Set[str]:
     results = []
     for secondary, primary in delegations:
         _, _, both = hash_addresses(primary, secondary, "salt", "salt_primary")

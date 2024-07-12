@@ -79,12 +79,18 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   );
 
   const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
-  const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus();
+  const {
+    mutateAsync: refreshAntisybilStatus,
+    isSuccess: isSuccessRefreshAntisybilStatus,
+    error: refreshAntisybilStatusError,
+  } = useRefreshAntisybilStatus();
 
   const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
     useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
-      enabled: isSuccessRefreshAntisybilStatus,
+      enabled:
+        isSuccessRefreshAntisybilStatus ||
+        (refreshAntisybilStatusError as null | { message: string })?.message ===
+          'Address is already used for delegation',
     });
 
   const checkDelegation = async () => {

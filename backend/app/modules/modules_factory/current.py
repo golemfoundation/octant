@@ -111,6 +111,7 @@ class CurrentServices(Model):
         score_delegation = SimpleObfuscationDelegation(
             verifier=score_delegation_verifier,
             antisybil=user_antisybil_service,
+            user_deposits_service=user_deposits,
         )
 
         multisig_signatures = OffchainMultisigSignatures(
