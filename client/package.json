@@ -39,6 +39,7 @@
     "@sentry/react": "^8.4.0",
     "@sentry/vite-plugin": "^2.17.0",
     "@tanstack/react-query": "^5.37.1",
+    "@wagmi/core": "^2.11.5",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
     "date-fns": "^3.6.0",
@@ -60,7 +61,7 @@
     "react-vis": "^1.12.1",
     "socket.io-client": "^4.7.5",
     "viem": "^2.12.1",
-    "wagmi": "^2.9.6",
+    "wagmi": "^2.10.8",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },

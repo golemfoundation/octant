@@ -32,4 +32,8 @@ def get_score_by_address(user_address: str) -> Optional[GPStamps]:
     if user is None:
         raise UserNotFound(user_address)
 
-    return GPStamps.query.filter_by(user_id=user.id).first()
+    return (
+        GPStamps.query.order_by(GPStamps.created_at.desc())
+        .filter_by(user_id=user.id)
+        .first()
+    )

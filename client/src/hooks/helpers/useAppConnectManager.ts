@@ -53,11 +53,11 @@ export default function useAppConnectManager(
   const { setValuesFromLocalStorage: setValuesFromLocalStorageTips } = useTipsStore(state => ({
     setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));
-  const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings } = useSettingsStore(
-    state => ({
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings, isDelegationInProgress } =
+    useSettingsStore(state => ({
+      isDelegationInProgress: state.data.isDelegationInProgress,
       setValuesFromLocalStorage: state.setValuesFromLocalStorage,
-    }),
-  );
+    }));
   const { setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding } = useOnboardingStore(
     state => ({
       setValuesFromLocalStorage: state.setValuesFromLocalStorage,
@@ -137,7 +137,10 @@ export default function useAppConnectManager(
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesSyncStatusRequireFlush =
       !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
-    if (doesAddressRequireFlush || doesIsConnectedRequireFlush || doesSyncStatusRequireFlush) {
+    if (
+      (doesAddressRequireFlush || doesIsConnectedRequireFlush || doesSyncStatusRequireFlush) &&
+      !isDelegationInProgress
+    ) {
       setIsFlushRequired(true);
     }
     if (doesIsConnectedRequireFlush) {
