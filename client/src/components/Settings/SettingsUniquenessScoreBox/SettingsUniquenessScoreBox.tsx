@@ -92,8 +92,14 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       return;
     }
     const accountsPromises = connectors.map(connector => connector.getAccounts());
-    const addresses = await Promise.all(accountsPromises);
-    const uniqAddresses = uniq(addresses.flat());
+    /**
+     * In Safari browsers this array of promises results in an empty result,
+     * resulting in an error thrown from wagmi, ProviderNotFoundError.
+     *
+     * Adding empty catch here solves the problem.
+     */
+    const addresses = await Promise.all(accountsPromises).catch(() => {});
+    const uniqAddresses = addresses ? uniq(addresses.flat()) : [];
     if (uniqAddresses.length < 2) {
       refreshAntisybilStatus(address!);
       return;
