@@ -14,7 +14,7 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 MR_FUNDING_CAP_PERCENT = Decimal("0.2")
 LOW_UQ_SCORE = Decimal("0.2")
 MAX_UQ_SCORE = Decimal("1.0")
-UQ_THRESHOLD = 20
+UQ_THRESHOLD = 5
 
 BEACONCHAIN_API = "https://beaconcha.in/api"
 ETHERSCAN_API = "https://api.etherscan.io/api"
