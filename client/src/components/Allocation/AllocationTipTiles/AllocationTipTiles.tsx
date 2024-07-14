@@ -76,7 +76,6 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !!isDecisionWindowOpen &&
     !isPendingRefreshAntisybilStatus &&
     !isFetchingUqScore &&
-    isSuccessRefreshAntisybilStatus &&
     uqScore === 20n &&
     !wasUqTooLowAlreadyClosed;
 
