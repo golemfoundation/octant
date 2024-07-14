@@ -22,15 +22,25 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const navigate = useNavigate();
   const { isDesktop } = useMediaQuery();
   const { address, isConnected } = useAccount();
-  const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus();
+  const {
+    mutateAsync: refreshAntisybilStatus,
+    isPending: isPendingRefreshAntisybilStatus,
+    isSuccess: isSuccessRefreshAntisybilStatus,
+    error: refreshAntisybilStatusError,
+  } = useRefreshAntisybilStatus();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
-  const { data: uqScore } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!, {
-    enabled: isSuccessRefreshAntisybilStatus,
-  });
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(
+    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+    {
+      enabled:
+        isSuccessRefreshAntisybilStatus ||
+        (refreshAntisybilStatusError as null | { message: string })?.message ===
+          'Address is already used for delegation',
+    },
+  );
   const {
     wasRewardsAlreadyClosed,
     setWasRewardsAlreadyClosed,
@@ -64,6 +74,8 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
 
   const isUqTooLowTipVisible =
     !!isDecisionWindowOpen &&
+    !isPendingRefreshAntisybilStatus &&
+    !isFetchingUqScore &&
     isSuccessRefreshAntisybilStatus &&
     uqScore === 20n &&
     !wasUqTooLowAlreadyClosed;
