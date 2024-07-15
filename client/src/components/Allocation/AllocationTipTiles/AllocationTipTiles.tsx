@@ -1,10 +1,11 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import TipTile from 'components/shared/TipTile';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -20,12 +21,26 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
   const navigate = useNavigate();
   const { isDesktop } = useMediaQuery();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
+  const {
+    mutateAsync: refreshAntisybilStatus,
+    isPending: isPendingRefreshAntisybilStatus,
+    isSuccess: isSuccessRefreshAntisybilStatus,
+    error: refreshAntisybilStatusError,
+  } = useRefreshAntisybilStatus();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
-  const { data: uqScore } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(
+    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+    {
+      enabled:
+        isSuccessRefreshAntisybilStatus ||
+        (refreshAntisybilStatusError as null | { message: string })?.message ===
+          'Address is already used for delegation',
+    },
+  );
   const {
     wasRewardsAlreadyClosed,
     setWasRewardsAlreadyClosed,
@@ -40,10 +55,29 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     wasUqTooLowAlreadyClosed: state.data.wasUqTooLowAlreadyClosed,
   }));
 
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+    /**
+     * The initial value of UQ for every user is 0.2.
+     * It does not update automatically after delegation nor after change in Gitcoin Passport itself.
+     *
+     * We need to refreshAntisybilStatus to force BE to refetch current values from Gitcoin Passport
+     * and return true value.
+     */
+    refreshAntisybilStatus(address!);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const isEpoch1 = currentEpoch === 1;
 
   const isUqTooLowTipVisible =
-    !!isDecisionWindowOpen && uqScore === 20n && !wasUqTooLowAlreadyClosed;
+    !!isDecisionWindowOpen &&
+    !isPendingRefreshAntisybilStatus &&
+    !isFetchingUqScore &&
+    uqScore === 20n &&
+    !wasUqTooLowAlreadyClosed;
 
   const isRewardsTipVisible =
     !isEpoch1 &&
