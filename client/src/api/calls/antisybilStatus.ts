@@ -14,5 +14,5 @@ export async function apiGetAntisybilStatus(userAddress: string): Promise<Respon
 }
 
 export async function apiPutAntisybilStatus(userAddress: string): Promise<void> {
-  return apiService.put(`${env.serverEndpoint}user/${userAddress}/antisybil-status`);
+  return apiService.put(`${env.serverEndpoint}user/${userAddress}/antisybil-statwd`);
 }
