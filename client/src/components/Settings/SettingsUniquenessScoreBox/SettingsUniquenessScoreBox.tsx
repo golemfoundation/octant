@@ -86,12 +86,17 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   } = useRefreshAntisybilStatus();
 
   const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
-    useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
-      enabled:
-        isSuccessRefreshAntisybilStatus ||
-        (refreshAntisybilStatusError as null | { message: string })?.message ===
-          'Address is already used for delegation',
-    });
+    useAntisybilStatusScore(
+      isDelegationCompleted && delegationSecondaryAddress !== '0x???'
+        ? delegationSecondaryAddress!
+        : address!,
+      {
+        enabled:
+          isSuccessRefreshAntisybilStatus ||
+          (refreshAntisybilStatusError as null | { message: string })?.message ===
+            'Address is already used for delegation',
+      },
+    );
 
   const checkDelegation = async () => {
     if (!isUserTOSAccepted) {
@@ -139,6 +144,10 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     if (isDelegationCompleted) {
       setSecondaryAddressScore(antisybilStatusScore);
     } else {
+      if (refreshAntisybilStatusError) {
+        setDelegationPrimaryAddress(address);
+        setDelegationSecondaryAddress('0x???');
+      }
       setPrimaryAddressScore(
         antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n
           ? DELEGATION_MIN_SCORE
@@ -147,7 +156,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     }
     setIsFetchingScore(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessAntisybilStatusScore, isFetchingUqScore]);
+  }, [isSuccessAntisybilStatusScore, isFetchingUqScore, refreshAntisybilStatusError]);
 
   useEffect(() => {
     if (
@@ -208,7 +217,12 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
-            isDisabled={isDelegationCompleted || isFetchingScore || isFetchingUqScore}
+            isDisabled={
+              isDelegationCompleted ||
+              isFetchingScore ||
+              isFetchingUqScore ||
+              delegationSecondaryAddress === '0x???'
+            }
             isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
@@ -224,7 +238,8 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
               primaryAddressScore === undefined ||
               primaryAddressScore >= 20 ||
               isFetchingUqScore ||
-              uqScore === 100n
+              uqScore === 100n ||
+              delegationSecondaryAddress === '0x???'
             }
             isHigh
             onClick={() => {
