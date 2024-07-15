@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import Identicon from 'components/ui/Identicon';
+import Svg from 'components/ui/Svg';
 import useSettingsStore from 'store/settings/store';
+import { octant } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './SettingsUniquenessScoreAddresses.module.scss';
@@ -66,7 +68,11 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
       <div className={styles.avatarsGroup}>
         {addresses.map(address => (
           <div key={address} className={styles.addressAvatar}>
-            <Identicon className={styles.avatar} username={address} />
+            {address === '0x???' ? (
+              <Svg img={octant} size={1.4} />
+            ) : (
+              <Identicon className={styles.avatar} username={address} />
+            )}
           </div>
         ))}
       </div>
