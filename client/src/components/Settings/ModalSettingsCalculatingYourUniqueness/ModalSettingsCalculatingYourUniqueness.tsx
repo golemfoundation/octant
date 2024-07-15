@@ -6,10 +6,7 @@ import Img from 'components/ui/Img';
 import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
-import {
-  GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD,
-  SCORING_20_FOR_HUMANS_GUIDE,
-} from 'constants/urls';
+import { GITCOIN_PASSPORT, SCORING_20_FOR_HUMANS_GUIDE } from 'constants/urls';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 
 import styles from './ModalSettingsCalculatingYourUniqueness.module.scss';
@@ -23,13 +20,7 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
   const steps = [
     <Trans
       className={styles.onboardingModalText}
-      components={[
-        <Button
-          className={styles.link}
-          href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
-          variant="link3"
-        />,
-      ]}
+      components={[<Button className={styles.link} href={GITCOIN_PASSPORT} variant="link3" />]}
       i18nKey="views.settings.calculatingYourUniquenessStep1"
     />,
     <Trans
