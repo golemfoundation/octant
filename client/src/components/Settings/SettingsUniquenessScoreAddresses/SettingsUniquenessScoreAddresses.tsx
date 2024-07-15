@@ -36,7 +36,8 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
   }));
 
   const addresses =
-    isDelegationCompleted && delegationPrimaryAddress && delegationSecondaryAddress
+    (isDelegationCompleted && delegationPrimaryAddress && delegationSecondaryAddress) ||
+    (delegationPrimaryAddress && delegationSecondaryAddress === '0x???')
       ? [delegationPrimaryAddress, delegationSecondaryAddress]
       : [accountAddress];
 
