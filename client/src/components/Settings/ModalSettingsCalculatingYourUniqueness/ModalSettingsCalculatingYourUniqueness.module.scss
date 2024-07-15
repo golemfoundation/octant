@@ -31,8 +31,11 @@
       font-size: $font-size-14;
     }
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       max-width: none;
+    }
+
+    @media #{$desktop-up} {
       height: 24.2rem;
       line-height: 2.4rem;
 
