@@ -4,6 +4,7 @@ export const BLOG_POST = 'https://docs.octant.app/using-the-app.html';
 export const OCTANT_BUILD_LINK = 'https://octant.build/';
 export const TWITTER_LINK = 'https://twitter.com/OctantApp';
 export const TERMS_OF_USE = 'https://docs.octant.app/terms-of-use.html';
+export const GITCOIN_PASSPORT = 'https://support.passport.xyz/passport-knowledge-base';
 export const GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD = 'https://passport.gitcoin.co/#/octant/';
 export const SCORING_20_FOR_HUMANS_GUIDE =
   'https://support.passport.xyz/passport-knowledge-base/stamps/scoring-20-for-humans';
