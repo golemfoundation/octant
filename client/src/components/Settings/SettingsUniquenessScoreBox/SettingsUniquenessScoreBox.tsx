@@ -141,13 +141,13 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     if (!isSuccessAntisybilStatusScore || isDelegationInProgress || isFetchingUqScore) {
       return;
     }
-    if (isDelegationCompleted || refreshAntisybilStatusError) {
+    if (isDelegationCompleted) {
       setSecondaryAddressScore(antisybilStatusScore);
-      if (!isDelegationCompleted) {
+    } else {
+      if (refreshAntisybilStatusError) {
         setDelegationPrimaryAddress(address);
         setDelegationSecondaryAddress('0x???');
       }
-    } else {
       setPrimaryAddressScore(
         antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n
           ? DELEGATION_MIN_SCORE
