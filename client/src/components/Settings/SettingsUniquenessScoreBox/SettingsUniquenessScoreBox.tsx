@@ -146,7 +146,6 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       if (!isDelegationCompleted) {
         setDelegationPrimaryAddress(address);
         setDelegationSecondaryAddress('0x???');
-        setIsDelegationCompleted(true);
       }
     } else {
       setPrimaryAddressScore(
@@ -218,7 +217,12 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
-            isDisabled={isDelegationCompleted || isFetchingScore || isFetchingUqScore}
+            isDisabled={
+              isDelegationCompleted ||
+              isFetchingScore ||
+              isFetchingUqScore ||
+              delegationSecondaryAddress === '0x???'
+            }
             isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
@@ -234,7 +238,8 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
               primaryAddressScore === undefined ||
               primaryAddressScore >= 20 ||
               isFetchingUqScore ||
-              uqScore === 100n
+              uqScore === 100n ||
+              delegationSecondaryAddress === '0x???'
             }
             isHigh
             onClick={() => {
