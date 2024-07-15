@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import React, { useState, useEffect, useCallback, FC } from 'react';
+import React, { useState, useEffect, useCallback, ReactNode } from 'react';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/ui/Img';
@@ -23,10 +23,10 @@ const motionAnimationProps: AnimationProps = {
   transition: { duration: 0.15, ease: 'easeOut' },
 };
 
-const ModalOnboarding: FC = () => {
+const ModalOnboarding = (): ReactNode => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
-
+  const { address } = useAccount();
   const {
     setIsOnboardingDone,
     isOnboardingDone,
@@ -50,7 +50,7 @@ const ModalOnboarding: FC = () => {
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
 
-  const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
+  const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
@@ -130,6 +130,11 @@ const ModalOnboarding: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserTOSAccepted]);
+
+  useEffect(() => {
+    if (isFetchingUserTOS) {return;}
+    setIsUserTOSAcceptedInitial(isUserTOSAccepted);
+  }, [address, isFetchingUserTOS, isUserTOSAccepted]);
 
   return (
     <Modal
