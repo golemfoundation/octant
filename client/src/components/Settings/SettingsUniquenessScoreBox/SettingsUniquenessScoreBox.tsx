@@ -86,12 +86,17 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   } = useRefreshAntisybilStatus();
 
   const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
-    useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
-      enabled:
-        isSuccessRefreshAntisybilStatus ||
-        (refreshAntisybilStatusError as null | { message: string })?.message ===
-          'Address is already used for delegation',
-    });
+    useAntisybilStatusScore(
+      isDelegationCompleted && delegationSecondaryAddress !== '0x???'
+        ? delegationSecondaryAddress!
+        : address!,
+      {
+        enabled:
+          isSuccessRefreshAntisybilStatus ||
+          (refreshAntisybilStatusError as null | { message: string })?.message ===
+            'Address is already used for delegation',
+      },
+    );
 
   const checkDelegation = async () => {
     if (!isUserTOSAccepted) {
@@ -136,8 +141,13 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     if (!isSuccessAntisybilStatusScore || isDelegationInProgress || isFetchingUqScore) {
       return;
     }
-    if (isDelegationCompleted) {
+    if (isDelegationCompleted || refreshAntisybilStatusError) {
       setSecondaryAddressScore(antisybilStatusScore);
+      if (!isDelegationCompleted) {
+        setDelegationPrimaryAddress(address);
+        setDelegationSecondaryAddress('0x???');
+        setIsDelegationCompleted(true);
+      }
     } else {
       setPrimaryAddressScore(
         antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n
@@ -147,7 +157,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     }
     setIsFetchingScore(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccessAntisybilStatusScore, isFetchingUqScore]);
+  }, [isSuccessAntisybilStatusScore, isFetchingUqScore, refreshAntisybilStatusError]);
 
   useEffect(() => {
     if (
