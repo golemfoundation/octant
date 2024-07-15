@@ -2,29 +2,40 @@
   min-width: 39rem;
 
   .imageWrapper {
-    height: 22.6rem;
-    width: 100%;
-    padding: 6.4rem 14.8rem 0;
+    height: 24rem;
+    padding: 6.4rem 0 4.9rem;
+
+    @media #{$desktop-up} {
+      height: 27.2rem;
+    }
 
     .image {
-      width: 17.6rem;
-      height: 16rem;
+      width: 12.4rem;
+      height: 11.2rem;
+
+      @media #{$desktop-up} {
+        width: 17.6rem;
+        height: 16rem;
+      }
     }
   }
 
   .text {
-    height: 19.8rem;
+    height: 22.2rem;
     line-height: 2.2rem;
-  
+    max-width: 34.4rem;
+    margin-right: auto;
+
     &,
     * {
       font-size: $font-size-14;
     }
-  
+
     @media #{$desktop-up} {
-      height: 21.6rem;
+      max-width: none;
+      height: 24.2rem;
       line-height: 2.4rem;
-  
+
       &,
       * {
         font-size: $font-size-16;
@@ -34,12 +45,11 @@
 
   .link {
     text-decoration: underline;
-  
+
     @media #{$desktop-up} {
       text-decoration: none;
     }
   }
-
 }
 
 .stepper {
