@@ -122,9 +122,9 @@ def init_web3(app):
         w3.middleware_onion.add(
             _create_cache(app, 60, is_epochs_or_deposits_contract, (lambda x: True))
         )
-        # w3.middleware_onion.add(
-        #     _create_cache(app, 20, is_get_block_by_number, _generic_should_cache_web3)
-        # )
+        w3.middleware_onion.add(
+            _create_cache(app, 20, is_get_block_by_number, _generic_should_cache_web3)
+        )
 
     glm.init_web3(w3, app.config["GLM_CONTRACT_ADDRESS"])
     epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
