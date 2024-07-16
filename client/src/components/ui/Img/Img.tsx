@@ -24,7 +24,7 @@ const Img: FC<ImgProps> = ({ alt = '', className, dataTest, src, sources, ...pro
   return (
     <img
       alt={alt}
-      className={cx(styles.root, className)}
+      className={className}
       data-test={dataTest}
       onError={() => {
         if (src !== undefined || !sources) {
