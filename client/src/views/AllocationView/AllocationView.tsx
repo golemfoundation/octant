@@ -129,6 +129,7 @@ const AllocationView = (): ReactElement => {
     refetchHistory();
     refetchWithdrawals();
     refetchProjectsDonors();
+    toastService.hideToast('confirmChanges');
     setAllocations([
       ...allocations.filter(allocation => {
         const allocationValue = allocationValues.find(({ address }) => address === allocation);
