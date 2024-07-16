@@ -132,7 +132,9 @@ const ModalOnboarding = (): ReactNode => {
   }, [isUserTOSAccepted]);
 
   useEffect(() => {
-    if (isFetchingUserTOS) {return;}
+    if (isFetchingUserTOS) {
+      return;
+    }
     setIsUserTOSAcceptedInitial(isUserTOSAccepted);
   }, [address, isFetchingUserTOS, isUserTOSAccepted]);
 
