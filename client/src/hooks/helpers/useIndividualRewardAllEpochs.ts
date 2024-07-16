@@ -24,7 +24,14 @@ export default function useIndividualRewardAllEpochs({
             resolve({ budget: '0' });
           });
         }
-        return apiGetIndividualRewards(epoch, address!);
+
+        try {
+          return apiGetIndividualRewards(epoch, address!);
+        } catch (error) {
+          return new Promise<Response>(resolve => {
+            resolve({ budget: '0' });
+          });
+        }
       },
       queryKey: QUERY_KEYS.individualReward(epoch),
       retry: false,
