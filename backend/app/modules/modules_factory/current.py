@@ -44,6 +44,7 @@ from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
@@ -126,8 +127,11 @@ class CurrentServices(Model):
                 effective_deposits=user_deposits, octant_rewards=octant_rewards
             )
         )
+        uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(), budgets=user_budgets
+            antisybil=GitcoinPassportAntisybil(),
+            budgets=user_budgets,
+            uq_threshold=uq_threshold,
         )
 
         return CurrentServices(

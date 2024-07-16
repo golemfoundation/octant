@@ -48,6 +48,7 @@ from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
@@ -94,8 +95,13 @@ class PendingServices(Model):
         project_rewards = FinalizingProjectRewards()
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
+
+        is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+        uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
+            antisybil=GitcoinPassportAntisybil(),
+            budgets=saved_user_budgets,
+            uq_threshold=uq_threshold,
         )
 
         allocations_verifier = PendingUserAllocationsVerifier(
