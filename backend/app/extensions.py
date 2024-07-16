@@ -114,11 +114,11 @@ def init_web3(app):
         w3.middleware_onion.add(middleware.time_based_cache_middleware)
         w3.middleware_onion.add(middleware.latest_block_based_cache_middleware)
         w3.middleware_onion.add(middleware.simple_cache_middleware)
-        w3.middleware_onion.add(
-            _create_cache(
-                app, 600, is_glm_or_projects_contract, _generic_should_cache_web3
-            )
-        )
+        # w3.middleware_onion.add(
+        #     _create_cache(
+        #         app, 600, is_glm_or_projects_contract, _generic_should_cache_web3
+        #     )
+        # )
         w3.middleware_onion.add(
             _create_cache(app, 60, is_epochs_or_deposits_contract, (lambda x: True))
         )
