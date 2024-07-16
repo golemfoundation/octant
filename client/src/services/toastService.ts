@@ -13,6 +13,7 @@ export const TOAST_NAMES = [
   'projectLoadingProblem',
   'allocationMultisigInitialSignature',
   'delegationTooManyUniqueAddresses',
+  'unableToDelegateToAddressWithPositiveGLMLock',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 

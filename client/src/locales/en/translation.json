@@ -540,9 +540,15 @@
       "signMessage": "Sign message",
       "signMessages": "Sign messages",
       "switchAccount": "Switch account",
-      "delegationTooManyUniqueAddressesToast": {
-        "title": "Too many accounts",
-        "message": "Please connect up to 10 accounts to check your delegation status"
+      "toasts": {
+        "delegationTooManyUniqueAddresses": {
+          "title": "Too many accounts",
+          "message": "Please connect up to 10 accounts to check your delegation status"
+        },
+        "unableToDelegateToAddressWithPositiveGLMLock": {
+          "title": "Address with GLM locked",
+          "message": "Please delegate to an address without GLM locked"
+        }
       }
     },
     "syncStatus": {
