@@ -1,8 +1,10 @@
+import cx from 'classnames';
 import React, { FC, useState, useEffect } from 'react';
 
+import styles from './Img.module.scss';
 import ImgProps from './types';
 
-const Img: FC<ImgProps> = ({ alt = '', dataTest, src, sources, ...props }) => {
+const Img: FC<ImgProps> = ({ alt = '', className, dataTest, src, sources, ...props }) => {
   const [srcLocal, setSrcLocal] = useState<string>('');
 
   useEffect(() => {
@@ -15,9 +17,14 @@ const Img: FC<ImgProps> = ({ alt = '', dataTest, src, sources, ...props }) => {
     return setSrcLocal('');
   }, [src, sources]);
 
+  if (srcLocal === '') {
+    return <div className={cx(styles.root, className, styles.isLoading)} />;
+  }
+
   return (
     <img
       alt={alt}
+      className={cx(styles.root, className)}
       data-test={dataTest}
       onError={() => {
         if (src !== undefined || !sources) {
