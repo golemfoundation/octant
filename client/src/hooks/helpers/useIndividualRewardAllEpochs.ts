@@ -27,7 +27,7 @@ export default function useIndividualRewardAllEpochs({
 
         try {
           return apiGetIndividualRewards(epoch, address!);
-        } catch (error) {
+        } catch (_error) {
           return new Promise<Response>(resolve => {
             resolve({ budget: '0' });
           });
