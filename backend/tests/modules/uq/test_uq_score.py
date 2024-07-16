@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 
 from app.modules.uq.core import calculate_uq
+from tests.helpers.constants import UQ_THRESHOLD_MAINNET
 
 
 @pytest.mark.parametrize(
@@ -15,4 +16,6 @@ from app.modules.uq.core import calculate_uq
     ],
 )
 def test_calculate_uq(gp_score, expected_output):
-    assert calculate_uq(gp_score) == Decimal(str(expected_output))
+    assert calculate_uq(gp_score, uq_threshold=UQ_THRESHOLD_MAINNET) == Decimal(
+        str(expected_output)
+    )

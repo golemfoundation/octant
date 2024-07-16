@@ -52,6 +52,7 @@ from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.shared.blockchain_types import ChainTypes
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
+from tests.helpers.constants import UQ_THRESHOLD_MAINNET
 
 
 def test_future_services_factory():
@@ -140,7 +141,9 @@ def test_pending_services_factory():
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
+        antisybil=GitcoinPassportAntisybil(),
+        budgets=saved_user_budgets,
+        uq_threshold=UQ_THRESHOLD_MAINNET,
     )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,

@@ -28,6 +28,7 @@ class UserBudgets(Protocol):
 class PreliminaryUQ(Model):
     antisybil: Antisybil
     budgets: UserBudgets
+    uq_threshold: int
 
     def retrieve(
         self, context: Context, user_address: str, should_save: bool = False
@@ -52,7 +53,7 @@ class PreliminaryUQ(Model):
     def calculate(self, context: Context, user_address: str) -> Decimal:
         gp_score = self._get_gp_score(context, user_address)
 
-        return calculate_uq(gp_score)
+        return calculate_uq(gp_score, self.uq_threshold)
 
     def _get_gp_score(self, context: Context, address: str) -> float:
         antisybil_status = self.antisybil.get_antisybil_status(context, address)
