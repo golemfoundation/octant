@@ -7,7 +7,6 @@ import { DELEGATION_MIN_SCORE } from 'constants/delegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useSettingsStore from 'store/settings/store';
@@ -40,13 +39,12 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
     useAntisybilStatusScore(isDelegationCompleted ? delegationSecondaryAddress! : address!, {
       enabled: isSuccessRefreshAntisybilStatus,
     });
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const {
     data: uqScore,
     isFetching: isFetchingUqScore,
     isError: isErrorUqScore,
-  } = useUqScore(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!, {
+  } = useUqScore(currentEpoch!, {
     enabled: isSuccessAntisybilStatusScore,
   });
 

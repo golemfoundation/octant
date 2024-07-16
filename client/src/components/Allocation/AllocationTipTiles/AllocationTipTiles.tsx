@@ -32,15 +32,12 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
-  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(
-    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
-    {
-      enabled:
-        isSuccessRefreshAntisybilStatus ||
-        (refreshAntisybilStatusError as null | { message: string })?.message ===
-          'Address is already used for delegation',
-    },
-  );
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!, {
+    enabled:
+      isSuccessRefreshAntisybilStatus ||
+      (refreshAntisybilStatusError as null | { message: string })?.message ===
+        'Address is already used for delegation',
+  });
   const {
     wasRewardsAlreadyClosed,
     setWasRewardsAlreadyClosed,
