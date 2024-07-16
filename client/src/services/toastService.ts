@@ -26,6 +26,7 @@ const ToastService = () => {
     'confirmChanges',
     'ipfsError',
     'allocationMultisigInitialSignature',
+    'changeNetwork',
   ];
 
   const setToastIdValue = (name: ToastName, value: Id | undefined) => {

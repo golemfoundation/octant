@@ -2,6 +2,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
+import networkConfig from 'constants/networkConfig';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export interface EpochProps {
@@ -10,7 +11,7 @@ export interface EpochProps {
 }
 
 export default function useCurrentEpochProps(): UseQueryResult<EpochProps> {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: networkConfig.id });
 
   return useQuery<{ decisionWindow: BigInt; duration: BigInt }, any, EpochProps>({
     queryFn: () =>

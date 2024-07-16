@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
 
+import networkConfig from 'constants/networkConfig';
 import { readContractERC20 } from 'hooks/contracts/readContracts';
 
 // eslint-disable-next-line no-shadow
@@ -15,7 +16,7 @@ export default function useApprovalState(
   spender: string,
   minAmountToBeApproved: bigint,
 ): [ApprovalState, () => Promise<ApprovalState>] {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: networkConfig.id });
   const [approvalState, setApprovalState] = useState(ApprovalState.UNKNOWN);
 
   const approveCallback = useCallback(async (): Promise<ApprovalState> => {
