@@ -12,6 +12,7 @@ import useDelegate from 'hooks/mutations/useDelegate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useUserTOS from 'hooks/queries/useUserTOS';
+import toastService from 'services/toastService';
 import useSettingsStore from 'store/settings/store';
 import { notificationIconWarning } from 'svg/misc';
 
@@ -112,7 +113,15 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
           setIsDelegationCalculatingUQScoreModalOpen(false);
           setIsDelegationCompleted(true);
         })
-        .catch(() => {
+        .catch(error => {
+          if (error.message === 'Secondary address cannot lock any GLMs') {
+            toastService.showToast({
+              message: t('toasts.unableToDelegateToAddressWithPositiveGLMLock.message'),
+              name: 'unableToDelegateToAddressWithPositiveGLMLock',
+              title: t('toasts.unableToDelegateToAddressWithPositiveGLMLock.title'),
+              type: 'error',
+            });
+          }
           setIsDelegationInProgress(false);
           setIsDelegationCalculatingUQScoreModalOpen(false);
           setIsDelegationCompleted(false);
