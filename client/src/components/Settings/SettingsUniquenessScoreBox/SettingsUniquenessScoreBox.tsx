@@ -16,7 +16,6 @@ import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import toastService from 'services/toastService';
@@ -30,11 +29,8 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   const connectors = useConnectors();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isUserTOSAccepted } = useUserTOS();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(
-    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
-  );
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
 
   const [isRecalculatingScoreModalOpen, setIisRecalculatingScoreModalOpen] = useState(false);
   const [isCalculatingYourUniquenessModalOpen, setIsCalculatingYourUniquenessModalOpen] =
