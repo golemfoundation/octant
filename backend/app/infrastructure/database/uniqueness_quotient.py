@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from app import db
 from app.infrastructure.database.models import UniquenessQuotient, User
@@ -13,6 +13,12 @@ def get_uq_by_user(user: User, epoch: int) -> Optional[UniquenessQuotient]:
     )
 
     return query.one_or_none()
+
+
+def list_all_uqs_by_epoch(epoch: int) -> List[UniquenessQuotient]:
+    query = UniquenessQuotient.query.join(User)
+    query = query.filter(UniquenessQuotient.epoch == epoch)
+    return query.all()
 
 
 def get_uq_by_address(user_address: str, epoch: int) -> Optional[UniquenessQuotient]:
