@@ -63,8 +63,13 @@ const ToastService = () => {
     setToastIdValue(name, undefined);
   };
 
+  const isToastVisible = (name: ToastName): boolean => {
+    return !!toastIds[name];
+  };
+
   return {
     hideToast,
+    isToastVisible,
     showToast,
   };
 };
