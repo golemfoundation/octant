@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount, useChainId, useConnect } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -27,7 +27,8 @@ export default function useAppConnectManager(
 } {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   const queryClient = useQueryClient();
-  const { address, isConnected, chain } = useAccount();
+  const chainId = useChainId();
+  const { address, isConnected } = useAccount();
   const { reset } = useConnect();
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -83,7 +84,7 @@ export default function useAppConnectManager(
   };
 
   useEffect(() => {
-    if (chain && chain.id !== networkConfig.id) {
+    if (chainId !== networkConfig.id) {
       toastService.showToast({
         message: t('message', {
           isTestnet: networkConfig.isTestnet ? ' testnet' : '',
@@ -95,7 +96,7 @@ export default function useAppConnectManager(
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain?.id]);
+  }, [chainId]);
 
   useEffect(() => {
     /**

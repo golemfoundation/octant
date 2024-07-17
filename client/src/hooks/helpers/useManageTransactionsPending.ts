@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { usePublicClient } from 'wagmi';
 
+import networkConfig from 'constants/networkConfig';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
@@ -12,7 +13,7 @@ import useTransactionLocalStore, {
 } from 'store/transactionLocal/store';
 
 export default function useManageTransactionsPending(): void {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: networkConfig.id });
   const {
     blockNumberWithLatestTx,
     transactionsPending,

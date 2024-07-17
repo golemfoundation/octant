@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAccount, useBalance, useBlockNumber, UseBalanceReturnType } from 'wagmi';
 
+import networkConfig from 'constants/networkConfig';
 import env from 'env';
 
 export default function useAvailableFundsEth(): UseBalanceReturnType<{
@@ -11,7 +12,10 @@ export default function useAvailableFundsEth(): UseBalanceReturnType<{
   value: bigint;
 }> {
   const { address } = useAccount();
-  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { data: blockNumber } = useBlockNumber({
+    chainId: networkConfig.id,
+    watch: true,
+  });
   const queryClient = useQueryClient();
   const balance = useBalance({
     address,
