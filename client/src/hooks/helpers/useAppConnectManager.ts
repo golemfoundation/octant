@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useChainId, useConnect } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -27,8 +27,7 @@ export default function useAppConnectManager(
 } {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   const queryClient = useQueryClient();
-  const chainId = useChainId();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { reset } = useConnect();
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -84,7 +83,10 @@ export default function useAppConnectManager(
   };
 
   useEffect(() => {
-    if (chainId !== networkConfig.id) {
+    if (!chainId) {
+      return;
+    }
+    if (!toastService.isToastVisible('changeNetwork') && chainId !== networkConfig.id) {
       toastService.showToast({
         message: t('message', {
           isTestnet: networkConfig.isTestnet ? ' testnet' : '',
@@ -94,6 +96,10 @@ export default function useAppConnectManager(
         title: t('title'),
         type: 'error',
       });
+      return;
+    }
+    if (toastService.isToastVisible('changeNetwork')) {
+      toastService.hideToast('changeNetwork');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
