@@ -48,6 +48,7 @@
 
   .link {
     text-decoration: underline;
+    white-space: nowrap;
 
     @media #{$desktop-up} {
       text-decoration: none;
