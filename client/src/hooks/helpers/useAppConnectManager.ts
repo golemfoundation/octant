@@ -84,6 +84,9 @@ export default function useAppConnectManager(
 
   useEffect(() => {
     if (!chainId) {
+      if (toastService.isToastVisible('changeNetwork')) {
+        toastService.hideToast('changeNetwork');
+      }
       return;
     }
     if (!toastService.isToastVisible('changeNetwork') && chainId !== networkConfig.id) {
