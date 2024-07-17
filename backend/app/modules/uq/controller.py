@@ -7,6 +7,7 @@ from app.exceptions import (
     NotImplementedForGivenEpochState,
 )
 from app.modules.registry import get_services
+from app.modules.uq import core
 
 
 def get_uq(user_address: str, epoch_num: int) -> Decimal:
@@ -24,5 +25,13 @@ def get_uq(user_address: str, epoch_num: int) -> Decimal:
 
 def get_all_uqs(epoch_num: int) -> List[Tuple[str, Decimal]]:
     context = epoch_context(epoch_num)
-    service = get_services(context.epoch_state).uniqueness_quotients
-    return service.get_all_uqs(epoch_num)
+
+    if context.epoch_state not in [
+        EpochState.FINALIZED,
+        EpochState.FINALIZING,
+        EpochState.PENDING,
+        EpochState.PRE_PENDING,
+    ]:
+        raise NotImplementedForGivenEpochState()
+
+    return core.get_all_uqs(epoch_num)
