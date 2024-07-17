@@ -25,4 +25,4 @@ def get_uq(user_address: str, epoch_num: int) -> Decimal:
 def get_all_uqs(epoch_num: int) -> List[Tuple[str, Decimal]]:
     context = epoch_context(epoch_num)
     service = get_services(context.epoch_state).uniqueness_quotients
-    return service.get_all(context)
+    return service.get_all_uqs(epoch_num)
