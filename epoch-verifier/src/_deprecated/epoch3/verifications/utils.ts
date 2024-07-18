@@ -2,35 +2,11 @@ import { VerificationResult } from "../runner";
 
 type Predicate<T> = (elem: T) => boolean | VerificationResult
 
-export const SCALE_FACTOR = 10n ** 18n;
-
 function abs(v: bigint): bigint {
   if (v < BigInt(0)) {
     return -v
   }
   return v
-}
-
-export function sqrt(v: bigint): bigint {
-  // Heron's Algorithm
-  // SQRT has some error margin, i.e. for 1000 it returns 31 instead of 31.622776601683793319988935444327
-  // This is due to the fact that we are using BigInts and not floating point numbers
-  // This is fine for our purposes since we're using wei and we can omit it
-  let x = v * SCALE_FACTOR;
-  let y = (x + 1n) / 2n;
-
-  while (y < x) {
-    x = y;
-    y = (x + v * SCALE_FACTOR / x) / 2n;
-  }
-
-  let result = x / (SCALE_FACTOR ** (1n / 2n));
-  return result;
-}
-
-export function multiplyFloatByBigInt(v1: number, v2: bigint): bigint {
-  let productBigInt = BigInt(v1 * 1e6) * v2;
-  return productBigInt / BigInt(1e6);
 }
 
 export function assertEq(value: bigint, expected: bigint, maxMargin?: bigint, shouldPrintWhenValuesWithinExpectedError = false): VerificationResult {

@@ -13,7 +13,7 @@ interface Options {
   url?: string
 }
 
-const DEPLOYMENTS: { [key: string]: string } = {
+const DEPLOYMENTS: {[key: string]: string} = {
   mainnet: "https://backend.mainnet.octant.app",
   master: "https://master-backend.octant.wildland.dev",
   rc: "https://backend.mainnet.octant.wildland.dev",
@@ -39,7 +39,7 @@ function getDeploymentUrl(options: Options): string {
 }
 
 async function run(epoch: string, opts: any) {
-  const options: Options = { epoch: parseInt(epoch, 10), ...opts }
+  const options: Options = {epoch: parseInt(epoch, 10), ...opts}
   const baseUrl = getDeploymentUrl(options)
 
   console.log(`Using url: ${baseUrl}`)
@@ -50,8 +50,7 @@ async function run(epoch: string, opts: any) {
     fetcher.apiGetUserBudgets(options.epoch),
     fetcher.apiGetAllocations(options.epoch),
     fetcher.apiGetRewards(options.epoch),
-    fetcher.apiGetEpochInfo(options.epoch),
-    fetcher.apiGetEpochUqs(options.epoch)
+    fetcher.apiGetEpochInfo(options.epoch)
   ])
 
   if (results.some(isNull)) {
@@ -63,9 +62,8 @@ async function run(epoch: string, opts: any) {
     allocations,
     rewards,
     epochInfo,
-    epochUqs
   ] = results;
-  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!, epochUqs!)
+  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!)
 
   const runner = new Runner()
   registerVerifications(runner)
