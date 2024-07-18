@@ -18,8 +18,8 @@ export function registerVerifications(runner: Runner): void {
     { name: "Users allocated vs rewards allocated", verify: verifyUserDonationsVsRewards },
     { name: "Users rewards allocated vs allocated", verify: verifyRewardsVsUserDonations },
     { name: "Total withdrawals vs budgets, allocations, patrons and unclaimed", verify: verifyTotalWithdrawals },
-    { name: "Matched funds from epoch info", verify: verifyMatchingFundFromEpochInfo},
-    { name: "Total amounts from epoch info", verify: verifyAllEpochRewards},
+    { name: "Matched funds from epoch info", verify: verifyMatchingFundFromEpochInfo },
+    { name: "Total amounts from epoch info", verify: verifyAllEpochRewards },
   ]
 
   verifications.forEach((v) => runner.register(v))

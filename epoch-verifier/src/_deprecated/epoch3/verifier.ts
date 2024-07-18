@@ -13,7 +13,7 @@ interface Options {
   url?: string
 }
 
-const DEPLOYMENTS: {[key: string]: string} = {
+const DEPLOYMENTS: { [key: string]: string } = {
   mainnet: "https://backend.mainnet.octant.app",
   master: "https://master-backend.octant.wildland.dev",
   rc: "https://backend.mainnet.octant.wildland.dev",
@@ -39,7 +39,7 @@ function getDeploymentUrl(options: Options): string {
 }
 
 async function run(epoch: string, opts: any) {
-  const options: Options = {epoch: parseInt(epoch, 10), ...opts}
+  const options: Options = { epoch: parseInt(epoch, 10), ...opts }
   const baseUrl = getDeploymentUrl(options)
 
   console.log(`Using url: ${baseUrl}`)

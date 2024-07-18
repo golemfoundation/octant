@@ -23,7 +23,7 @@ export function verifyProjectsBelowThreshold(context: Context): VerificationResu
   const individualDonations = individualDonationsByProposals(context)
   const threshold = getThreshold(individualDonations)
 
-  const projectsBelowThreshold = Array.from(individualDonations.entries()).filter(([_, v]) => v <= threshold).map(([p,_]) => p)
+  const projectsBelowThreshold = Array.from(individualDonations.entries()).filter(([_, v]) => v <= threshold).map(([p, _]) => p)
   const rewards = rewardsByProject(context)
 
   return assertAll(projectsBelowThreshold, (project) => !rewards.has(project))
@@ -33,14 +33,14 @@ export function verifyUserDonationsVsRewards(context: Context): VerificationResu
   const projectsAboveThreshold = Array.from(getUserAllocationsForProjectsAboveThreshold(context).entries())
   const rewards = rewardsByProject(context)
 
-  return assertAll(projectsAboveThreshold, ([proposal, allocated]) =>  assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true))
+  return assertAll(projectsAboveThreshold, ([proposal, allocated]) => assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true))
 }
 
 export function verifyRewardsVsUserDonations(context: Context): VerificationResult {
   const projectsAboveThreshold = getUserAllocationsForProjectsAboveThreshold(context)
   const rewards = Array.from(rewardsByProject(context).entries())
 
-  return assertAll(rewards, ([proposal, reward]: [Address, Reward]) =>  assertEq(reward.allocated, projectsAboveThreshold.get(proposal)!, BigInt(100), true))
+  return assertAll(rewards, ([proposal, reward]: [Address, Reward]) => assertEq(reward.allocated, projectsAboveThreshold.get(proposal)!, BigInt(100), true))
 
 }
 

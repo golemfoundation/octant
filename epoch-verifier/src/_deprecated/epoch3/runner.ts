@@ -1,23 +1,23 @@
 /* eslint-disable no-console */
 import { Context } from "./data/context"
 
-export type VerificationResult = {message: string, result: boolean}
+export type VerificationResult = { message: string, result: boolean }
 type VerifyFunc = (context: Context) => VerificationResult;
 
 export interface Verification {
   readonly name: string
-  verify:  VerifyFunc
+  verify: VerifyFunc
 }
 
 export class Runner {
 
   verifications: Verification[]
 
-  constructor(){
+  constructor() {
     this.verifications = []
   }
 
-  register(verification: Verification): void{
+  register(verification: Verification): void {
     this.verifications.push(verification)
   }
 
@@ -30,7 +30,7 @@ export class Runner {
         console.log(`Verification ${v.name} started`)
         const result = v.verify(context)
 
-        if (result.result){
+        if (result.result) {
           console.log(`Verification ${v.name} succeeded`)
         }
 
@@ -51,7 +51,7 @@ export class Runner {
     console.log("Run all verifications")
 
     const ok = results.filter(([_, result]) => result.result)
-    const failures = results.filter(([_, result]) =>  !result.result )
+    const failures = results.filter(([_, result]) => !result.result)
 
     ok.forEach(([name, result]) => {
       console.log(`✅ ${name}: ${result.message}`)

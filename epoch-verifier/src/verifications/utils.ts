@@ -13,9 +13,9 @@ function abs(v: bigint): bigint {
 
 export function sqrt(v: bigint): bigint {
   // Heron's Algorithm
-  // SQRT has some error margin, i.e. for 1000 it returns 31 instead of 31.622776601683793319988935444327
+  // SQRT by default has some error margin, i.e. for 1000 it returns 31 instead of 31.622776601683793319988935444327
   // This is due to the fact that we are using BigInts and not floating point numbers
-  // This is fine for our purposes since we're using wei and we can omit it
+  // That's why we use SCALE_FACTOR coefficient to secure ourselves from such margin errors.
   let x = v * SCALE_FACTOR;
   let y = (x + 1n) / 2n;
 

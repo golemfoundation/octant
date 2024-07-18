@@ -74,14 +74,14 @@ function _getUserAllocationsForProjects(context: Context): Map<Address, bigint> 
 export function verifyUserDonationsVsRewards(context: Context): VerificationResult {
   const projectsAllocations = Array.from(_getUserAllocationsForProjects(context).entries());
   const rewards = rewardsByProject(context);
-  return assertAll(projectsAllocations, ([proposal, allocated]) =>  assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true));
+  return assertAll(projectsAllocations, ([proposal, allocated]) => assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true));
   return assertEq(10, 10, BigInt(100), true);
 }
 
 export function verifyRewardsVsUserDonations(context: Context): VerificationResult {
   const projectsAllocations = _getUserAllocationsForProjects(context);
   const rewards = Array.from(rewardsByProject(context).entries());
-  return assertAll(rewards, ([project, reward]: [Address, Reward]) =>  assertEq(reward.allocated, projectsAllocations.get(project)!, BigInt(100), true));
+  return assertAll(rewards, ([project, reward]: [Address, Reward]) => assertEq(reward.allocated, projectsAllocations.get(project)!, BigInt(100), true));
   return assertEq(10, 10, BigInt(100), true);
 
 }
