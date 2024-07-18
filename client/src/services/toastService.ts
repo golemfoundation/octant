@@ -13,6 +13,7 @@ export const TOAST_NAMES = [
   'projectLoadingProblem',
   'allocationMultisigInitialSignature',
   'delegationTooManyUniqueAddresses',
+  'unableToDelegateToAddressWithPositiveGLMLock',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 
@@ -26,6 +27,7 @@ const ToastService = () => {
     'confirmChanges',
     'ipfsError',
     'allocationMultisigInitialSignature',
+    'changeNetwork',
   ];
 
   const setToastIdValue = (name: ToastName, value: Id | undefined) => {
@@ -61,8 +63,13 @@ const ToastService = () => {
     setToastIdValue(name, undefined);
   };
 
+  const isToastVisible = (name: ToastName): boolean => {
+    return !!toastIds[name];
+  };
+
   return {
     hideToast,
+    isToastVisible,
     showToast,
   };
 };

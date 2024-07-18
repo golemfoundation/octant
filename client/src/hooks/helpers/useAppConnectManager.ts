@@ -27,7 +27,7 @@ export default function useAppConnectManager(
 } {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   const queryClient = useQueryClient();
-  const { address, isConnected, chain } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { reset } = useConnect();
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -83,7 +83,13 @@ export default function useAppConnectManager(
   };
 
   useEffect(() => {
-    if (chain && chain.id !== networkConfig.id) {
+    if (!chainId) {
+      if (toastService.isToastVisible('changeNetwork')) {
+        toastService.hideToast('changeNetwork');
+      }
+      return;
+    }
+    if (!toastService.isToastVisible('changeNetwork') && chainId !== networkConfig.id) {
       toastService.showToast({
         message: t('message', {
           isTestnet: networkConfig.isTestnet ? ' testnet' : '',
@@ -93,9 +99,13 @@ export default function useAppConnectManager(
         title: t('title'),
         type: 'error',
       });
+      return;
+    }
+    if (toastService.isToastVisible('changeNetwork')) {
+      toastService.hideToast('changeNetwork');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain?.id]);
+  }, [chainId]);
 
   useEffect(() => {
     /**

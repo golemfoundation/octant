@@ -273,7 +273,7 @@ user_uq_pair_model = api.model(
 uq_pairs_model = api.model(
     "ListUserUQPair",
     {
-        "pairs": fields.List(fields.Nested(user_uq_pair_model), required=True),
+        "uqsInfo": fields.List(fields.Nested(user_uq_pair_model), required=True),
     },
 )
 
@@ -294,7 +294,7 @@ class AllUQScores(OctantResource):
         app.logger.debug(f"Uniqueness quotient len: {len(uq_scores)}")
 
         return {
-            "pairs": [
+            "uqsInfo": [
                 {
                     "uniquenessQuotient": uq_score,
                     "userAddress": user_address,

@@ -7,6 +7,7 @@ import EarnGlmLockBudget from 'components/Earn/EarnGlmLock/EarnGlmLockBudget';
 import EarnGlmLockNotification from 'components/Earn/EarnGlmLock/EarnGlmLockNotification';
 import EarnGlmLockStepper from 'components/Earn/EarnGlmLock/EarnGlmLockStepper';
 import EarnGlmLockTabs from 'components/Earn/EarnGlmLock/EarnGlmLockTabs';
+import networkConfig from 'constants/networkConfig';
 import env from 'env';
 import { writeContractERC20 } from 'hooks/contracts/writeContracts';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
@@ -28,7 +29,7 @@ import { formInitialValues, validationSchema } from './utils';
 const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
   const { i18n } = useTranslation();
   const { address } = useAccount();
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: networkConfig.id });
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
   const { data: isContract } = useIsContract();

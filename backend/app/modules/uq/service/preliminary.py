@@ -5,7 +5,7 @@ from typing import List, Protocol, Optional, Tuple, runtime_checkable
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
     get_uq_by_address,
-    list_all_uqs_by_epoch,
+    get_all_uqs_by_epoch,
     save_uq_from_address,
 )
 from app.modules.uq.core import calculate_uq
@@ -62,8 +62,6 @@ class PreliminaryUQ(Model):
             return 0.0
         return antisybil_status[0]
 
-    def get_all(self, context: Context) -> List[Tuple[str, Decimal]]:
-        epoch_num = context.epoch_details.epoch_num
-
-        all_uqs = list_all_uqs_by_epoch(epoch_num)
+    def get_all_uqs(self, epoch_num: int) -> List[Tuple[str, Decimal]]:
+        all_uqs = get_all_uqs_by_epoch(epoch_num)
         return [(uq.user.address, uq.validated_score) for uq in all_uqs]

@@ -2,6 +2,7 @@ import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-
 import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
+import networkConfig from 'constants/networkConfig';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useCypressMoveToDecisionWindowClosed(): UseMutationResult<
@@ -9,7 +10,7 @@ export default function useCypressMoveToDecisionWindowClosed(): UseMutationResul
   unknown
 > {
   const queryClient = useQueryClient();
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({ chainId: networkConfig.id });
 
   return useMutation({
     mutationFn: () => {

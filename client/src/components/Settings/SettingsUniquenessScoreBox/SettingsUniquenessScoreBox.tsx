@@ -114,9 +114,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
     if (uniqAddresses.length > 10) {
       refreshAntisybilStatus(address!);
       toastService.showToast({
-        message: t('delegationTooManyUniqueAddressesToast.message'),
+        message: t('toasts.delegationTooManyUniqueAddresses.message'),
         name: 'delegationTooManyUniqueAddresses',
-        title: t('delegationTooManyUniqueAddressesToast.title'),
+        title: t('toasts.delegationTooManyUniqueAddresses.title'),
         type: 'error',
       });
       return;
