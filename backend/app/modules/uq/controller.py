@@ -26,7 +26,7 @@ def get_uq(user_address: str, epoch_num: int) -> Decimal:
 def get_all_uqs(epoch_num: int) -> List[Tuple[str, Decimal]]:
     context = epoch_context(epoch_num)
 
-    if context.epoch_state not in [
+    if context.epoch_state > EpochState.PENDING
         EpochState.FINALIZED,
         EpochState.FINALIZING,
         EpochState.PENDING,
