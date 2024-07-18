@@ -10,19 +10,6 @@ env:
   GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
-  stop-e2e-env:
-    name: Stop E2E Env
-    needs:
-    - start-e2e-env
-    - run-e2e-tests
-    if: always() && (needs.start-e2e-env.result == 'success')
-    uses: ./.github/workflows/tpl-destroy-env.yml
-    secrets: inherit
-    with:
-      env-type: e2e
-      pull-request-id: ${{ github.event.pull_request.number }}
-      workflow-id: ${{ github.run_id }}
-
   stop-api-env:
     name: Stop APITest Env
     needs:
@@ -35,88 +22,6 @@ jobs:
       env-type: apitest
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
-
-  run-e2e-tests:
-    name: Run E2E Tests
-    needs:
-    - deploy-e2e-env
-    runs-on:
-    - e2e
-    container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:4d64bd94
-      credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
-    env:
-      ENV_TYPE: e2e
-      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
-      CI_PIPELINE_ID: ${{ github.run_id }}
-      CYPRESS_DOCKER_RUN: true
-      CI: true
-      METAMASK_VERSION: 10.25.0
-      SECRET_WORDS: test test test test test test test test test test test junk
-      CHAIN_ID: 1337
-      NETWORK_NAME: Local
-      SYMBOL: ETH
-      IS_TESTNET: true
-      VITE_NETWORK: Local
-    steps:
-    - uses: actions/checkout@v4.1.0
-
-    - uses: actions/cache/restore@v4
-      with:
-        path: |-
-          ${{ matrix.SERVICE }}/.yarn
-          ${{ matrix.SERVICE }}/node-modules
-        key: "${{ github.sha }}-yarn-client"
-
-    - uses: actions/cache/restore@v4
-      with:
-        path: |-
-          ${{ matrix.SERVICE }}/.yarn
-          ${{ matrix.SERVICE }}/node-modules
-        key: "${{ github.sha }}-yarn-root"
-
-    - name: Run E2E tests
-      run: |
-        set -ex
-
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
-
-        export OCTANT_BASE_URL=${{ needs.deploy-e2e-env.outputs.octant-web-url }}
-        export RPC_URL=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
-        export VITE_JSON_RPC_ENDPOINT=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
-        export VITE_SERVER_ENDPOINT=${{ needs.deploy-e2e-env.outputs.octant-backend-url }}/
-
-        # Setup NVM to use Node version 20
-        set +x
-        source /usr/share/nvm/init-nvm.sh
-        nvm install 20
-        nvm use 20
-        set -x
-        npm i -g yarn
-
-        pushd client
-        yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
-
-        source /usr/bin/entrypoint.sh
-
-        curl --retry-connrefused --retry 100 --retry-delay 3 \
-          -s -X GET $OCTANT_BASE_URL
-
-        rm -rf $HOME/.config/Cypress
-        rm -rf $HOME/.config/google-chrome
-        yarn synpress:run
-      shell: bash
-
-    - uses: actions/upload-artifact@v4.0.0
-      if: failure()
-      with:
-        name: "${{ github.job }}"
-        retention-days: 3
-        path: |-
-          client/cypress/videos
-          client/cypress/screenshots
 
   run-api-tests:
     name: Run API Tests
@@ -166,35 +71,6 @@ jobs:
         poetry run pytest -s --onlyapi
       shell: bash
 
-  deploy-e2e-env:
-    name: Deploy E2E Env
-    needs:
-    - docker
-    - start-e2e-env
-    uses: ./.github/workflows/tpl-deploy-app.yml
-    with:
-      # ---
-      env-type: e2e
-      branch-head-ref: ${{ github.ref }}
-      image-tag: ${{ github.sha }}
-      pull-request-id: ${{ github.event.pull_request.number }}
-      workflow-id: ${{ github.run_id }}
-      env-id: ${{ needs.start-e2e-env.outputs.env-id }}
-      deployment-id: ${{ needs.start-e2e-env.outputs.deployment-id }}
-      # ---
-      deploy-contracts: true
-      forward-first-epoch: true
-      chain-id: 1337
-      network-name: local
-      chain-name: localhost
-      snapshotter-enabled: false
-      multisigger-enabled: false
-      scheduler-enabled: true
-      glm-claim-enabled: true
-      vault-confirm-withdrawals-enabled: true
-      anvil-block-time: 5
-    secrets: inherit
-
   deploy-apitest-env:
     name: Deploy APITest Env
     needs:
@@ -224,18 +100,6 @@ jobs:
       subgraph-deploy: false
       graph-healtchecker-enabled: false
     secrets: inherit
-
-  start-e2e-env:
-    name: Start E2E Env
-    needs:
-    - permissions-check
-    uses: ./.github/workflows/tpl-start-env.yml
-    secrets: inherit
-    with:
-      env-type: e2e
-      git-ref: ${{ github.ref }}
-      pull-request-id: ${{ github.event.pull_request.number }}
-      workflow-id: ${{ github.run_id }}
 
   start-apitest-env:
     name: Start APITest Env
