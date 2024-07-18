@@ -1,0 +1,7 @@
+/ci/**                 @housekeeper-bot
+/backend/**            @housekeeper-bot
+/client/**             @housekeeper-bot
+/coin-prices-server/** @housekeeper-bot
+/contracts-v1/**       @housekeeper-bot
+/localenv/**           @housekeeper-bot
+/subgraph/**           @housekeeper-bot
