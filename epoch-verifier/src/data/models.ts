@@ -174,7 +174,6 @@ export class EpochUqsImpl implements Deserializable<EpochUqs>{
   uniquenessQuotient: number;
 
   from(input: any) {
-    console.log("XXX", input);
     this.userAddress = input.userAddress;
     this.uniquenessQuotient = parseFloat(input.uniquenessQuotient);
     return this;
