@@ -9,7 +9,6 @@ from alembic import op
 import sqlalchemy as sa
 
 
-# revision identifiers, used by Alembic.
 revision = "5d3bf271b78d"
 down_revision = "19f6b4f5ce2e"
 branch_labels = None
@@ -22,7 +21,7 @@ def upgrade():
     query = f"""
         UPDATE uniqueness_quotients
         SET score = '1.0'
-        WHERE epoch = 5 AND user_id IN (
+        WHERE score = '0.2' AND epoch = 4 AND user_id IN (
             SELECT id FROM users WHERE address IN (
                 {", ".join([f"'{address}'" for address in user_addresses])}
             )       
@@ -32,11 +31,10 @@ def upgrade():
 
 
 def downgrade():
-    # Revert the changes made in the upgrade
     query = f"""
         UPDATE uniqueness_quotients
         SET score = '0.2'
-        WHERE epoch = 5 AND user_id IN (
+        WHERE score = '1.0' AND epoch = 4 AND user_id IN (
             SELECT id FROM users WHERE address IN (
                 {", ".join([f"'{address}'" for address in user_addresses])}
             )       
@@ -514,6 +512,3 @@ user_addresses = [
     "0xe1555c6ee61366a3f90135dc704acd25c3247aca",
     "0x2f51e78ff8aec6a941c4ceeeb26b4a1f03737c50",
 ]
-
-
-upgrade()
