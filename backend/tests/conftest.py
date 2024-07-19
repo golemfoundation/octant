@@ -674,13 +674,25 @@ class Client:
     def root(self):
         return self._flask_client.get("/").text
 
-    def sync_status(self):
-        rv = self._flask_client.get("/info/sync-status").text
-        return json.loads(rv)
+    def get_chain_info(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/chain-info")
+        return json.loads(rv.text), rv.status_code
+
+    def get_healthcheck(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
+
+    def get_version(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/version")
+        return json.loads(rv.text), rv.status_code
+
+    def sync_status(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/sync-status")
+        return json.loads(rv.text), rv.status_code
 
     def wait_for_sync(self, target):
         while True:
-            res = self.sync_status()
+            res, _ = self.sync_status()
             if res["indexedEpoch"] == res["blockchainEpoch"]:
                 if res["indexedEpoch"] == target:
                     return
@@ -885,7 +897,7 @@ def client(flask_client: FlaskClient) -> Client:
         if i != 1:
             client.move_to_next_epoch(i)
         while True:
-            res = client.sync_status()
+            res, _ = client.sync_status()
             if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
                 i - 1
             ):

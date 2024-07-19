@@ -22,7 +22,7 @@
     "apitest:up": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up anvil ipfs graph-postgres graph-node multideployer",
     "apitest:down": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml down",
     "apitest:run": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml run backend-apitest",
-    "preapitest:up": "docker rm -v -f $(docker ps -qa --filter 'name=apitest')",
+    "preapitest:up": "docker rm -v -f $(docker ps -qa --filter 'name=apitest') || true",
     "preapitest:run": "yarn localenv:build-backend"
   },
   "repository": {
