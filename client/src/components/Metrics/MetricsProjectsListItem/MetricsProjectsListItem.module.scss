@@ -22,7 +22,16 @@
     color: $color-octant-dark;
   }
 
+  .name {
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .value {
-    margin-left: auto;
+    margin-left: 1rem;
+    flex-shrink: 0;
   }
 }
