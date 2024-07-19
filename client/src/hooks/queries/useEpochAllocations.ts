@@ -6,7 +6,8 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochAllocation = {
   amount: bigint;
-  user: string;
+  donor: string;
+  project: string;
 };
 
 type EpochAllocations = EpochAllocation[];
@@ -20,17 +21,10 @@ export default function useEpochAllocations(
     queryKey: QUERY_KEYS.epochAllocations(epoch),
     select: response => {
       return response.allocations.reduce((acc, curr) => {
-        const donorIdx = acc.findIndex(({ user }) => user === curr.donor);
-
-        if (donorIdx > -1) {
-          // eslint-disable-next-line operator-assignment
-          acc[donorIdx].amount = acc[donorIdx].amount + parseUnitsBigInt(curr.amount, 'wei');
-        } else {
-          acc.push({
-            amount: parseUnitsBigInt(curr.amount, 'wei'),
-            user: curr.donor,
-          });
-        }
+        acc.push({
+          ...curr,
+          amount: parseUnitsBigInt(curr.amount, 'wei'),
+        });
 
         return acc;
       }, [] as EpochAllocations);

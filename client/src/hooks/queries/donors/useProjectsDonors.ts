@@ -1,14 +1,8 @@
-import { UseQueryResult, useQueries } from '@tanstack/react-query';
-import { useCallback } from 'react';
-
-import { apiGetProjectDonors } from 'api/calls/projectDonors';
-import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 
 import { ProjectDonor } from './types';
-import { mapDataToProjectDonors } from './utils';
 
 export default function useProjectsDonors(epoch?: number): {
   data: { [key: string]: ProjectDonor[] };
@@ -17,57 +11,47 @@ export default function useProjectsDonors(epoch?: number): {
   refetch: () => void;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: projectsEpoch } = useProjectsEpoch(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+
+  const epochToUse = epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
 
   // TODO OCT-1139 implement socket here.
 
-  const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
-    queries: (projectsEpoch?.projectsAddresses || []).map(projectAddress => ({
-      enabled:
-        !!projectsEpoch &&
-        !!currentEpoch &&
-        currentEpoch > 1 &&
-        (isDecisionWindowOpen === true || epoch !== undefined),
-      queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
-      queryKey: QUERY_KEYS.projectDonors(
-        projectAddress,
-        epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-      ),
-      select: response => mapDataToProjectDonors(response),
-    })),
-  });
+  const {
+    data: epochAllocations,
+    refetch,
+    isFetching: isFetchingEpochAllocations,
+    isSuccess,
+  } = useEpochAllocations(epochToUse);
 
-  const refetchAll = useCallback(() => {
-    projectsDonorsResults.forEach(result => result.refetch());
-  }, [projectsDonorsResults]);
+  const projectsDonors =
+    epochAllocations?.reduce((acc, curr) => {
+      if (!acc[curr.project]) {
+        acc[curr.project] = [];
+      }
+
+      acc[curr.project].push({ address: curr.donor, amount: curr.amount });
+      acc[curr.project].sort((a, b) => {
+        if (a.amount > b.amount) {
+          return -1;
+        }
+        if (a.amount < b.amount) {
+          return 1;
+        }
+        return 0;
+      });
+
+      return acc;
+    }, {}) || {};
 
   const isFetching =
-    isDecisionWindowOpen === undefined ||
-    projectsEpoch === undefined ||
-    projectsDonorsResults.length === 0 ||
-    projectsDonorsResults.some(
-      ({ isFetching: isFetchingProjectsDonorsResult }) => isFetchingProjectsDonorsResult,
-    );
-  if (isFetching) {
-    return {
-      data: {},
-      isFetching,
-      isSuccess: false,
-      refetch: refetchAll,
-    };
-  }
+    currentEpoch === undefined || isDecisionWindowOpen === undefined || isFetchingEpochAllocations;
 
   return {
-    data: (projectsDonorsResults || []).reduce((acc, curr, currentIndex) => {
-      return {
-        ...acc,
-        [projectsEpoch?.projectsAddresses[currentIndex]]: curr.data,
-      };
-    }, {}),
-    isFetching: false,
+    data: projectsDonors,
+    isFetching,
     // Ensures projectsDonorsResults is actually fetched with data, and not just an object with undefined values.
-    isSuccess: !projectsDonorsResults.some(element => !element.isSuccess),
-    refetch: refetchAll,
+    isSuccess,
+    refetch,
   };
 }
