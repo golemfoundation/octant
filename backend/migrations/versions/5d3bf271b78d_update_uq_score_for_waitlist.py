@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     # Waitlist is a list of stings that represent user addresses
-    # For all users in the waitlist, if they have a UQ score, update it to 1.0 only for epoch 5
+    # For all users in the waitlist, if they have a UQ score, update it to 1.0 only for epoch 4
     query = f"""
         UPDATE uniqueness_quotients
         SET score = '1.0'
