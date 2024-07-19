@@ -13,6 +13,7 @@ import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
+import ModalAllocationLowUqScore from 'components/Allocation/ModalAllocationLowUqScore';
 import Layout from 'components/shared/Layout';
 import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
@@ -28,6 +29,7 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import useUpcomingBudget from 'hooks/queries/useUpcomingBudget';
+import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
@@ -94,7 +96,9 @@ const AllocationView = (): ReactElement => {
     isFetching: isFetchingUserNonce,
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
+  const { data: uqScore } = useUqScore(currentEpoch!);
   const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
+  const [showLowUQScoreModal, setShowLowUQScoreModal] = useState(false);
   const {
     allocations,
     rewardsForProjects,
@@ -256,7 +260,7 @@ const AllocationView = (): ReactElement => {
     setAllocationValues(allocationValuesReset);
   };
 
-  const onAllocate = () => {
+  const onAllocate = (isProceedingToAllocateWithLowUQScore?: boolean) => {
     if (userNonce === undefined || projectsEpoch === undefined) {
       return;
     }
@@ -272,7 +276,7 @@ const AllocationView = (): ReactElement => {
         value: '0',
       });
     }
-    if (isContract) {
+    if (isContract && !isProceedingToAllocateWithLowUQScore) {
       setIsWaitingForFirstMultisigSignature(true);
       toastService.showToast({
         message: t('multisigSignatureToast.message'),
@@ -280,6 +284,17 @@ const AllocationView = (): ReactElement => {
         title: t('multisigSignatureToast.title'),
         type: 'warning',
       });
+    }
+    if (
+      !userAllocations?.hasUserAlreadyDoneAllocation &&
+      uqScore === 20n &&
+      !isProceedingToAllocateWithLowUQScore
+    ) {
+      setShowLowUQScoreModal(true);
+      return;
+    }
+    if (isProceedingToAllocateWithLowUQScore) {
+      setShowLowUQScoreModal(false);
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
   };
@@ -550,6 +565,13 @@ const AllocationView = (): ReactElement => {
           isLoadingAllocateSimulate={isLoadingAllocateSimulate}
         />
       )}
+      <ModalAllocationLowUqScore
+        modalProps={{
+          isOpen: showLowUQScoreModal,
+          onClosePanel: () => setShowLowUQScoreModal(false),
+        }}
+        onAllocate={() => onAllocate(true)}
+      />
     </Layout>
   );
 };
