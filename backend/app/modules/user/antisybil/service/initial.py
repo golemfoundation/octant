@@ -1,7 +1,10 @@
 from flask import current_app as app
 
+from eth_utils import to_checksum_address
+
 from typing import Optional, Tuple
 
+import json
 from datetime import datetime
 from typing import List
 
@@ -10,6 +13,7 @@ from app.exceptions import ExternalApiException, UserNotFound, AddressAlreadyDel
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
+from app.modules.user.antisybil.service.guest_list import guest_set
 from app.pydantic import Model
 from app.infrastructure.external_api.common import retry_request
 from app.infrastructure.external_api.gc_passport.score import (
@@ -23,6 +27,7 @@ class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
+        user_address = to_checksum_address(user_address)
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
         except UserNotFound as ex:
@@ -31,12 +36,16 @@ class GitcoinPassportAntisybil(Model):
             )
             raise ex
         if score is not None:
+            if (user_address in guest_set) and not _has_guest_stamp_applied_by_gp(
+                score
+            ):
+                score.score = score.score + 21.0
             return score.score, score.expires_at
         return None
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> (float, datetime, any):
+    ) -> Tuple[float, datetime, any]:
         score = issue_address_for_scoring(user_address)
 
         def _retry_fetch():
@@ -45,7 +54,7 @@ class GitcoinPassportAntisybil(Model):
                 raise ExternalApiException("GP: scoring is not completed yet", 503)
 
         if score["status"] != "DONE":
-            score = retry_request(self._retry_fetch, 200)
+            score = retry_request(_retry_fetch, 200)
 
         all_stamps = fetch_stamps(user_address)["items"]
         cutoff = datetime.now()
@@ -74,6 +83,26 @@ class GitcoinPassportAntisybil(Model):
         primary, secondary, _ = get_hashed_addresses(user_address, user_address)
         if primary in all_hashes or secondary in all_hashes:
             raise AddressAlreadyDelegated()
+
+
+guest_list_stamp_providers = [
+    "AllowList#OctantFinal",
+    "AllowList#OctantEpochTwo",
+    "AllowList#OctantEpochOne",
+]
+
+
+def _has_guest_stamp_applied_by_gp(score) -> bool:
+    def get_provider(stamp) -> str:
+        return stamp["credential"]["credentialSubject"]["provider"]
+
+    all_stamps = json.loads(score.stamps)
+    stamps = [
+        stamp
+        for stamp in all_stamps
+        if get_provider(stamp) in guest_list_stamp_providers
+    ]
+    return len(stamps) > 0
 
 
 def _parse_expiration_date(timestamp_str: str) -> datetime:
