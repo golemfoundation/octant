@@ -700,7 +700,7 @@ class Client:
 
     def wait_for_height_sync(self):
         while True:
-            res = self.sync_status()
+            res, _ = self.sync_status()
             if res["indexedHeight"] == res["blockchainHeight"]:
                 return res["indexedHeight"]
             time.sleep(0.5)
