@@ -1,4 +1,4 @@
-"""update uq score for waitlist
+"""update uq score for guestlist
 
 Revision ID: 5d3bf271b78d
 Revises: 19f6b4f5ce2e
@@ -8,6 +8,7 @@ Create Date: 2024-07-19 14:11:00.850135
 from alembic import op
 import sqlalchemy as sa
 
+from eth_utils import to_checksum_address
 
 revision = "5d3bf271b78d"
 down_revision = "19f6b4f5ce2e"
@@ -16,8 +17,8 @@ depends_on = None
 
 
 def upgrade():
-    # Waitlist is a list of stings that represent user addresses
-    # For all users in the waitlist, if they have a UQ score, update it to 1.0 only for epoch 4
+    # Guest-list is a list of stings that represent user addresses
+    # For all users in the Guest-list, if they have a UQ score, update it to 1.0 only for epoch 4
     query = f"""
         UPDATE uniqueness_quotients
         SET score = '1.0'
@@ -43,7 +44,7 @@ def downgrade():
     op.execute(query)
 
 
-user_addresses = [
+raw_addresses = [
     "0x16f3f2f0ba34973937a1ebb989a295ca106b67c7",
     "0xbb5935daafbacae82c8d2ca8377f16073d70061a",
     "0xba84b5ca750b33dfaddbfdd1b7c6887885a34977",
@@ -512,3 +513,5 @@ user_addresses = [
     "0xe1555c6ee61366a3f90135dc704acd25c3247aca",
     "0x2f51e78ff8aec6a941c4ceeeb26b4a1f03737c50",
 ]
+
+user_addresses = [str(to_checksum_address(address)) for address in raw_addresses]
