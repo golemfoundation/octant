@@ -112,6 +112,12 @@ def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
                 "githubAccountCreationGte#90": 0.0,
             },
         }
+    elif args[0] == "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1":
+        return {
+            "address": "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1",
+            "score": "22.0",
+            "status": "DONE",
+        }
     else:
         return {"status": "DONE", "score": "0.0"}
 
@@ -136,6 +142,12 @@ def mock_gitcoin_passport_fetch_score(*args, **kwargs):
                 "twitterAccountAgeGte#180": 0.0,
                 "githubAccountCreationGte#90": 0.0,
             },
+        }
+    elif args[0] == "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1":
+        return {
+            "address": "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1",
+            "score": "22.0",
+            "status": "DONE",
         }
     else:
         return {"status": "DONE", "score": "0.0"}
@@ -363,8 +375,20 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
             ],
         }
 
+    elif args[0] == "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1":
+        return {
+            "items": [
+                {
+                    "version": "1.0.0",
+                    "credential": {
+                        "expirationDate": "2099-09-22T15:04:05.073Z",
+                        "credentialSubject": {"provider": "AllowList#OctantEpochTwo"},
+                    },
+                }
+            ]
+        }
     else:
-        return []
+        return {"next": None, "prev": None, "items": []}
 
 
 def mock_etherscan_api_get_transactions(*args, **kwargs):

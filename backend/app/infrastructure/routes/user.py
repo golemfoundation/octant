@@ -256,3 +256,49 @@ class UQScore(OctantResource):
         app.logger.debug(f"Uniqueness quotient: {uq_score}")
 
         return {"uniquenessQuotient": uq_score}
+
+
+user_uq_pair_model = api.model(
+    "UserUQPair",
+    {
+        "userAddress": fields.String(
+            required=True, description="User ethereum address"
+        ),
+        "uniquenessQuotient": fields.String(
+            required=True, description="Uniqueness quotient score"
+        ),
+    },
+)
+
+uq_pairs_model = api.model(
+    "ListUserUQPair",
+    {
+        "uqsInfo": fields.List(fields.Nested(user_uq_pair_model), required=True),
+    },
+)
+
+
+@ns.route("/uq/<int:epoch>/all")
+class AllUQScores(OctantResource):
+    @ns.doc(
+        description="Returns uniqueness quotient scores for all users for given epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(uq_pairs_model)
+    @ns.response(200, "uniqueness quotients retrieved")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting uniqueness quotients for epoch {epoch}")
+        uq_scores = uq_controller.get_all_uqs(epoch)
+        app.logger.debug(f"Uniqueness quotient len: {len(uq_scores)}")
+
+        return {
+            "uqsInfo": [
+                {
+                    "uniquenessQuotient": uq_score,
+                    "userAddress": user_address,
+                }
+                for user_address, uq_score in uq_scores
+            ]
+        }
