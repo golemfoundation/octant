@@ -1,12 +1,16 @@
 import cx from 'classnames';
-import React, { FC, memo } from 'react';
+import React, { ChangeEvent, FC, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
+import InputText from 'components/ui/InputText/InputText';
+import Svg from 'components/ui/Svg';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
+import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsList.module.scss';
 import ProjectsListProps from './types';
@@ -19,13 +23,32 @@ const ProjectsList: FC<ProjectsListProps> = ({
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.projectsList',
   });
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: projectsEpoch, isFetching: isFetchingProjectsEpoch } = useProjectsEpoch(epoch);
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
   const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
+
+  const isLatestEpochAndDecisionWindowOpen = epoch === undefined && !!isDecisionWindowOpen;
+
+  const onChangeSearchQuery = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
+  };
+
+  const areProjectsIpfsWithRewardsAvailable =
+    projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards;
+  const projectsIpfsWithRewardsFiltered = areProjectsIpfsWithRewardsAvailable
+    ? projectsIpfsWithRewards.filter(projectIpfsWithRewards => {
+        return (
+          projectIpfsWithRewards.name!.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          projectIpfsWithRewards.address!.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      })
+    : [];
 
   return (
     <div
@@ -54,8 +77,19 @@ const ProjectsList: FC<ProjectsListProps> = ({
           </div>
         </>
       )}
-      {projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards
-        ? projectsIpfsWithRewards.map((projectIpfsWithRewards, index) => (
+      {isLatestEpochAndDecisionWindowOpen && (
+        <InputText
+          className={styles.inputSearch}
+          Icon={<Svg img={magnifyingGlass} size={3.2} />}
+          onChange={onChangeSearchQuery}
+          onClear={() => setSearchQuery('')}
+          placeholder={t('searchInputPlaceholder')}
+          value={searchQuery}
+          variant="search"
+        />
+      )}
+      {areProjectsIpfsWithRewardsAvailable
+        ? projectsIpfsWithRewardsFiltered.map((projectIpfsWithRewards, index) => (
             <ProjectsListItem
               key={projectIpfsWithRewards.address}
               className={styles.element}

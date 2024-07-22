@@ -273,7 +273,8 @@
         "didNotReachThreshold": "Did not reach threshold"
       },
       "projectsList": {
-        "epochArchive": "Epoch {{epoch}} Archive"
+        "epochArchive": "Epoch {{epoch}} Archive",
+        "searchInputPlaceholder": "Search for projects"
       },
       "timeCounter": {
         "hours": "Hours",
