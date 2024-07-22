@@ -15,8 +15,6 @@ export default function useProjectsDonors(epoch?: number): {
 
   const epochToUse = epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
 
-  // TODO OCT-1139 implement socket here.
-
   const {
     data: epochAllocations,
     refetch,
