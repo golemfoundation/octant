@@ -45,6 +45,7 @@ def downgrade():
 
 
 raw_addresses = [
+    "0x747e6ABc102222f1dF65C662540dDf471241a644",
     "0x16f3f2f0ba34973937a1ebb989a295ca106b67c7",
     "0xbb5935daafbacae82c8d2ca8377f16073d70061a",
     "0xba84b5ca750b33dfaddbfdd1b7c6887885a34977",
