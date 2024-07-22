@@ -23,12 +23,10 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
 
   const steps = [
     <Trans
-      className={styles.onboardingModalText}
       components={[<Button className={styles.link} href={GITCOIN_PASSPORT} variant="link3" />]}
       i18nKey="views.settings.calculatingYourUniquenessStep1"
     />,
     <Trans
-      className={styles.onboardingModalText}
       components={[
         <Button
           className={styles.link}
@@ -39,7 +37,6 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
       i18nKey="views.settings.calculatingYourUniquenessStep2"
     />,
     <Trans
-      className={styles.onboardingModalText}
       components={[
         <Button className={styles.link} href={SCORING_20_FOR_HUMANS_GUIDE} variant="link3" />,
       ]}
