@@ -43,7 +43,7 @@ def test_antisybil_service(
     assert score == 2.572
 
 
-def test_guest_stamp(
+def test_guest_stamp_score_bump_for_both_gp_and_octant_side_application(
     patch_gitcoin_passport_issue_address_for_scoring,
     patch_gitcoin_passport_fetch_score,
     patch_gitcoin_passport_fetch_stamps,

@@ -1,19 +1,19 @@
 from flask import current_app as app
 
-from eth_utils import to_checksum_address
+from eth_utils.address import to_checksum_address
 
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import json
 from datetime import datetime
 from typing import List
 
+from app.constants import GUEST_LIST, GUEST_LIST_STAMP_PROVIDERS
 from app.extensions import db
 from app.exceptions import ExternalApiException, UserNotFound, AddressAlreadyDelegated
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
-from app.modules.user.antisybil.service.guest_list import guest_set
 from app.pydantic import Model
 from app.infrastructure.external_api.common import retry_request
 from app.infrastructure.external_api.gc_passport.score import (
@@ -36,9 +36,7 @@ class GitcoinPassportAntisybil(Model):
             )
             raise ex
         if score is not None:
-            if (user_address in guest_set) and not _has_guest_stamp_applied_by_gp(
-                score
-            ):
+            if user_address in GUEST_LIST and not _has_guest_stamp_applied_by_gp(score):
                 score.score = score.score + 21.0
             return score.score, score.expires_at
         return None
@@ -85,14 +83,7 @@ class GitcoinPassportAntisybil(Model):
             raise AddressAlreadyDelegated()
 
 
-guest_list_stamp_providers = [
-    "AllowList#OctantFinal",
-    "AllowList#OctantEpochTwo",
-    "AllowList#OctantEpochOne",
-]
-
-
-def _has_guest_stamp_applied_by_gp(score) -> bool:
+def _has_guest_stamp_applied_by_gp(score: Dict) -> bool:
     def get_provider(stamp) -> str:
         return stamp["credential"]["credentialSubject"]["provider"]
 
@@ -100,7 +91,7 @@ def _has_guest_stamp_applied_by_gp(score) -> bool:
     stamps = [
         stamp
         for stamp in all_stamps
-        if get_provider(stamp) in guest_list_stamp_providers
+        if get_provider(stamp) in GUEST_LIST_STAMP_PROVIDERS
     ]
     return len(stamps) > 0
 
