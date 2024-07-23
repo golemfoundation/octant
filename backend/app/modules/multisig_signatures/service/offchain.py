@@ -1,4 +1,3 @@
-from threading import Lock
 from typing import List, Dict
 
 from app.context.manager import Context
@@ -7,8 +6,8 @@ from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
-
 from app.infrastructure.external_api.common import retry_request
+from app.infrastructure.external_api.safe.message_details import get_message_details
 from app.modules.common.allocations.deserializer import deserialize_payload
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
@@ -24,7 +23,6 @@ from app.modules.multisig_signatures.core import (
 )
 from app.modules.multisig_signatures.dto import Signature
 from app.pydantic import Model
-from app.infrastructure.external_api.safe.message_details import get_message_details
 
 
 class OffchainMultisigSignatures(Model):
@@ -32,8 +30,6 @@ class OffchainMultisigSignatures(Model):
     verifiers: Dict[SignatureOpType, Verifier]
 
     staged_signatures: List[MultisigSignatures] = []
-
-    _lock = Lock()
 
     def get_last_pending_signature(
         self, _: Context, user_address: str, op_type: SignatureOpType
@@ -70,14 +66,10 @@ class OffchainMultisigSignatures(Model):
 
         return approved_signatures
 
-    def _apply_atomically(self, pending_signature: MultisigSignatures):
-        with self._lock:
-            pending_signature.status = SigStatus.APPROVED
-
     def apply_staged_signatures(self, _: Context, signature_id: int):
         for idx, pending_signature in enumerate(self.staged_signatures):
             if pending_signature.id == signature_id:
-                self._apply_atomically(pending_signature)
+                pending_signature.status = SigStatus.APPROVED
                 db.session.commit()
                 self.staged_signatures.pop(idx)
                 return
