@@ -1,3 +1,4 @@
+import { Projects } from 'api/calls/projects';
 import { DISPLAY_CURRENCIES } from 'constants/currencies';
 import {
   ALLOCATION_ITEMS_KEY,
@@ -14,10 +15,18 @@ import {
   HAS_ONBOARDING_BEEN_CLOSED,
   LAST_SEEN_STEP,
   WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP,
+  PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
+import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 import isStringValidJson from 'utils/isStringValidJson';
+
+export type LocalStorageInitParams = {
+  currentEpoch: number;
+  isDecisionWindowOpen: boolean;
+  projectsEpoch: Projects;
+};
 
 const LocalStorageService = () => {
   const validateLocalStorageJsons = (): void => {
@@ -144,9 +153,72 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasUqTooLowAlreadyClosed,
     );
 
+  const validateProjectsAddressesRandomizedOrder = ({
+    currentEpoch,
+    projectsEpoch,
+    isDecisionWindowOpen,
+  }: LocalStorageInitParams): void => {
+    const projectsAddressesRandomizedOrder = JSON.parse(
+      localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER) || 'null',
+    );
+
+    // Validations in case data is set.
+    if (projectsAddressesRandomizedOrder !== null) {
+      // Invalid structure of an object, remove.
+      if (
+        !projectsAddressesRandomizedOrder.epoch ||
+        !projectsAddressesRandomizedOrder.addressesRandomizedOrder ||
+        typeof projectsAddressesRandomizedOrder.epoch !== 'number' ||
+        !Array.isArray(projectsAddressesRandomizedOrder.addressesRandomizedOrder) ||
+        projectsAddressesRandomizedOrder.addressesRandomizedOrder.length === 0
+      ) {
+        localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
+      }
+
+      // When AW is closed, remove.
+      if (!isDecisionWindowOpen) {
+        localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
+      }
+
+      // When epoch changed, remove.
+      if (projectsAddressesRandomizedOrder.epoch !== currentEpoch) {
+        localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
+      }
+
+      // When length changed, remove (shouldn't be possible, but these are famous last words).
+      if (
+        projectsAddressesRandomizedOrder.addressesRandomizedOrder.length !==
+        projectsEpoch.projectsAddresses.length
+      ) {
+        localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
+      }
+    }
+
+    // getItem again, in case any of the previous removes happened.
+    const projectsAddressesRandomizedOrderFresh = JSON.parse(
+      localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER) || 'null',
+    );
+
+    if (projectsAddressesRandomizedOrderFresh === null) {
+      if (isDecisionWindowOpen) {
+        const projectsEpochRandomized = projectsEpoch.projectsAddresses.sort(
+          () => 0.5 - Math.random(),
+        );
+
+        localStorage.setItem(
+          PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
+          JSON.stringify({
+            addressesRandomizedOrder: projectsEpochRandomized,
+            epoch: currentEpoch,
+          } as ProjectsAddressesRandomizedOrder),
+        );
+      }
+    }
+  };
+
   const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
-  const init = (): void => {
+  const init = (params: LocalStorageInitParams): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
     validateIsOnboardingAlwaysVisible();
@@ -162,6 +234,7 @@ const LocalStorageService = () => {
     validateRewardsForProjects();
     validateHasOnboardingBeenClosed();
     validateLastSeenStep();
+    validateProjectsAddressesRandomizedOrder(params);
   };
 
   return {
