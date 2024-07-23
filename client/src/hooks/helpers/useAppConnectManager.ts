@@ -83,6 +83,7 @@ export default function useAppConnectManager(
       localStorageInitParams.currentEpoch === undefined ||
       localStorageInitParams.projectsEpoch === undefined
     ) {
+      setIsLocalStorageInitialized(false);
       return;
     }
 
