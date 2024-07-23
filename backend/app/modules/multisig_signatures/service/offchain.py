@@ -1,4 +1,5 @@
-from typing import List
+from threading import Lock
+from typing import List, Dict
 
 from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest, InvalidMultisigAddress
@@ -28,11 +29,11 @@ from app.infrastructure.external_api.safe.message_details import get_message_det
 
 class OffchainMultisigSignatures(Model):
     is_mainnet: bool = False
-    verifiers: dict[SignatureOpType, Verifier]
+    verifiers: Dict[SignatureOpType, Verifier]
 
-    staged_signatures: list[
-        MultisigSignatures
-    ] = []  # TODO make it invulnerable for data race & race conditions
+    staged_signatures: List[MultisigSignatures] = []
+
+    _lock = Lock()
 
     def get_last_pending_signature(
         self, _: Context, user_address: str, op_type: SignatureOpType
@@ -69,10 +70,14 @@ class OffchainMultisigSignatures(Model):
 
         return approved_signatures
 
+    def _apply_atomically(self, pending_signature: MultisigSignatures):
+        with self._lock:
+            pending_signature.status = SigStatus.APPROVED
+
     def apply_staged_signatures(self, _: Context, signature_id: int):
         for idx, pending_signature in enumerate(self.staged_signatures):
             if pending_signature.id == signature_id:
-                pending_signature.status = SigStatus.APPROVED
+                self._apply_atomically(pending_signature)
                 db.session.commit()
                 self.staged_signatures.pop(idx)
                 return
