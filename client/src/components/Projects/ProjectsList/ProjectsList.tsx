@@ -56,6 +56,10 @@ const ProjectsList: FC<ProjectsListProps> = ({
     localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER)!,
   ) as ProjectsAddressesRandomizedOrder;
 
+  const projectsAddressesToIterate = isLatestEpochAndDecisionWindowOpen
+    ? projectsAddressesRandomizedOrder.addressesRandomizedOrder
+    : projectsIpfsWithRewards.map(({ address }) => address);
+
   return (
     <div
       className={styles.list}
@@ -95,7 +99,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
         />
       )}
       {areProjectsIpfsWithRewardsAvailable
-        ? projectsAddressesRandomizedOrder.addressesRandomizedOrder.map((address, index) => {
+        ? projectsAddressesToIterate.map((address, index) => {
             const projectIpfsWithRewards = projectsIpfsWithRewardsFiltered.find(
               element => element.address === address,
             )!;

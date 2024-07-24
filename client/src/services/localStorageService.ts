@@ -1,3 +1,5 @@
+import isEqual from 'lodash/isEqual';
+
 import { Projects } from 'api/calls/projects';
 import { DISPLAY_CURRENCIES } from 'constants/currencies';
 import {
@@ -173,22 +175,18 @@ const LocalStorageService = () => {
         projectsAddressesRandomizedOrder.addressesRandomizedOrder.length === 0
       ) {
         localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
-      }
-
-      // When AW is closed, remove.
-      if (!isDecisionWindowOpen) {
+      } else if (!isDecisionWindowOpen) {
+        // When AW is closed, remove.
         localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
-      }
-
-      // When epoch changed, remove.
-      if (projectsAddressesRandomizedOrder.epoch !== currentEpoch) {
+      } else if (projectsAddressesRandomizedOrder.epoch !== currentEpoch) {
+        // When epoch changed, remove.
         localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
-      }
-
-      // When length changed, remove (shouldn't be possible, but these are famous last words).
-      if (
-        projectsAddressesRandomizedOrder.addressesRandomizedOrder.length !==
-        projectsEpoch.projectsAddresses.length
+      } else if (
+        // When length changed or elements do not match, remove (shouldn't be possible, but these are famous last words).
+        !isEqual(
+          projectsAddressesRandomizedOrder.addressesRandomizedOrder.sort(),
+          projectsEpoch.projectsAddresses.sort(),
+        )
       ) {
         localStorage.removeItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER);
       }
