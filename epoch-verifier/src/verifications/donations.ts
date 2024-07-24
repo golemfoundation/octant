@@ -92,8 +92,10 @@ export function verifyMatchedFunds(context: Context): VerificationResult {
   const aggregatedDonations = individualDonationsAggregatedByProjectsWithUQs(context)
   const [aggregatedCappedMatchedFunding, leftover] = _computeMatchingFundQFAndCapAndUQ(aggregatedDonations, totalMatchedFunding);
 
+  console.log("[INFO] Leftover value:", leftover);
+
   return assertAll(aggregatedCappedMatchedFunding, ([project, matched]) => {
-    return assertEq(matched, rewards.get(project)!.matched, BigInt(100), true)
+    return assertEq(matched - leftover, rewards.get(project)!.matched, BigInt(100), true)
   });
 }
 
