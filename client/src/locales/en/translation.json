@@ -274,7 +274,8 @@
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive",
-        "searchInputPlaceholder": "Search for projects"
+        "searchInputPlaceholder": "Search for projects",
+        "noSearchResults": "No luck, please try again"
       },
       "timeCounter": {
         "hours": "Hours",

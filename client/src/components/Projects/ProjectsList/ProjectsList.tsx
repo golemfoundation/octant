@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
+import Img from 'components/ui/Img';
 import InputText from 'components/ui/InputText/InputText';
 import Svg from 'components/ui/Svg';
 import { PROJECTS_ADDRESSES_RANDOMIZED_ORDER } from 'constants/localStorageKeys';
@@ -98,6 +99,14 @@ const ProjectsList: FC<ProjectsListProps> = ({
           variant="search"
         />
       )}
+      {isLatestEpochAndDecisionWindowOpen &&
+        !isFetchingProjectsWithRewards &&
+        projectsIpfsWithRewardsFiltered.length === 0 && (
+          <div className={styles.noSearchResults}>
+            <Img className={styles.image} src="images/searchEmpty.png" />
+            {t('noSearchResults')}
+          </div>
+        )}
       {areProjectsIpfsWithRewardsAvailable
         ? projectsAddressesToIterate.map((address, index) => {
             const projectIpfsWithRewards = projectsIpfsWithRewardsFiltered.find(

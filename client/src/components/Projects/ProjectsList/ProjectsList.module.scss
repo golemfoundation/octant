@@ -1,5 +1,19 @@
 $elementMargin: 1.6rem;
 
+.noSearchResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  color: $color-octant-grey5;
+  margin-bottom: 1.6rem;
+
+  .image {
+    width: 28rem;
+    margin-bottom: 3.2rem;
+  }
+}
+
 .list {
   display: flex;
   flex-wrap: wrap;
