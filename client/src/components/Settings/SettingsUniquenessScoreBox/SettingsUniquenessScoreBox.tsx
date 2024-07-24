@@ -75,6 +75,22 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       : primaryAddressScore === null || primaryAddressScore !== address,
   );
 
+  const isRecalculateButtonDisabled =
+    isDelegationCompleted ||
+    isFetchingScore ||
+    isFetchingUqScore ||
+    delegationSecondaryAddress === '0x???';
+
+  const isDelegateButtonDisabled =
+    isDelegationCompleted ||
+    isFetchingScore ||
+    primaryAddressScore === null ||
+    primaryAddressScore === undefined ||
+    primaryAddressScore >= 20 ||
+    isFetchingUqScore ||
+    uqScore === 100n ||
+    delegationSecondaryAddress === '0x???';
+
   const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
   const {
     mutateAsync: refreshAntisybilStatus,
@@ -213,19 +229,14 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         <Button
           className={styles.visitDashboard}
           href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
-          label="Score too low? Visit our Passport dashboard"
+          label={t('visitOurPassportDashboard')}
           variant="link"
         />
         <SettingsUniquenessScoreAddresses isFetchingScore={isFetchingScore} />
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}
-            isDisabled={
-              isDelegationCompleted ||
-              isFetchingScore ||
-              isFetchingUqScore ||
-              delegationSecondaryAddress === '0x???'
-            }
+            isDisabled={isRecalculateButtonDisabled}
             isHigh
             onClick={() => setIisRecalculatingScoreModalOpen(true)}
             variant="cta"
@@ -234,16 +245,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
           </Button>
           <Button
             className={styles.button}
-            isDisabled={
-              isDelegationCompleted ||
-              isFetchingScore ||
-              primaryAddressScore === null ||
-              primaryAddressScore === undefined ||
-              primaryAddressScore >= 20 ||
-              isFetchingUqScore ||
-              uqScore === 100n ||
-              delegationSecondaryAddress === '0x???'
-            }
+            isDisabled={isDelegateButtonDisabled}
             isHigh
             onClick={() => {
               setIsDelegationInProgress(true);

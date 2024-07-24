@@ -547,6 +547,7 @@
       "signMessage": "Sign message",
       "signMessages": "Sign messages",
       "switchAccount": "Switch account",
+      "visitOurPassportDashboard": "Score too low? Visit our Passport dashboard",
       "toasts": {
         "delegationTooManyUniqueAddresses": {
           "title": "Too many accounts",

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { animate } from 'framer-motion';
-import React, { FC, memo, useEffect, useRef } from 'react';
+import React, { FC, memo, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -35,13 +35,23 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
     secondaryAddressScore: state.data.secondaryAddressScore,
   }));
 
-  const addresses =
-    (isDelegationCompleted && delegationPrimaryAddress && delegationSecondaryAddress) ||
-    (delegationPrimaryAddress && delegationSecondaryAddress === '0x???')
-      ? [delegationPrimaryAddress, delegationSecondaryAddress]
-      : [accountAddress];
+  const addresses = useMemo(() => {
+    if (
+      (isDelegationCompleted && delegationPrimaryAddress && delegationSecondaryAddress) ||
+      (delegationPrimaryAddress && delegationSecondaryAddress === '0x???')
+    ) {return [delegationPrimaryAddress, delegationSecondaryAddress];}
+
+    return [accountAddress];
+  }, [delegationPrimaryAddress, delegationSecondaryAddress, isDelegationCompleted, accountAddress]);
 
   const showMoreThanOneAddress = addresses.length > 1;
+
+  const addressesToShow = useMemo(() => {
+    if (showMoreThanOneAddress) {
+      return addresses.map(address => address.slice(0, 5)).join(', ');
+    }
+    return truncateEthAddress(addresses.at(0) || '');
+  }, [showMoreThanOneAddress, addresses]);
 
   useEffect(() => {
     if (isFetchingScore || !ref?.current) {
@@ -78,11 +88,7 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
         ))}
       </div>
       <div className={styles.addresses}>
-        <div className={styles.addressesGroup}>
-          {showMoreThanOneAddress
-            ? addresses.map(address => address.slice(0, 5)).join(', ')
-            : truncateEthAddress(addresses.at(0) || '')}
-        </div>
+        <div className={styles.addressesGroup}>{addressesToShow}</div>
         <div className={styles.numberOfAddresses}>
           {showMoreThanOneAddress ? `${addresses?.length} ${t('addresses')}` : t('primary')}
         </div>
