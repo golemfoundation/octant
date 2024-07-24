@@ -102,7 +102,12 @@ const ProjectsList: FC<ProjectsListProps> = ({
         ? projectsAddressesToIterate.map((address, index) => {
             const projectIpfsWithRewards = projectsIpfsWithRewardsFiltered.find(
               element => element.address === address,
-            )!;
+            );
+
+            if (!projectIpfsWithRewards) {
+              return null;
+            }
+
             return (
               <ProjectsListItem
                 key={projectIpfsWithRewards.address}
