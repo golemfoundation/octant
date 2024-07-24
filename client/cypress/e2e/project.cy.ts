@@ -105,11 +105,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           i === projectNames.length - 1 ? projectNames.length - 1 : i,
         );
         cy.get('[data-test=ProjectListItemHeader__name]')
+          .contains(projectNames[i])
           .scrollIntoView({ offset: { left: 0, top: -150 } })
-          .contains(projectNames[i]);
-        cy.get('[data-test=ProjectListItem__Donors]')
-          .scrollIntoView({ offset: { left: 0, top: -150 } })
-          .should('be.visible');
+        cy.get('[data-test=ProjectListItem__Donors]').should('have.length', projectNames.length);
+        cy.get('[data-test=ProjectListItem__Donors]').each($element => {
+          cy.wrap($element).should('be.visible');
+        })
       }
     });
 
