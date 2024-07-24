@@ -228,7 +228,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('search field -- results should show project', () => {
       cy.get('[data-test=ProjectsList__InputText]').clear().type(projectNames[0]);
-      cy.get('[data-test^=ProjectsView__ProjectsListItem]').should('have.length', 1);
+      cy.get('[data-test^=ProjectsView__ProjectsList]')
+        .find('[data-test^=ProjectsView__ProjectsListItem]')
+        .should('have.length', 1);
     });
 
     it('search field -- no results should show no results image & text', () => {
