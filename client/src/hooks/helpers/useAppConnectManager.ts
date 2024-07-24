@@ -129,6 +129,12 @@ export default function useAppConnectManager(
   }, [chainId]);
 
   useEffect(() => {
+    if (isSyncingInProgress) {
+      setIsLocalStorageInitialized(false);
+    }
+  }, [isSyncingInProgress]);
+
+  useEffect(() => {
     /**
      * Possible solution for invalid cached `isConnect` value.
      * This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm)
@@ -157,7 +163,6 @@ export default function useAppConnectManager(
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
   useEffect(() => {
