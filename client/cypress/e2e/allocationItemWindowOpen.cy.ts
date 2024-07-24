@@ -105,7 +105,7 @@ describe('allocation (allocation window open)', () => {
 
       it('AllocationItem shows all the elements', () => {
         cy.get('@projectName').then(projectName => {
-          cy.find('[data-test=AllocationItem__name]').contains(projectName);
+          cy.find('[data-test=AllocationItem__name]').contains(projectName).should('be.visible');
         });
         cy.get('[data-test=AllocationItem]')
           .eq(0)
