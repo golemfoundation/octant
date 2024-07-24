@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { animate } from 'framer-motion';
-import React, { FC, memo, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -39,7 +39,9 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
     if (
       (isDelegationCompleted && delegationPrimaryAddress && delegationSecondaryAddress) ||
       (delegationPrimaryAddress && delegationSecondaryAddress === '0x???')
-    ) {return [delegationPrimaryAddress, delegationSecondaryAddress];}
+    ) {
+      return [delegationPrimaryAddress, delegationSecondaryAddress];
+    }
 
     return [accountAddress];
   }, [delegationPrimaryAddress, delegationSecondaryAddress, isDelegationCompleted, accountAddress]);
@@ -100,4 +102,4 @@ const SettingsUniquenessScoreAddresses: FC<SettingsUniquenessScoreAddressesProps
   );
 };
 
-export default memo(SettingsUniquenessScoreAddresses);
+export default SettingsUniquenessScoreAddresses;

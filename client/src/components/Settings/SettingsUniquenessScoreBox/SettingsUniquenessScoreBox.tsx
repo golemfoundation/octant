@@ -1,6 +1,6 @@
 import { watchAccount } from '@wagmi/core';
 import uniq from 'lodash/uniq';
-import React, { ReactNode, memo, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useConnectors } from 'wagmi';
 
@@ -33,7 +33,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
 
   const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
 
-  const [isRecalculatingScoreModalOpen, setIisRecalculatingScoreModalOpen] = useState(false);
+  const [isRecalculatingScoreModalOpen, setIsRecalculatingScoreModalOpen] = useState(false);
   const [isCalculatingYourUniquenessModalOpen, setIsCalculatingYourUniquenessModalOpen] =
     useState(false);
 
@@ -110,6 +110,30 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
             'Address is already used for delegation',
       },
     );
+
+  const modalSettingsCalculatingUQScoreProps = useMemo(() => {
+    return {
+      isOpen: isDelegationCalculatingUQScoreModalOpen,
+      onClosePanel: () => setIsDelegationCalculatingUQScoreModalOpen(false),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDelegationCalculatingUQScoreModalOpen]);
+
+  const modalSettingsRecalculatingScoreProps = useMemo(() => {
+    return {
+      isOpen: isRecalculatingScoreModalOpen,
+      onClosePanel: () => setIsRecalculatingScoreModalOpen(false),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecalculatingScoreModalOpen]);
+
+  const modalSettingsCalculatingYourUniquenessProps = useMemo(() => {
+    return {
+      isOpen: isCalculatingYourUniquenessModalOpen,
+      onClosePanel: () => setIsCalculatingYourUniquenessModalOpen(false),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCalculatingYourUniquenessModalOpen]);
 
   const checkDelegation = async () => {
     if (!isUserTOSAccepted) {
@@ -238,7 +262,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
             className={styles.button}
             isDisabled={isRecalculateButtonDisabled}
             isHigh
-            onClick={() => setIisRecalculatingScoreModalOpen(true)}
+            onClick={() => setIsRecalculatingScoreModalOpen(true)}
             variant="cta"
           >
             {t('recalculate')}
@@ -256,27 +280,14 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
             {t('delegate')}
           </Button>
         </div>
-        <ModalSettingsCalculatingUQScore
-          modalProps={{
-            isOpen: isDelegationCalculatingUQScoreModalOpen,
-            onClosePanel: () => setIsDelegationCalculatingUQScoreModalOpen(false),
-          }}
-        />
-        <ModalSettingsRecalculatingScore
-          modalProps={{
-            isOpen: isRecalculatingScoreModalOpen,
-            onClosePanel: () => setIisRecalculatingScoreModalOpen(false),
-          }}
-        />
+        <ModalSettingsCalculatingUQScore modalProps={modalSettingsCalculatingUQScoreProps} />
+        <ModalSettingsRecalculatingScore modalProps={modalSettingsRecalculatingScoreProps} />
         <ModalSettingsCalculatingYourUniqueness
-          modalProps={{
-            isOpen: isCalculatingYourUniquenessModalOpen,
-            onClosePanel: () => setIsCalculatingYourUniquenessModalOpen(false),
-          }}
+          modalProps={modalSettingsCalculatingYourUniquenessProps}
         />
       </>
     </BoxRounded>
   );
 };
 
-export default memo(SettingsUniquenessScoreBox);
+export default SettingsUniquenessScoreBox;
