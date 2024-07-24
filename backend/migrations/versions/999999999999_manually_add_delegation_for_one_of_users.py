@@ -30,7 +30,16 @@ def upgrade():
     query = f"INSERT INTO score_delegation (hashed_addr) VALUES ('{hash3}');"
     print(query, flush=True)
     op.execute(query)
-    query = f"INSERT INTO uniqueness_quotients (user_id, epoch, score) VALUES (12812, 4, '1.0')"
+
+    # since sqlite doesn't support conditional inserts that well...
+    if op.get_bind().engine.name == "sqlite":
+        return
+
+    query = """
+      INSERT INTO uniqueness_quotients (user_id, epoch, score)
+      SELECT 12812, 4, '1.0'
+      WHERE EXISTS (SELECT id FROM users WHERE id = 12812)
+    """
     print(query, flush=True)
     op.execute(query)
     minimal_stamps = {
@@ -44,7 +53,7 @@ def upgrade():
             }
         ]
     }
-    query = f"INSERT INTO gitcoin_passport_stamps (user_id, score, expires_at, stamps) VALUES (12812, '35.046', '2024-10-14T00:00:01.000000', '{json.dumps(minimal_stamps)}')"
+    query = f"INSERT INTO gitcoin_passport_stamps (user_id, score, expires_at, stamps) SELECT 12812, '35.046', '2024-10-14T00:00:01.000000', '{json.dumps(minimal_stamps)}' WHERE EXISTS (SELECT id FROM users WHERE id = 12812);"
     print(query, flush=True)
     op.execute(query)
 
