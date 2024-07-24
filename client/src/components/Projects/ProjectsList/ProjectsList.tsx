@@ -107,7 +107,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
             <Img
               className={styles.image}
               dataTest="ProjectsList__noSearchResults__Img"
-              src="images/searchEmpty.png"
+              src="images/funds_swept.webp"
             />
             {t('noSearchResults')}
           </div>
