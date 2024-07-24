@@ -216,6 +216,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .invoke('text')
         .should('eq', '0 ETH');
     });
+
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
       changeMainValueToFiat(ROOT_ROUTES.projects.absolute);
 
@@ -223,6 +224,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .first()
         .invoke('text')
         .should('eq', '$0.00');
+    });
+
+    it('search field -- no results should show no results image & text', () => {
+      cy.get('[data-test=ProjectsList__InputText]')
+        .clear()
+        .type('there-is-no-way-there-will-ever-be-a-project-with-such-a-name');
+      cy.get('[data-test=ProjectsList__noSearchResults]').should('be.visible');
+      cy.get('[data-test=ProjectsList__noSearchResults__Img]').should('be.visible');
     });
   });
 

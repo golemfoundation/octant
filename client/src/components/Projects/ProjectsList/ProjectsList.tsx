@@ -91,6 +91,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
       {isLatestEpochAndDecisionWindowOpen && (
         <InputText
           className={styles.inputSearch}
+          dataTest="ProjectsList__InputText"
           Icon={<Svg img={magnifyingGlass} size={3.2} />}
           onChange={onChangeSearchQuery}
           onClear={() => setSearchQuery('')}
@@ -102,8 +103,12 @@ const ProjectsList: FC<ProjectsListProps> = ({
       {isLatestEpochAndDecisionWindowOpen &&
         !isFetchingProjectsWithRewards &&
         projectsIpfsWithRewardsFiltered.length === 0 && (
-          <div className={styles.noSearchResults}>
-            <Img className={styles.image} src="images/searchEmpty.png" />
+          <div className={styles.noSearchResults} data-test="ProjectsList__noSearchResults">
+            <Img
+              className={styles.image}
+              dataTest="ProjectsList__noSearchResults__Img"
+              src="images/searchEmpty.png"
+            />
             {t('noSearchResults')}
           </div>
         )}
