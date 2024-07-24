@@ -5,8 +5,7 @@ import {
   EpochInfo,
   Reward,
   UserBudget,
-  UserDonation,
-  EpochUqs
+  UserDonation
 } from "./models"
 
 export interface Context {
@@ -14,7 +13,6 @@ export interface Context {
   budgets: Map<Address, bigint>
   epochInfo: EpochInfo
   rewards: Reward[]
-  uqs: Map<Address, Double>
 }
 
 function transformToAllocations(allocationRecords: AllocationRecord[]): Allocation[] {
@@ -22,14 +20,14 @@ function transformToAllocations(allocationRecords: AllocationRecord[]): Allocati
 
   for (const record of allocationRecords) {
     const prev = allocations.get(record.user) ?? { donations: [], user: record.user }
-    prev.donations.push({ amount: record.amount, project: record.project })
+    prev.donations.push({ amount: record.amount, proposal: record.proposal })
     allocations.set(record.user, prev)
   }
 
   return Array.from(allocations.values())
 }
 
-export function buildContext(userBudgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo, epochUqs: EpochUqs[]): Context {
+export function buildContext(userBudgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo): Context {
 
   const positiveUserBudgets = userBudgets.filter(positiveUserBudget => positiveUserBudget.amount !== BigInt(0));
 
@@ -37,8 +35,7 @@ export function buildContext(userBudgets: UserBudget[], allocations: AllocationR
     allocations: transformToAllocations(allocations),
     budgets: new Map(positiveUserBudgets.map(value => [value.user, value.amount] as const)),
     epochInfo,
-    rewards,
-    epochUqs: new Map(epochUqs.map(value => [value.userAddress, value.uniquenessQuotient] as const))
+    rewards
   }
 }
 
@@ -46,44 +43,21 @@ export function allocationsByUser(context: Context): Map<Address, UserDonation[]
   return new Map(context.allocations.map((alloc) => [alloc.user, alloc.donations] as const))
 }
 
-export function individualDonationsSummedByProjects(context: Context): Map<Address, bigint> {
+export function individualDonationsByProjects(context: Context): Map<Address, bigint> {
   const individualDonations: Map<Address, bigint> = new Map()
   const donations: UserDonation[] = context.allocations.flatMap((alloc) => alloc.donations)
+
   for (const donation of donations) {
-    const prev = individualDonations.get(donation.project) ?? BigInt(0)
-    individualDonations.set(donation.project, prev + donation.amount)
+    const prev = individualDonations.get(donation.proposal) ?? BigInt(0)
+    individualDonations.set(donation.proposal, prev + donation.amount)
   }
 
   return individualDonations
 }
 
-export function individualDonationsAggregatedByProjectsWithUQs(context: Context): Map<Address, UserDonation[]> {
-  const individualDonations: Map<Address, UserDonation[]> = new Map()
-  const uqs = context.epochUqs;
-
-  const donationsWithUsers = context.allocations.flatMap((alloc) => alloc.donations.map((donation) => ({
-    ...donation,
-    user: alloc.user,
-  }))
-  );
-
-  for (const donation of donationsWithUsers) {
-    const prev = individualDonations.get(donation.project) ?? [];
-    individualDonations.set(donation.project, [
-      ...prev,
-      {
-        amount: donation.amount,
-        project: donation.project,
-        uq: uqs.get(donation.user) ?? null,
-      },
-    ]);
-  }
-  return individualDonations;
-}
-
 export function rewardsByProject(context: Context): Map<Address, Reward> {
   return new Map(context.rewards
     .filter(r => r.matched !== BigInt(0))
-    .map((r) => [r.project, r] as const)
+    .map((r) => [r.proposal, r] as const)
   );
 }
