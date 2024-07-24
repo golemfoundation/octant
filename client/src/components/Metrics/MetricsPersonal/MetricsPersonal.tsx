@@ -56,7 +56,13 @@ const MetricsPersonal = (): ReactElement => {
           />
           <MetricsPersonalGridTotalRewardsWithdrawals isLoading={isLoading} />
           <MetricsPersonalGridDonationsProgressBar isLoading={isLoading} />
-          {wasUserEverAPatron && <MetricsPersonalGridPatronDonations isLoading={isLoading} />}
+          {wasUserEverAPatron && (
+            <MetricsPersonalGridPatronDonations
+              isLoading={isLoading}
+              numberOfEpochs={totalPatronDonations.numberOfEpochs}
+              value={totalPatronDonations.value}
+            />
+          )}
         </MetricsGrid>
       ) : (
         <TipTile

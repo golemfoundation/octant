@@ -1,10 +1,14 @@
 from flask import current_app as app
 
-from typing import Optional, Tuple
+from eth_utils.address import to_checksum_address
 
+from typing import Dict, Optional, Tuple
+
+import json
 from datetime import datetime
 from typing import List
 
+from app.constants import GUEST_LIST, GUEST_LIST_STAMP_PROVIDERS
 from app.extensions import db
 from app.exceptions import ExternalApiException, UserNotFound, AddressAlreadyDelegated
 from app.context.manager import Context
@@ -23,6 +27,7 @@ class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
+        user_address = to_checksum_address(user_address)
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
         except UserNotFound as ex:
@@ -31,12 +36,14 @@ class GitcoinPassportAntisybil(Model):
             )
             raise ex
         if score is not None:
+            if user_address in GUEST_LIST and not _has_guest_stamp_applied_by_gp(score):
+                score.score = score.score + 21.0
             return score.score, score.expires_at
         return None
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> (float, datetime, any):
+    ) -> Tuple[float, datetime, any]:
         score = issue_address_for_scoring(user_address)
 
         def _retry_fetch():
@@ -45,7 +52,7 @@ class GitcoinPassportAntisybil(Model):
                 raise ExternalApiException("GP: scoring is not completed yet", 503)
 
         if score["status"] != "DONE":
-            score = retry_request(self._retry_fetch, 200)
+            score = retry_request(_retry_fetch, 200)
 
         all_stamps = fetch_stamps(user_address)["items"]
         cutoff = datetime.now()
@@ -74,6 +81,19 @@ class GitcoinPassportAntisybil(Model):
         primary, secondary, _ = get_hashed_addresses(user_address, user_address)
         if primary in all_hashes or secondary in all_hashes:
             raise AddressAlreadyDelegated()
+
+
+def _has_guest_stamp_applied_by_gp(score: Dict) -> bool:
+    def get_provider(stamp) -> str:
+        return stamp["credential"]["credentialSubject"]["provider"]
+
+    all_stamps = json.loads(score.stamps)
+    stamps = [
+        stamp
+        for stamp in all_stamps
+        if get_provider(stamp) in GUEST_LIST_STAMP_PROVIDERS
+    ]
+    return len(stamps) > 0
 
 
 def _parse_expiration_date(timestamp_str: str) -> datetime:

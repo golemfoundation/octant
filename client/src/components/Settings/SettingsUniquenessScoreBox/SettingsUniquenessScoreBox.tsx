@@ -12,6 +12,7 @@ import SettingsUniquenessScoreAddresses from 'components/Settings/SettingsUnique
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import { DELEGATION_MIN_SCORE } from 'constants/delegation';
+import { GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD } from 'constants/urls';
 import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -209,6 +210,12 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       }
     >
       <>
+        <Button
+          className={styles.visitDashboard}
+          href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+          label="Score too low? Visit our Passport dashboard"
+          variant="link"
+        />
         <SettingsUniquenessScoreAddresses isFetchingScore={isFetchingScore} />
         <div className={styles.buttonsWrapper}>
           <Button
