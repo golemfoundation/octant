@@ -50,8 +50,7 @@ async function run(epoch: string, opts: any) {
     fetcher.apiGetUserBudgets(options.epoch),
     fetcher.apiGetAllocations(options.epoch),
     fetcher.apiGetRewards(options.epoch),
-    fetcher.apiGetEpochInfo(options.epoch),
-    fetcher.apiGetEpochUqs(options.epoch)
+    fetcher.apiGetEpochInfo(options.epoch)
   ])
 
   if (results.some(isNull)) {
@@ -63,9 +62,8 @@ async function run(epoch: string, opts: any) {
     allocations,
     rewards,
     epochInfo,
-    epochUqs
   ] = results;
-  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!, epochUqs!)
+  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!)
 
   const runner = new Runner()
   registerVerifications(runner)

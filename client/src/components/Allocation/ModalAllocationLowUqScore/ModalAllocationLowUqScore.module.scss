@@ -1,0 +1,11 @@
+.image {
+  width: 14rem;
+  height: 12.6rem;
+  margin: 3.5rem auto;
+
+  @media #{$desktop-up} {
+    margin: 3.8rem auto;
+    width: 21.8rem;
+    height: 19.6rem;
+  }
+}

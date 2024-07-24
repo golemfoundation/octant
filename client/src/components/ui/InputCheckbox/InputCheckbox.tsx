@@ -13,9 +13,10 @@ const InputCheckbox: FC<InputCheckboxProps> = ({
   dataTest = 'InputCheckbox',
   onChange,
   inputId,
+  size = 'normal',
 }) => {
   return (
-    <div className={cx(styles.root, isDisabled && styles.disabled)}>
+    <div className={cx(styles.root, isDisabled && styles.disabled, styles[`size--${size}`])}>
       <input
         checked={isChecked}
         className={styles.input}
@@ -25,7 +26,13 @@ const InputCheckbox: FC<InputCheckboxProps> = ({
         onChange={onChange}
         type="checkbox"
       />
-      {isChecked && <Svg classNameSvg={styles.svgChecked} img={checkboxChecked} size={2.4} />}
+      {isChecked && (
+        <Svg
+          classNameSvg={styles.svgChecked}
+          img={checkboxChecked}
+          size={size === 'big' ? 3.6 : 2.4}
+        />
+      )}
     </div>
   );
 };

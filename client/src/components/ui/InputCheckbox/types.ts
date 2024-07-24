@@ -7,4 +7,5 @@ export default interface InputCheckboxProps {
   isChecked?: boolean;
   isDisabled?: boolean;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  size?: 'normal' | 'big';
 }

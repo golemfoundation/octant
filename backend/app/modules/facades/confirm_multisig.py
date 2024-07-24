@@ -7,8 +7,10 @@ from app.modules.multisig_signatures.controller import (
 )
 from app.modules.user.allocations import controller as allocations_controller
 from app.modules.user.tos import controller as tos_controller
+from app.modules.common.synchronized import synchronized
 
 
+@synchronized
 def confirm_multisig():
     """
     This is a facade function that is used to confirm (i.e approve and apply) multisig approvals.

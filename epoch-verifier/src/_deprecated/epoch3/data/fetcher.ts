@@ -12,7 +12,6 @@ import {
   UserBudget,
   AllocationRecord,
   ApiRewardsBudgets, ApiAllocations, ApiRewards,
-  ApiEpochUqs, EpochUqsImpl
 } from "./models";
 
 const REQUEST_TIMEOUT = 150_000;
@@ -43,7 +42,7 @@ export class HttpFetcher {
       if (response.status !== 200) {
         throw new Error(response.data)
       }
-      console.log(`✅ Fetched ${resource}`)
+      console.log(`✅ Fetched ${resource} ${response.data}`)
       return mapper(response.data)
 
     }).catch(reason => {
@@ -51,6 +50,7 @@ export class HttpFetcher {
       return null
     })
   }
+
 
   async apiGetUserBudgets(epoch: number): Promise<UserBudget[] | null> {
     return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl, (data: ApiRewardsBudgets) => data.budgets)
@@ -66,9 +66,5 @@ export class HttpFetcher {
 
   async apiGetEpochInfo(epoch: number): Promise<EpochInfo | null> {
     return this._get(`/epochs/info/${epoch}`, "epoch info", EpochInfoImpl)
-  }
-
-  async apiGetEpochUqs(epoch: number): Promise<EpochUqs | null> {
-    return this._get_array(`/user/uq/${epoch}/all`, "epoch uqs", EpochUqsImpl, (data: ApiEpochUqs) => data.uqsInfo);
   }
 }

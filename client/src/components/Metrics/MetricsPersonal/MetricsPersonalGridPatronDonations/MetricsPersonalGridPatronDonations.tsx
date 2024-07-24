@@ -1,24 +1,24 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
-import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';
 
 import MetricsPersonalGridPatronDonationsProps from './types';
 
 const MetricsPersonalGridPatronDonations: FC<MetricsPersonalGridPatronDonationsProps> = ({
   isLoading,
+  numberOfEpochs,
+  value,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const { data: totalPatronDonations } = useTotalPatronDonations();
   const getValuesToDisplay = useGetValuesToDisplay();
 
   const totalPatronDonationsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    valueCrypto: totalPatronDonations?.value,
+    valueCrypto: value,
   });
 
   return (
@@ -30,9 +30,7 @@ const MetricsPersonalGridPatronDonations: FC<MetricsPersonalGridPatronDonationsP
               isLoading={isLoading}
               size="S"
               value={t('patronModeActiveLabel', {
-                numberOfEpochs: totalPatronDonations
-                  ? totalPatronDonations.numberOfEpochs.toString()
-                  : '',
+                numberOfEpochs,
               }).toUpperCase()}
             />
           ),
@@ -55,4 +53,4 @@ const MetricsPersonalGridPatronDonations: FC<MetricsPersonalGridPatronDonationsP
   );
 };
 
-export default MetricsPersonalGridPatronDonations;
+export default memo(MetricsPersonalGridPatronDonations);
