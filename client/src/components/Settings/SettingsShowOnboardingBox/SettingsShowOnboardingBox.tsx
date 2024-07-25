@@ -1,10 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingsToggleBox from 'components/Settings/SettingsToggleBox';
 import useSettingsStore from 'store/settings/store';
 
-const SettingsShowOnboardingBox = (): ReactNode => {
+const SettingsShowOnboardingBox = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { setIsAllocateOnboardingAlwaysVisible, isAllocateOnboardingAlwaysVisible } =
     useSettingsStore(state => ({
