@@ -22,13 +22,10 @@ hash3 = "fb610f25ff00d710de6578a2b684fdd2dcb353ed341e9f22a100af754ef36ae6"
 
 def upgrade():
     query = f"INSERT INTO score_delegation (hashed_addr) VALUES ('{hash1}');"
-    print(query, flush=True)
     op.execute(query)
     query = f"INSERT INTO score_delegation (hashed_addr) VALUES ('{hash2}');"
-    print(query, flush=True)
     op.execute(query)
     query = f"INSERT INTO score_delegation (hashed_addr) VALUES ('{hash3}');"
-    print(query, flush=True)
     op.execute(query)
 
     # since sqlite doesn't support conditional inserts that well...
@@ -40,8 +37,6 @@ def upgrade():
       SELECT 12812, 4, '1.0'
       WHERE EXISTS (SELECT id FROM users WHERE id = 12812)
     """
-    print(query, flush=True)
-    op.execute(query)
     minimal_stamps = {
         "items": [
             {
@@ -54,17 +49,13 @@ def upgrade():
         ]
     }
     query = f"INSERT INTO gitcoin_passport_stamps (user_id, score, expires_at, stamps) SELECT 12812, '35.046', '2024-10-14T00:00:01.000000', '{json.dumps(minimal_stamps)}' WHERE EXISTS (SELECT id FROM users WHERE id = 12812);"
-    print(query, flush=True)
     op.execute(query)
 
 
 def downgrade():
     query = f"DELETE FROM gitcoin_passport_stamps WHERE user_id = 12812;"
-    print(query, flush=True)
     op.execute(query)
     query = f"DELETE FROM uniqueness_quotients WHERE user_id = 12812"
-    print(query, flush=True)
     op.execute(query)
     query = f"DELETE FROM score_delegation WHERE hashed_addr in ('{hash1}', '{hash2}', '{hash3}');"
-    print(query, flush=True)
     op.execute(query)
