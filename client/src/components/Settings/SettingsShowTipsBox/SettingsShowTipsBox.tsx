@@ -1,10 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingsToggleBox from 'components/Settings/SettingsToggleBox';
 import useSettingsStore from 'store/settings/store';
 
-const SettingsShowTipsBox = (): ReactNode => {
+const SettingsShowTipsBox = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { setAreOctantTipsAlwaysVisible, areOctantTipsAlwaysVisible } = useSettingsStore(state => ({
     areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,

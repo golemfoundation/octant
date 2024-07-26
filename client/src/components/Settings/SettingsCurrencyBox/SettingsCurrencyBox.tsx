@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/ui/BoxRounded';
@@ -18,7 +18,7 @@ const options: Options = [
   { label: 'GBP', value: 'gbp' },
 ];
 
-const SettingsCurrencyBox = (): ReactNode => {
+const SettingsCurrencyBox = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { setDisplayCurrency, displayCurrency } = useSettingsStore(state => ({
     displayCurrency: state.data.displayCurrency,

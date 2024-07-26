@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ModalSettingsPatronMode from 'components/Settings/ModalSettingsPatronMode';
@@ -10,7 +10,7 @@ import { questionMark } from 'svg/misc';
 
 import styles from './SettingsPatronModeBox.module.scss';
 
-const SettingsPatronModeBox = (): ReactNode => {
+const SettingsPatronModeBox = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const [isPatronModeModalOpen, setIsPatronModeModalOpen] = useState(false);
   const { data: isPatronModeEnabled } = useIsPatronMode();
