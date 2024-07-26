@@ -15,7 +15,9 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       autocomplete,
       className,
       classNameInput,
+      dataTest = 'InputText',
       error,
+      Icon,
       isButtonClearVisible = true,
       isDisabled,
       isErrorInlineVisible = true,
@@ -23,15 +25,14 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       mode,
       onChange,
       onClear,
+      shouldAutoFocusAndSelect = true,
+      shouldAutoFocusAndSelectOnModeChange,
+      showLoader = false,
       suffix,
+      suffixClassName,
       textAlign = 'left',
       value,
       variant = 'simple',
-      suffixClassName,
-      showLoader = false,
-      dataTest = 'InputText',
-      shouldAutoFocusAndSelect = true,
-      shouldAutoFocusAndSelectOnModeChange,
       ...rest
     },
     ref,
@@ -46,6 +47,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         isDisabled && styles.isDisabled,
         !!error && styles.isError,
         suffix && styles.hasSuffix,
+        !!Icon && styles.hasIcon,
         variant === 'allocation' && value && value.length > 8 && styles.smallFontSize,
         classNameInput,
       ),
@@ -78,8 +80,9 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         <label>
           {label && <div className={styles.label}>{label}</div>}
           <div className={cx(styles.inputWrapper, isDisabled && styles.isDisabled)}>
+            {Icon && <div className={styles.icon}>{Icon}</div>}
             <input {...inputProps} data-test={dataTest} />
-            {variant === 'simple' && value && isButtonClearVisible && (
+            {['simple', 'search'].includes(variant) && value && isButtonClearVisible && (
               <Button
                 className={cx(styles.buttonClear, !!suffix && styles.isSuffix)}
                 Icon={<Svg img={cross} size={0.8} />}

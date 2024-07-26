@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/ui/Img';
@@ -23,7 +23,7 @@ const motionAnimationProps: AnimationProps = {
   transition: { duration: 0.15, ease: 'easeOut' },
 };
 
-const ModalOnboarding = (): ReactNode => {
+const ModalOnboarding = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
   const { address } = useAccount();
