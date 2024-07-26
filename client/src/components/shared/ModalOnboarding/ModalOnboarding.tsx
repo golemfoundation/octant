@@ -66,8 +66,7 @@ const ModalOnboarding = (): ReactNode => {
     steps: stepsToUse,
   });
 
-  const currentStep =
-    !isFetchingUserTOS && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
+  const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;
