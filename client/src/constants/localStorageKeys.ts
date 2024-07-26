@@ -9,6 +9,12 @@ export const ALLOCATION_REWARDS_FOR_PROJECTS = getLocalStorageKey(
   'rewardsForProjects',
 );
 
+const projectsPrefix = 'projects';
+export const PROJECTS_ADDRESSES_RANDOMIZED_ORDER = getLocalStorageKey(
+  projectsPrefix,
+  'addressesRandomizedOrder',
+);
+
 const onboardingPrefix = 'onboarding';
 export const IS_ONBOARDING_DONE = getLocalStorageKey(onboardingPrefix, 'isOnboardingDone');
 export const HAS_ONBOARDING_BEEN_CLOSED = getLocalStorageKey(
