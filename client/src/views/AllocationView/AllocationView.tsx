@@ -277,15 +277,7 @@ const AllocationView = (): ReactElement => {
         value: '0',
       });
     }
-    if (isContract && !isProceedingToAllocateWithLowUQScore) {
-      setIsWaitingForFirstMultisigSignature(true);
-      toastService.showToast({
-        message: t('multisigSignatureToast.message'),
-        name: 'allocationMultisigInitialSignature',
-        title: t('multisigSignatureToast.title'),
-        type: 'warning',
-      });
-    }
+
     if (
       !userAllocations?.hasUserAlreadyDoneAllocation &&
       uqScore === 20n &&
@@ -294,8 +286,21 @@ const AllocationView = (): ReactElement => {
       setShowLowUQScoreModal(true);
       return;
     }
+
     if (isProceedingToAllocateWithLowUQScore) {
       setShowLowUQScoreModal(false);
+    }
+
+    // this condition must always be last due to ModalAllocationLowUqScore
+    // if uqScore == 20n, the signature request is triggered in ModalAllocationLowUqScore
+    if (isContract) {
+      setIsWaitingForFirstMultisigSignature(true);
+      toastService.showToast({
+        message: t('multisigSignatureToast.message'),
+        name: 'allocationMultisigInitialSignature',
+        title: t('multisigSignatureToast.title'),
+        type: 'warning',
+      });
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
   };

@@ -23,7 +23,10 @@ const App = (): ReactElement => {
   useAppPopulateState();
 
   const [isFlushRequired, setIsFlushRequired] = useState(false);
-  const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
+  const { isSyncingInProgress, isLocalStorageInitialized } = useAppConnectManager(
+    isFlushRequired,
+    setIsFlushRequired,
+  );
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
   const { isConnected } = useAccount();
@@ -35,7 +38,7 @@ const App = (): ReactElement => {
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
-  if (isLoading && !isSyncingInProgress) {
+  if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
     return <AppLoader />;
   }
 

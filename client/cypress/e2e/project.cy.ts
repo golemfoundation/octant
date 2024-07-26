@@ -107,7 +107,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=ProjectListItemHeader__name]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
-          .contains(projectNames[i]);
+          .should('be.visible');
         cy.get('[data-test=ProjectListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })

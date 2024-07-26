@@ -210,13 +210,13 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       }
     >
       <>
+        <SettingsUniquenessScoreAddresses isFetchingScore={isFetchingScore} />
         <Button
           className={styles.visitDashboard}
           href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
-          label="Score too low? Visit our Passport dashboard"
+          label={t('scoreTooLow')}
           variant="link"
         />
-        <SettingsUniquenessScoreAddresses isFetchingScore={isFetchingScore} />
         <div className={styles.buttonsWrapper}>
           <Button
             className={styles.button}

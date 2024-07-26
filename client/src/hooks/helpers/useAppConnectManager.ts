@@ -5,9 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
-import localStorageService from 'services/localStorageService';
+import localStorageService, { LocalStorageInitParams } from 'services/localStorageService';
 import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
@@ -23,14 +25,19 @@ export default function useAppConnectManager(
   isFlushRequired: boolean,
   setIsFlushRequired: (isFlushRequiredNew: boolean) => void,
 ): {
+  isLocalStorageInitialized: boolean;
   isSyncingInProgress: boolean;
 } {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
+  const [isLocalStorageInitialized, setIsLocalStorageInitialized] = useState<boolean>(false);
+
   const queryClient = useQueryClient();
   const { address, isConnected, chainId } = useAccount();
   const { reset } = useConnect();
 
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: projectsEpoch } = useProjectsEpoch();
 
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
@@ -67,9 +74,21 @@ export default function useAppConnectManager(
     reset: state.reset,
   }));
 
-  const initializeStore = (shouldDoReset = false) => {
+  const initializeStore = (
+    localStorageInitParams: Partial<LocalStorageInitParams>,
+    shouldDoReset = false,
+  ) => {
+    if (
+      localStorageInitParams.isDecisionWindowOpen === undefined ||
+      localStorageInitParams.currentEpoch === undefined ||
+      localStorageInitParams.projectsEpoch === undefined
+    ) {
+      setIsLocalStorageInitialized(false);
+      return;
+    }
+
     // Store is populated with data from LS, hence init here.
-    localStorageService.init();
+    localStorageService.init(localStorageInitParams as LocalStorageInitParams);
     setValuesFromLocalStorageSettings();
     setValuesFromLocalStorageOnboarding();
     setValuesFromLocalStorageTips();
@@ -79,6 +98,8 @@ export default function useAppConnectManager(
       resetAllocationsStore();
       resetTransactionLocalStore();
     }
+
+    setIsLocalStorageInitialized(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
@@ -108,6 +129,12 @@ export default function useAppConnectManager(
   }, [chainId]);
 
   useEffect(() => {
+    if (isSyncingInProgress) {
+      setIsLocalStorageInitialized(false);
+    }
+  }, [isSyncingInProgress]);
+
+  useEffect(() => {
     /**
      * Possible solution for invalid cached `isConnect` value.
      * This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm)
@@ -118,9 +145,13 @@ export default function useAppConnectManager(
       refetchAvailableFundsEth();
       refetchAvailableFundsGlm();
     }
-    initializeStore();
+    initializeStore({
+      currentEpoch,
+      isDecisionWindowOpen,
+      projectsEpoch,
+    });
     // eslint-disable-next-line
-  }, []);
+  }, [isDecisionWindowOpen, currentEpoch, projectsEpoch]);
 
   useEffect(() => {
     if (syncStatus && !isEqual(syncStatus, syncStatusLocal)) {
@@ -132,7 +163,6 @@ export default function useAppConnectManager(
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
   useEffect(() => {
@@ -154,7 +184,7 @@ export default function useAppConnectManager(
       setIsFlushRequired(true);
     }
     if (doesIsConnectedRequireFlush) {
-      initializeStore(true);
+      initializeStore({ currentEpoch, isDecisionWindowOpen, projectsEpoch }, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -166,6 +196,9 @@ export default function useAppConnectManager(
     syncStatus,
     syncStatusLocal,
     setIsFlushRequired,
+    isDecisionWindowOpen,
+    currentEpoch,
+    projectsEpoch,
   ]);
 
   useEffect(() => {
@@ -199,5 +232,5 @@ export default function useAppConnectManager(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
-  return { isSyncingInProgress };
+  return { isLocalStorageInitialized, isSyncingInProgress };
 }
