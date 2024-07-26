@@ -535,6 +535,7 @@
       "recalculate": "Recalculate",
       "delegate": "Delegate",
       "whatIsThis": "What is this?",
+      "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
       "addresses": "addresses",
       "calculatingYourUniqueness": "Calculating your uniqueness",
       "switchAccounts": "Switch accounts",
@@ -547,7 +548,6 @@
       "signMessage": "Sign message",
       "signMessages": "Sign messages",
       "switchAccount": "Switch account",
-      "visitOurPassportDashboard": "Score too low? Visit our Passport dashboard",
       "toasts": {
         "delegationTooManyUniqueAddresses": {
           "title": "Too many accounts",
