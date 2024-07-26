@@ -66,7 +66,8 @@ const ModalOnboarding = (): ReactNode => {
     steps: stepsToUse,
   });
 
-  const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
+  // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
+  const currentStep = (!isFetchingUserTOS && !isContract) && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;
