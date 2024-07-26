@@ -291,6 +291,8 @@ const AllocationView = (): ReactElement => {
       setShowLowUQScoreModal(false);
     }
 
+    // this condition must always be last due to ModalAllocationLowUqScore
+    // if uqScore == 20n, the signature request is triggered in ModalAllocationLowUqScore
     if (isContract) {
       setIsWaitingForFirstMultisigSignature(true);
       toastService.showToast({
