@@ -5,6 +5,7 @@ import json
 import os
 import time
 import urllib.request
+import urllib.error
 from unittest.mock import MagicMock, Mock
 
 import gql
@@ -530,10 +531,16 @@ def pytest_collection_modifyitems(config, items):
 def setup_deployment() -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     testname = f"octant_test_{random_string()}"
-    f = urllib.request.urlopen(f"{deployer}/?name={testname}")
-    deployment = f.read().decode().split("\n")
-    deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
-    return deployment
+    try:
+        f = urllib.request.urlopen(f"{deployer}/?name={testname}")
+        deployment = f.read().decode().split("\n")
+        deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
+        return deployment
+    except urllib.error.HTTPError as err:
+        current_app.logger.error(f"call to multideployer failed: {err}")
+        current_app.logger.error(f"multideployer failed: code is {err.code}")
+        current_app.logger.error(f"multideployer failed: msg is {err.msg}")
+        raise err
 
 
 def random_string() -> str:
@@ -774,7 +781,7 @@ class Client:
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        print(
+        current_app.logger.debug(
             "get_rewards_budget :",
             self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
         )
