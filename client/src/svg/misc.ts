@@ -107,3 +107,9 @@ export const person: SvgImageConfig = {
     '<path fill="#F5F5F5" d="M0 0h12v14H0z"/><path fill="#EBEBEB" d="M-743-2147c0-1.1.895-2 2-2h8124c1.1 0 2 .9 2 2v4381c0 1.1-.9 2-2 2H-741c-1.105 0-2-.9-2-2v-4381Z"/><path fill="#000" fill-opacity=".1" d="M-741-2148h8124v-2H-741v2Zm8125 1v4381h2v-4381h-2Zm-1 4382H-741v2h8124v-2Zm-8125-1v-4381h-2v4381h2Zm1 1c-.552 0-1-.45-1-1h-2c0 1.66 1.343 3 3 3v-2Zm8125-1c0 .55-.45 1-1 1v2c1.66 0 3-1.34 3-3h-2Zm-1-4382c.55 0 1 .45 1 1h2c0-1.66-1.34-3-3-3v2Zm-8124-2c-1.657 0-3 1.34-3 3h2c0-.55.448-1 1-1v-2Z"/><g clip-path="url(#person-a)"><path fill="#F8F8F8" d="M-545-413H895V667H-545z"/><rect width="700" height="104" x="-175" y="-61" fill="#fff" rx="16"/><rect width="50" height="24" x="-8" y="-5" fill="#FAFAFA" rx="4"/><g stroke="#171717" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6.625a2.625 2.625 0 1 0 0-5.25 2.625 2.625 0 0 0 0 5.25Z"/><path d="M3.734 2.667a4.355 4.355 0 0 0 4.862.977M1.125 12.625a4.875 4.875 0 0 1 9.75 0"/><path d="M4.125 8.125V8.5a1.875 1.875 0 1 0 3.75 0v-.375"/></g></g><defs><clipPath id="person-a"><path fill="#fff" d="M-545-413H895V667H-545z"/></clipPath></defs>',
   viewBox: '0 0 12 14',
 };
+
+export const magnifyingGlass: SvgImageConfig = {
+  markup:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><g stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M17.312 19.584a4.295 4.295 0 1 0-3.36-7.905 4.295 4.295 0 0 0 3.36 7.905ZM18.668 18.669 21.998 22"/></g></svg>',
+  viewBox: '0 0 32 32',
+};
