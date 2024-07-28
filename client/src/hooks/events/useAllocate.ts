@@ -108,7 +108,7 @@ export default function useAllocate({
 
       const intervalId = setInterval(async () => {
         const nextSafeMessages = await apiGetSafeMessages(address!);
-        const newestSafeMessage = nextSafeMessages[0];
+        const newestSafeMessage = nextSafeMessages.results[0];
         const isNewestSafeMessageOctantAllocation =
           newestSafeMessage.message?.domain?.name === 'Octant' &&
           newestSafeMessage.message?.primaryType === 'AllocationPayload';
