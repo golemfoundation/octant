@@ -5,6 +5,9 @@ import apiService from 'services/apiService';
 
 export type Response = {
   count: number;
+  results: {
+    message: any;
+  };
 };
 
 export async function apiGetSafeMessages(
