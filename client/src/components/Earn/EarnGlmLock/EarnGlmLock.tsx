@@ -18,6 +18,7 @@ import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useHistory from 'hooks/queries/useHistory';
 import useIsContract from 'hooks/queries/useIsContract';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
@@ -61,6 +62,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: projectsEpoch } = useProjectsEpoch();
+  const { refetch: refetchHistory } = useHistory();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
@@ -115,13 +117,19 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     if (isContract) {
       const id = setInterval(async () => {
         const nextSafeTransactions = await apiGetSafeTransactions(address!);
-        if (nextSafeTransactions.results.find(t => t.safeTxHash === hash && t.transactionHash)) {
+        const safeTransaction = nextSafeTransactions.results.find(
+          t => t.safeTxHash === hash && t.transactionHash,
+        );
+
+        if (safeTransaction) {
           clearInterval(id);
           Promise.all([
             refetchDeposit(),
             refetchEstimatedEffectiveDeposit(),
             refetchLockedSummaryLatest(),
+            refetchHistory(),
           ]).then(() => {
+            setTransactionHashForEtherscan(safeTransaction.transactionHash);
             setStep(3);
           });
         }
