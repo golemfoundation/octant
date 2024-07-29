@@ -4,7 +4,10 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type Response = {
-  results: any[];
+  results: {
+    safeTxHash: string;
+    transactionHash?: string;
+  }[];
 };
 
 export async function apiGetSafeTransactions(
