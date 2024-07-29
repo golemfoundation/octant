@@ -14,7 +14,6 @@ branch_labels = None
 depends_on = None
 
 user_id = 14424
-# values of hashes below were obtained using code above; with appropriately set DELEGATION_SALT and DELEGATION_SALT_PRIMARY envs
 hash1 = "a1ee927c11efc35ffef40fa51547e0770df76aab9085da332311ac9d629fa518"
 hash2 = "f6b78725294faab4442f38aedb97ff7bc8fcaf9d73edf9845e1c57496e6d2913"
 hash3 = "93bf4d5bb695b96edd45c0d4eae59fe3f5ecc657f7137407288fd82834476a0b"
