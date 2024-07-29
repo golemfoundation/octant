@@ -163,5 +163,34 @@ export default function getMilestones(): Milestone[] {
       id: 'e5-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Five' }),
     },
+    {
+      from: new Date('2024-08-01T00:00:00+0200'),
+      href: 'https://octant.fillout.com/t/ok9Rz9pJBxus',
+      id: 'e5-applications-open',
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      to: new Date('2024-08-15T23:59:59+0200'),
+    },
+    {
+      from: new Date('2024-08-15T23:59:59+0200'),
+      id: 'e5-project-updates-close',
+      label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
+    },
+    {
+      from: new Date('2024-08-19T18:00:00+0200'),
+      id: 'e5-snapshot-vote',
+      label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      to: new Date('2024-08-25T18:00:00+0200'),
+    },
+    {
+      from: new Date('2024-10-13T18:00:00+0200'),
+      id: 'e5-allocation-window',
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      to: new Date('2024-10-27T17:00:00+0100'),
+    },
+    {
+      from: new Date('2024-10-27T17:00:00+0100'),
+      id: 'e6-epoch-starts',
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Six' }),
+    },
   ];
 }
