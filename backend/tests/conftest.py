@@ -5,6 +5,7 @@ import json
 import os
 import time
 import urllib.request
+import urllib.error
 from unittest.mock import MagicMock, Mock
 
 import gql
@@ -530,10 +531,16 @@ def pytest_collection_modifyitems(config, items):
 def setup_deployment() -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     testname = f"octant_test_{random_string()}"
-    f = urllib.request.urlopen(f"{deployer}/?name={testname}")
-    deployment = f.read().decode().split("\n")
-    deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
-    return deployment
+    try:
+        f = urllib.request.urlopen(f"{deployer}/?name={testname}")
+        deployment = f.read().decode().split("\n")
+        deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
+        return deployment
+    except urllib.error.HTTPError as err:
+        current_app.logger.error(f"call to multideployer failed: {err}")
+        current_app.logger.error(f"multideployer failed: code is {err.code}")
+        current_app.logger.error(f"multideployer failed: msg is {err.msg}")
+        raise err
 
 
 def random_string() -> str:
@@ -674,13 +681,25 @@ class Client:
     def root(self):
         return self._flask_client.get("/").text
 
-    def sync_status(self):
-        rv = self._flask_client.get("/info/sync-status").text
-        return json.loads(rv)
+    def get_chain_info(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/chain-info")
+        return json.loads(rv.text), rv.status_code
+
+    def get_healthcheck(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
+
+    def get_version(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/version")
+        return json.loads(rv.text), rv.status_code
+
+    def sync_status(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/sync-status")
+        return json.loads(rv.text), rv.status_code
 
     def wait_for_sync(self, target):
         while True:
-            res = self.sync_status()
+            res, _ = self.sync_status()
             if res["indexedEpoch"] == res["blockchainEpoch"]:
                 if res["indexedEpoch"] == target:
                     return
@@ -688,7 +707,7 @@ class Client:
 
     def wait_for_height_sync(self):
         while True:
-            res = self.sync_status()
+            res, _ = self.sync_status()
             if res["indexedHeight"] == res["blockchainHeight"]:
                 return res["indexedHeight"]
             time.sleep(0.5)
@@ -762,7 +781,7 @@ class Client:
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        print(
+        current_app.logger.debug(
             "get_rewards_budget :",
             self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
         )
@@ -885,7 +904,7 @@ def client(flask_client: FlaskClient) -> Client:
         if i != 1:
             client.move_to_next_epoch(i)
         while True:
-            res = client.sync_status()
+            res, _ = client.sync_status()
             if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
                 i - 1
             ):
