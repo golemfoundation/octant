@@ -7,7 +7,7 @@ export type Response = {
   allocations: {
     amount: string; // WEI
     donor: string; // address
-    proposal: string; // proposal address
+    project: string; // project address
   }[];
 };
 

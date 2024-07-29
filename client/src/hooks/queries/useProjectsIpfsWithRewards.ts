@@ -58,10 +58,11 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
     const totalValueOfAllocations =
       projectMatchedProjectRewards?.sum ||
       (isSuccessProjectsDonors
-        ? projectsDonors[project.address].reduce((acc, curr) => acc + curr.amount, BigInt(0))
+        ? projectsDonors[project.address]?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) ||
+          BigInt(0)
         : BigInt(0));
     return {
-      numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address].length : 0,
+      numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address]?.length || 0 : 0,
       percentage: projectMatchedProjectRewards?.percentage,
       totalValueOfAllocations,
       ...project,
