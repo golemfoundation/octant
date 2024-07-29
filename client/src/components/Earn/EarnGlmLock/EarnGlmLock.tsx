@@ -3,6 +3,7 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useWalletClient, usePublicClient, useWaitForTransactionReceipt } from 'wagmi';
 
+import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
 import EarnGlmLockBudget from 'components/Earn/EarnGlmLock/EarnGlmLockBudget';
 import EarnGlmLockNotification from 'components/Earn/EarnGlmLock/EarnGlmLockNotification';
 import EarnGlmLockStepper from 'components/Earn/EarnGlmLock/EarnGlmLockStepper';
@@ -16,8 +17,10 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useIsContract from 'hooks/queries/useIsContract';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
+import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -52,12 +55,15 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
    */
   const [valueToDepose, setValueToDepose] = useState<bigint>(BigInt(0));
   const [step, setStep] = useState<Step>(1);
+  const [intervalId, setIntervalId] = useState<null | NodeJS.Timeout>(null);
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState<boolean>(true);
   const buttonUseMaxRef = useRef<HTMLButtonElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: projectsEpoch } = useProjectsEpoch();
-  const { data: depositsValue } = useDepositValue();
+  const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
+  const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
+  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
 
   useEffect(() => {
     if (transactionReceipt && !isLoadingTransactionReceipt) {
@@ -106,19 +112,34 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   };
 
   const onSuccess = async ({ hash, value }): Promise<void> => {
+    if (isContract) {
+      const id = setInterval(async () => {
+        const nextSafeTransactions = await apiGetSafeTransactions(address!);
+        if (nextSafeTransactions.results.find(t => t.safeTxHash === hash && t.transactionHash)) {
+          clearInterval(id);
+          Promise.all([
+            refetchDeposit(),
+            refetchEstimatedEffectiveDeposit(),
+            refetchLockedSummaryLatest(),
+          ]).then(() => {
+            setStep(3);
+          });
+        }
+      }, 2000);
+      setIntervalId(id);
+      return;
+    }
     addTransactionPending({
       eventData: {
         amount: value,
         transactionHash: hash,
       },
-      isMultisig: isContract,
+      isMultisig: !!isContract,
       // GET /history uses seconds. Normalization here.
       timestamp: Math.floor(Date.now() / 1000).toString(),
       type: currentMode,
     });
-    if (!isContract) {
-      setTransactionHashForEtherscan(hash);
-    }
+    setTransactionHashForEtherscan(hash);
   };
 
   const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {
@@ -159,6 +180,15 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const isLockingApproved = approvalState === ApprovalState.APPROVED;
   const isApprovalKnown = approvalState !== ApprovalState.UNKNOWN;
 
+  useEffect(() => {
+    return () => {
+      if (!intervalId) {
+        return;
+      }
+      clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
   return (
     <Formik
       initialValues={formInitialValues(currentMode)}
@@ -191,7 +221,9 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
             buttonUseMaxRef={buttonUseMaxRef}
             className={styles.element}
             currentMode={currentMode}
-            isLoading={isLoadingTransactionReceipt || props.isSubmitting}
+            isLoading={
+              isLoadingTransactionReceipt || props.isSubmitting || (!!isContract && step === 2)
+            }
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}
