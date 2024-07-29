@@ -50,7 +50,7 @@ const ModalOnboarding = (): ReactElement => {
   const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
-  const isContract = useIsContract();
+  const { data: isContract } = useIsContract();
 
   const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
