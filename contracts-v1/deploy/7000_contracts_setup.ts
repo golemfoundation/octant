@@ -3,6 +3,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { PROPOSALS_ADDRESSES } from '../env';
+import { getNamedSigners } from '../helpers/misc-utils';
 import { EPOCHS, PROPOSALS, WITHDRAWALS_TARGET } from '../helpers/constants';
 import { Epochs, Proposals, WithdrawalsTarget } from '../typechain';
 
@@ -12,25 +13,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /* eslint-disable no-console */
   if (['hardhat'].includes(hre.network.name)) {
     // Test setup
-    const { TestFoundation } = await hre.ethers.getNamedSigners();
-    const epochs: Epochs = await hre.ethers.getContract(EPOCHS);
-    const proposals: Proposals = await hre.ethers.getContract(PROPOSALS);
+    const { TestFoundation } = await getNamedSigners();
+    const epochsAddress = (await hre.deployments.get(EPOCHS)).address;
+    const proposalsInfo = await hre.deployments.get(PROPOSALS);
+    const proposals: Proposals = await hre.ethers.getContractAt(proposalsInfo.abi, proposalsInfo.address);
 
     const unnamedAddresses = await hre.getUnnamedAccounts();
     const proposalAddresses = unnamedAddresses.slice(0, 10);
-    await proposals.connect(TestFoundation).setEpochs(epochs.address);
+    await proposals.connect(TestFoundation).setEpochs(epochsAddress);
     await proposals.connect(TestFoundation).setProposalAddresses(1, proposalAddresses);
   } else if (['sepolia', 'goerli', 'localhost'].includes(hre.network.name)) {
     // Testnet and localhost networks setup
-    const { TestFoundation } = await hre.ethers.getNamedSigners();
-    const epochs: Epochs = await hre.ethers.getContract(EPOCHS);
-    const proposals: Proposals = await hre.ethers.getContract(PROPOSALS);
+    const { TestFoundation } = await getNamedSigners();
+    const epochsAddress = (await hre.deployments.get(EPOCHS)).address;
+    const proposalsInfo = await hre.deployments.get(PROPOSALS);
+    const proposals: Proposals = await hre.ethers.getContractAt(proposalsInfo.abi, proposalsInfo.address);
 
     const proposalAddresses = PROPOSALS_ADDRESSES.split(',');
     await proposals.connect(TestFoundation).setProposalAddresses(1, proposalAddresses);
-    await proposals.connect(TestFoundation).setEpochs(epochs.address);
+    await proposals.connect(TestFoundation).setEpochs(epochsAddress);
 
-    const target: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
+    const targetInfo = await hre.deployments.get(WITHDRAWALS_TARGET);
+    const target: WithdrawalsTarget = await hre.ethers.getContractAt(targetInfo.abi, targetInfo.address);
 
     let sendTx = null;
 
