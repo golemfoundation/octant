@@ -188,7 +188,7 @@ export default function getMilestones(): Milestone[] {
       to: new Date('2024-10-27T17:00:00+0100'),
     },
     {
-      from: new Date('2024-10-27T17:00:00+0100'),
+      from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e6-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Six' }),
     },
