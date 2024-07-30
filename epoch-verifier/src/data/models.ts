@@ -58,10 +58,18 @@ export interface Allocation {
   user: Address;
 }
 
-export interface Reward {
-  allocated: bigint;
+interface IReward {
   matched: bigint;
+}
+
+export interface Reward extends IReward {
+  allocated: bigint;
   project: Address;
+}
+
+export interface SimulatedReward extends IReward {
+  amount: bigint; // allocated + matched
+  address: Address;
 }
 
 export interface EpochInfo {
@@ -81,6 +89,12 @@ export interface EpochInfo {
 export interface EpochUqs {
   userAddress: string;
   uniquenessQuotient: number;
+}
+
+export interface FinalizedSimulation {
+  patronsRewards: bigint;
+  matchedRewards: bigint;
+  projectRewards: SimulatedReward[];
 }
 
 export class UserBudgetImpl implements Deserializable<UserBudget> {
@@ -123,6 +137,20 @@ export class RewardImpl implements Deserializable<Reward> {
     this.project = input.address
     this.allocated = BigInt(input.allocated)
     this.matched = BigInt(input.matched)
+
+    return this
+  }
+}
+
+export class SimulatedRewardImpl implements Deserializable<SimulatedReward> {
+  amount: bigint;
+  matched: bigint;
+  address: Address;
+
+  from(input: any) {
+    this.address = input.address;
+    this.amount = BigInt(input.amount);
+    this.matched = BigInt(input.matched);
 
     return this
   }
@@ -176,6 +204,23 @@ export class EpochUqsImpl implements Deserializable<EpochUqs>{
   from(input: any) {
     this.userAddress = input.userAddress;
     this.uniquenessQuotient = parseFloat(input.uniquenessQuotient);
+    return this;
+  }
+}
+
+export class FinalizedSimulationImpl implements Deserializable<FinalizedSimulation>{
+  patronsRewards: bigint;
+  matchedRewards: bigint;
+  projectsRewards: SimulatedReward[];
+
+  from(input: any) {
+    this.patronsRewards = BigInt(input.patronsRewards);
+    this.matchedRewards = BigInt(input.matchedRewards);
+    this.projectsRewards = input.projectsRewards.map((reward: any) => {
+      const simulatedReward = new SimulatedRewardImpl();
+      return simulatedReward.from(reward);
+    });
+
     return this;
   }
 }

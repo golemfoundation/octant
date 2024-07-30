@@ -2,7 +2,7 @@ import { VerificationResult } from "../runner";
 
 type Predicate<T> = (elem: T) => boolean | VerificationResult
 
-export const SCALE_FACTOR = 10n ** 18n;
+export const SCALE_FACTOR = 10n ** 36n;
 
 function abs(v: bigint): bigint {
   if (v < BigInt(0)) {

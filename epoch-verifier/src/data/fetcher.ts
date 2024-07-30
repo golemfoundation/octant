@@ -12,7 +12,8 @@ import {
   UserBudget,
   AllocationRecord,
   ApiRewardsBudgets, ApiAllocations, ApiRewards,
-  ApiEpochUqs, EpochUqsImpl
+  ApiEpochUqs, EpochUqsImpl,
+  FinalizedSimulationImpl
 } from "./models";
 
 const REQUEST_TIMEOUT = 150_000;
@@ -60,15 +61,19 @@ export class HttpFetcher {
     return this._get_array(`/allocations/epoch/${epoch}?includeZeroAllocations=true`, "users' allocations", AllocationImpl, (data: ApiAllocations) => data.allocations)
   }
 
-  async apiGetRewards(epoch: number): Promise<Reward[] | null> {
-    return this._get_array(`/rewards/projects/epoch/${epoch}`, "projects rewards", RewardImpl, (data: ApiRewards) => data.rewards)
-  }
-
   async apiGetEpochInfo(epoch: number): Promise<EpochInfo | null> {
     return this._get(`/epochs/info/${epoch}`, "epoch info", EpochInfoImpl)
   }
 
   async apiGetEpochUqs(epoch: number): Promise<EpochUqs | null> {
     return this._get_array(`/user/uq/${epoch}/all`, "epoch uqs", EpochUqsImpl, (data: ApiEpochUqs) => data.uqsInfo);
+  }
+
+  async apiGetRewards(epoch: number): Promise<Reward[] | null> {
+    return this._get_array(`/rewards/projects/epoch/${epoch}`, "projects rewards", RewardImpl, (data: ApiRewards) => data.rewards)
+  }
+
+  async apiGetFinalizedSimulated() {
+    return this._get('/snapshots/finalized/simulate', 'finalized simulated snapshot', FinalizedSimulationImpl);
   }
 }

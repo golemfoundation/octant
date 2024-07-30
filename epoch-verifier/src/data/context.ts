@@ -6,15 +6,17 @@ import {
   Reward,
   UserBudget,
   UserDonation,
-  EpochUqs
+  EpochUqs,
+  SimulatedReward
 } from "./models"
 
 export interface Context {
-  allocations: Allocation[]
-  budgets: Map<Address, bigint>
-  epochInfo: EpochInfo
-  rewards: Reward[]
-  uqs: Map<Address, Double>
+  allocations: Allocation[];
+  budgets: Map<Address, bigint>;
+  epochInfo: EpochInfo;
+  rewards: Reward[];
+  uqs: Map<Address, Double>;
+  isSimulated: boolean;
 }
 
 function transformToAllocations(allocationRecords: AllocationRecord[]): Allocation[] {
@@ -29,7 +31,7 @@ function transformToAllocations(allocationRecords: AllocationRecord[]): Allocati
   return Array.from(allocations.values())
 }
 
-export function buildContext(userBudgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo, epochUqs: EpochUqs[]): Context {
+export function buildContext(userBudgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo, epochUqs: EpochUqs[], isSimulated: boolean): Context {
 
   const positiveUserBudgets = userBudgets.filter(positiveUserBudget => positiveUserBudget.amount !== BigInt(0));
 
@@ -38,7 +40,8 @@ export function buildContext(userBudgets: UserBudget[], allocations: AllocationR
     budgets: new Map(positiveUserBudgets.map(value => [value.user, value.amount] as const)),
     epochInfo,
     rewards,
-    epochUqs: new Map(epochUqs.map(value => [value.userAddress, value.uniquenessQuotient] as const))
+    epochUqs: new Map(epochUqs.map(value => [value.userAddress, value.uniquenessQuotient] as const)),
+    isSimulated
   }
 }
 
@@ -81,9 +84,23 @@ export function individualDonationsAggregatedByProjectsWithUQs(context: Context)
   return individualDonations;
 }
 
-export function rewardsByProject(context: Context): Map<Address, Reward> {
-  return new Map(context.rewards
+function _getSimulatedRewardsByProject(rewards: SimulatedReward[]): Map<Address, SimulatedReward> {
+  return new Map(rewards
+    .filter(r => r.matched !== BigInt(0))
+    .map((r) => [r.address, r] as const)
+  );
+}
+
+function _getRewardsByProject(rewards: Reward[]): Map<Address, Reward> {
+  return new Map(rewards
     .filter(r => r.matched !== BigInt(0))
     .map((r) => [r.project, r] as const)
   );
+}
+
+export function rewardsByProject(context: Context): Map<Address, IReward> {
+  if (context.isSimulated) {
+    return _getSimulatedRewardsByProject(context.rewards.projectsRewards);
+  }
+  return _getRewardsByProject(context.rewards);
 }
