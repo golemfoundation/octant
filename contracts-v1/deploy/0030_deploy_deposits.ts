@@ -10,13 +10,11 @@ import { AUTH, DEPOSITS, TOKEN } from '../helpers/constants';
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
-
-  const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
+  const authAddress = AUTH_ADDRESS || (await hre.deployments.get(AUTH)).address;
 
   let glmAddress = GLM_ADDRESS;
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    const token = await ethers.getContract(TOKEN);
-    glmAddress = token.address;
+    glmAddress = (await hre.deployments.get(TOKEN)).address;
   }
 
   await deploy(DEPOSITS, {
