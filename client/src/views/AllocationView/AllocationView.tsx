@@ -19,8 +19,8 @@ import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
-import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsContract from 'hooks/queries/useIsContract';
@@ -55,7 +55,6 @@ const AllocationView = (): ReactElement => {
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
-  const { refetch: refetchProjectsDonors } = useProjectsDonors();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
@@ -99,6 +98,10 @@ const AllocationView = (): ReactElement => {
   const { data: uqScore } = useUqScore(currentEpoch!);
   const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
   const [showLowUQScoreModal, setShowLowUQScoreModal] = useState(false);
+  const { refetch: refetchEpochAllocations } = useEpochAllocations(
+    isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+  );
+
   const {
     allocations,
     rewardsForProjects,
@@ -132,7 +135,7 @@ const AllocationView = (): ReactElement => {
     refetchUserAllocationNonce();
     refetchHistory();
     refetchWithdrawals();
-    refetchProjectsDonors();
+    refetchEpochAllocations();
     toastService.hideToast('confirmChanges');
     setAllocations([
       ...allocations.filter(allocation => {

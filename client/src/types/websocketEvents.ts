@@ -6,7 +6,7 @@ export enum WebsocketEmitEvent {
 // eslint-disable-next-line no-shadow
 export enum WebsocketListenEvent {
   allocationsSum = 'allocations_sum',
-  projectDonors = 'proposal_donors',
-  projectRewards = 'proposal_rewards',
+  projectDonors = 'project_donors',
+  projectRewards = 'project_rewards',
   threshold = 'threshold',
 }
