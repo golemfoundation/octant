@@ -108,7 +108,11 @@ export default function useAllocate({
 
       const intervalId = setInterval(async () => {
         const nextSafeMessages = await apiGetSafeMessages(address!);
-        if (nextSafeMessages.count > safeMessages.count) {
+        const newestSafeMessage = nextSafeMessages.results[0];
+        const isNewestSafeMessageOctantAllocation =
+          newestSafeMessage.message?.domain?.name === 'Octant' &&
+          newestSafeMessage.message?.primaryType === 'AllocationPayload';
+        if (nextSafeMessages.count > safeMessages.count && isNewestSafeMessageOctantAllocation) {
           clearInterval(intervalId);
           apiPostPendingMultisigSignatures(
             address!,

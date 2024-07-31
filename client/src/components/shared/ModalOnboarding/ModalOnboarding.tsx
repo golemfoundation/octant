@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, ReactElement, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/ui/Img';
@@ -10,6 +10,7 @@ import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
+import useIsContract from 'hooks/queries/useIsContract';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
@@ -23,7 +24,7 @@ const motionAnimationProps: AnimationProps = {
   transition: { duration: 0.15, ease: 'easeOut' },
 };
 
-const ModalOnboarding = (): ReactNode => {
+const ModalOnboarding = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
   const { address } = useAccount();
@@ -49,6 +50,7 @@ const ModalOnboarding = (): ReactNode => {
   const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
+  const { data: isContract } = useIsContract();
 
   const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
@@ -66,8 +68,14 @@ const ModalOnboarding = (): ReactNode => {
     steps: stepsToUse,
   });
 
-  const currentStep =
-    !isFetchingUserTOS && stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
+  // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
+  const currentStep = useMemo(() => {
+    if (!stepsToUse.length || (isFetchingUserTOS && !isContract)) {
+      return null;
+    }
+    return stepsToUse[currentStepIndex];
+  }, [stepsToUse, currentStepIndex, isFetchingUserTOS, isContract]);
+
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;

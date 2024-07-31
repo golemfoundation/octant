@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +17,7 @@ const MetricsEpochGridCurrentDonors: FC<MetricsEpochGridCurrentDonorsProps> = ({
   const { epoch } = useMetricsEpoch();
   const { data: epochAllocations } = useEpochAllocations(epoch);
 
-  const currentDonorsString = `${epochAllocations?.length || 0}`;
+  const currentDonorsString = uniqBy(epochAllocations, 'donor').length.toString();
 
   return (
     <MetricsGridTile

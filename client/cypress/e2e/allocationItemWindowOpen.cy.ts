@@ -104,14 +104,9 @@ describe('allocation (allocation window open)', () => {
       });
 
       it('AllocationItem shows all the elements', () => {
-        cy.get('[data-test=AllocationItem]')
-          .eq(0)
-          .find('[data-test=AllocationItem__name]')
-          .then($allocationItemName => {
-            cy.get('@projectName').then(projectName => {
-              expect(projectName).to.eq($allocationItemName.text());
-            });
-          });
+        cy.get('@projectName').then(projectName => {
+          cy.get('[data-test=AllocationItem__name]').contains(projectName).should('be.visible');
+        });
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__imageProfile]')

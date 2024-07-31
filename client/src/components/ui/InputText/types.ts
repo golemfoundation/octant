@@ -1,9 +1,10 @@
 import { ChangeEvent, FocusEventHandler, HTMLAttributes, ReactNode } from 'react';
 
-export const INPUT_TEXT_VARIANTS = ['allocation', 'simple'] as const;
+export const INPUT_TEXT_VARIANTS = ['allocation', 'simple', 'search'] as const;
 export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 
 export default interface InputTextProps {
+  Icon?: ReactNode;
   autocomplete?: string;
   className?: string;
   classNameInput?: string;

@@ -4,18 +4,18 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type Response = {
-  count: number;
   results: {
-    message: any;
-  };
+    safeTxHash: string;
+    transactionHash?: string;
+  }[];
 };
 
-export async function apiGetSafeMessages(
+export async function apiGetSafeTransactions(
   address: string,
   signal?: GenericAbortSignal,
 ): Promise<Response> {
   return apiService
-    .get(`${env.safeEndpoint}api/v1/safes/${address}/messages/`, {
+    .get(`${env.safeEndpoint}api/v1/safes/${address}/all-transactions/`, {
       signal,
     })
     .then(({ data }) => data);
