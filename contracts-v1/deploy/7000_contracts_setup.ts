@@ -3,9 +3,9 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { PROPOSALS_ADDRESSES } from '../env';
-import { getNamedSigners } from '../helpers/misc-utils';
 import { EPOCHS, PROPOSALS, WITHDRAWALS_TARGET } from '../helpers/constants';
-import { Epochs, Proposals, WithdrawalsTarget } from '../typechain';
+import { getNamedSigners } from '../helpers/misc-utils';
+import { Proposals, WithdrawalsTarget } from '../typechain';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
@@ -13,7 +13,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /* eslint-disable no-console */
   if (['hardhat'].includes(hre.network.name)) {
     // Test setup
-    const { TestFoundation } = await getNamedSigners();
+    const { TestFoundation } = await getNamedSigners(hre);
     const epochsAddress = (await hre.deployments.get(EPOCHS)).address;
     const proposalsInfo = await hre.deployments.get(PROPOSALS);
     const proposals: Proposals = await hre.ethers.getContractAt(proposalsInfo.abi, proposalsInfo.address);
@@ -24,7 +24,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await proposals.connect(TestFoundation).setProposalAddresses(1, proposalAddresses);
   } else if (['sepolia', 'goerli', 'localhost'].includes(hre.network.name)) {
     // Testnet and localhost networks setup
-    const { TestFoundation } = await getNamedSigners();
+    const { TestFoundation } = await getNamedSigners(hre);
     const epochsAddress = (await hre.deployments.get(EPOCHS)).address;
     const proposalsInfo = await hre.deployments.get(PROPOSALS);
     const proposals: Proposals = await hre.ethers.getContractAt(proposalsInfo.abi, proposalsInfo.address);
