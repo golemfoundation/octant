@@ -58,6 +58,14 @@
   background: $color-octant-grey8;
   overflow: hidden;
 
+  &.calculatingUQScore {
+    padding: 6.8rem 0 6.4rem;
+
+    @media #{$desktop-up} {
+      padding: 8rem 0 5.6rem;
+    }
+  }
+
   &.welcomeToOctant {
     padding: 3.2rem 0 5.2rem;
 

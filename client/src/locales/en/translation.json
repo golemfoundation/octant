@@ -458,6 +458,10 @@
         }
       },
       "stepsDecisionWindowOpen": {
+        "calculatingUQScore": {
+          "header": "Calculating a UQ score",
+          "text": "We're now using a custom Gitcoin Passport dashboard as an anti-sybil solution for QF. Have\u00a0a\u00a0low score but participated previously?<br/><br/>→ go to <0>Octant Gitcoin Passport dashboard</0><br/>→ sign using your Octant wallet<br/>→ refresh Octant, receive a 20+ score"
+        },
         "welcomeToOctant": {
           "header": "Welcome to Epoch {{epoch}} Allocation",
           "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all about."

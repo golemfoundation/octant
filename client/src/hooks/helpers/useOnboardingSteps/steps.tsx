@@ -4,10 +4,32 @@ import { Trans } from 'react-i18next';
 import styles from 'components/shared/ModalOnboarding/ModalOnboarding.module.scss';
 import { Step } from 'components/shared/ModalOnboarding/types';
 import Button from 'components/ui/Button';
-import { DISCORD_LINK, OCTANT_BUILD_LINK, TWITTER_LINK } from 'constants/urls';
+import {
+  DISCORD_LINK,
+  GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD,
+  OCTANT_BUILD_LINK,
+  TWITTER_LINK,
+} from 'constants/urls';
 import i18n from 'i18n';
 
 export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string): Step[] => [
+  {
+    header: i18n.t('views.onboarding.stepsDecisionWindowOpen.calculatingUQScore.header', { epoch }),
+    image: 'images/calculator.webp',
+    imageClassName: styles.calculatingUQScore,
+    text: (
+      <Trans
+        components={[
+          <Button
+            className={styles.link}
+            href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+            variant="link3"
+          />,
+        ]}
+        i18nKey="views.onboarding.stepsDecisionWindowOpen.calculatingUQScore.text"
+      />
+    ),
+  },
   {
     header: i18n.t('views.onboarding.stepsDecisionWindowOpen.welcomeToOctant.header', { epoch }),
     image: 'images/onboarding/1.webp',
