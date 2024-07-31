@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
-from app.extensions import w3
+from app.extensions import w3, epochs
 from app.infrastructure import database, graphql
 from app.infrastructure.exception_handler import ExceptionHandler
+from app.legacy.controllers import snapshots
 from dataclass_wizard import JSONWizard
 from flask import current_app as app
 
@@ -28,6 +29,16 @@ class Healthcheck(JSONWizard):
     subgraph: str
 
 
+@dataclass(frozen=True)
+class SyncStatus(JSONWizard):
+    blockchainEpoch: int | None
+    indexedEpoch: int | None
+    blockchainHeight: int | None
+    indexedHeight: int | None
+    pendingSnapshot: str | None
+    finalizedSnapshot: str | None
+
+
 def get_blockchain_info() -> ChainInfo:
     smart_contracts = [
         SmartContract("Auth", app.config["AUTH_CONTRACT_ADDRESS"]),
@@ -47,7 +58,7 @@ def get_blockchain_info() -> ChainInfo:
     )
 
 
-def healthcheck() -> (Healthcheck, int):
+def healthcheck() -> Tuple[Healthcheck, int]:
     try:
         is_chain_rpc_healthy = w3.eth.chain_id == app.config["CHAIN_ID"]
     except Exception as e:
@@ -82,3 +93,37 @@ def healthcheck() -> (Healthcheck, int):
         return healthcheck_status, 500
 
     return healthcheck_status, 200
+
+
+def sync_status() -> Tuple[SyncStatus, int]:
+    services, status = healthcheck()
+    blockchainEpoch = None
+    indexedEpoch = None
+    blockchainHeight = None
+    indexedHeight = None
+    pendingSnapshot = None
+    finalizedSnapshot = None
+    if services.blockchain == "UP":
+        blockchainHeight = w3.eth.get_block("latest")["number"]
+        blockchainEpoch = epochs.get_current_epoch()
+    if services.subgraph == "UP":
+        sg_result = graphql.epochs.get_epochs()
+        sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
+        indexedEpoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
+        indexedHeight = sg_result["_meta"]["block"]["number"]
+
+    if status == 200:
+        finalizedSnapshot = snapshots.get_finalized_snapshot_status()
+        pendingSnapshot = snapshots.get_pending_snapshot_status()
+
+    return (
+        SyncStatus(
+            blockchainEpoch=blockchainEpoch,
+            indexedEpoch=indexedEpoch,
+            blockchainHeight=blockchainHeight,
+            indexedHeight=indexedHeight,
+            pendingSnapshot=pendingSnapshot,
+            finalizedSnapshot=finalizedSnapshot,
+        ),
+        status,
+    )

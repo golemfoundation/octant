@@ -698,11 +698,25 @@ class Client:
         return json.loads(rv.text), rv.status_code
 
     def wait_for_sync(self, target):
+        timeout = datetime.timedelta(seconds=5)
+        start = datetime.datetime.now()
         while True:
-            res, _ = self.sync_status()
-            if res["indexedEpoch"] == res["blockchainEpoch"]:
-                if res["indexedEpoch"] == target:
-                    return
+            try:
+                res, status_code = self.sync_status()
+                current_app.logger.debug(f"sync_status returns {res}")
+                current_app.logger.debug(
+                    f"sync_status http status code is {status_code}"
+                )
+                assert status_code == 200
+                if res["indexedEpoch"] == res["blockchainEpoch"]:
+                    if res["indexedEpoch"] == target:
+                        return
+            except Exception as exp:
+                current_app.logger.warning(
+                    f"Request to /info/sync-status returned {exp}"
+                )
+            if datetime.datetime.now() - start > timeout:
+                raise TimeoutError(f"Waiting for sync for epoch {target} has timeouted")
             time.sleep(0.5)
 
     def wait_for_height_sync(self):
@@ -903,12 +917,7 @@ def client(flask_client: FlaskClient) -> Client:
     for i in range(1, STARTING_EPOCH + 1):
         if i != 1:
             client.move_to_next_epoch(i)
-        while True:
-            res, _ = client.sync_status()
-            if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
-                i - 1
-            ):
-                break
+            client.wait_for_sync(i)
     return client
 
 
