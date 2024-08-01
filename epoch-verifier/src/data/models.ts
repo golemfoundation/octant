@@ -213,10 +213,10 @@ export class FinalizedSimulationImpl implements Deserializable<FinalizedSimulati
   matchedRewards: bigint;
   projectsRewards: SimulatedReward[];
 
-  from(input: any) {
+  from(input: FinalizedSimulation) {
     this.patronsRewards = BigInt(input.patronsRewards);
     this.matchedRewards = BigInt(input.matchedRewards);
-    this.projectsRewards = input.projectsRewards.map((reward: any) => {
+    this.projectsRewards = input.projectsRewards.map((reward: SimulatedReward) => {
       const simulatedReward = new SimulatedRewardImpl();
       return simulatedReward.from(reward);
     });
