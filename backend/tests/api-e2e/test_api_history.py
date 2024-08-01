@@ -32,7 +32,7 @@ def test_history_basics(
 
     # make a snapshot
     res = client.pending_snapshot()
-    assert res["epoch"] > STARTING_EPOCH - 1
+    assert res["epoch"] == STARTING_EPOCH
 
     allocation_response_code = ua_alice.allocate(1000, alice_proposals)
     assert (
