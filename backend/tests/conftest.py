@@ -531,15 +531,16 @@ def pytest_collection_modifyitems(config, items):
 def setup_deployment() -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     testname = f"octant_test_{random_string()}"
+    print(f"new deployment: {testname}")
     try:
         f = urllib.request.urlopen(f"{deployer}/?name={testname}")
         deployment = f.read().decode().split("\n")
         deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
         return deployment
     except urllib.error.HTTPError as err:
-        current_app.logger.error(f"call to multideployer failed: {err}")
-        current_app.logger.error(f"multideployer failed: code is {err.code}")
-        current_app.logger.error(f"multideployer failed: msg is {err.msg}")
+        print(f"call to multideployer failed: {err}")
+        print(f"multideployer failed: code is {err.code}")
+        print(f"multideployer failed: msg is {err.msg}")
         raise err
 
 
