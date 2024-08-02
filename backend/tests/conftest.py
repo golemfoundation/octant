@@ -794,12 +794,8 @@ class Client:
         return json.loads(rv.text), rv.status_code
 
     def get_rewards_budget(self, address: str, epoch: int):
-        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        current_app.logger.debug(
-            "get_rewards_budget :",
-            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
-        )
-        return json.loads(rv)
+        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
+        return json.loads(rv.text)
 
     def get_withdrawals_for_address(self, address: str):
         rv = self._flask_client.get(f"/withdrawals/{address}").text
