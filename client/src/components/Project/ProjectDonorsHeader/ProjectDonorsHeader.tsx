@@ -29,7 +29,10 @@ const ProjectDonorsHeader: FC<ProjectDonorsListProps> = ({
     if (epochNumber === currentEpoch) {
       return 0;
     }
-    return isFetching ? '--' : projectDonors?.length;
+    if (isFetching) {
+      return '---';
+    }
+    return projectDonors?.length || '0';
   }, [isFetching, projectDonors, epochNumber, currentEpoch]);
 
   return (
