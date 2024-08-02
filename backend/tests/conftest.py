@@ -528,12 +528,12 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
-def setup_deployment() -> dict[str, str]:
+def setup_deployment(test_name) -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
-    testname = f"octant_test_{random_string()}"
-    print(f"new deployment: {testname}")
+    env_name = f"octant_test_{random_string()}"
+    print(f"test {test_name}, environment name: {env_name}")
     try:
-        f = urllib.request.urlopen(f"{deployer}/?name={testname}")
+        f = urllib.request.urlopen(f"{deployer}/?name={env_name}")
         deployment = f.read().decode().split("\n")
         deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
         return deployment
@@ -567,11 +567,11 @@ def flask_client(deployment) -> FlaskClient:
 
 
 @pytest.fixture(scope="function")
-def deployment(pytestconfig):
+def deployment(pytestconfig, request):
     """
     Deploy contracts and a subgraph under a single-use name.
     """
-    envs = setup_deployment()
+    envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
@@ -717,7 +717,9 @@ class Client:
                     f"Request to /info/sync-status returned {exp}"
                 )
             if datetime.datetime.now() - start > timeout:
-                raise TimeoutError(f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)")
+                raise TimeoutError(
+                    f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)"
+                )
             time.sleep(0.5)
 
     def wait_for_height_sync(self):
