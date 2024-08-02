@@ -913,7 +913,7 @@ def client(flask_client: FlaskClient) -> Client:
     for i in range(1, STARTING_EPOCH + 1):
         if i != 1:
             client.move_to_next_epoch(i)
-            client.wait_for_sync(i)
+        client.wait_for_sync(i)
     return client
 
 
