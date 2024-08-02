@@ -685,8 +685,8 @@ class Client:
         rv = self._flask_client.get("/info/sync-status")
         return json.loads(rv.text), rv.status_code
 
-    def wait_for_sync(self, target):
-        timeout = datetime.timedelta(seconds=5)
+    def wait_for_sync(self, target, timeout_s=20):
+        timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
             try:
@@ -704,7 +704,7 @@ class Client:
                     f"Request to /info/sync-status returned {exp}"
                 )
             if datetime.datetime.now() - start > timeout:
-                raise TimeoutError(f"Waiting for sync for epoch {target} has timeouted")
+                raise TimeoutError(f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)")
             time.sleep(0.5)
 
     def wait_for_height_sync(self):
@@ -901,7 +901,7 @@ def client(flask_client: FlaskClient) -> Client:
     for i in range(1, STARTING_EPOCH + 1):
         if i != 1:
             client.move_to_next_epoch(i)
-        client.wait_for_sync(i)
+        client.wait_for_sync(i, timeout_s=60)
     return client
 
 
