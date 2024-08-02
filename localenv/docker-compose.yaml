@@ -4,7 +4,7 @@ version: "3.8"
 services:
 
   graph-node:
-    image: graphprotocol/graph-node:v0.34.1
+    image: graphprotocol/graph-node:v0.35.1
     platform: linux/amd64
     ports:
       - '8000:8000'
@@ -26,7 +26,7 @@ services:
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       ethereum: localhost:http://anvil:8545
-      GRAPH_LOG: info
+      GRAPH_LOG: debug
 
   ipfs:
     image: ipfs/kubo:v0.27.0

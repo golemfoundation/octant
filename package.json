@@ -22,6 +22,7 @@
     "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up",
     "apitest:up": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up anvil ipfs graph-postgres graph-node multideployer",
     "apitest:down": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml down",
+    "apitest:logs": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml logs",
     "apitest:run": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml run backend-apitest",
     "apitest:clean": "docker rm -v -f $(docker ps -qa --filter 'name=apitest') || true",
     "preapitest:up": "yarn apitest:clean",
