@@ -31,7 +31,7 @@
     "prettier:ts:pure": "prettier --parser typescript --write",
     "start": "docker-compose -f docker-compose.yml up",
     "start:linux": "docker-compose -f docker-compose-linux.yml up",
-    "test": "graph test -v 0.5.4",
+    "test": "graph test -d",
     "type-check": "echo 'Not used'"
   },
   "devDependencies": {
