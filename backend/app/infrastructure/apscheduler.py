@@ -20,7 +20,7 @@ def vault_confirm_withdrawals():
             try:
                 vault.confirm_withdrawals()
             except exceptions.MissingSnapshot:
-                app.logger.warning("No pending snapshot found")
+                app.logger.warning("No snapshot found")
 
 
 @scheduler.task(
