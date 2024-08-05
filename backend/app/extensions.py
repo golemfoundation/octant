@@ -1,3 +1,4 @@
+import socketio 
 from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -23,7 +24,12 @@ api = Api(
     description="Octant REST API documentation",
     catch_all_404s=True,
 )
-socketio = SocketIO(cors_allowed_origins="*")
+# from flask import current_app as app
+
+socketio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*", logger=True)
+    # async_mode="asgi", cors_allowed_origins="*", client_manager=mgr
+# )
+# socketio = SocketIO(cors_allowed_origins="*")
 db = SQLAlchemy()
 migrate = Migrate()
 cors = CORS()
