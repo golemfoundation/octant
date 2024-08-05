@@ -42,6 +42,8 @@ spec:
             value: '$BACKEND_RPC_URL'
           - name: graphNode.graph.env.GRAPHQL_MAX_FIRST
             value: '100000'
+          - name: graphNode.graph.env.GRAPH_LOG
+            value: 'debug'
           - name: graphHealtchecker.replicas
             value: '${GRAPH_HEALTHCHECKER_REPLICAS:-1}'
           - name: subgraph.deploy
