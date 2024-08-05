@@ -4,19 +4,11 @@ import { mockCoinPricesServer, visitWithLoader } from './e2e';
 
 import Chainable = Cypress.Chainable;
 
-export const connectWallet = (
-  isTOSAccepted: boolean,
-  shouldVisit = true,
-  shouldReload = false,
-): Chainable<any> => {
-  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
+export const connectWalletOnboarding = (): Chainable<any> => {
+  // cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.disconnectMetamaskWalletFromAllDapps();
-  if (shouldVisit) {
-    visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
-  }
-  if (shouldReload) {
-    cy.reload();
-  }
+  visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
+
   cy.wait(500);
   cy.get('[data-test=MainLayout__Button--connect]').click();
   cy.wait(500);

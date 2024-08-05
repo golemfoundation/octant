@@ -259,7 +259,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      connectWallet({ isPatronModeEnabled: true, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: true });
       checkProjectsViewLoaded();
       /**
        * This could be done in before hook, but CY wipes the state after each test
