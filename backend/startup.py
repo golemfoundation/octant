@@ -20,35 +20,12 @@ eventlet.monkey_patch()
 if os.getenv("SENTRY_DSN"):
     import sentry_sdk
 
-    def sentry_before_send(event, hint):
-        exceptions = event.get("exception", [])
-        if not exceptions:
-            return event
-
-        exc = exceptions[-1]
-        mechanism = exc.get("mechanism", {})
-
-        if mechanism.get("handled"):
-            return None
-
-        return event
-        exceptions = event["exception"]
-        if exceptions:
-            exc = exceptions[-1]
-            mechanism = exc.get("mechanism")
-            if mechanism:
-                if mechanism.get("handled"):
-                    return None
-
-        return event
-
     print("[+] Starting sentry")
 
     sentry_sdk.init(
         traces_sample_rate=1.0,
         profiles_sample_rate=1.0,
         enable_tracing=True,
-        before_send=sentry_before_send,
     )
 
 from app import create_app  # noqa
