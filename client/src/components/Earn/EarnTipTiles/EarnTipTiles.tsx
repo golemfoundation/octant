@@ -80,7 +80,7 @@ const EarnTipTiles = (): ReactElement => {
         imageClassName={styles.lockGlmImage}
         isOpen={isLockGlmTipVisible}
         onClose={() => setWasLockGLMAlreadyClosed(true)}
-        text={t('lockGlm.text')}
+        text={t(isDesktop ? 'lockGlm.text.desktop' : 'lockGlm.text.mobile')}
         title={t('lockGlm.title')}
       />
       <TipTile
@@ -89,7 +89,7 @@ const EarnTipTiles = (): ReactElement => {
         imageClassName={styles.connectWalletImage}
         isOpen={isConnectWalletTipVisible}
         onClose={() => setWasConnectWalletAlreadyClosed(true)}
-        text={t('connectWallet.text')}
+        text={t(isDesktop ? 'connectWallet.text.desktop' : 'connectWallet.text.mobile')}
         title={t(isDesktop ? 'connectWallet.title.desktop' : 'connectWallet.title.mobile')}
       />
       <TipTile
@@ -97,7 +97,7 @@ const EarnTipTiles = (): ReactElement => {
         imageClassName={styles.withdrawImage}
         isOpen={isWithdrawTipVisible}
         onClose={() => setWasWithdrawAlreadyClosed(true)}
-        text={t('withdrawEth.text')}
+        text={t(isDesktop ? 'withdrawEth.text.desktop' : 'withdrawEth.text.mobile')}
         title={t('withdrawEth.title')}
       />
       <TipTile
@@ -105,9 +105,7 @@ const EarnTipTiles = (): ReactElement => {
         imageClassName={styles.allocateYourRewardsImage}
         isOpen={isAllocateRewardsTipVisible}
         onClose={() => setWasAllocateRewardsAlreadyClosed(true)}
-        text={
-          isDesktop ? t('allocateYourRewards.textDesktop') : t('allocateYourRewards.textMobile')
-        }
+        text={t(isDesktop ? 'allocateYourRewards.text.desktop' : 'allocateYourRewards.text.mobile')}
         title={t('allocateYourRewards.title')}
       />
     </Fragment>

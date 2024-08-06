@@ -18,12 +18,13 @@ const TipTile: React.FC<TipTileProps> = ({
   dataTest = 'TipTile',
   image,
   imageClassName,
-  isOpen,
+  // isOpen,
   onClose,
   onClick,
   text,
   title,
 }) => {
+  const isOpen = true;
   const { t } = useTranslation('translation', { keyPrefix: 'common' });
   const { isDesktop } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
