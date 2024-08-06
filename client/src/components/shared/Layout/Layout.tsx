@@ -92,6 +92,8 @@ const Layout: FC<LayoutProps> = ({
   };
   const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
 
+  const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
+
   const tabsWithIsActive = useMemo(() => {
     let tabs = navigationTabsDefault;
 
@@ -222,7 +224,7 @@ const Layout: FC<LayoutProps> = ({
                               !isProjectAdminMode && isPatronMode && styles.isPatronMode,
                             )}
                           >
-                            {truncateEthAddress(address)}
+                            {truncatedEthAddress}
                           </div>
                         </div>
                         {!!currentEpoch &&

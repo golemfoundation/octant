@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingsRecalculatingScore from 'components/Settings/SettingsRecalculatingScore';
@@ -24,4 +24,4 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
   );
 };
 
-export default ModalSettingsRecalculatingScore;
+export default memo(ModalSettingsRecalculatingScore);
