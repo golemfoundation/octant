@@ -33,7 +33,7 @@
     "days": "Days",
     "donations": "Donations",
     "done": "Done",
-    "gettingStarted": "Getting Started",
+    "gettingStarted": "Getting started",
     "history": "History",
     "lockGlm": "Lock GLM",
     "octantTips": "Octant tips",
@@ -504,7 +504,10 @@
       },
       "tip": {
         "title": "Add your favourites",
-        "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
+        "text": {
+          "desktop": "Save projects to the Allocate view with the heart icon so you can donate rewards to them. You can also slide any allocate tile to remove them",
+          "mobile": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
+        }
       }
     },
     "settings": {

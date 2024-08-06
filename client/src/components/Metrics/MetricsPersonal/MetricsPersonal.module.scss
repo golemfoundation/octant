@@ -12,3 +12,11 @@
   background-color: $color-octant-grey1;
   margin: 3.2rem 0;
 }
+
+.connectWalletImage {
+  height: 8.2rem;
+
+  @media #{$desktop-up} {
+    height: 11.3rem;
+  }
+}
