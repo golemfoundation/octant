@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
-import React, { FC, memo } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -30,6 +30,7 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   const { address: activeAddress } = useAccount();
 
   const isActive = activeAddress === address;
+  const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
 
   return (
     <motion.div
@@ -62,7 +63,7 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
         )}
       </div>
       <div className={styles.addressWrapper}>
-        <div className={styles.address}>{truncateEthAddress(address)}</div>
+        <div className={styles.address}>{truncatedEthAddress}</div>
         <span className={cx(styles.badge, badge === 'secondary' && styles.secondary)}>{badge}</span>
       </div>
       {mode === 'score' && (
