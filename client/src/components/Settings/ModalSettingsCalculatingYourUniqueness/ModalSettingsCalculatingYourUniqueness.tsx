@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
@@ -89,4 +89,4 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
   );
 };
 
-export default ModalSettingsCalculatingYourUniqueness;
+export default memo(ModalSettingsCalculatingYourUniqueness);
