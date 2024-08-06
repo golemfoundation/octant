@@ -14,9 +14,5 @@
 }
 
 .connectWalletImage {
-  height: 8.2rem;
-
-  @media #{$desktop-up} {
-    height: 11.3rem;
-  }
+  @include tipTileConnectWalletImage();
 }
