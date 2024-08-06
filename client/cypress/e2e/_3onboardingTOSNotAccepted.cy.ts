@@ -28,13 +28,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }, ind
     });
 
     beforeEach(() => {
-      // cy.intercept(
-      //   {
-      //     method: 'POST',
-      //     url: '/user/*/tos',
-      //   },
-      //   { body: { accepted: true }, statusCode: 200 },
-      // );
       connectWalletOnboarding();
     });
 

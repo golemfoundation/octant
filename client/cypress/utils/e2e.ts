@@ -44,8 +44,11 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 export const connectWallet = ({
   isPatronModeEnabled = false,
 }: ConnectWalletParameters): Chainable<any> => {
-  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
+  // In CI, e2e tests are run serially and mocking TOS response is not required
+  // Uncomment snippet below to mock TOS GET response in development
   // cy.intercept('GET', '/user/*/tos', { body: { accepted: true } });
+
+  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('GET', '/user/*/antisybil-status', {
     body: {
