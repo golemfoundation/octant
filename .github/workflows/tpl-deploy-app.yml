@@ -118,6 +118,10 @@ on:
         required: false
         default: true
         type: boolean
+      ipfs-gateways:
+        required: false
+        default: 'https://turquoise-accused-gayal-88.mypinata.cloud/ipfs/,https://octant.infura-ipfs.io/ipfs/'
+        type: string
 
 env:
   ENV_TYPE: ${{ inputs.env-type }}
@@ -160,6 +164,7 @@ env:
   TESTNET_RPC_URL: "${{ secrets.TESTNET_RPC_URL }}"
   ETHERSCAN_API_KEY: "${{ secrets.ETHERSCAN_API_KEY }}"
   VITE_ALCHEMY_ID: "${{ secrets.VITE_ALCHEMY_ID }}"
+  IPFS_GATEWAYS: "${{ inputs.ipfs-gateways }}"
   MULTIDEPLOYER_ENABLED: ${{ inputs.multideployer-enabled }}
   SUBGRAPH_DEPLOY: ${{ inputs.subgraph-deploy }}
   GRAPH_HEALTCHECKER_ENABLED: ${{ inputs.graph-healtchecker-enabled }}
