@@ -24,7 +24,11 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
     keyPrefix: 'views.allocation.allocationItem',
   });
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ projectAddress: address });
-  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs([address]);
+  const {
+    data: projectIpfs,
+    isFetching: isFetchingProjectIpfs,
+    isAnyIpfsError,
+  } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   // Real, not simulated threshold is used, because user won't change his decision here.
@@ -74,7 +78,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   return (
     <div className={styles.root} data-test="AllocationSummaryProject">
-      {isFetchingProjectIpfs ? null : (
+      {isFetchingProjectIpfs || isAnyIpfsError ? null : (
         <>
           <div className={styles.leftSection}>
             <div className={styles.name}>{projectIpfs[0].name}</div>
