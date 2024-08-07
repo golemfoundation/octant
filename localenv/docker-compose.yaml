@@ -27,6 +27,7 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: localhost:http://anvil:8545
       GRAPH_LOG: debug
+      ETHEREUM_REORG_THRESHOLD: 0
 
   ipfs:
     image: ipfs/kubo:v0.27.0

@@ -44,6 +44,8 @@ spec:
             value: '100000'
           - name: graphNode.graph.env.GRAPH_LOG
             value: 'debug'
+          - name: graphNode.graph.env.ETHEREUM_REORG_THRESHOLD
+            value: '0'
           - name: graphHealtchecker.replicas
             value: '${GRAPH_HEALTHCHECKER_REPLICAS:-1}'
           - name: subgraph.deploy
