@@ -117,7 +117,6 @@ class PendingOctantRewards(Model):
         allocations = database.allocations.get_all_with_uqs(
             context.epoch_details.epoch_num
         )
-        print("ALLOCATIONS", allocations, flush=True)
         project_rewards = self.project_rewards.get_finalized_project_rewards(
             context, allocations, context.projects_details.projects, matched_rewards
         )
