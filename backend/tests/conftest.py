@@ -533,6 +533,7 @@ def setup_deployment(test_name) -> dict[str, str]:
     print(f"test {test_name}, environment name: {env_name}")
     try:
         f = urllib.request.urlopen(f"{deployer}/?name={env_name}")
+        time.sleep(10)
         deployment = f.read().decode().split("\n")
         deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
         return deployment
