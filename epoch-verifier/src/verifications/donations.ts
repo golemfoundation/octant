@@ -13,8 +13,7 @@ function _groupAllocationsByProjects(aggregatedDonations: Map<Address, UserDonat
 
   aggregatedDonations.forEach((values, project) => {
     const sumOfSqrt = values.reduce((sum, value) => sum + sqrt(multiplyFloatByBigInt(value.uq, value.amount)), BigInt(0));
-    const resultValue = sumOfSqrt ** BigInt(2);
-
+    let resultValue = sumOfSqrt ** BigInt(2);
     totalPlainQF += resultValue;
 
     result.set(project, resultValue);
@@ -74,22 +73,29 @@ function _getUserAllocationsForProjects(context: Context): Map<Address, bigint> 
 export function verifyUserDonationsVsRewards(context: Context): VerificationResult {
   const projectsAllocations = Array.from(_getUserAllocationsForProjects(context).entries());
   const rewards = rewardsByProject(context);
+
+  if (context.isSimulated) {
+    return assertAll(projectsAllocations, ([proposal, allocated]) => assertEq(allocated, rewards.get(proposal)!.amount - rewards.get(proposal)!.matched, BigInt(100), true));
+  }
+
   return assertAll(projectsAllocations, ([proposal, allocated]) => assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true));
-  return assertEq(10, 10, BigInt(100), true);
 }
 
 export function verifyRewardsVsUserDonations(context: Context): VerificationResult {
   const projectsAllocations = _getUserAllocationsForProjects(context);
   const rewards = Array.from(rewardsByProject(context).entries());
-  return assertAll(rewards, ([project, reward]: [Address, Reward]) => assertEq(reward.allocated, projectsAllocations.get(project)!, BigInt(100), true));
-  return assertEq(10, 10, BigInt(100), true);
 
+  if (context.isSimulated) {
+    return assertAll(rewards, ([project, reward]: [Address, Reward]) => assertEq(reward.amount - reward.matched, projectsAllocations.get(project)!, BigInt(100), true));
+  }
+
+  return assertAll(rewards, ([project, reward]: [Address, Reward]) => assertEq(reward.allocated, projectsAllocations.get(project)!, BigInt(100), true));
 }
 
 export function verifyMatchedFunds(context: Context): VerificationResult {
   const rewards = rewardsByProject(context)
   const totalMatchedFunding = context.epochInfo.matchedRewards;
-  const aggregatedDonations = individualDonationsAggregatedByProjectsWithUQs(context)
+  const aggregatedDonations = individualDonationsAggregatedByProjectsWithUQs(context);
   const [aggregatedCappedMatchedFunding, leftover] = _computeMatchingFundQFAndCapAndUQ(aggregatedDonations, totalMatchedFunding);
 
   return assertAll(aggregatedCappedMatchedFunding, ([project, matched]) => {
@@ -115,6 +121,14 @@ export function verifyTotalWithdrawals(context: Context): VerificationResult {
     .map(([user, donations]) => [user, donations.reduce((acc, donation) => acc + donation.amount, BigInt(0))] as const)
     .map(([user, donationsSum]) => context.budgets.get(user)! - donationsSum)
     .reduce((acc, user_claimed) => acc + user_claimed, BigInt(0))
+
+  if (context.isSimulated) {
+    const rewards = context.rewards.projectsRewards
+      .filter((reward) => reward.matched !== BigInt(0))
+      .reduce((acc, reward) => acc + reward.amount, BigInt(0))
+
+    return assertEq(claimed + rewards, context.epochInfo.totalWithdrawals)
+  }
 
   const rewards = context.rewards
     .filter((reward) => reward.matched !== BigInt(0))
