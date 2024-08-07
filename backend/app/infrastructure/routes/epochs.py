@@ -106,6 +106,10 @@ epoch_stats_model = api.model(
             required=False,
             description="Community fund for the given epoch. It's calculated from staking proceeds directly.",
         ),
+        "donatedToProjects": fields.String(
+            required=False,
+            description="The amount of funds donated to projects. Includes MR and allocations.",
+        ),
     },
 )
 

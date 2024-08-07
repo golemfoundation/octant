@@ -53,6 +53,8 @@ class OctantRewardsDTO(JSONWizard):
     # Data available starting from Epoch 3
     ppf: Optional[int] = None
     community_fund: Optional[int] = None
+    # Data needed since Epoch 4
+    donated_to_projects: Optional[int] = None
 
 
 @dataclass(frozen=True)

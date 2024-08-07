@@ -4,16 +4,16 @@ import datetime
 import json
 import os
 import time
-import urllib.request
 import urllib.error
+import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
-from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
+from gql.transport.exceptions import TransportQueryError
 from requests import RequestException
 from web3 import Web3
 
@@ -21,8 +21,8 @@ from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
-from app.infrastructure import database
 from app.infrastructure import Client as GQLClient
+from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -1237,10 +1237,14 @@ def mock_users_db(app, user_accounts):
 
 @pytest.fixture(scope="function")
 def mock_pending_epoch_snapshot_db_since_epoch3(
-    app, mock_users_db, ppf=PPF, cf=COMMUNITY_FUND
+    app,
+    mock_users_db,
+    ppf=PPF,
+    cf=COMMUNITY_FUND,
+    epoch=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
 ):
     create_pending_snapshot(
-        epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        epoch_nr=epoch,
         mock_users_db=mock_users_db,
         optional_ppf=ppf,
         optional_cf=cf,
@@ -1268,22 +1272,9 @@ def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.save_snapshot(
-        MOCKED_FINALIZED_EPOCH_NO,
-        MATCHED_REWARDS,
-        NO_PATRONS_REWARDS,
-        LEFTOVER,
-        total_withdrawals=TOTAL_WITHDRAWALS,
-    )
-
-    db.session.commit()
-
-
-@pytest.fixture(scope="function")
-def mock_allocations_db(app, mock_users_db, project_accounts):
-    prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
-    pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
+def mock_allocations_db(mock_users_db, project_accounts, epoch=MOCKED_PENDING_EPOCH_NO):
+    prev_epoch_context = get_context(epoch - 1)
+    pending_epoch_context = get_context(epoch)
     user1, user2, _ = mock_users_db
 
     user1_allocations = [
