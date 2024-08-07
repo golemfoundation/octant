@@ -1,0 +1,27 @@
+.lockGlmImage {
+  height: 10.5rem;
+
+  @media #{$desktop-up} {
+    height: 11.7rem;
+  }
+}
+
+.connectWalletImage {
+  @include tipTileConnectWalletImage();
+}
+
+.withdrawImage {
+  height: 7.8rem;
+
+  @media #{$desktop-up} {
+    height: 10.4rem;
+  }
+}
+
+.allocateYourRewardsImage {
+  height: 7.5rem;
+
+  @media #{$desktop-up} {
+    height: 10.4rem;
+  }
+}

@@ -12,6 +12,7 @@ import {
   WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
 } from 'constants/window';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
@@ -19,7 +20,8 @@ import useTipsStore from 'store/tips/store';
 import styles from './ProjectsView.module.scss';
 
 const ProjectsView = (): ReactElement => {
-  const { t, i18n } = useTranslation('translation', {
+  const { isDesktop } = useMediaQuery();
+  const { t } = useTranslation('translation', {
     keyPrefix: 'views.projects',
   });
   const { data: currentEpoch } = useCurrentEpoch();
@@ -99,10 +101,10 @@ const ProjectsView = (): ReactElement => {
           className={styles.tip}
           dataTest="ProjectsView__TipTile"
           image="images/favourites.webp"
-          infoLabel={i18n.t('common.gettingStarted')}
+          imageClassName={styles.favouritesImage}
           isOpen={isAddToFavouritesTipVisible}
           onClose={() => setWasAddFavouritesAlreadyClosed(true)}
-          text={t('tip.text')}
+          text={isDesktop ? t('tip.text.desktop') : t('tip.text.mobile')}
           title={t('tip.title')}
         />
       )}

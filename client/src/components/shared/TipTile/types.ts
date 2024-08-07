@@ -4,7 +4,7 @@ export type TipTileProps = {
   className?: string;
   dataTest?: string;
   image: string;
-  infoLabel: string;
+  imageClassName?: string;
   isOpen: boolean;
   key?: string;
   onClick?: () => void;
