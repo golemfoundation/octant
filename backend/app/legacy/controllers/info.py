@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Tuple
 
+from flask_restx.api import HTTPStatus
+
 from app.extensions import w3, epochs
 from app.infrastructure import database, graphql
 from app.infrastructure.exception_handler import ExceptionHandler
@@ -90,40 +92,40 @@ def healthcheck() -> Tuple[Healthcheck, int]:
         app.logger.warning(
             f"[Healthcheck] failed: chain_rpc: {is_chain_rpc_healthy}, db_health: {is_db_healthy}, subgraph_health: {is_subgraph_healthy}"
         )
-        return healthcheck_status, 500
+        return healthcheck_status, HTTPStatus.INTERNAL_SERVER_ERROR
 
-    return healthcheck_status, 200
+    return healthcheck_status, HTTPStatus.OK
 
 
 def sync_status() -> Tuple[SyncStatus, int]:
     services, status = healthcheck()
-    blockchainEpoch = None
-    indexedEpoch = None
-    blockchainHeight = None
-    indexedHeight = None
-    pendingSnapshot = None
-    finalizedSnapshot = None
+    blockchain_epoch = None
+    indexed_epoch = None
+    blockchain_height = None
+    indexed_height = None
+    pending_snapshot = None
+    finalized_snapshot = None
     if services.blockchain == "UP":
-        blockchainHeight = w3.eth.get_block("latest")["number"]
-        blockchainEpoch = epochs.get_current_epoch()
+        blockchain_height = w3.eth.get_block("latest")["number"]
+        blockchain_epoch = epochs.get_current_epoch()
     if services.subgraph == "UP":
         sg_result = graphql.epochs.get_epochs()
         sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
-        indexedEpoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
-        indexedHeight = sg_result["_meta"]["block"]["number"]
+        indexed_epoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
+        indexed_height = sg_result["_meta"]["block"]["number"]
 
-    if status == 200:
-        finalizedSnapshot = snapshots.get_finalized_snapshot_status()
-        pendingSnapshot = snapshots.get_pending_snapshot_status()
+    if status == HTTPStatus.OK:
+        finalized_snapshot = snapshots.get_finalized_snapshot_status()
+        pending_snapshot = snapshots.get_pending_snapshot_status()
 
     return (
         SyncStatus(
-            blockchainEpoch=blockchainEpoch,
-            indexedEpoch=indexedEpoch,
-            blockchainHeight=blockchainHeight,
-            indexedHeight=indexedHeight,
-            pendingSnapshot=pendingSnapshot,
-            finalizedSnapshot=finalizedSnapshot,
+            blockchainEpoch=blockchain_epoch,
+            indexedEpoch=indexed_epoch,
+            blockchainHeight=blockchain_height,
+            indexedHeight=indexed_height,
+            pendingSnapshot=pending_snapshot,
+            finalizedSnapshot=finalized_snapshot,
         ),
         status,
     )

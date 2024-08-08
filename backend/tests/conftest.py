@@ -527,7 +527,7 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
-def setup_deployment(test_name) -> dict[str, str]:
+def setup_deployment(test_name: str) -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     env_name = f"octant_test_{random_string()}"
     print(f"test {test_name}, environment name: {env_name}")
