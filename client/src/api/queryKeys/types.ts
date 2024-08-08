@@ -17,8 +17,8 @@ export type Root = {
   individualReward: 'individualReward';
   matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
-  projectDonors: 'projectDonors';
   projectRewardsThreshold: 'projectRewardsThreshold';
+  projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
   upcomingBudget: 'upcomingBudget';
@@ -58,11 +58,8 @@ export type QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
   matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
-  projectDonors: (
-    projectAddress: string,
-    epochNumber: number,
-  ) => [Root['projectDonors'], string, string];
   projectRewardsThreshold: (epochNumber: number) => [Root['projectRewardsThreshold'], string];
+  projectsDonors: (epochNumber: number) => [Root['projectsDonors'], string];
   projectsEpoch: (epochNumber: number) => [Root['projectsEpoch'], string];
   projectsIpfsResults: (
     projectAddress: string,
