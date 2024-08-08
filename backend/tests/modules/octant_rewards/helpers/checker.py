@@ -16,6 +16,7 @@ def check_octant_rewards(
     matched_rewards: int = None,
     total_withdrawals: int = None,
     patrons_rewards: int = None,
+    donated_to_projects: int = None,
 ):
     assert rewards.staking_proceeds == ETH_PROCEEDS
     assert rewards.locked_ratio == LOCKED_RATIO
@@ -29,3 +30,4 @@ def check_octant_rewards(
     assert rewards.leftover == leftover
     assert rewards.community_fund == community_fund
     assert rewards.ppf == ppf
+    assert rewards.donated_to_projects == donated_to_projects

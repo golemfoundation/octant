@@ -18,3 +18,6 @@ class Leftover(ABC):
     @abstractmethod
     def calculate_leftover(self, payload: LeftoverPayload) -> int:
         pass
+
+    def extract_unused_matched_rewards(self, *args, **kwargs) -> int:
+        return 0

@@ -1,3 +1,5 @@
+from typing import List
+
 from app.context.manager import Context
 from app.modules.common.project_rewards import get_projects_rewards, AllocationsPayload
 from app.modules.dto import AllocationDTO, ProjectAccountFundsDTO
@@ -9,8 +11,8 @@ class FinalizingProjectRewards(Model):
     def get_finalized_project_rewards(
         self,
         context: Context,
-        allocations: list[AllocationDTO],
-        all_projects: list[str],
+        allocations: List[AllocationDTO],
+        all_projects: List[str],
         matched_rewards: int,
     ) -> FinalizedProjectRewards:
         allocations_payload = AllocationsPayload(

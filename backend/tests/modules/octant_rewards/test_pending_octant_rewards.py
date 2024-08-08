@@ -4,6 +4,7 @@ from app.modules.dto import AllocationItem
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
 from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
 from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     USER1_BUDGET,
     MOCKED_EPOCH_NO_AFTER_OVERHAUL,
@@ -13,7 +14,6 @@ from tests.helpers.constants import (
     MATCHED_REWARDS,
     MATCHED_REWARDS_AFTER_OVERHAUL,
 )
-from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
@@ -43,6 +43,7 @@ def test_pending_octant_rewards_before_overhaul(
         patrons_rewards=USER2_BUDGET,
         matched_rewards=MATCHED_REWARDS + USER2_BUDGET,
         leftover=321928766823288000000,
+        donated_to_projects=0,
     )
 
 
@@ -60,6 +61,7 @@ def test_pending_octant_rewards_after_overhaul(
         patrons_rewards=USER2_BUDGET,
         matched_rewards=MATCHED_REWARDS_AFTER_OVERHAUL,
         leftover=282293485473756640672,
+        donated_to_projects=0,
     )
 
 
@@ -117,3 +119,28 @@ def test_pending_get_leverage(
     result = service.get_leverage(context)
 
     assert result == 144164.29856550877
+
+
+def test_donated_to_projects_in_octant_rewards_for_capped_mr(
+    mock_pending_epoch_snapshot_with_uq_scores, service
+):
+    user1, _, _ = mock_pending_epoch_snapshot_with_uq_scores
+    context = get_context(epoch_num=4)
+    make_user_allocation(
+        context,
+        user1,
+        allocation_items=[
+            AllocationItem(context.projects_details.projects[0], USER1_BUDGET)
+        ],
+    )
+    result = service.get_octant_rewards(context)
+
+    check_octant_rewards(
+        result,
+        community_fund=COMMUNITY_FUND,
+        ppf=PPF,
+        patrons_rewards=USER2_BUDGET,
+        matched_rewards=MATCHED_REWARDS_AFTER_OVERHAUL,
+        leftover=366801619086282814574,
+        donated_to_projects=28171413696161041950,
+    )

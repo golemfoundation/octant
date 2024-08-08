@@ -27,8 +27,8 @@ class ProjectRewards(Protocol):
     def get_finalized_project_rewards(
         self,
         context: Context,
-        allocations: list[AllocationDTO],
-        all_projects: list[str],
+        allocations: List[AllocationDTO],
+        all_projects: List[str],
         matched_rewards: int,
     ) -> FinalizedProjectRewards:
         ...
@@ -51,6 +51,7 @@ class PendingOctantRewards(Model):
             context.epoch_details.epoch_num
         )
         matched_rewards = self.octant_matched_rewards.get_matched_rewards(context)
+        project_rewards = self._get_project_rewards(context, matched_rewards)
 
         return OctantRewardsDTO(
             staking_proceeds=int(pending_snapshot.eth_proceeds),
@@ -63,7 +64,10 @@ class PendingOctantRewards(Model):
             ppf=pending_snapshot.validated_ppf,
             matched_rewards=matched_rewards,
             patrons_rewards=self.patrons_mode.get_patrons_rewards(context),
-            leftover=self.get_leftover(context, pending_snapshot, matched_rewards),
+            leftover=self._get_leftover(
+                context, pending_snapshot, matched_rewards, project_rewards
+            ),
+            donated_to_projects=self._get_donated_to_projects(project_rewards),
         )
 
     def get_matched_rewards(self, context: Context) -> int:
@@ -79,19 +83,14 @@ class PendingOctantRewards(Model):
             matched_rewards, allocations_sum
         )
 
-    def get_leftover(
+    def _get_leftover(
         self,
         context: Context,
         pending_snapshot: PendingEpochSnapshot,
         matched_rewards: int,
+        project_rewards: FinalizedProjectRewards,
     ) -> int:
-        allocations = database.allocations.get_all_with_uqs(
-            context.epoch_details.epoch_num
-        )
         _, user_rewards = self.user_rewards.get_claimed_rewards(context)
-        project_rewards = self.project_rewards.get_finalized_project_rewards(
-            context, allocations, context.projects_details.projects, matched_rewards
-        )
 
         return context.epoch_settings.octant_rewards.leftover.calculate_leftover(
             LeftoverPayload(
@@ -106,3 +105,19 @@ class PendingOctantRewards(Model):
                 used_matched_rewards=sum(r.matched for r in project_rewards.rewards),
             )
         )
+
+    def _get_donated_to_projects(self, project_rewards: FinalizedProjectRewards) -> int:
+        total_user_donations_with_used_matched_rewards = sum(
+            r.amount for r in project_rewards.rewards
+        )
+
+        return total_user_donations_with_used_matched_rewards
+
+    def _get_project_rewards(self, context: Context, matched_rewards: int):
+        allocations = database.allocations.get_all_with_uqs(
+            context.epoch_details.epoch_num
+        )
+        project_rewards = self.project_rewards.get_finalized_project_rewards(
+            context, allocations, context.projects_details.projects, matched_rewards
+        )
+        return project_rewards

@@ -31,6 +31,7 @@ def test_finalized_octant_rewards_before_overhaul(
         matched_rewards=MATCHED_REWARDS,
         total_withdrawals=TOTAL_WITHDRAWALS,
         patrons_rewards=NO_PATRONS_REWARDS,
+        donated_to_projects=MATCHED_REWARDS,
     )
 
 
@@ -51,6 +52,7 @@ def test_finalized_octant_rewards_after_overhaul(
         matched_rewards=MATCHED_REWARDS_AFTER_OVERHAUL,
         total_withdrawals=TOTAL_WITHDRAWALS,
         patrons_rewards=NO_PATRONS_REWARDS,
+        donated_to_projects=MATCHED_REWARDS_AFTER_OVERHAUL,
     )
 
 
@@ -70,3 +72,13 @@ def test_finalized_get_leverage(
     result = service.get_leverage(context)
 
     assert result == 144160.63189897747
+
+
+def test_donated_to_projects_in_octant_rewards_for_capped_mr(
+    mock_pending_epoch_snapshot_with_uq_scores, mock_finalized_epoch_snapshot_db_for_e4
+):
+    context = get_context(epoch_num=4)
+    service = FinalizedOctantRewards()
+    result = service.get_octant_rewards(context)
+
+    assert result.donated_to_projects == 140849434135859019815

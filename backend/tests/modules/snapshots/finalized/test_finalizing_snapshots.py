@@ -8,7 +8,11 @@ from app.modules.projects.rewards.service.finalizing import FinalizingProjectRew
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from tests.helpers import make_user_allocation
 from tests.helpers.allocations import make_user_allocation_with_uq_score
-from tests.helpers.constants import MATCHED_REWARDS, USER2_BUDGET, LOW_UQ_SCORE
+from tests.helpers.constants import (
+    MATCHED_REWARDS,
+    USER2_BUDGET,
+    LOW_UQ_SCORE,
+)
 from tests.helpers.context import get_context
 
 
