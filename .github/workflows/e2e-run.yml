@@ -72,6 +72,7 @@ jobs:
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
       anvil-block-time: 5
+      ipfs-gateways: 'https://ipfs.octant.wildland.dev/ipfs/'
     secrets: inherit
 
   run-e2e-tests:

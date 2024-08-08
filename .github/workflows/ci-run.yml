@@ -10,7 +10,6 @@ env:
   GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
-
   docker:
     name: Docker
     needs:

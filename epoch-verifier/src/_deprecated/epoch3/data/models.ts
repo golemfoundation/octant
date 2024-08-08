@@ -17,7 +17,7 @@ export interface ApiAllocations {
   allocations: {
     amount: string; // wei
     donor: string;
-    project: string;
+    proposal: string;
   }[];
 }
 
@@ -25,13 +25,6 @@ export interface ApiRewards {
   rewards: {
     address: string;
     value: string; // wei;
-  }[];
-}
-
-export interface ApiEpochUqs {
-  uqsInfo: {
-    userAddress: string;
-    uniquenessQuotient: string;
   }[];
 }
 
@@ -43,13 +36,12 @@ export interface UserBudget {
 
 export interface UserDonation {
   amount: bigint;
-  project: Address;
-  uq: number | null;
+  proposal: Address;
 }
 
 export interface AllocationRecord {
   amount: bigint;
-  project: Address;
+  proposal: Address;
   user: Address;
 }
 
@@ -58,18 +50,10 @@ export interface Allocation {
   user: Address;
 }
 
-interface IReward {
-  matched: bigint;
-}
-
-export interface Reward extends IReward {
+export interface Reward {
   allocated: bigint;
-  project: Address;
-}
-
-export interface SimulatedReward extends IReward {
-  amount: bigint; // allocated + matched
-  address: Address;
+  matched: bigint;
+  proposal: Address;
 }
 
 export interface EpochInfo {
@@ -84,17 +68,6 @@ export interface EpochInfo {
   totalEffectiveDeposit: bigint;
   totalRewards: bigint;
   totalWithdrawals: bigint;
-}
-
-export interface EpochUqs {
-  userAddress: string;
-  uniquenessQuotient: number;
-}
-
-export interface FinalizedSimulation {
-  patronsRewards: bigint;
-  matchedRewards: bigint;
-  projectRewards: SimulatedReward[];
 }
 
 export class UserBudgetImpl implements Deserializable<UserBudget> {
@@ -113,13 +86,13 @@ export class UserBudgetImpl implements Deserializable<UserBudget> {
 export class AllocationImpl implements Deserializable<AllocationRecord> {
   user: Address;
 
-  project: Address;
+  proposal: Address;
 
   amount: bigint;
 
   from(input: any) {
     this.user = input.donor
-    this.project = input.project;
+    this.proposal = input.proposal;
     this.amount = BigInt(input.amount ?? 0)
 
     return this
@@ -131,26 +104,12 @@ export class RewardImpl implements Deserializable<Reward> {
 
   matched: bigint;
 
-  project: Address;
+  proposal: Address;
 
   from(input: any) {
-    this.project = input.address
+    this.proposal = input.address
     this.allocated = BigInt(input.allocated)
     this.matched = BigInt(input.matched)
-
-    return this
-  }
-}
-
-export class SimulatedRewardImpl implements Deserializable<SimulatedReward> {
-  amount: bigint;
-  matched: bigint;
-  address: Address;
-
-  from(input: any) {
-    this.address = input.address;
-    this.amount = BigInt(input.amount);
-    this.matched = BigInt(input.matched);
 
     return this
   }
@@ -187,41 +146,13 @@ export class EpochInfoImpl implements Deserializable<EpochInfo> {
     this.stakingProceeds = BigInt(input.stakingProceeds)
     this.totalEffectiveDeposit = BigInt(input.totalEffectiveDeposit)
     this.totalRewards = BigInt(input.totalRewards)
-    this.totalWithdrawals = input.totalWithdrawals !== null ? BigInt(input.totalWithdrawals) : BigInt(0)
+    this.totalWithdrawals = BigInt(input.totalWithdrawals)
     this.operationalCost = BigInt(input.operationalCost)
     this.leftover = BigInt(input.leftover)
     this.ppf = BigInt(input.ppf)
     this.communityFund = BigInt(input.communityFund)
 
     return this
-  }
-}
-
-export class EpochUqsImpl implements Deserializable<EpochUqs>{
-  userAddress: string;
-  uniquenessQuotient: number;
-
-  from(input: any) {
-    this.userAddress = input.userAddress;
-    this.uniquenessQuotient = parseFloat(input.uniquenessQuotient);
-    return this;
-  }
-}
-
-export class FinalizedSimulationImpl implements Deserializable<FinalizedSimulation>{
-  patronsRewards: bigint;
-  matchedRewards: bigint;
-  projectsRewards: SimulatedReward[];
-
-  from(input: FinalizedSimulation) {
-    this.patronsRewards = BigInt(input.patronsRewards);
-    this.matchedRewards = BigInt(input.matchedRewards);
-    this.projectsRewards = input.projectsRewards.map((reward: SimulatedReward) => {
-      const simulatedReward = new SimulatedRewardImpl();
-      return simulatedReward.from(reward);
-    });
-
-    return this;
   }
 }
 

@@ -8,10 +8,9 @@ import { registerVerifications } from "./verifications";
 
 
 interface Options {
-  deployment?: string;
-  epoch: number;
-  url?: string;
-  simulated?: boolean;
+  deployment?: string
+  epoch: number
+  url?: string
 }
 
 const DEPLOYMENTS: { [key: string]: string } = {
@@ -40,33 +39,19 @@ function getDeploymentUrl(options: Options): string {
 }
 
 async function run(epoch: string, opts: any) {
-  const options: Options = { epoch: parseInt(epoch, 10), simulated: opts.simulated, ...opts }
+  const options: Options = { epoch: parseInt(epoch, 10), ...opts }
   const baseUrl = getDeploymentUrl(options)
 
   console.log(`Using url: ${baseUrl}`)
-
-  if (options.simulated) {
-    console.log(`Running verification scripts for epoch: ${options.epoch} in simulated mode.`)
-  }
-  else {
-    console.log(`Running verification scripts for epoch: ${options.epoch}.`)
-  }
+  console.log(`Running verification scripts for epoch: ${options.epoch}`)
 
   const fetcher = new HttpFetcher(baseUrl)
-  const fetchPromises = [
+  const results = await Promise.all([
     fetcher.apiGetUserBudgets(options.epoch),
     fetcher.apiGetAllocations(options.epoch),
-    fetcher.apiGetEpochInfo(options.epoch),
-    fetcher.apiGetEpochUqs(options.epoch)
-  ];
-
-  if (options.simulated) {
-    fetchPromises.push(fetcher.apiGetFinalizedSimulated());
-  } else {
-    fetchPromises.push(fetcher.apiGetRewards(options.epoch));
-  }
-
-  const results = await Promise.all(fetchPromises);
+    fetcher.apiGetRewards(options.epoch),
+    fetcher.apiGetEpochInfo(options.epoch)
+  ])
 
   if (results.some(isNull)) {
     process.exit(1)
@@ -75,11 +60,10 @@ async function run(epoch: string, opts: any) {
   const [
     userBudgets,
     allocations,
+    rewards,
     epochInfo,
-    epochUqs,
-    rewards
   ] = results;
-  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!, epochUqs!, options.simulated);
+  const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!)
 
   const runner = new Runner()
   registerVerifications(runner)
@@ -95,7 +79,6 @@ program
   .description("Epoch verifier script.")
   .addOption(new Option("--deployment <deployment>", "specify deployment to connect to").choices(Object.keys(DEPLOYMENTS)))
   .option("--url <url>", "custom deployment url. Do not use with --deployment option")
-  .option("--simulated", "run the script in simulated mode")
   .argument("<epoch>", "Epoch number for which the verification should be done.")
   .action(run)
   .parse(process.argv);

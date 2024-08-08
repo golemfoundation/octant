@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest, InvalidMultisigAddress
@@ -6,8 +6,8 @@ from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
-
 from app.infrastructure.external_api.common import retry_request
+from app.infrastructure.external_api.safe.message_details import get_message_details
 from app.modules.common.allocations.deserializer import deserialize_payload
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
@@ -23,16 +23,13 @@ from app.modules.multisig_signatures.core import (
 )
 from app.modules.multisig_signatures.dto import Signature
 from app.pydantic import Model
-from app.infrastructure.external_api.safe.message_details import get_message_details
 
 
 class OffchainMultisigSignatures(Model):
     is_mainnet: bool = False
-    verifiers: dict[SignatureOpType, Verifier]
+    verifiers: Dict[SignatureOpType, Verifier]
 
-    staged_signatures: list[
-        MultisigSignatures
-    ] = []  # TODO make it invulnerable for data race & race conditions
+    staged_signatures: List[MultisigSignatures] = []
 
     def get_last_pending_signature(
         self, _: Context, user_address: str, op_type: SignatureOpType

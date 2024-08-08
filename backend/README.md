@@ -64,7 +64,7 @@ yarn apitest:run # in a second console
 When backend code is changed, just re-run `yarn apitest:run`.
 To run just one test, use standard pytest naming:
 ```
-yarn apitest:run tests/legacy/test_api_snapshot.py::test_pending_snapshot
+yarn apitest:run tests/api-e2e/test_api_snapshot.py::test_pending_snapshot
 ```
 
 To stop the env, run `yarn apitest:down`
