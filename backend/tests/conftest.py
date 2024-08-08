@@ -544,6 +544,12 @@ def setup_deployment(test_name) -> dict[str, str]:
         raise err
 
 
+def teardown_deployment(test_name, subgraph_name):
+    deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
+    print(f"calling multideployer to teardown env {subgraph_name} for test {test_name}")
+    urllib.request.urlopen(f"{deployer}/remove?name={subgraph_name}")
+
+
 def random_string() -> str:
     import random
     import string
@@ -591,6 +597,7 @@ def deployment(pytestconfig, request):
         "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     )
     yield conf
+    teardown_deployment(request.node.name, graph_name)
 
 
 class UserAccount:
