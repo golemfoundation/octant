@@ -514,7 +514,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.allocation.absolute);
       cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget: '10000000000000000' } });
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
     });
 
     after(() => {

@@ -76,7 +76,7 @@ describe('allocation (allocation window open)', () => {
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+        connectWallet({ isPatronModeEnabled: false });
 
         checkProjectsViewLoaded();
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')

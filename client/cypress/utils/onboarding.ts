@@ -4,19 +4,24 @@ import { mockCoinPricesServer, visitWithLoader } from './e2e';
 
 import Chainable = Cypress.Chainable;
 
-export const connectWallet = (
-  isTOSAccepted: boolean,
-  shouldVisit = true,
-  shouldReload = false,
-): Chainable<any> => {
-  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<any> => {
+  // mockedTOSResponse variable is for development use only
+  // In CI, e2e tests are run serially and mocking TOS response is not required
+  if (mockedTOSResponse !== undefined) {
+    cy.intercept(
+      {
+        method: 'POST',
+        url: '/user/*/tos',
+      },
+      { body: { accepted: true }, statusCode: 200 },
+    );
+    cy.intercept('GET', '/user/*/tos', { body: { accepted: mockedTOSResponse } });
+  }
+
   cy.disconnectMetamaskWalletFromAllDapps();
-  if (shouldVisit) {
-    visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
-  }
-  if (shouldReload) {
-    cy.reload();
-  }
+  visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
+
   cy.wait(500);
   cy.get('[data-test=MainLayout__Button--connect]').click();
   cy.wait(500);

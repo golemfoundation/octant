@@ -114,18 +114,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button is active', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=BoxGlmLock__Button]').should('not.be.disabled');
     });
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button opens "ModalGlmLock"', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
     });
 
     it('Wallet connected: "ModalGlmLock" has overflow', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock__overflow]').should('exist');
     });
@@ -135,7 +135,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * In EarnGlmLock there are multiple autofocus rules set.
        * This test checks if user is still able to type without any autofocus disruption.
        */
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -147,7 +147,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: "ModalGlmLock" - changing tabs keep focus on first input', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -158,7 +158,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Lock 1 GLM', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -210,7 +210,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Unlock 1 GLM', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -294,7 +294,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
       const connectWalletParameters: ConnectWalletParameters = {
         isPatronModeEnabled: false,
-        isTOSAccepted: true,
       };
       connectWallet(connectWalletParameters);
 
