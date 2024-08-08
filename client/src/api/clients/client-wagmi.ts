@@ -32,7 +32,7 @@ if (env.jsonRpcEndpoint) {
 const connectors = connectorsForWallets(
   [
     {
-      groupName: 'recommended',
+      groupName: 'Recommended',
       wallets: [injectedWallet, walletConnectWallet, ledgerWallet],
     },
   ],

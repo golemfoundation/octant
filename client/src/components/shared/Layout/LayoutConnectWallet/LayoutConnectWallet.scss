@@ -1,0 +1,43 @@
+// Custom styles for RainbowKit connect modal.
+// !important are required, since most of these styles are being overwritten by direct CSS rules.
+
+.rainbowKitCustomFontFamily {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.rainbowkitConnectModalHeader {
+  position: relative !important;
+}
+
+.rainbowkitConnectModalHeaderText {
+  position: absolute !important;
+  left: 1.8rem !important;
+  font-size: 2rem !important;
+  font-weight: $font-weight-bold !important;
+}
+
+.walletOptionsButton {
+  background: $color-octant-grey3 !important;
+}
+
+.walletOptionsText {
+  font-weight: $font-weight-bold !important;
+  font-size: $font-size-12 !important;
+}
+
+.buttonClose {
+  height: 3.2rem !important;
+  width: 3.2rem !important;
+  background: none !important;
+  border: none !important;
+  border-radius: $border-radius-10 !important;
+
+  &:hover {
+    transform: none !important;
+    background: $color-octant-grey3 !important;
+  }
+
+  > svg > path {
+    fill: $color-octant-purple2 !important;
+  }
+}
