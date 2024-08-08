@@ -14,3 +14,11 @@
 .archives {
   width: 100%;
 }
+
+.favouritesImage {
+  height: 8.8rem;
+
+  @media #{$desktop-up} {
+    height: 11.5rem;
+  }
+}

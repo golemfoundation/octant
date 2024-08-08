@@ -49,6 +49,8 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
     disconnect();
   };
 
+  const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
+
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
@@ -93,7 +95,7 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
               href={`${networkConfig.etherscanAddress}/address/${address}`}
               variant="link"
             >
-              {truncateEthAddress(address)}
+              {truncatedEthAddress}
             </Button>
           ) : undefined
         }

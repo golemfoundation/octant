@@ -22,7 +22,7 @@ const MetricsPersonal = (): ReactElement => {
   const { isConnected } = useAccount();
   const { isDesktop } = useMediaQuery();
   const [isConnectWalletTipTileOpen, setIsConnectWalletTipTileOpen] = useState(!isConnected);
-  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const {
     data: { displayCurrency },
@@ -68,7 +68,7 @@ const MetricsPersonal = (): ReactElement => {
         <TipTile
           dataTest="MetricsPersonal__TipTile--connectWallet"
           image="images/tip-connect-wallet.webp"
-          infoLabel={i18n.t('common.octantTips')}
+          imageClassName={styles.connectWalletImage}
           isOpen={isConnectWalletTipTileOpen}
           onClose={() => setIsConnectWalletTipTileOpen(false)}
           text={
