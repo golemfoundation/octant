@@ -528,9 +528,12 @@ def pytest_collection_modifyitems(config, items):
 
 
 def setup_deployment(test_name: str) -> dict[str, str]:
+    import logging
+
+    LOGGER = logging.getLogger("app")
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     env_name = f"octant_test_{random_string()}"
-    print(f"test {test_name}, environment name: {env_name}")
+    LOGGER.debug(f"test {test_name}, environment name: {env_name}")
     try:
         f = urllib.request.urlopen(f"{deployer}/?name={env_name}")
         time.sleep(10)
@@ -538,15 +541,20 @@ def setup_deployment(test_name: str) -> dict[str, str]:
         deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
         return deployment
     except urllib.error.HTTPError as err:
-        print(f"call to multideployer failed: {err}")
-        print(f"multideployer failed: code is {err.code}")
-        print(f"multideployer failed: msg is {err.msg}")
+        LOGGER.debug(f"call to multideployer failed: {err}")
+        LOGGER.debug(f"multideployer failed: code is {err.code}")
+        LOGGER.debug(f"multideployer failed: msg is {err.msg}")
         raise err
 
 
 def teardown_deployment(test_name, subgraph_name):
+    import logging
+
+    LOGGER = logging.getLogger("app")
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
-    print(f"calling multideployer to teardown env {subgraph_name} for test {test_name}")
+    LOGGER.debug(
+        f"calling multideployer to teardown env {subgraph_name} for test {test_name}"
+    )
     urllib.request.urlopen(f"{deployer}/remove?name={subgraph_name}")
 
 
