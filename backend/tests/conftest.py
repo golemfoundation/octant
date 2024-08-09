@@ -705,6 +705,7 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
+            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
@@ -712,18 +713,20 @@ class Client:
                     f"sync_status http status code is {status_code}"
                 )
                 assert status_code == 200
-                if res["indexedEpoch"] == res["blockchainEpoch"]:
-                    if res["indexedEpoch"] == target:
-                        return
             except Exception as exp:
                 current_app.logger.warning(
                     f"Request to /info/sync-status returned {exp}"
                 )
-            if datetime.datetime.now() - start > timeout:
-                raise TimeoutError(
-                    f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)"
-                )
-            time.sleep(check_interval)
+                if datetime.datetime.now() - start > timeout:
+                    raise TimeoutError(
+                        f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)"
+                    )
+                time.sleep(check_interval)
+                continue
+
+            if res["indexedEpoch"] == res["blockchainEpoch"]:
+                if res["indexedEpoch"] == target:
+                    return
 
     def wait_for_height_sync(self):
         while True:
