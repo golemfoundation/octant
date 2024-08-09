@@ -19,16 +19,22 @@ import {
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Prepare .env for client
   /* eslint-disable no-console */
-  const auth = await hre.ethers.getContract(AUTH);
-  const withdrawals = await hre.ethers.getContract(WITHDRAWALS_TARGET);
-  const epochs = await hre.ethers.getContract(EPOCHS);
-  const deposits = await hre.ethers.getContract(DEPOSITS);
-  const proposals = await hre.ethers.getContract(PROPOSALS);
-  const vault = await hre.ethers.getContract(VAULT);
+  const authInfo = await hre.deployments.get(AUTH);
+  const auth = await hre.ethers.getContractAt(authInfo.abi, authInfo.address);
+  const withdrawalsInfo = await hre.deployments.get(WITHDRAWALS_TARGET);
+  const withdrawals = await hre.ethers.getContractAt(withdrawalsInfo.abi, withdrawalsInfo.address);
+  const epochsInfo = await hre.deployments.get(EPOCHS);
+  const epochs = await hre.ethers.getContractAt(epochsInfo.abi, epochsInfo.address);
+  const depositsInfo = await hre.deployments.get(DEPOSITS);
+  const deposits = await hre.ethers.getContractAt(depositsInfo.abi, depositsInfo.address);
+  const proposalsInfo = await hre.deployments.get(PROPOSALS);
+  const proposals = await hre.ethers.getContractAt(proposalsInfo.abi, proposalsInfo.address);
+  const vaultInfo = await hre.deployments.get(VAULT);
+  const vault = await hre.ethers.getContractAt(vaultInfo.abi, vaultInfo.address);
   let glmAddress = GLM_ADDRESS;
 
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    glmAddress = (await hre.ethers.getContract(TOKEN)).address;
+    glmAddress = (await hre.deployments.get(TOKEN)).address;
   }
   console.log(`GLM_CONTRACT_ADDRESS=${glmAddress}`);
   console.log(`DEPOSITS_CONTRACT_ADDRESS=${deposits.address}`);

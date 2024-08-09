@@ -17,6 +17,8 @@ echo "IPFS URL:     $IPFS_URL"
 
 ./configure-network.sh
 
+echo "Version check"
+npx graph --version
 echo "Code generation"
 npx graph codegen
 echo "Build graph"
