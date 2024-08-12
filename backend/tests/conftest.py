@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+from http import HTTPStatus
 import json
 import os
 import time
@@ -712,7 +713,7 @@ class Client:
                 current_app.logger.debug(
                     f"sync_status http status code is {status_code}"
                 )
-                assert status_code == 200
+                assert status_code == HTTPStatus.OK
             except Exception as exp:
                 current_app.logger.warning(
                     f"Request to /info/sync-status returned {exp}"
