@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 from http import HTTPStatus
 import json
+import logging
 import os
 import time
 import urllib.request
@@ -75,6 +76,8 @@ from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
+
+LOGGER = logging.getLogger("app")
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
@@ -529,9 +532,6 @@ def pytest_collection_modifyitems(config, items):
 
 
 def setup_deployment(test_name: str) -> dict[str, str]:
-    import logging
-
-    LOGGER = logging.getLogger("app")
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     env_name = f"octant_test_{random_string()}"
     LOGGER.debug(f"test {test_name}, environment name: {env_name}")
@@ -549,9 +549,6 @@ def setup_deployment(test_name: str) -> dict[str, str]:
 
 
 def teardown_deployment(test_name, subgraph_name):
-    import logging
-
-    LOGGER = logging.getLogger("app")
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     LOGGER.debug(
         f"calling multideployer to teardown env {subgraph_name} for test {test_name}"
