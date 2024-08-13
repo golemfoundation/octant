@@ -1,9 +1,12 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
-from app.extensions import w3
+from flask_restx.api import HTTPStatus
+
+from app.extensions import w3, epochs
 from app.infrastructure import database, graphql
 from app.infrastructure.exception_handler import ExceptionHandler
+from app.legacy.controllers import snapshots
 from dataclass_wizard import JSONWizard
 from flask import current_app as app
 
@@ -28,6 +31,16 @@ class Healthcheck(JSONWizard):
     subgraph: str
 
 
+@dataclass(frozen=True)
+class SyncStatus(JSONWizard):
+    blockchainEpoch: int | None
+    indexedEpoch: int | None
+    blockchainHeight: int | None
+    indexedHeight: int | None
+    pendingSnapshot: str | None
+    finalizedSnapshot: str | None
+
+
 def get_blockchain_info() -> ChainInfo:
     smart_contracts = [
         SmartContract("Auth", app.config["AUTH_CONTRACT_ADDRESS"]),
@@ -47,7 +60,7 @@ def get_blockchain_info() -> ChainInfo:
     )
 
 
-def healthcheck() -> (Healthcheck, int):
+def healthcheck() -> Tuple[Healthcheck, int]:
     try:
         is_chain_rpc_healthy = w3.eth.chain_id == app.config["CHAIN_ID"]
     except Exception as e:
@@ -79,6 +92,40 @@ def healthcheck() -> (Healthcheck, int):
         app.logger.warning(
             f"[Healthcheck] failed: chain_rpc: {is_chain_rpc_healthy}, db_health: {is_db_healthy}, subgraph_health: {is_subgraph_healthy}"
         )
-        return healthcheck_status, 500
+        return healthcheck_status, HTTPStatus.INTERNAL_SERVER_ERROR
 
-    return healthcheck_status, 200
+    return healthcheck_status, HTTPStatus.OK
+
+
+def sync_status() -> Tuple[SyncStatus, int]:
+    services, status = healthcheck()
+    blockchain_epoch = None
+    indexed_epoch = None
+    blockchain_height = None
+    indexed_height = None
+    pending_snapshot = None
+    finalized_snapshot = None
+    if services.blockchain == "UP":
+        blockchain_height = w3.eth.get_block("latest")["number"]
+        blockchain_epoch = epochs.get_current_epoch()
+    if services.subgraph == "UP":
+        sg_result = graphql.epochs.get_epochs()
+        sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
+        indexed_epoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
+        indexed_height = sg_result["_meta"]["block"]["number"]
+
+    if status == HTTPStatus.OK:
+        finalized_snapshot = snapshots.get_finalized_snapshot_status()
+        pending_snapshot = snapshots.get_pending_snapshot_status()
+
+    return (
+        SyncStatus(
+            blockchainEpoch=blockchain_epoch,
+            indexedEpoch=indexed_epoch,
+            blockchainHeight=blockchain_height,
+            indexedHeight=indexed_height,
+            pendingSnapshot=pending_snapshot,
+            finalizedSnapshot=finalized_snapshot,
+        ),
+        status,
+    )

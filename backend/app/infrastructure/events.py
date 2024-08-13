@@ -27,6 +27,13 @@ def handle_connect():
         project_rewards = get_estimated_project_rewards().rewards
         emit("project_rewards", _serialize_project_rewards(project_rewards))
 
+        for project in project_rewards:
+            donors = controller.get_all_donations_by_project(project.address)
+            emit(
+                "project_donors",
+                {"project": project.address, "donors": _serialize_donors(donors)},
+            )
+
 
 @socketio.on("disconnect")
 def handle_disconnect():

@@ -2,3 +2,19 @@
   color: $color-octant-green;
   font-weight: $font-weight-bold;
 }
+
+.uqTooLowImage {
+  height: 7.2rem;
+
+  @media #{$desktop-up} {
+    height: 10rem;
+  }
+}
+
+.rewardsImage {
+  height: 8.5rem;
+
+  @media #{$desktop-up} {
+    height: 11rem;
+  }
+}

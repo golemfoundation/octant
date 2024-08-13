@@ -33,7 +33,7 @@
     "days": "Days",
     "donations": "Donations",
     "done": "Done",
-    "gettingStarted": "Getting Started",
+    "gettingStarted": "Getting started",
     "history": "History",
     "lockGlm": "Lock GLM",
     "octantTips": "Octant tips",
@@ -370,23 +370,34 @@
       "tips": {
         "withdrawEth": {
           "title": "Withdraw ETH",
-          "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+          "text": {
+            "desktop": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view once the allocation window has closed",
+            "mobile": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+          }
         },
         "connectWallet": {
           "title": {
             "desktop": "Connect your wallet",
             "mobile": "Connect wallet"
           },
-          "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+          "text": {
+            "desktop": "Please connect your wallet to get started. You will need it to lock GLM, receive rewards and to prove your uniqueness",
+            "mobile": "Please connect your wallet to Octant in order to participate in this and future epochs"
+          }
         },
         "lockGlm": {
           "title": "Lock GLM to earn",
-          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
+          "text": {
+            "desktop": "Lock GLM for at least one complete epoch to earn ETH rewards you can donate (and get match funding) or allocate to yourself",
+            "mobile": "Lock GLM for at least 1 complete epoch to earn ETH rewards you can donate or withdraw"
+          }
         },
         "allocateYourRewards": {
           "title": "Allocate your rewards",
-          "textDesktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
-          "textMobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
+          "text": {
+            "desktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
+            "mobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
+          }
         }
       },
       "preLaunch": {
@@ -504,7 +515,10 @@
       },
       "tip": {
         "title": "Add your favourites",
-        "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
+        "text": {
+          "desktop": "Save projects to the Allocate view with the heart icon so you can donate rewards to them. You can also slide any allocate tile to remove them",
+          "mobile": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
+        }
       }
     },
     "settings": {

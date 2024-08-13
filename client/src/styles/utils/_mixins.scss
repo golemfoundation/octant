@@ -87,3 +87,11 @@
   min-width: 39rem;
   max-width: 70rem + $layoutMarginHorizontal * 2;
 }
+
+@mixin tipTileConnectWalletImage() {
+  height: 8.2rem;
+
+  @media #{$desktop-up} {
+    height: 11.3rem;
+  }
+}

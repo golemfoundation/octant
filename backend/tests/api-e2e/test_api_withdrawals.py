@@ -19,10 +19,6 @@ def test_withdrawals(
     ua_carol: UserAccount,
     setup_funds,
 ):
-    res, _ = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
-
     alice_proposals = get_projects_addresses(1)[:3]
     bob_proposals = get_projects_addresses(1)[:3]
     carol_proposals = get_projects_addresses(1)[:3]

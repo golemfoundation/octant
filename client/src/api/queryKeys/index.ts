@@ -17,8 +17,8 @@ export const ROOTS: Root = {
   individualReward: 'individualReward',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
-  projectDonors: 'projectDonors',
   projectRewardsThreshold: 'projectRewardsThreshold',
+  projectsDonors: 'projectsDonors',
   projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
   upcomingBudget: 'upcomingBudget',
@@ -56,12 +56,8 @@ export const QUERY_KEYS: QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProjectRewards: epochNumber => [ROOTS.matchedProjectRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
-  projectDonors: (projectAddress, epochNumber) => [
-    ROOTS.projectDonors,
-    projectAddress,
-    epochNumber.toString(),
-  ],
   projectRewardsThreshold: epochNumber => [ROOTS.projectRewardsThreshold, epochNumber.toString()],
+  projectsDonors: epochNumber => [ROOTS.projectsDonors, epochNumber.toString()],
   projectsEpoch: epochNumber => [ROOTS.projectsEpoch, epochNumber.toString()],
   projectsIpfsResults: (projectAddress, epochNumber) => [
     ROOTS.projectsIpfsResults,

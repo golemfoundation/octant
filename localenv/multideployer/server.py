@@ -47,6 +47,13 @@ def get_addresses(lines):
     return {var.split("=")[0]: var.split("=")[1] for var in envs}
 
 
+def drop_subgraph(testname):
+    subprocess.run(
+        ["yarn", "graph", "remove", "--node", subgraph_admin_url, testname],
+        check=True,
+    )
+
+
 def setup_subgraph(contracts, testname):
     env = dict(contracts)
     fn = f"/tmp/{testname}_subgraph_networks.json"
@@ -92,6 +99,11 @@ def setup_subgraph(contracts, testname):
 class WebRequestHandler(BaseHTTPRequestHandler):
     def run_sync(self, query):
         return subprocess.run(query, capture_output=True, text=True)
+
+    def drop_env(self, name):
+        assert name in deployments
+        drop_subgraph(name)
+        deployments.pop(name, None)
 
     def get_env(self, name):
         if name in deployments:
@@ -146,7 +158,28 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         return dict(parse_qsl(self.url().query))
 
     def do_GET(self):
-        if self.path == "/ping":
+        path = self.path.split("?")[0]
+        if path == "/ping":
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            return
+
+        if path == "/remove":
+            query = self.query_data()
+            if "name" not in query:
+                self.send_response(400)
+                self.wfile.write(
+                    'Missing "name" field in GET query fields'.encode("utf-8")
+                )
+                return
+            subgraph_name = query["name"]
+            if subgraph_name not in deployments:
+                self.send_response(400)
+                self.wfile.write(r"No deployment with {subgraph_name}".encode("utf-8"))
+                return
+
+            self.drop_env(subgraph_name)
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()

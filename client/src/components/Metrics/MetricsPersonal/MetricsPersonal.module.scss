@@ -12,3 +12,7 @@
   background-color: $color-octant-grey1;
   margin: 3.2rem 0;
 }
+
+.connectWalletImage {
+  @include tipTileConnectWalletImage();
+}
