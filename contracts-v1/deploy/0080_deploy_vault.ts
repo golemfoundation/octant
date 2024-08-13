@@ -1,4 +1,3 @@
-import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
@@ -11,7 +10,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
+  const authAddress = AUTH_ADDRESS || (await hre.deployments.get(AUTH)).address;
 
   await deploy(VAULT, {
     args: [authAddress],
