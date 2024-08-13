@@ -1,0 +1,125 @@
+.root {
+  display: flex;
+  min-height: 8rem;
+  width: 100%;
+  align-items: center;
+  padding: 0 2.4rem;
+  position: relative;
+  border-bottom: 0.1rem solid $color-octant-grey1;
+
+  @media #{$desktop-up} {
+    padding: 0 4rem;
+  }
+
+  @media #{$desktop-up} {
+    padding: 0 11.2rem;
+  }
+
+  .octantLogo {
+    cursor: pointer;
+    margin-right: 4rem;
+
+    @media #{$tablet-up} {
+      margin-right: 13rem;
+    }
+
+    @media #{$large-desktop-up} {
+      margin-right: 0;
+    }
+  }
+
+  .links {
+    display: flex;
+    margin-left: 2.4rem;
+
+    .link {
+      font-size: $font-size-14;
+      font-weight: $font-weight-bold;
+      color: $color-octant-grey2;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 2.4rem;
+      }
+
+      &.isActive {
+        color: $color-octant-dark;
+      }
+    }
+  }
+
+  .allocationInfo {
+    margin: 0 auto;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    font-size: $font-size-14;
+    font-weight: $font-weight-bold;
+    line-height: 1.4rem;
+    padding: 1rem 1.4rem;
+    background: $color-octant-green9;
+    color: $color-octant-green;
+    border-radius: $border-radius-16;
+
+    .calendarIcon {
+      margin-right: 1.2rem;
+    }
+  }
+
+  .buttonWallet {
+    cursor: pointer;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-12;
+    padding: 0 0.2rem 0 1.2rem;
+    margin-left: 2.4rem;
+    justify-content: left;
+    min-width: 8.5rem;
+
+    @media #{$tablet-up} {
+      font-size: $font-size-14;
+      padding-left: 1.5rem;
+      min-width: 14.6rem;
+    }
+
+    .buttonWalletArrow {
+      margin: 1.1rem;
+      path {
+        stroke: $color-white;
+      }
+    }
+
+    &.isConnectButton {
+      justify-content: center;
+      padding: 0;
+    }
+  }
+
+  .settingsButton,
+  .allocateButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 4rem;
+    min-height: 4rem;
+    max-width: 4rem;
+    max-height: 4rem;
+    background-color: $color-white;
+    border-radius: $border-radius-16;
+    margin-left: 1.6rem;
+  }
+
+  .allocateButtonIcon {
+    margin-left: 0.3rem;
+
+    path {
+      stroke: $color-octant-grey2;
+    }
+  }
+
+  .settingsButtonIcon {
+    path {
+      stroke: $color-octant-grey2;
+    }
+  }
+}

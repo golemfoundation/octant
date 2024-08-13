@@ -20,7 +20,7 @@
   pointer-events: initial;
   width: 34.2rem;
 
-  @media #{$desktop-up} {
+  @media #{$tablet-up} {
     border-radius: $border-radius-40;
     width: 43.2rem;
   }
@@ -29,7 +29,7 @@
     padding: 1.6rem;
     border-bottom: 0.1rem solid $color-octant-grey3;
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       padding: 2.4rem;
     }
   }
@@ -45,7 +45,7 @@
       justify-content: center;
     }
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       margin: 1.2rem 2.4rem 2rem 2.4rem;
     }
   }
@@ -59,15 +59,29 @@
     flex: 0;
     font-size: $font-size-10;
 
+    &.isActive {
+      svg.octantLogo {
+        path:nth-child(2) {
+          fill: $color-octant-dark;
+        }
+      }
+    }
+
     &:not(.isActive):hover {
       color: $color-octant-grey5;
 
       svg path {
         stroke: $color-octant-grey5;
       }
+
+      svg.octantLogo {
+        path:nth-child(2) {
+          fill: $color-octant-grey5;
+        }
+      }
     }
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       font-size: $font-size-12;
 
       &:not(:last-child) {
@@ -96,7 +110,7 @@
   border-radius: 50%;
   transform: translateZ(0); // On webkit solves the flickering of text during the scale.
 
-  @media #{$desktop-up} {
+  @media #{$tablet-up} {
     height: 2rem;
     width: 2rem;
     font-size: $font-size-10;
@@ -126,14 +140,14 @@
     rgba(0, 0, 0, 1)
   );
 
-  @media #{$desktop-up} {
+  @media #{$tablet-up} {
     height: 15.2rem;
   }
 
   &.hasNavigationBottomSuffix {
     height: 20rem;
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       height: 24.8rem;
     }
   }

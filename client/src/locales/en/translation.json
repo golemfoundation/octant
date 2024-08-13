@@ -299,7 +299,27 @@
       }
     }
   },
-  "layouts": {
+  "layout": {
+    "topBar": {
+      "epochAllocationWindowOpen": "Epoch {{epoch}} allocation window now open",
+      "epochAllocationWindowOpenShort": "E{{epoch}} allocation open",
+      "epochAllocationWindowClosed": "Epoch {{epoch}} allocation window is closed",
+      "epochAllocationWindowClosedShort": "E{{epoch}} allocation is closed",
+      "connectWallet": "Connect wallet",
+      "connect": "Connect"
+    },
+    "footer": {
+      "octantText": "Octant is a <0>Golem Foundation</0> project,<br/> launched in 2023.",
+      "links": {
+        "website": "Website",
+        "discord": "Discord",
+        "blog": "Blog",
+        "docs": "Docs",
+        "brandAssets": "Brand assets",
+        "termsOfUse": "Terms of use"
+
+      }
+    },
     "main": {
       "buttonConnect": "Connect",
       "noRewardsYet": "No rewards yet",

@@ -1,98 +1,117 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment, useMemo, useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, useMatch, useNavigate } from 'react-router-dom';
-import { useAccount } from 'wagmi';
+import React, {
+  FC,
+  // useState,
+  Fragment,
+  useMemo,
+  //  useEffect
+} from 'react';
+// import { useTranslation } from 'react-i18next';
+import {
+  useLocation,
+  //  useMatch, useNavigate
+} from 'react-router-dom';
+// import { useAccount } from 'wagmi';
 
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
 import ModalLayoutConnectWallet from 'components/shared/Layout/ModalLayoutConnectWallet';
 import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
-import Button from 'components/ui/Button';
 import Loader from 'components/ui/Loader';
-import Svg from 'components/ui/Svg';
-import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
 import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
 import {
   adminNavigationTabs,
   navigationTabs as navigationTabsDefault,
   patronNavigationTabs,
 } from 'constants/navigationTabs/navigationTabs';
-import networkConfig from 'constants/networkConfig';
-import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
-import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
+// import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
+// import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+// import useIndividualReward from 'hooks/queries/useIndividualReward';
+// import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import useUserTOS from 'hooks/queries/useUserTOS';
+// import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import useSettingsStore from 'store/settings/store';
-import { octant } from 'svg/logo';
-import { chevronBottom } from 'svg/misc';
+import useLayoutStore from 'store/layout/store';
+// import useSettingsStore from 'store/settings/store';
 import { chevronLeft } from 'svg/navigation';
-import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
+// import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
-import getTimeDistance from 'utils/getTimeDistance';
-import truncateEthAddress from 'utils/truncateEthAddress';
+// import getTimeDistance from 'utils/getTimeDistance';
+// import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './Layout.module.scss';
+import LayoutFooter from './LayoutFooter/LayoutFooter';
+import LayoutTopBar from './LayoutTopBar/LayoutTopBar';
 import LayoutProps from './types';
 
 const Layout: FC<LayoutProps> = ({
   children,
   dataTest,
   navigationBottomSuffix,
-  isHeaderVisible = true,
+  // isHeaderVisible = true,
   isLoading,
   isNavigationVisible = true,
   classNameBody,
-  isAbsoluteHeaderPosition = false,
-  showHeaderBlur = true,
+  // isAbsoluteHeaderPosition = false,
+  // showHeaderBlur = true,
 }) => {
+  const { isDesktop } = useMediaQuery();
   const { data: isPatronMode } = useIsPatronMode();
-  const { i18n, t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
-  const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
-  const { address, isConnected } = useAccount();
-  const { data: individualReward } = useIndividualReward();
+  // const { i18n, t  } = useTranslation('translation', { keyPrefix: 'layout.main' });
+  // const { address, isConnected } = useAccount();
+  // const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  // const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  // const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const { data: isUserTOSAccepted } = useUserTOS();
+  // const navigate = useNavigate();
+  // const { data: isUserTOSAccepted } = useUserTOS();
   const isProjectAdminMode = useIsProjectAdminMode();
+  // const {
+  //   data: { isCryptoMainValueDisplay },
+  // } = useSettingsStore(({ data }) => ({
+  //   data: {
+  //     isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+  //   },
+  // }));
+
   const {
-    data: { isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
+    setShowWalletModal,
+    setShowConnectWalletModal,
+    data: { showWalletModal, showConnectWalletModal },
+  } = useLayoutStore(state => ({
     data: {
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+      showConnectWalletModal: state.data.showConnectWalletModal,
+      showWalletModal: state.data.showWalletModal,
     },
+    setShowConnectWalletModal: state.setShowConnectWalletModal,
+    setShowWalletModal: state.setShowWalletModal,
   }));
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
-  const isUseMatchProject = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
-  const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
-  const isProjectRoot = isUseMatchProject || isUseMatchProjectWithAddress;
-  const isProjectsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
-  const getValuesToDisplay = useGetValuesToDisplay();
+  // const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
+  // const isUseMatchProject = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  // const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  // const isProjectRoot = isUseMatchProject || isUseMatchProjectWithAddress;
+  // const isProjectsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
+  // const getValuesToDisplay = useGetValuesToDisplay();
 
-  const showAllocationPeriod = isAllocationRoot || isProjectRoot || isProjectsRoot;
+  // const showAllocationPeriod = isAllocationRoot || isProjectRoot || isProjectsRoot;
 
-  const getCurrentPeriod = () => {
-    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
-    }
-    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
-    }
-    return '';
-  };
-  const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
+  // const getCurrentPeriod = () => {
+  //   if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+  //     return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
+  //   }
+  //   if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+  //     return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
+  //   }
+  //   return '';
+  // };
+  // const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
 
-  const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
+  // const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
 
   const tabsWithIsActive = useMemo(() => {
     let tabs = navigationTabsDefault;
@@ -117,67 +136,56 @@ const Layout: FC<LayoutProps> = ({
     });
   }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname]);
 
-  const isAllocationPeriodIsHighlighted = useMemo(() => {
-    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
-      return getDifferenceInWeeks(Date.now(), new Date(timeCurrentAllocationEnd).getTime()) < 1;
-    }
-    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
-      return getDifferenceInWeeks(Date.now(), new Date(timeCurrentEpochEnd).getTime()) < 1;
-    }
-    return false;
-  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+  // const isAllocationPeriodIsHighlighted = useMemo(() => {
+  //   if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+  //     return getDifferenceInWeeks(Date.now(), new Date(timeCurrentAllocationEnd).getTime()) < 1;
+  //   }
+  //   if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+  //     return getDifferenceInWeeks(Date.now(), new Date(timeCurrentEpochEnd).getTime()) < 1;
+  //   }
+  //   return false;
+  // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
-  const individualRewardText = useMemo(() => {
-    if (currentEpoch === 1 || individualReward === 0n || !isDecisionWindowOpen) {
-      return i18n.t('layouts.main.noRewardsYet');
-    }
-    if (currentEpoch === undefined || individualReward === undefined) {
-      return i18n.t('layouts.main.loadingRewardBudget');
-    }
-    return i18n.t('common.rewards', {
-      rewards: getValuesToDisplay({
-        cryptoCurrency: 'ethereum',
-        showCryptoSuffix: true,
-        valueCrypto: individualReward,
-      }).primary,
-    });
-    // eslint-disable-next-line  react-hooks/exhaustive-deps
-  }, [individualReward, currentEpoch, isDecisionWindowOpen, isCryptoMainValueDisplay]);
+  // const individualRewardText = useMemo(() => {
+  //   if (currentEpoch === 1 || individualReward === 0n || !isDecisionWindowOpen) {
+  //     return i18n.t('layout.main.noRewardsYet');
+  //   }
+  //   if (currentEpoch === undefined || individualReward === undefined) {
+  //     return i18n.t('layout.main.loadingRewardBudget');
+  //   }
+  //   return i18n.t('common.rewards', {
+  //     rewards: getValuesToDisplay({
+  //       cryptoCurrency: 'ethereum',
+  //       showCryptoSuffix: true,
+  //       valueCrypto: individualReward,
+  //     }).primary,
+  //   });
+  //   // eslint-disable-next-line  react-hooks/exhaustive-deps
+  // }, [individualReward, currentEpoch, isDecisionWindowOpen, isCryptoMainValueDisplay]);
 
-  const onLogoClick = () => {
-    if (pathname === ROOT_ROUTES.projects.absolute) {
-      window.scrollTo({ behavior: 'smooth', top: 0 });
-      return;
-    }
+  // const onLogoClick = () => {
+  //   if (pathname === ROOT_ROUTES.projects.absolute) {
+  //     window.scrollTo({ behavior: 'smooth', top: 0 });
+  //     return;
+  //   }
 
-    navigate(ROOT_ROUTES.projects.absolute);
-  };
+  //   navigate(ROOT_ROUTES.projects.absolute);
+  // };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentPeriod(getCurrentPeriod());
-    }, 1000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setCurrentPeriod(getCurrentPeriod());
+  //   }, 1000);
 
-    return () => clearInterval(intervalId);
-    // eslint-disable-next-line  react-hooks/exhaustive-deps
-  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+  //   return () => clearInterval(intervalId);
+  //   // eslint-disable-next-line  react-hooks/exhaustive-deps
+  // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return (
     <Fragment>
-      <ModalLayoutWallet
-        modalProps={{
-          isOpen: isWalletModalOpen,
-          onClosePanel: () => setIsWalletModalOpen(false),
-        }}
-      />
-      <ModalLayoutConnectWallet
-        modalProps={{
-          isOpen: isModalConnectWalletOpen,
-          onClosePanel: () => setIsModalConnectWalletOpen(false),
-        }}
-      />
       <div className={styles.root} data-test={dataTest}>
-        {isHeaderVisible && (
+        <LayoutTopBar />
+        {/* {isHeaderVisible && (
           <Fragment>
             {showHeaderBlur && <div className={styles.headerBlur} />}
             <div
@@ -241,8 +249,8 @@ const Layout: FC<LayoutProps> = ({
                                 ]}
                                 i18nKey={
                                   isDecisionWindowOpen
-                                    ? 'layouts.main.allocationEndsIn'
-                                    : 'layouts.main.allocationStartsIn'
+                                    ? 'layout.main.allocationEndsIn'
+                                    : 'layout.main.allocationStartsIn'
                                 }
                                 values={{ currentPeriod }}
                               />
@@ -276,7 +284,7 @@ const Layout: FC<LayoutProps> = ({
               </div>
             </div>
           </Fragment>
-        )}
+        )} */}
         <div
           className={cx(
             styles.body,
@@ -289,10 +297,23 @@ const Layout: FC<LayoutProps> = ({
         >
           {isLoading ? <Loader dataTest="MainLayout__Loader" /> : children}
         </div>
-        {isNavigationVisible && (
+        {!isDesktop && isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />
         )}
+        <LayoutFooter />
       </div>
+      <ModalLayoutWallet
+        modalProps={{
+          isOpen: showWalletModal,
+          onClosePanel: () => setShowWalletModal(false),
+        }}
+      />
+      <ModalLayoutConnectWallet
+        modalProps={{
+          isOpen: showConnectWalletModal,
+          onClosePanel: () => setShowConnectWalletModal(false),
+        }}
+      />
     </Fragment>
   );
 };

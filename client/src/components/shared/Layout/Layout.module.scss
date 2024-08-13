@@ -9,12 +9,6 @@ $bodyPaddingTop: calc(1.6rem + $headerMarginTop + $headerHeight);
   min-height: 100%;
 }
 
-.root,
-.headerWrapper {
-  @include layoutFloatingElementWidth();
-  margin: 0 auto;
-}
-
 .headerWrapper {
   position: fixed;
   top: 0;
@@ -182,10 +176,10 @@ $bodyPaddingTop: calc(1.6rem + $headerMarginTop + $headerHeight);
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: $bodyPaddingTop $layoutMarginHorizontal 12rem;
+  margin: 0 2.4rem;
 
   @media #{$desktop-up} {
-    padding-bottom: 15.2rem;
+    margin: 0 11.2rem;
   }
 
   &.isNavigationBottomSuffix {

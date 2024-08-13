@@ -25,7 +25,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
   }));
   const allocationsPrevRef = useRef(allocations);
 
-  const { isDesktop } = useMediaQuery();
+  const { isTablet } = useMediaQuery();
   const location = useLocation();
   const [scope, animate] = useAnimate();
   const isProjectAdminMode = useIsProjectAdminMode();
@@ -37,7 +37,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
       return;
     }
     animate([
-      [scope?.current, { scale: [isDesktop ? 1.4 : 1.5] }, { duration: 0.15, ease: 'easeOut' }],
+      [scope?.current, { scale: [isTablet ? 1.4 : 1.5] }, { duration: 0.15, ease: 'easeOut' }],
       [scope?.current, { scale: 1 }, { duration: 0.15, ease: 'easeOut' }],
     ]);
     allocationsPrevRef.current = allocations;
@@ -64,7 +64,19 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
                 key={index}
                 className={cx(styles.buttonNavigation, isActive && styles.isActive)}
                 dataTest={`Navbar__Button--${label}`}
-                Icon={<Svg img={icon} size={isDesktop ? 4 : 3.2} />}
+                Icon={
+                  to === ROOT_ROUTES.settings.absolute ? (
+                    <Svg img={icon} size={isTablet ? 3 : 2.4} />
+                  ) : (
+                    <Svg
+                      classNameSvg={
+                        to === ROOT_ROUTES.home.absolute ? styles.octantLogo : undefined
+                      }
+                      img={icon}
+                      size={isTablet ? 4 : 3.2}
+                    />
+                  )
+                }
                 isActive={isActive}
                 isDisabled={isDisabled || areTabsDisabled}
                 label={label}

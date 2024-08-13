@@ -8,6 +8,7 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import AllocationView from 'views/AllocationView/AllocationView';
 import EarnView from 'views/EarnView/EarnView';
+import HomeView from 'views/HomeView/HomeView';
 import MetricsView from 'views/MetricsView/MetricsView';
 import PlaygroundView from 'views/PlaygroundView/PlaygroundView';
 import ProjectsView from 'views/ProjectsView/ProjectsView';
@@ -43,6 +44,14 @@ const RootRoutes: FC<RootRoutesProps> = props => {
                   path={`${ROOT_ROUTES.allocation.relative}/*`}
                 />
               )}
+              <Route
+                element={
+                  <Protected {...props}>
+                    <HomeView />
+                  </Protected>
+                }
+                path={`${ROOT_ROUTES.home.relative}/*`}
+              />
               <Route
                 element={
                   <Protected {...props}>
