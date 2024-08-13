@@ -1,4 +1,4 @@
-FROM europe-docker.pkg.dev/wildland-dev/octant-test/foundry:latest
+FROM europe-docker.pkg.dev/wildland-dev/internal/octant/anvil:latest
 
 WORKDIR /home/foundry
 
