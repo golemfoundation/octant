@@ -704,7 +704,6 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
-            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
@@ -913,6 +912,18 @@ class Client:
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
         return rv.text, rv.status_code
+
+    def get_chain_info(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/chain-info")
+        return json.loads(rv.text), rv.status_code
+
+    def get_version(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/version")
+        return json.loads(rv.text), rv.status_code
+
+    def get_healthcheck(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
 
     @property
     def config(self):
