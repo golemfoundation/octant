@@ -27,6 +27,7 @@ api = Api(
 # from flask import current_app as app
 
 socketio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*", logger=True)
+
     # async_mode="asgi", cors_allowed_origins="*", client_manager=mgr
 # )
 # socketio = SocketIO(cors_allowed_origins="*")

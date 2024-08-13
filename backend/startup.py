@@ -32,12 +32,14 @@ def teardown_session(*args, **kwargs):
     db.session.remove()
 
 
-# Create FastAPI app
-fastapi_app = FastAPI()
+from v2.main import fastapi_app
 
-@fastapi_app.get("/fastapi-endpoint")
-async def fastapi_endpoint():
-    return {"message": "This is a FastAPI endpoint."}
+# Create FastAPI app
+# fastapi_app = FastAPI()
+
+# @fastapi_app.get("/fastapi-endpoint")
+# async def fastapi_endpoint():
+#     return {"message": "This is a FastAPI endpoint."}
 
 # Mount Flask app under a sub-path
 fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
@@ -63,11 +65,11 @@ class PathCheckMiddleware(BaseHTTPMiddleware):
 fastapi_app.add_middleware(PathCheckMiddleware)
 
 
-from app.extensions import socketio as our_socketio
-import socketio
+# from app.extensions import socketio as our_socketio
+# import socketio
 
-sio_asgi_app = socketio.ASGIApp(socketio_server=our_socketio, other_asgi_app=fastapi_app)
+# sio_asgi_app = socketio.ASGIApp(socketio_server=our_socketio, other_asgi_app=fastapi_app)
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
-fastapi_app.add_route("/socket.io/", route=sio_asgi_app)
-fastapi_app.add_websocket_route("/socket.io/", sio_asgi_app)
+# # app.mount("/static", StaticFiles(directory="static"), name="static")
+# fastapi_app.add_route("/socket.io/", route=sio_asgi_app)
+# fastapi_app.add_websocket_route("/socket.io/", sio_asgi_app)
