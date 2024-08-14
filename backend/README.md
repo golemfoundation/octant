@@ -69,6 +69,8 @@ yarn apitest:run tests/api-e2e/test_api_snapshot.py::test_pending_snapshot
 
 To stop the env, run `yarn apitest:down`
 
+*NOTICE:* At least on Linux, anvil sometimes stops working in docker environment. This leads to multideployer timing out its startup. Restart of host machine helps.
+
 ## Lint
 
 ```bash

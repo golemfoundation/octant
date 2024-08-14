@@ -18,7 +18,7 @@ import styles from './AllocationTipTiles.module.scss';
 import AllocationTipTilesProps from './types';
 
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
-  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
+  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
   const navigate = useNavigate();
   const { isDesktop } = useMediaQuery();
   const { address, isConnected } = useAccount();
@@ -92,7 +92,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
       <TipTile
         className={className}
         image="images/uqTooLow.webp"
-        infoLabel={i18n.t('common.octantTips')}
+        imageClassName={styles.uqTooLowImage}
         isOpen={isUqTooLowTipVisible}
         onClick={() => navigate(ROOT_ROUTES.settings.absolute)}
         onClose={() => setWasUqTooLowAlreadyClosed(true)}
@@ -111,7 +111,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
       <TipTile
         className={className}
         image="images/rewards.webp"
-        infoLabel={i18n.t('common.octantTips')}
+        imageClassName={styles.rewardsImage}
         isOpen={isRewardsTipVisible}
         onClose={() => setWasRewardsAlreadyClosed(true)}
         text={isDesktop ? t('rewards.text.desktop') : t('rewards.text.mobile')}
