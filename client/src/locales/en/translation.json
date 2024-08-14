@@ -300,6 +300,13 @@
     }
   },
   "layout": {
+    "navigationTabs": {
+      "home": "Home",
+      "projects": "Projects",
+      "metrics": "Metrics",
+      "settings": "Settings",
+      "allocate": "Allocate"
+    },
     "topBar": {
       "epochAllocationWindowOpen": "Epoch {{epoch}} allocation window now open",
       "epochAllocationWindowOpenShort": "E{{epoch}} allocation open",

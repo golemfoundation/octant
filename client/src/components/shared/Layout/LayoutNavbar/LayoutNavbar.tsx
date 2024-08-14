@@ -2,7 +2,6 @@ import cx from 'classnames';
 import { useAnimate } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAccount } from 'wagmi';
 
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
@@ -10,16 +9,14 @@ import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useUserTOS from 'hooks/queries/useUserTOS';
+import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 
 import styles from './LayoutNavbar.module.scss';
 import LayoutNavbarProps from './types';
 
-const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) => {
-  const { isConnected } = useAccount();
-  const { data: isUserTOSAccepted } = useUserTOS();
+const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
   const { allocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
   }));
@@ -29,8 +26,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
   const location = useLocation();
   const [scope, animate] = useAnimate();
   const isProjectAdminMode = useIsProjectAdminMode();
-
-  const areTabsDisabled = isConnected && !isUserTOSAccepted;
+  const tabs = useNavigationTabs();
 
   useEffect(() => {
     if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
@@ -58,10 +54,9 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
             className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}
             data-test="Navbar__buttons"
           >
-            {tabs.map(({ icon, label, to, isActive, isDisabled = false }, index) => (
+            {tabs.map(({ key, icon, label, to, isActive, isDisabled = false }) => (
               <Button
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
+                key={key}
                 className={cx(styles.buttonNavigation, isActive && styles.isActive)}
                 dataTest={`Navbar__Button--${label}`}
                 Icon={
@@ -78,7 +73,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
                   )
                 }
                 isActive={isActive}
-                isDisabled={isDisabled || areTabsDisabled}
+                isDisabled={isDisabled}
                 label={label}
                 onClick={() => {
                   if (location.pathname !== ROOT_ROUTES.projects.absolute) {

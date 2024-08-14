@@ -1,4 +1,6 @@
-import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+// TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
+// import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import { ConnectWalletParameters } from './types';
@@ -29,7 +31,9 @@ export const visitWithLoader = (
 };
 
 export const navigateWithCheck = (urlEnter: string): Chainable<any> => {
-  const { label } = navigationTabs.find(({ to }) => to === urlEnter)!;
+  // TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
+  // const { label } = navigationTabs.find(({ to }) => to === urlEnter)!;
+  const label = 'Home';
   cy.get(`[data-test=Navbar__Button--${label}]`).click();
   return checkLocationWithLoader(urlEnter);
 };

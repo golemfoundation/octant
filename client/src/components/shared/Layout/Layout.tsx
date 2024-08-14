@@ -3,14 +3,14 @@ import React, {
   FC,
   // useState,
   Fragment,
-  useMemo,
+  // useMemo,
   //  useEffect
 } from 'react';
 // import { useTranslation } from 'react-i18next';
-import {
-  useLocation,
-  //  useMatch, useNavigate
-} from 'react-router-dom';
+// import {
+// useLocation,
+//  useMatch, useNavigate
+// } from 'react-router-dom';
 // import { useAccount } from 'wagmi';
 
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
@@ -18,26 +18,21 @@ import ModalLayoutConnectWallet from 'components/shared/Layout/ModalLayoutConnec
 import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
 import Loader from 'components/ui/Loader';
 import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
-import {
-  adminNavigationTabs,
-  navigationTabs as navigationTabsDefault,
-  patronNavigationTabs,
-} from 'constants/navigationTabs/navigationTabs';
 // import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 // import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
-import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+// import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+// import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 // import useIndividualReward from 'hooks/queries/useIndividualReward';
 // import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
+// import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 // import useUserTOS from 'hooks/queries/useUserTOS';
-import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+// import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useLayoutStore from 'store/layout/store';
 // import useSettingsStore from 'store/settings/store';
-import { chevronLeft } from 'svg/navigation';
+// import { chevronLeft } from 'svg/navigation';
 // import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
-import getIsPreLaunch from 'utils/getIsPreLaunch';
+// import getIsPreLaunch from 'utils/getIsPreLaunch';
 // import getTimeDistance from 'utils/getTimeDistance';
 // import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -58,17 +53,17 @@ const Layout: FC<LayoutProps> = ({
   // showHeaderBlur = true,
 }) => {
   const { isDesktop } = useMediaQuery();
-  const { data: isPatronMode } = useIsPatronMode();
+  // const { data: isPatronMode } = useIsPatronMode();
   // const { i18n, t  } = useTranslation('translation', { keyPrefix: 'layout.main' });
   // const { address, isConnected } = useAccount();
   // const { data: individualReward } = useIndividualReward();
-  const { data: currentEpoch } = useCurrentEpoch();
+  // const { data: currentEpoch } = useCurrentEpoch();
   // const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   // const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
   // const navigate = useNavigate();
   // const { data: isUserTOSAccepted } = useUserTOS();
-  const isProjectAdminMode = useIsProjectAdminMode();
+  // const isProjectAdminMode = useIsProjectAdminMode();
   // const {
   //   data: { isCryptoMainValueDisplay },
   // } = useSettingsStore(({ data }) => ({
@@ -90,7 +85,7 @@ const Layout: FC<LayoutProps> = ({
     setShowWalletModal: state.setShowWalletModal,
   }));
 
-  const isPreLaunch = getIsPreLaunch(currentEpoch);
+  // const isPreLaunch = getIsPreLaunch(currentEpoch);
   // const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
   // const isUseMatchProject = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
   // const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
@@ -112,29 +107,6 @@ const Layout: FC<LayoutProps> = ({
   // const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
 
   // const truncatedEthAddress = useMemo(() => address && truncateEthAddress(address), [address]);
-
-  const tabsWithIsActive = useMemo(() => {
-    let tabs = navigationTabsDefault;
-
-    if (isPatronMode) {
-      tabs = patronNavigationTabs;
-    }
-    if (isProjectAdminMode) {
-      tabs = adminNavigationTabs;
-    }
-
-    return tabs.map(tab => {
-      const isProjectView =
-        pathname.includes(`${ROOT_ROUTES.project.absolute}/`) &&
-        tab.to === ROOT_ROUTES.projects.absolute;
-      return {
-        ...tab,
-        icon: isProjectView ? chevronLeft : tab.icon,
-        isActive: tab.isActive || pathname === tab.to || isProjectView,
-        isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
-      };
-    });
-  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname]);
 
   // const isAllocationPeriodIsHighlighted = useMemo(() => {
   //   if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
@@ -298,7 +270,7 @@ const Layout: FC<LayoutProps> = ({
           {isLoading ? <Loader dataTest="MainLayout__Loader" /> : children}
         </div>
         {!isDesktop && isNavigationVisible && (
-          <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />
+          <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} />
         )}
         <LayoutFooter />
       </div>

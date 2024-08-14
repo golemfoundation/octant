@@ -113,3 +113,9 @@ export const magnifyingGlass: SvgImageConfig = {
     '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><g stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M17.312 19.584a4.295 4.295 0 1 0-3.36-7.905 4.295 4.295 0 0 0 3.36 7.905ZM18.668 18.669 21.998 22"/></g></svg>',
   viewBox: '0 0 32 32',
 };
+
+export const calendar: SvgImageConfig = {
+  markup:
+    '<g clip-path="url(#a)" stroke="#2D9B87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5h-13a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1ZM.5 6.5h15M4.5 4V.5M11.5 4V.5"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs>',
+  viewBox: '0 0 16 16',
+};

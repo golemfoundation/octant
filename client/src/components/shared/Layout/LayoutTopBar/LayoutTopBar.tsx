@@ -6,66 +6,33 @@ import { useAccount } from 'wagmi';
 
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
-import {
-  // adminNavigationTabs,
-  navigationTabs as navigationTabsDefault,
-  // patronNavigationTabs,
-} from 'constants/navigationTabs/navigationTabs';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useLayoutStore from 'store/layout/store';
 import { octant } from 'svg/logo';
-import { chevronBottom } from 'svg/misc';
+import { calendar, chevronBottom } from 'svg/misc';
 import { allocate, settings } from 'svg/navigation';
-import getIsPreLaunch from 'utils/getIsPreLaunch';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './LayoutTopBar.module.scss';
 
 const LayoutTopBar = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
-  const { isTablet, isLargeDesktop, isMobile } = useMediaQuery();
+  const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { setShowWalletModal, setShowConnectWalletModal } = useLayoutStore(state => ({
     setShowConnectWalletModal: state.setShowConnectWalletModal,
     setShowWalletModal: state.setShowWalletModal,
   }));
 
-  const tabsWithIsActive = useMemo(() => {
-    const tabs = navigationTabsDefault.filter(
-      ({ to }) => to !== ROOT_ROUTES.allocation.absolute && to !== ROOT_ROUTES.settings.absolute,
-    );
-
-    // if (isPatronMode) {
-    //   tabs = patronNavigationTabs;
-    // }
-    // if (isProjectAdminMode) {
-    //   tabs = adminNavigationTabs;
-    // }
-
-    return tabs.map(tab => {
-      const isProjectView =
-        pathname.includes(`${ROOT_ROUTES.project.absolute}/`) &&
-        tab.to === ROOT_ROUTES.projects.absolute;
-      return {
-        ...tab,
-        // icon: isProjectView ? chevronLeft : tab.icon,
-        isActive: tab.isActive || pathname === tab.to || isProjectView,
-        isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
-      };
-    });
-  }, [
-    // isPatronMode, isProjectAdminMode,
-    isPreLaunch,
-    pathname,
-  ]);
+  const tabs = useNavigationTabs(true);
 
   const allocationInfoText = useMemo(() => {
     const epoch = currentEpoch! - 1;
@@ -103,11 +70,11 @@ const LayoutTopBar = (): ReactNode => {
   return (
     <div className={styles.root}>
       <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
-      {isLargeDesktop && (
+      {isDesktop && (
         <div className={styles.links}>
-          {tabsWithIsActive.map(tab => (
+          {tabs.map(tab => (
             <div
-              key={tab.to}
+              key={tab.key}
               className={cx(styles.link, tab.isActive && styles.isActive)}
               onClick={() => navigate(tab.to)}
             >
@@ -117,7 +84,7 @@ const LayoutTopBar = (): ReactNode => {
         </div>
       )}
       <div className={styles.allocationInfo}>
-        {isTablet && <Svg classNameSvg={styles.calendarIcon} img={octant} size={1.6} />}
+        {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
         {allocationInfoText}
       </div>
       <Button
@@ -130,7 +97,7 @@ const LayoutTopBar = (): ReactNode => {
           <Svg classNameSvg={styles.buttonWalletArrow} img={chevronBottom} size={1} />
         )}
       </Button>
-      {isLargeDesktop && (
+      {isDesktop && (
         <Fragment>
           <div className={styles.settingsButton}>
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />

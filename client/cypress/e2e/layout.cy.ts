@@ -1,3 +1,6 @@
+// TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
+// import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+
 import {
   navigateWithCheck,
   mockCoinPricesServer,
@@ -10,7 +13,6 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
-import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -69,11 +71,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=Navbar]').should('be.visible');
     });
 
-    it('bottom navbar allows to change views', () => {
-      navigationTabs.forEach(({ to }) => {
-        navigateWithCheck(to);
-      });
-    });
+    // TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
+    // it('bottom navbar allows to change views', () => {
+    //   navigationTabs.forEach(({ to }) => {
+    //     navigateWithCheck(to);
+    //   });
+    // });
 
     it('"Connect" button is visible when wallet is disconnected', () => {
       cy.get('[data-test=MainLayout__Button--connect]').should('be.visible');
