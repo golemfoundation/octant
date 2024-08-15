@@ -10,6 +10,108 @@ env:
   GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
+  stop-api-env:
+    name: Stop APITest Env
+    needs:
+    - start-apitest-env
+    - run-api-tests
+    if: always() && (needs.start-apitest-env.result == 'success')
+    uses: ./.github/workflows/tpl-destroy-env.yml
+    secrets: inherit
+    with:
+      env-type: apitest
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+
+  run-api-tests:
+    name: Run API Tests
+    needs:
+    - deploy-apitest-env
+    runs-on:
+    - general
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: apitest
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      OCTANT_ENV: dev
+      CHAIN_ID: 1337
+      CHAIN_NAME: localhost
+      GC_PASSPORT_SCORER_ID: "${{ secrets.GITCOIN_SCORER_ID }}"
+      GC_PASSPORT_SCORER_API_KEY: "${{ secrets.GITCOIN_SCORER_API_KEY }}"
+      DELEGATION_SALT: "${{ secrets.DELEGATION_SALT }}"
+      DELEGATION_SALT_PRIMARY: "${{ secrets.DELEGATION_SALT_PRIMARY }}"
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: backend/.venv
+        key: "${{ github.sha }}-poetry-backend"
+    - name: Run API tests
+      run: |
+        set -ex
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+
+        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+
+        pushd backend
+
+        poetry config virtualenvs.in-project true
+        poetry install --no-interaction --no-ansi -v --with prod --with dev
+
+        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+        export CONTRACTS_DEPLOYER_URL; CONTRACTS_DEPLOYER_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_multideployer_url.sh)
+        export ETH_RPC_PROVIDER_URL; ETH_RPC_PROVIDER_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
+        export SUBGRAPH_URL; SUBGRAPH_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_graph_url.sh)
+
+        poetry run pytest -s --onlyapi
+      shell: bash
+
+  deploy-apitest-env:
+    name: Deploy APITest Env
+    needs:
+    - docker
+    - start-apitest-env
+    uses: ./.github/workflows/tpl-deploy-app.yml
+    with:
+      # ---
+      env-type: apitest
+      branch-head-ref: ${{ github.ref }}
+      image-tag: ${{ github.sha }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+      env-id: ${{ needs.start-apitest-env.outputs.env-id }}
+      deployment-id: ${{ needs.start-apitest-env.outputs.deployment-id }}
+      # ---
+      deploy-contracts: false
+      chain-id: 1337
+      network-name: localhost
+      chain-name: localhost
+      snapshotter-enabled: false
+      multisigger-enabled: false
+      web-client-replicas: 0
+      coin-prices-server-replicas: 0
+      backend-server-replicas: 0
+      multideployer-enabled: true
+      subgraph-deploy: false
+      graph-healtchecker-enabled: false
+    secrets: inherit
+
+  start-apitest-env:
+    name: Start APITest Env
+    needs:
+    - permissions-check
+    uses: ./.github/workflows/tpl-start-env.yml
+    secrets: inherit
+    with:
+      env-type: apitest
+      git-ref: ${{ github.ref }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
 
   docker:
     name: Docker

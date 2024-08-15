@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
-import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
+import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
@@ -107,7 +107,8 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   const { data: uqScore } = useUqScore(currentEpoch!);
 
-  const { data: projectDonors } = useProjectDonors(address);
+  const { data: projectsDonors } = useProjectsDonors();
+  const projectDonors = projectsDonors?.[address];
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
