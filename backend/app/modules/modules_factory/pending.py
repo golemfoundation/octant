@@ -38,7 +38,7 @@ from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
-from app.modules.user.antisybil.service.initial import (
+from app.modules.user.antisybil.service.passport import (
     GitcoinPassportAntisybil,
 )
 from app.modules.user.budgets.service.saved import SavedUserBudgets

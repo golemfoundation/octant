@@ -4,7 +4,7 @@ from datetime import datetime
 from app.exceptions import UserNotFound
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
-from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
+from app.modules.user.antisybil.service.passport import GitcoinPassportAntisybil
 from tests.helpers.context import get_context
 
 

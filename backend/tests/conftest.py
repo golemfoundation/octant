@@ -1190,7 +1190,7 @@ def patch_user_budget(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_gitcoin_passport_issue_address_for_scoring(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.user.antisybil.service.initial.issue_address_for_scoring",
+        "app.modules.user.antisybil.service.passport.issue_address_for_scoring",
         mock_gitcoin_passport_issue_address_for_scoring,
     )
 
@@ -1198,7 +1198,7 @@ def patch_gitcoin_passport_issue_address_for_scoring(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_gitcoin_passport_fetch_score(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.user.antisybil.service.initial.fetch_score",
+        "app.modules.user.antisybil.service.passport.fetch_score",
         mock_gitcoin_passport_fetch_score,
     )
 
@@ -1206,7 +1206,7 @@ def patch_gitcoin_passport_fetch_score(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_gitcoin_passport_fetch_stamps(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.user.antisybil.service.initial.fetch_stamps",
+        "app.modules.user.antisybil.service.passport.fetch_stamps",
         mock_gitcoin_passport_fetch_stamps,
     )
 
