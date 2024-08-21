@@ -48,6 +48,8 @@ services:
       DELEGATION_SALT: "salt"
       DELEGATION_SALT_PRIMARY: "salt_primary"
 
+      CACHE_TYPE: "SimpleCache"
+
     depends_on:
       - backend-postgres
       - anvil
