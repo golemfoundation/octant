@@ -925,6 +925,14 @@ class Client:
         rv = self._flask_client.get("/info/healthcheck")
         return json.loads(rv.text), rv.status_code
 
+    def delegate(self, primary_address: str, secondary_address: str, primary_address_signature: str,
+                 secondary_address_signature: str) -> tuple[dict, int]:
+        rv = self._flask_client.post("/delegation/delegate", json={"primaryAddr": primary_address,
+                                                                   "secondaryAddr": secondary_address,
+                                                                   "primaryAddrSignature": primary_address_signature,
+                                                                   "secondaryAddrSignature": secondary_address_signature})
+        return json.loads(rv.text), rv.status_code
+
     @property
     def config(self):
         return self._flask_client.application.config
@@ -1315,25 +1323,25 @@ def mock_allocations_db(app, mock_users_db, project_accounts):
     user1, user2, _ = mock_users_db
 
     user1_allocations = [
-        AllocationItem(project_accounts[0].address, 10 * 10**18),
-        AllocationItem(project_accounts[1].address, 5 * 10**18),
-        AllocationItem(project_accounts[2].address, 300 * 10**18),
+        AllocationItem(project_accounts[0].address, 10 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 5 * 10 ** 18),
+        AllocationItem(project_accounts[2].address, 300 * 10 ** 18),
     ]
 
     user1_allocations_prev_epoch = [
-        AllocationItem(project_accounts[0].address, 101 * 10**18),
-        AllocationItem(project_accounts[1].address, 51 * 10**18),
-        AllocationItem(project_accounts[2].address, 3001 * 10**18),
+        AllocationItem(project_accounts[0].address, 101 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 51 * 10 ** 18),
+        AllocationItem(project_accounts[2].address, 3001 * 10 ** 18),
     ]
 
     user2_allocations = [
-        AllocationItem(project_accounts[1].address, 1050 * 10**18),
-        AllocationItem(project_accounts[3].address, 500 * 10**18),
+        AllocationItem(project_accounts[1].address, 1050 * 10 ** 18),
+        AllocationItem(project_accounts[3].address, 500 * 10 ** 18),
     ]
 
     user2_allocations_prev_epoch = [
-        AllocationItem(project_accounts[1].address, 10501 * 10**18),
-        AllocationItem(project_accounts[3].address, 5001 * 10**18),
+        AllocationItem(project_accounts[1].address, 10501 * 10 ** 18),
+        AllocationItem(project_accounts[3].address, 5001 * 10 ** 18),
     ]
 
     make_user_allocation(
