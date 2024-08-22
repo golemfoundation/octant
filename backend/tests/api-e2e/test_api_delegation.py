@@ -41,18 +41,23 @@ def test_delegation(client: Client, payload: ScoreDelegationPayload):
     assert int(delegator_score["expires_at"]) > 0
 
     # check that scores are different before delegation
-    assert float(delegator_score["score"]) != float(
-        delegatee_score["score"])
+    assert float(delegator_score["score"]) != float(delegatee_score["score"])
 
-    _, status = client.delegate(primary_address=payload.primary_addr,
-                                secondary_address=payload.secondary_addr,
-                                primary_address_signature=payload.primary_addr_signature,
-                                secondary_address_signature=payload.secondary_addr_signature)
+    _, status = client.delegate(
+        primary_address=payload.primary_addr,
+        secondary_address=payload.secondary_addr,
+        primary_address_signature=payload.primary_addr_signature,
+        secondary_address_signature=payload.secondary_addr_signature,
+    )
     assert status == 201
 
     # check that scores are the same after delegation
     delegatee_score, code = client.get_antisybil_score(payload.secondary_addr)
     assert code == 200
     assert delegatee_score["status"] == "Known"
-    assert float(delegatee_score["score"]) == float(
-        delegator_score["score"])
+    assert float(delegatee_score["score"]) == float(delegator_score["score"])
+
+
+@pytest.mark.api
+def test_check_in_delegation():
+    pass
