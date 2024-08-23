@@ -4,7 +4,7 @@ from flask import current_app as app
 from app.infrastructure import database
 from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import UserAccount, Client
-from tests.helpers.constants import STARTING_EPOCH
+from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE, MAX_UQ_SCORE
 
 
 @pytest.mark.api
@@ -24,7 +24,7 @@ def test_uq_for_user(client: Client, ua_alice: UserAccount):
 
     res, code = client.get_user_uq(ua_alice.address, 4)
     assert code == 200
-    assert res["uniquenessQuotient"] == "1.0" or res["uniquenessQuotient"] == "0.2"
+    assert res["uniquenessQuotient"] in [str(LOW_UQ_SCORE), str(MAX_UQ_SCORE)]
 
 
 @pytest.mark.api
