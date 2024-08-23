@@ -925,6 +925,11 @@ class Client:
         rv = self._flask_client.get("/info/healthcheck")
         return json.loads(rv.text), rv.status_code
 
+    def check_delegation(self, *addresses) -> tuple[dict, int]:
+        addresses = ",".join(addresses)
+        rv = self._flask_client.get(f"/delegation/check/{addresses}")
+        return json.loads(rv.text), rv.status_code
+
     @property
     def config(self):
         return self._flask_client.application.config
