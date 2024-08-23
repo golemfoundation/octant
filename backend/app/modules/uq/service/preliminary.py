@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Protocol, Optional, Tuple, runtime_checkable
+from typing import Protocol, List, Optional, Tuple, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
@@ -12,10 +12,18 @@ from app.pydantic import Model
 
 
 @runtime_checkable
-class Antisybil(Protocol):
+class Passport(Protocol):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
+        ...
+
+
+@runtime_checkable
+class Holonym(Protocol):
+    def get_sbt_status(
+        self, _: Context, user_address: str
+    ) -> Optional[Tuple[bool, List[str]]]:
         ...
 
 
@@ -26,7 +34,8 @@ class UserBudgets(Protocol):
 
 
 class PreliminaryUQ(Model):
-    antisybil: Antisybil
+    passport: Passport
+    holonym: Holonym
     budgets: UserBudgets
     uq_threshold: int
 
@@ -56,7 +65,7 @@ class PreliminaryUQ(Model):
         return calculate_uq(gp_score, self.uq_threshold)
 
     def _get_gp_score(self, context: Context, address: str) -> float:
-        antisybil_status = self.antisybil.get_antisybil_status(context, address)
-        if antisybil_status is None:
+        passport_status = self.passport.get_antisybil_status(context, address)
+        if passport_status is None:
             return 0.0
-        return antisybil_status[0]
+        return passport_status[0]

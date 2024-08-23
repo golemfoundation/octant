@@ -34,6 +34,7 @@ from app.modules.user.allocations.service.pending import (
 )
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.antisybil.service.passport import GitcoinPassportAntisybil
+from app.modules.user.antisybil.service.holonym import HolonymAntisybil
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.deposits.service.contract_balance import (
@@ -141,7 +142,8 @@ def test_pending_services_factory():
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(),
+        passport=GitcoinPassportAntisybil(),
+        holonym=HolonymAntisybil(),
         budgets=saved_user_budgets,
         uq_threshold=UQ_THRESHOLD_MAINNET,
     )

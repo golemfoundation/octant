@@ -21,7 +21,7 @@ HASH3 = "93bf4d5bb695b96edd45c0d4eae59fe3f5ecc657f7137407288fd82834476a0b"
 def upgrade():
     if op.get_bind().engine.name == "sqlite":
         return
-    query = f"UPDATE score_delegation SET created_at = make_date(2024, 7, 17) WHERE hashed_addr IN ('{HASH1}', '{HASH2}', '{HASH3}');"
+    query = f"UPDATE score_delegation SET created_at = '2024-07-17T00:00:01.000000' WHERE hashed_addr IN ('{HASH1}', '{HASH2}', '{HASH3}');"
     op.execute(query)
 
 

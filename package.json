@@ -25,7 +25,7 @@
     "apitest:logs": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml logs",
     "apitest:run": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml run backend-apitest",
     "apitest:clean": "docker rm -v -f $(docker ps -qa --filter 'name=apitest') || true",
-    "preapitest:up": "yarn apitest:clean",
+    "preapitest:up": "yarn apitest:clean; rm -f backend/dev.db",
     "preapitest:run": "yarn localenv:build-backend"
   },
   "repository": {

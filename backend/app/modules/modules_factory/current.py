@@ -41,6 +41,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from app.modules.user.antisybil.service.passport import GitcoinPassportAntisybil
+from app.modules.user.antisybil.service.holonym import HolonymAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -56,6 +57,7 @@ class CurrentServices(Model):
     user_deposits_service: CurrentUserDeposits
     user_tos_service: UserTos
     user_antisybil_passport_service: GitcoinPassportAntisybil
+    user_antisybil_holonym_service: HolonymAntisybil
     octant_rewards_service: OctantRewards
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
@@ -98,6 +100,7 @@ class CurrentServices(Model):
         user_allocations_nonce = SavedUserAllocationsNonce()
         user_withdrawals = FinalizedWithdrawals()
         user_antisybil_passport_service = GitcoinPassportAntisybil()
+        user_antisybil_holonym_service = HolonymAntisybil()
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
@@ -129,7 +132,8 @@ class CurrentServices(Model):
         )
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
+            passport=user_antisybil_passport_service,
+            holonym=user_antisybil_holonym_service,
             budgets=user_budgets,
             uq_threshold=uq_threshold,
         )
@@ -143,6 +147,7 @@ class CurrentServices(Model):
             multisig_signatures_service=multisig_signatures,
             user_tos_service=user_tos,
             user_antisybil_passport_service=user_antisybil_passport_service,
+            user_antisybil_holonym_service=user_antisybil_holonym_service,
             projects_metadata_service=StaticProjectsMetadataService(),
             user_budgets_service=user_budgets,
             score_delegation_service=score_delegation,

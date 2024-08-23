@@ -41,6 +41,7 @@ from app.modules.user.allocations.service.pending import (
 from app.modules.user.antisybil.service.passport import (
     GitcoinPassportAntisybil,
 )
+from app.modules.user.antisybil.service.holonym import HolonymAntisybil
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
@@ -99,7 +100,8 @@ class PendingServices(Model):
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
+            passport=GitcoinPassportAntisybil(),
+            holonym=HolonymAntisybil(),
             budgets=saved_user_budgets,
             uq_threshold=uq_threshold,
         )

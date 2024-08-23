@@ -27,6 +27,10 @@ user_antisybil_status_model = api.model(
         "expires_at": fields.String(
             required=False, description="Expiry date, unix timestamp"
         ),
+        "holonym": fields.String(
+            required=False,
+            description="True, if user has Holonym SBT",
+        ),
         "score": fields.String(
             required=False,
             description="Score, parses as a float",
@@ -192,12 +196,14 @@ class AntisybilStatus(OctantResource):
     @ns.response(200, "User's cached antisybil status retrieved")
     def get(self, user_address: str):
         app.logger.debug(f"Getting user {user_address} cached antisybil status")
+
         antisybil_status = get_user_antisybil_status(user_address)
         app.logger.debug(f"User {user_address} antisybil status: {antisybil_status}")
         if antisybil_status is None:
             return {"status": "Unknown"}, 404
-        score, expires_at = antisybil_status
+        (score, expires_at), (has_sbt, _) = antisybil_status
         return {
+            "holonym": has_sbt,
             "status": "Known",
             "score": score,
             "expires_at": int(expires_at.timestamp()),
@@ -211,9 +217,11 @@ class AntisybilStatus(OctantResource):
     @ns.response(504, "Could not refresh antisybil status. Upstream is unavailable.")
     def put(self, user_address: str):
         app.logger.info(f"Updating user {user_address} antisybil status")
-        score, expires_at = update_user_antisybil_status(user_address)
+        status = update_user_antisybil_status(user_address)
+        app.logger.info(f"Got status for user {user_address} = {status}")
+        (score, expires_at), (has_sbt, _) = status
         app.logger.info(
-            f"User {user_address} antisybil status refreshed {[score, expires_at]}"
+            f"User {user_address} antisybil status refreshed {[score, has_sbt, expires_at]}"
         )
 
         return {}, 204
