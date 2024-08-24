@@ -925,6 +925,24 @@ class Client:
         rv = self._flask_client.get("/info/healthcheck")
         return json.loads(rv.text), rv.status_code
 
+    def delegate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.post(
+            "/delegation/delegate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
+
     @property
     def config(self):
         return self._flask_client.application.config
