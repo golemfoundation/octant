@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.59
+      targetRevision: 0.2.61
       chart: octant
       helm:
         parameters:
@@ -40,10 +40,6 @@ spec:
             value: '$NETWORK_NAME'
           - name: graphNode.graph.env.RPC_URL
             value: '$BACKEND_RPC_URL'
-          - name: graphNode.graph.env.GRAPHQL_MAX_FIRST
-            value: '100000'
-          - name: graphNode.graph.env.GRAPH_LOG
-            value: 'debug'
           - name: graphNode.graph.env.ETHEREUM_REORG_THRESHOLD
             value: '0'
           - name: graphHealtchecker.replicas

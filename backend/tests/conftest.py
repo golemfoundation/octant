@@ -901,8 +901,16 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
-    def get_user_history(self, user_address) -> tuple[dict, int]:
+    def get_user_history(self, user_address: str) -> tuple[dict, int]:
         rv = self._flask_client.get(f"/history/{user_address}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_uq(self, user_address: str, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/uq/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_all_uqs(self, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"user/uq/{epoch}/all")
         return json.loads(rv.text), rv.status_code
 
     def get_antisybil_score(self, user_address: str) -> (any, int):
