@@ -59,5 +59,49 @@ def test_delegation(client: Client, payload: ScoreDelegationPayload):
 
 
 @pytest.mark.api
-def test_check_in_delegation():
-    pass
+def test_recalculate_in_delegation(client: Client, payload: ScoreDelegationPayload):
+    """
+    Recalculation can actually return two different results:
+    - if the delegation does not exist, it will return 400
+    - if the delegation exists, i.e. secondary address exists in the database, it will return 400
+    it's due to the fact that the recalculation is already stoned for a secondary address in our implementation
+    """
+    client.move_to_next_epoch(STARTING_EPOCH + 1)
+    client.move_to_next_epoch(STARTING_EPOCH + 2)
+    client.move_to_next_epoch(STARTING_EPOCH + 3)
+
+    epoch_no = client.wait_for_sync(STARTING_EPOCH + 3)
+    app.logger.debug(f"indexed epoch: {epoch_no}")
+
+    database.user.add_user(USER1_ADDRESS)
+    database.user.add_user(USER2_ADDRESS)
+
+    # try to recalculate before delegation
+    data, status = client.delegation_recalculate(
+        primary_address=payload.primary_addr,
+        secondary_address=payload.secondary_addr,
+        primary_address_signature=payload.primary_addr_signature,
+        secondary_address_signature=payload.secondary_addr_signature,
+    )
+    assert data["message"] == "Delegation does not exists"
+    assert status == 400
+
+    # make a delegation
+    _, status = client.delegate(
+        primary_address=payload.primary_addr,
+        secondary_address=payload.secondary_addr,
+        primary_address_signature=payload.primary_addr_signature,
+        secondary_address_signature=payload.secondary_addr_signature,
+    )
+    assert status == 201
+
+    # recalculate after delegation
+    data, status = client.delegation_recalculate(
+        primary_address=payload.primary_addr,
+        secondary_address=payload.secondary_addr,
+        primary_address_signature=payload.primary_addr_signature,
+        secondary_address_signature=payload.secondary_addr_signature,
+    )
+
+    assert data["message"] == "Invalid recalculation request"
+    assert status == 400
