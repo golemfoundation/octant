@@ -9,8 +9,10 @@ import {
   checkProjectsViewLoaded,
   changeMainValueToFiat,
 } from 'cypress/utils/e2e';
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
@@ -22,6 +24,30 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 chai.use(chaiColors);
+
+describe('move time', () => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
+
+  it('allocation window is open, when it is not, move time', () => {
+    setupAndMoveToPlayground();
+
+    cy.window().then(async win => {
+      moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
+        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+        expect(isDecisionWindowOpenAfter).to.be.true;
+      });
+    });
+  });
+});
 
 function checkProjectItemElements(index, name, isPatronMode = false): Chainable<any> {
   cy.get('[data-test^=ProjectsView__ProjectsListItem')
