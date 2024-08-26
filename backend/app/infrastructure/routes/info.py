@@ -2,9 +2,9 @@ from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
-from app.legacy.controllers import info, snapshots
-from app.extensions import api, w3, epochs
-from app.infrastructure import OctantResource, graphql
+from app.legacy.controllers import info
+from app.extensions import api
+from app.infrastructure import OctantResource
 
 ns = Namespace("info", description="Information about Octant's backend API")
 api.add_namespace(ns)
@@ -82,25 +82,10 @@ sync_status_model = api.model(
 @ns.doc(description="Returns synchronization status for indexer and database")
 class IndexedEpoch(OctantResource):
     @ns.marshal_with(sync_status_model)
-    @ns.response(200, "Current epoch successfully retrieved")
+    @ns.response(200, "All services are up and syncing")
+    @ns.response(500, "Some services are down, sync status unknown")
     def get(self):
-        sg_result = graphql.epochs.get_epochs()
-        sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
-        sg_height = sg_result["_meta"]["block"]["number"]
-
-        finalized_status = snapshots.get_finalized_snapshot_status()
-        pending_status = snapshots.get_pending_snapshot_status()
-
-        b_epoch = epochs.get_current_epoch()
-        block = w3.eth.get_block("latest")
-        return {
-            "blockchainEpoch": b_epoch,
-            "indexedEpoch": sg_epochs[-1:][0]["epoch"] if sg_epochs else 0,
-            "blockchainHeight": block["number"],
-            "indexedHeight": sg_height,
-            "pendingSnapshot": pending_status,
-            "finalizedSnapshot": finalized_status,
-        }
+        return info.sync_status()
 
 
 @ns.route("/websockets-api")

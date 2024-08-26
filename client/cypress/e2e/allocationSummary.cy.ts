@@ -41,7 +41,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         body: {
           allocations: [
             {
-              address: '0x52C45Bab6d0827F44a973899666D9Cd18Fd90bCF',
+              address: '0x15c941a44a343B8c46a28F2BB9aFc7a54E255A4f',
               amount: '5000000000000000',
             },
             {
