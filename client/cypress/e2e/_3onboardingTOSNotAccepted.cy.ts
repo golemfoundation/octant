@@ -10,7 +10,7 @@ import {
   checkChangeStepsWithArrowKeys,
   checkCurrentElement,
   checkProgressStepperSlimIsCurrentAndClickNext,
-  connectWallet,
+  connectWalletOnboarding,
 } from 'cypress/utils/onboarding';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
@@ -21,21 +21,14 @@ import {
 
 chai.use(chaiColors);
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }, index, arr) => {
   describe(`onboarding (TOS not accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       beforeSetup();
     });
 
     beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'POST',
-          url: '/user/*/tos',
-        },
-        { body: { accepted: true }, statusCode: 200 },
-      );
-      connectWallet(false);
+      connectWalletOnboarding();
     });
 
     after(() => {
@@ -95,22 +88,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px(false);
     });
 
-    it('TOS acceptance changes onboarding step to next step', () => {
-      checkCurrentElement(0, true);
-      cy.get('[data-test=TOS_InputCheckbox]').check();
-      cy.switchToMetamaskNotification();
-      cy.confirmMetamaskSignatureRequest();
-      checkCurrentElement(1, true);
-    });
-
-    it('TOS acceptance allows the user to close the modal by clicking button in the top-right', () => {
-      checkCurrentElement(0, true);
-      cy.get('[data-test=TOS_InputCheckbox]').check();
-      cy.switchToMetamaskNotification();
-      cy.confirmMetamaskSignatureRequest();
-      checkCurrentElement(1, true);
-      cy.get('[data-test=ModalOnboarding__Button]').click();
-      cy.get('[data-test=ModalOnboarding]').should('not.exist');
-    });
+    if (index === arr.length - 1) {
+      it('TOS acceptance changes onboarding step to next step and allows the user to close the modal by clicking button in the top-right', () => {
+        checkCurrentElement(0, true);
+        cy.get('[data-test=TOS_InputCheckbox]').check();
+        cy.switchToMetamaskNotification();
+        cy.confirmMetamaskSignatureRequest();
+        checkCurrentElement(1, true);
+        cy.get('[data-test=ModalOnboarding__Button]').click();
+        cy.get('[data-test=ModalOnboarding]').should('not.exist');
+      });
+    }
   });
 });

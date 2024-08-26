@@ -11,12 +11,15 @@ import {
   checkChangeStepsBySwipingOnScreenDifferenceMoreThanOrEqual5px,
   checkChangeStepsWithArrowKeys,
   checkProgressStepperSlimIsCurrentAndClickNext,
-  connectWallet,
+  connectWalletOnboarding,
 } from 'cypress/utils/onboarding';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
-import { getStepsDecisionWindowOpen } from 'src/hooks/helpers/useOnboardingSteps/steps';
+import {
+  getStepsDecisionWindowClosed,
+  getStepsDecisionWindowOpen,
+} from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
@@ -53,7 +56,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
     beforeEach(() => {
       cy.clearLocalStorage();
-      connectWallet(true);
+      connectWalletOnboarding();
     });
 
     after(() => {
@@ -61,18 +64,26 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('user is able to click through entire onboarding flow', () => {
-      const onboardingSteps = getStepsDecisionWindowOpen('2', '16 Jan');
+      cy.window().then(win => {
+        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
 
-      for (let i = 1; i < onboardingSteps.length - 1; i++) {
-        checkProgressStepperSlimIsCurrentAndClickNext(i);
-      }
+        const onboardingSteps = isDecisionWindowOpen
+          ? getStepsDecisionWindowOpen('2', '16 Jan')
+          : getStepsDecisionWindowClosed('2', '16 Jan');
 
-      cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
-        .eq(onboardingSteps.length - 1)
-        .click();
-      cy.get('[data-test=ModalOnboarding__Button]').click();
-      cy.get('[data-test=ModalOnboarding]').should('not.exist');
-      cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
+        for (let i = 1; i < onboardingSteps.length - 1; i++) {
+          checkProgressStepperSlimIsCurrentAndClickNext(i);
+        }
+
+        cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
+          .eq(onboardingSteps.length - 1)
+          .click();
+        cy.get('[data-test=ModalOnboarding__Button]').click();
+        cy.get('[data-test=ModalOnboarding]').should('not.exist');
+        cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
+      });
     });
 
     it('user is able to close the modal by clicking button in the top-right', () => {
@@ -89,7 +100,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.reload();
       // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
       cy.disconnectMetamaskWalletFromAllDapps();
-      connectWallet(true);
+      connectWalletOnboarding();
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
     });
 

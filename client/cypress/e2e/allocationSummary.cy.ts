@@ -52,7 +52,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           isManuallyEdited: true,
         },
       });
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
     });
 
     after(() => {
