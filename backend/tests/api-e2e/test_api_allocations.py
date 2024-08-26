@@ -49,7 +49,9 @@ def test_allocations(
     assert len(unique_proposals) == 3
 
 
-def _check_allocations_logic(client: Client, ua_alice: UserAccount, target_pending_epoch: int):
+def _check_allocations_logic(
+    client: Client, ua_alice: UserAccount, target_pending_epoch: int
+):
     alice_proposals = get_projects_addresses(1)[:3]
 
     i = 0
