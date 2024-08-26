@@ -27,7 +27,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const {
     data: projectIpfs,
     isFetching: isFetchingProjectIpfs,
-    // isAnyIpfsError,
+    isAnyIpfsError,
   } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
@@ -78,7 +78,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   return (
     <div className={styles.root} data-test="AllocationSummaryProject">
-      {isFetchingProjectIpfs ? null : ( // || isAnyIpfsError
+      {isFetchingProjectIpfs || isAnyIpfsError ? null : (
         <>
           <div className={styles.leftSection}>
             <div className={styles.name}>{projectIpfs[0].name}</div>
