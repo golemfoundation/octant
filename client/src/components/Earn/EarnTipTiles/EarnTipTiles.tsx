@@ -15,8 +15,10 @@ import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useTipsStore from 'store/tips/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
+import styles from './EarnTipTiles.module.scss';
+
 const EarnTipTiles = (): ReactElement => {
-  const { t, i18n } = useTranslation('translation', {
+  const { t } = useTranslation('translation', {
     keyPrefix: 'views.earn.tips',
   });
   const { isConnected } = useAccount();
@@ -75,37 +77,35 @@ const EarnTipTiles = (): ReactElement => {
     <Fragment>
       <TipTile
         image={isDesktop ? 'images/lock-glm-desktop.webp' : 'images/lock-glm-mobile.webp'}
-        infoLabel={i18n.t('common.gettingStarted')}
+        imageClassName={styles.lockGlmImage}
         isOpen={isLockGlmTipVisible}
         onClose={() => setWasLockGLMAlreadyClosed(true)}
-        text={t('lockGlm.text')}
+        text={t(isDesktop ? 'lockGlm.text.desktop' : 'lockGlm.text.mobile')}
         title={t('lockGlm.title')}
       />
       <TipTile
         dataTest="EarnView__TipTile--connectWallet"
         image="images/tip-connect-wallet.webp"
-        infoLabel={i18n.t('common.gettingStarted')}
+        imageClassName={styles.connectWalletImage}
         isOpen={isConnectWalletTipVisible}
         onClose={() => setWasConnectWalletAlreadyClosed(true)}
-        text={t('connectWallet.text')}
+        text={t(isDesktop ? 'connectWallet.text.desktop' : 'connectWallet.text.mobile')}
         title={t(isDesktop ? 'connectWallet.title.desktop' : 'connectWallet.title.mobile')}
       />
       <TipTile
         image="images/tip-withdraw.webp"
-        infoLabel={i18n.t('common.gettingStarted')}
+        imageClassName={styles.withdrawImage}
         isOpen={isWithdrawTipVisible}
         onClose={() => setWasWithdrawAlreadyClosed(true)}
-        text={t('withdrawEth.text')}
+        text={t(isDesktop ? 'withdrawEth.text.desktop' : 'withdrawEth.text.mobile')}
         title={t('withdrawEth.title')}
       />
       <TipTile
         image="images/funds_swept.webp"
-        infoLabel={i18n.t('common.octantTips')}
+        imageClassName={styles.allocateYourRewardsImage}
         isOpen={isAllocateRewardsTipVisible}
         onClose={() => setWasAllocateRewardsAlreadyClosed(true)}
-        text={
-          isDesktop ? t('allocateYourRewards.textDesktop') : t('allocateYourRewards.textMobile')
-        }
+        text={t(isDesktop ? 'allocateYourRewards.text.desktop' : 'allocateYourRewards.text.mobile')}
         title={t('allocateYourRewards.title')}
       />
     </Fragment>

@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
@@ -16,13 +17,14 @@ const TipTile: React.FC<TipTileProps> = ({
   className,
   dataTest = 'TipTile',
   image,
-  infoLabel,
+  imageClassName,
   isOpen,
   onClose,
   onClick,
   text,
   title,
 }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'common' });
   const { isDesktop } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
   const shouldSkipEntranceAnimation = useRef(isOpen);
@@ -50,7 +52,13 @@ const TipTile: React.FC<TipTileProps> = ({
           initial={
             shouldSkipEntranceAnimation.current
               ? {
-                  height: '22.4rem',
+                  /**
+                   * This value does not change dynamically.
+                   * Whenever viewport changes reload of the component is required to see new height.
+                   * This is not a huge issue as actual viewport changes does not occur often
+                   * in real life scenarios.
+                   */
+                  height: isDesktop ? '22.4rem' : '20rem',
                   marginBottom: '1.6rem',
                   opacity: 1,
                 }
@@ -66,18 +74,20 @@ const TipTile: React.FC<TipTileProps> = ({
             stiffness: 800,
           }}
         >
-          <div>
+          <div className={styles.content}>
             <div className={styles.info}>
               <Svg img={info} size={3.2} />
-              <div className={styles.infoLabel}>{infoLabel}</div>
+              <div className={styles.infoLabel}>{t('gettingStarted')}</div>
             </div>
             <div className={styles.body}>
-              <div className={styles.title}>{title}</div>
-              <div className={styles.text}>{text}</div>
+              <div className={styles.titleAndText}>
+                <div className={styles.title}>{title}</div>
+                <div className={styles.text}>{text}</div>
+              </div>
+              <div className={styles.imageWrapper}>
+                <Img className={cx(styles.image, imageClassName)} src={image} />
+              </div>
             </div>
-          </div>
-          <div className={styles.imageWrapper}>
-            <Img className={styles.image} src={image} />
           </div>
           <Button
             className={styles.buttonClose}
