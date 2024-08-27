@@ -60,6 +60,13 @@
         "reopenOnboarding": "Reopen onboarding"
       }
     },
+    "home": {
+"homeRewards": {
+  "currentRewards": "Current rewards",
+  "totalRewards":"Total rewards",
+  "rewardsRate": "Rewards rate"
+}
+    },
     "settings": {
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
@@ -351,6 +358,9 @@
     }
   },
   "views": {
+    "home": {
+      "title": "Welcome to Epoch {{epoch}}"
+    },
     "allocation": {
       "lowUQScoreModal": {
         "header": "Your UQ score is too low!",
