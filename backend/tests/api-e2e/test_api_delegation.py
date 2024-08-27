@@ -58,10 +58,12 @@ def test_delegation(client: Client, payload: ScoreDelegationPayload):
     assert float(delegatee_score["score"]) == float(delegator_score["score"])
 
     # check if the secondary address is actually used off
-    resp, code = client.delegate(primary_address=payload.primary_addr,
-                                 secondary_address=payload.secondary_addr,
-                                 primary_address_signature=payload.primary_addr_signature,
-                                 secondary_address_signature=payload.secondary_addr_signature, )
+    resp, code = client.delegate(
+        primary_address=payload.primary_addr,
+        secondary_address=payload.secondary_addr,
+        primary_address_signature=payload.primary_addr_signature,
+        secondary_address_signature=payload.secondary_addr_signature,
+    )
 
     assert code == 400
     assert resp["message"] == "Delegation already exists"
