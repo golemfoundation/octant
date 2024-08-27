@@ -65,7 +65,7 @@ const MetricsEpoch = (): ReactElement => {
     useEpochUnusedRewards(epoch);
 
   const ethBelowThreshold =
-    projectRewardsThreshold === undefined
+    projectRewardsThreshold === undefined || projectsDonors === undefined
       ? BigInt(0)
       : Object.values(projectsDonors).reduce((acc, curr) => {
           const projectSumOfDonations = curr.reduce((acc2, curr2) => {

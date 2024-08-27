@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MarkSeries, XYPlot, ArcSeries, Hint } from 'react-vis';
+
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
 import styles from './PieChart.module.scss';
 import { PieChartProps } from './types';
@@ -9,8 +11,10 @@ import { getPieChartData } from './utils';
 const RADIUS = 72;
 
 const PieChart: FC<PieChartProps> = ({ data, isLoading }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [point, setPoint] = useState<any>();
   const [activeTargetId, setActiveTargetId] = useState();
+  const { isDesktop } = useMediaQuery();
 
   const pieChartData = getPieChartData(data, RADIUS);
 
@@ -19,18 +23,25 @@ const PieChart: FC<PieChartProps> = ({ data, isLoading }) => {
     [],
   );
 
-  const handleOnValueMouseOverArcSeries = useCallback((datapoint, e) => {
-    setPoint({
-      ...datapoint,
-      angle: Math.abs(datapoint.angle - 0.5 * Math.PI),
-      angle0: Math.abs(datapoint.angle0 - 0.5 * Math.PI),
-    });
-    e.event.target.classList.add(styles.dataCirclePath__isActive);
-    e.event.target.id = datapoint.id;
-    setActiveTargetId(datapoint.id);
-  }, []);
+  const showDatapoint = useCallback(
+    (datapoint, e) => {
+      setPoint({
+        ...datapoint,
+        ...(isDesktop
+          ? {
+              angle: Math.abs(datapoint.angle - 0.5 * Math.PI),
+              angle0: Math.abs(datapoint.angle0 - 0.5 * Math.PI),
+            }
+          : {}),
+      });
+      e.event.target.classList.add(styles.dataCirclePath__isActive);
+      e.event.target.id = datapoint.id;
+      setActiveTargetId(datapoint.id);
+    },
+    [isDesktop],
+  );
 
-  const handleOnValueMouseOutArcSeries = useCallback(
+  const hideDatapoint = useCallback(
     (_datapoint, e) => {
       const nextTarget = document.elementFromPoint(e.event.clientX, e.event.clientY);
       if (nextTarget?.tagName === 'circle' || activeTargetId === nextTarget?.id) {
@@ -66,12 +77,29 @@ const PieChart: FC<PieChartProps> = ({ data, isLoading }) => {
     [],
   );
 
+  useEffect(() => {
+    if (isDesktop) {
+      return;
+    }
+
+    const listener = e => {
+      if ((ref.current && ref.current.contains(e.target)) || !point) {
+        return;
+      }
+      setPoint(null);
+    };
+
+    document.addEventListener('click', listener);
+
+    return () => document.removeEventListener('click', listener);
+  }, [isDesktop, point]);
+
   if (!pieChartData) {
     return null;
   }
 
   return (
-    <div className={styles.root}>
+    <div ref={ref} className={styles.root}>
       <XYPlot
         height={169}
         margin={0}
@@ -121,8 +149,26 @@ const PieChart: FC<PieChartProps> = ({ data, isLoading }) => {
             arcClassName={styles.dataCirclePath}
             colorType="literal"
             data={pieChartData}
-            onValueMouseOut={handleOnValueMouseOutArcSeries}
-            onValueMouseOver={handleOnValueMouseOverArcSeries}
+            getX={datapoint => {
+              if (!datapoint.x) {
+                return 0;
+              }
+              return getX(datapoint);
+            }}
+            getY={datapoint => {
+              if (!datapoint.y) {
+                return 0;
+              }
+              return getY(datapoint);
+            }}
+            onNearestXY={(datapoint, e) => {
+              if (isDesktop) {
+                return;
+              }
+              showDatapoint(datapoint, e);
+            }}
+            onValueMouseOut={hideDatapoint}
+            onValueMouseOver={isDesktop ? showDatapoint : undefined}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error lack of property in types
             padAngle={(2 * Math.PI) / 100}

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import datetime
+from http import HTTPStatus
 import json
+import logging
 import os
 import time
 import urllib.error
@@ -75,6 +77,8 @@ from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
+
+LOGGER = logging.getLogger("app")
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
@@ -528,19 +532,29 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
-def setup_deployment() -> dict[str, str]:
+def setup_deployment(test_name: str) -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
-    testname = f"octant_test_{random_string()}"
+    env_name = f"octant_test_{random_string()}"
+    LOGGER.debug(f"test {test_name}, environment name: {env_name}")
     try:
-        f = urllib.request.urlopen(f"{deployer}/?name={testname}")
+        f = urllib.request.urlopen(f"{deployer}/?name={env_name}")
+        time.sleep(10)
         deployment = f.read().decode().split("\n")
         deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
         return deployment
     except urllib.error.HTTPError as err:
-        current_app.logger.error(f"call to multideployer failed: {err}")
-        current_app.logger.error(f"multideployer failed: code is {err.code}")
-        current_app.logger.error(f"multideployer failed: msg is {err.msg}")
+        LOGGER.debug(f"call to multideployer failed: {err}")
+        LOGGER.debug(f"multideployer failed: code is {err.code}")
+        LOGGER.debug(f"multideployer failed: msg is {err.msg}")
         raise err
+
+
+def teardown_deployment(test_name, subgraph_name):
+    deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
+    LOGGER.debug(
+        f"calling multideployer to teardown env {subgraph_name} for test {test_name}"
+    )
+    urllib.request.urlopen(f"{deployer}/remove?name={subgraph_name}")
 
 
 def random_string() -> str:
@@ -566,11 +580,11 @@ def flask_client(deployment) -> FlaskClient:
 
 
 @pytest.fixture(scope="function")
-def deployment(pytestconfig):
+def deployment(pytestconfig, request):
     """
     Deploy contracts and a subgraph under a single-use name.
     """
-    envs = setup_deployment()
+    envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
@@ -590,6 +604,7 @@ def deployment(pytestconfig):
         "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     )
     yield conf
+    teardown_deployment(request.node.name, graph_name)
 
 
 class UserAccount:
@@ -681,29 +696,36 @@ class Client:
     def root(self):
         return self._flask_client.get("/").text
 
-    def get_chain_info(self) -> tuple[dict, int]:
-        rv = self._flask_client.get("/info/chain-info")
-        return json.loads(rv.text), rv.status_code
-
-    def get_healthcheck(self) -> tuple[dict, int]:
-        rv = self._flask_client.get("/info/healthcheck")
-        return json.loads(rv.text), rv.status_code
-
-    def get_version(self) -> tuple[dict, int]:
-        rv = self._flask_client.get("/info/version")
-        return json.loads(rv.text), rv.status_code
-
-    def sync_status(self) -> tuple[dict, int]:
+    def sync_status(self):
         rv = self._flask_client.get("/info/sync-status")
         return json.loads(rv.text), rv.status_code
 
-    def wait_for_sync(self, target):
+    def wait_for_sync(self, target, timeout_s=20, check_interval=0.5):
+        timeout = datetime.timedelta(seconds=timeout_s)
+        start = datetime.datetime.now()
         while True:
-            res, _ = self.sync_status()
+            res = {}
+            try:
+                res, status_code = self.sync_status()
+                current_app.logger.debug(f"sync_status returns {res}")
+                current_app.logger.debug(
+                    f"sync_status http status code is {status_code}"
+                )
+                assert status_code == HTTPStatus.OK
+            except Exception as exp:
+                current_app.logger.warning(
+                    f"Request to /info/sync-status returned {exp}"
+                )
+                if datetime.datetime.now() - start > timeout:
+                    raise TimeoutError(
+                        f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)"
+                    )
+                time.sleep(check_interval)
+                continue
+
             if res["indexedEpoch"] == res["blockchainEpoch"]:
                 if res["indexedEpoch"] == target:
                     return
-            time.sleep(0.5)
 
     def wait_for_height_sync(self):
         while True:
@@ -780,12 +802,8 @@ class Client:
         return json.loads(rv.text), rv.status_code
 
     def get_rewards_budget(self, address: str, epoch: int):
-        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        current_app.logger.debug(
-            "get_rewards_budget :",
-            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
-        )
-        return json.loads(rv)
+        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
+        return json.loads(rv.text)
 
     def get_withdrawals_for_address(self, address: str):
         rv = self._flask_client.get(f"/withdrawals/{address}").text
@@ -884,6 +902,18 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
+    def get_user_history(self, user_address: str) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/history/{user_address}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_uq(self, user_address: str, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/uq/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_all_uqs(self, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"user/uq/{epoch}/all")
+        return json.loads(rv.text), rv.status_code
+
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
         return json.loads(rv.text), rv.status_code
@@ -891,6 +921,36 @@ class Client:
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
         return rv.text, rv.status_code
+
+    def get_chain_info(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/chain-info")
+        return json.loads(rv.text), rv.status_code
+
+    def get_version(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/version")
+        return json.loads(rv.text), rv.status_code
+
+    def get_healthcheck(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
+
+    def delegate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.post(
+            "/delegation/delegate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
 
     @property
     def config(self):
@@ -903,12 +963,7 @@ def client(flask_client: FlaskClient) -> Client:
     for i in range(1, STARTING_EPOCH + 1):
         if i != 1:
             client.move_to_next_epoch(i)
-        while True:
-            res, _ = client.sync_status()
-            if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
-                i - 1
-            ):
-                break
+        client.wait_for_sync(i, timeout_s=60)
     return client
 
 

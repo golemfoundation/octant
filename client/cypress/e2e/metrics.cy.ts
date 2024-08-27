@@ -14,7 +14,7 @@ import {
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
-  connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+  connectWallet({ isPatronModeEnabled: false });
   if (!isCryptoAsAMainValue) {
     changeMainValueToFiat(ROOT_ROUTES.metrics.absolute);
   }

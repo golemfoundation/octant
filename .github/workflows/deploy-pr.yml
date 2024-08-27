@@ -41,6 +41,7 @@ jobs:
       anvil-block-time: 5
       decision-window: 1800
       epoch-duration: 3600
+      ipfs-gateways: 'https://ipfs.octant.wildland.dev/ipfs/'
     secrets: inherit
 
   run:

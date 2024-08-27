@@ -1,4 +1,4 @@
-import React, { FC, Fragment, memo, useMemo } from 'react';
+import React, { FC, Fragment, useMemo } from 'react';
 
 import ProjectDonors from 'components/Project/ProjectDonors';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
@@ -6,6 +6,7 @@ import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
 
 import styles from './ProjectListItem.module.scss';
@@ -19,9 +20,13 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
   website,
   index,
   epoch,
-  totalValueOfAllocations,
-  numberOfDonors,
 }) => {
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
+  const projectIpfsWithRewards = projectsIpfsWithRewards.find(p => p.address === address);
+  // loadedProjects (ProjectView) aren't updated during changes in open AW
+  // to provide live updates, the following values are taken directly from projectsIpfsWithRewards
+  const numberOfDonors = projectIpfsWithRewards?.numberOfDonors || 0;
+  const totalValueOfAllocations = projectIpfsWithRewards?.totalValueOfAllocations || 0n;
   const { data: currentEpoch } = useCurrentEpoch();
   const isEpoch1 = currentEpoch === 1;
 
@@ -66,4 +71,4 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
   );
 };
 
-export default memo(ProjectListItem);
+export default ProjectListItem;
