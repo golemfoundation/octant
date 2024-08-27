@@ -45,7 +45,7 @@ def check(
         results[cred] = _call(address, cred)
 
     has_sbt = any(results.values())
-    sbt_type = list({k: v for k, v in results.items() if v}.keys())
+    sbt_type = [k for k, v in results.items() if v]
     return has_sbt, sbt_type
 
 
