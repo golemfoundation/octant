@@ -23,12 +23,6 @@ api = Api(
     description="Octant REST API documentation",
     catch_all_404s=True,
 )
-# from flask import current_app as app
-
-# socketio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*", logger=True)
-
-# async_mode="asgi", cors_allowed_origins="*", client_manager=mgr
-# )
 socketio = SocketIO(cors_allowed_origins="*")
 db = SQLAlchemy()
 migrate = Migrate()
