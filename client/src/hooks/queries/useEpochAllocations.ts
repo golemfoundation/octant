@@ -14,7 +14,7 @@ type EpochAllocations = EpochAllocation[];
 
 export default function useEpochAllocations(
   epoch: number,
-  options?: UseQueryOptions<Response, unknown, EpochAllocations, any>,
+  options?: Omit<UseQueryOptions<Response, unknown, EpochAllocations, any>, 'queryKey'>,
 ): UseQueryResult<EpochAllocations, unknown> {
   return useQuery({
     queryFn: ({ signal }) => apiGetEpochAllocations(epoch, signal),

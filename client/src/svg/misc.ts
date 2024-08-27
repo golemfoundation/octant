@@ -68,7 +68,7 @@ export const questionMark: SvgImageConfig = {
 
 export const info: SvgImageConfig = {
   markup:
-    '<circle cx="16" cy="16" r="11.5" stroke="#EBEBEB"/><path fill="#171717" d="M16 8.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z"/><path fill="#fff" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><circle cx="1" cy="1" r="1" fill="#fff" transform="matrix(1 0 0 -1 14.5 13.25)"/>',
+    '<circle cx="16" cy="16" r="11.5" stroke="#EBEBEB"/><path fill="#CDD1CD" d="M16 8.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z"/><path fill="#fff" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><circle cx="1" cy="1" r="1" fill="#fff" transform="matrix(1 0 0 -1 14.5 13.25)"/>',
   viewBox: '0 0 32 32',
 };
 

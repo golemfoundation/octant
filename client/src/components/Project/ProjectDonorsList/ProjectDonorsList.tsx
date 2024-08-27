@@ -6,7 +6,7 @@ import ProjectDonorsListItem from 'components/Project/ProjectDonorsListItem';
 import ProjectDonorsListSkeletonItem from 'components/Project/ProjectDonorsListSkeletonItem';
 import ProjectDonorsListTotalDonated from 'components/Project/ProjectDonorsListTotalDonated';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
-import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
+import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import styles from './ProjectDonorsList.module.scss';
@@ -23,10 +23,10 @@ const ProjectDonorsList: FC<ProjectDonorsListProps> = ({
 
   const epochNumber = parseInt(epoch!, 10);
 
-  const { data: projectDonors, isFetching } = useProjectDonors(
-    projectAddress,
+  const { data: projectsDonors, isFetching } = useProjectsDonors(
     epochNumber === currentEpoch ? undefined : epochNumber,
   );
+  const projectDonors = projectsDonors?.[projectAddress];
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
