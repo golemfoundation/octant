@@ -144,7 +144,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('Wallet address is clickable and has href attribute', () => {
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
       cy.get('[data-test=ProfileInfo]').click();
       cy.get('[data-test=LayoutWallet__Button--address]').should('be.visible');
       cy.get('[data-test=LayoutWallet__Button--address]').should('have.attr', 'href');

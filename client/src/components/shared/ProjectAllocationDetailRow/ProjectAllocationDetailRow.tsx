@@ -15,17 +15,17 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
   isLoading,
 }) => {
   const { ipfsGateways } = env;
-  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs(
-    [address],
-    epoch,
-    !isLoading,
-  );
+  const {
+    data: projectIpfs,
+    isFetching: isFetchingProjectIpfs,
+    isAnyIpfsError,
+  } = useProjectsIpfs([address], epoch, !isLoading);
 
   const getValuesToDisplay = useGetValuesToDisplay();
 
   return (
     <div className={styles.root}>
-      {isLoading || isFetchingProjectIpfs ? (
+      {isLoading || isFetchingProjectIpfs || isAnyIpfsError ? (
         <div className={styles.skeleton} />
       ) : (
         <Fragment>
