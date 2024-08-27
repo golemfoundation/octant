@@ -7,8 +7,9 @@ from tests.conftest import Client, UserAccount
 
 @pytest.mark.api
 def test_holonym(client: Client):
-    # check status for a known address with SBT before caching
     address_with_sbt = "0x76273DCC41356e5f0c49bB68e525175DC7e83417"
+
+    # check status for a known address with SBT before caching
     database.user.add_user(address_with_sbt)
     _, code = client.get_antisybil_score(address_with_sbt)
     assert code == 404  # score for this user is not cached

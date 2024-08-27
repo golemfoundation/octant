@@ -9,6 +9,7 @@ from app.exceptions import (
 )
 from app.infrastructure import database
 from app.modules.dto import ScoreDelegationPayload
+from app.modules.user.antisybil.service.passport import GitcoinAntisybilDTO
 from app.modules.score_delegation.service.simple_obfuscation import (
     SimpleObfuscationDelegation,
     SimpleObfuscationDelegationVerifier,
@@ -39,8 +40,10 @@ def test_delegation(
     user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        20,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(
+            score=20,
+            expires_at="4024-05-22T14:46:46.810800+00:00",
+        ),
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
@@ -59,8 +62,10 @@ def test_delegation_disabled_when_secondary_is_locking(
     user_deposits = CalculatedUserDeposits(events_generator=mock_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        20,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(
+            score=20,
+            expires_at="4024-05-22T14:46:46.810800+00:00",
+        ),
         ["stamp"],
     )
     payload = ScoreDelegationPayload(
@@ -83,8 +88,10 @@ def test_disable_recalculation_when_secondary_address_is_used(
     user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        20,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(
+            score=20,
+            expires_at="4024-05-22T14:46:46.810800+00:00",
+        ),
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
@@ -93,8 +100,7 @@ def test_disable_recalculation_when_secondary_address_is_used(
     service.delegate(context, payload)
 
     antisybil.fetch_antisybil_status.return_value = (
-        25,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(score=25, expires_at="4024-05-22T14:46:46.810800+00:00"),
         ["stamp"],
     )
     payload = ScoreDelegationPayload(
@@ -115,8 +121,7 @@ def test_recalculation_when_delegation_is_not_done(
     user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        20,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(score=20, expires_at="4024-05-22T14:46:46.810800+00:00"),
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
@@ -125,8 +130,7 @@ def test_recalculation_when_delegation_is_not_done(
     service.delegate(context, payload)
 
     antisybil.fetch_antisybil_status.return_value = (
-        25,
-        "4024-05-22T14:46:46.810800+00:00",
+        GitcoinAntisybilDTO(25, "4024-05-22T14:46:46.810800+00:00"),
         ["stamp"],
     )
     payload = ScoreDelegationPayload(

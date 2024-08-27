@@ -190,23 +190,24 @@ class PatronMode(OctantResource):
 )
 class AntisybilStatus(OctantResource):
     @ns.doc(
-        description="Returns user's antisybil status.",
+        description="""Returns user's antisybil status.""",
     )
     @ns.marshal_with(user_antisybil_status_model)
     @ns.response(200, "User's cached antisybil status retrieved")
+    @ns.response(404, {"status": "Unknown"})
     def get(self, user_address: str):
         app.logger.debug(f"Getting user {user_address} cached antisybil status")
 
         antisybil_status = get_user_antisybil_status(user_address)
         app.logger.debug(f"User {user_address} antisybil status: {antisybil_status}")
-        if antisybil_status is None:
+        if antisybil_status == (None, None):
             return {"status": "Unknown"}, 404
-        (score, expires_at), (has_sbt, _) = antisybil_status
+        gitcoin, passport = antisybil_status
         return {
-            "holonym": has_sbt,
+            "holonym": passport.has_sbt if passport else None,
             "status": "Known",
-            "score": score,
-            "expires_at": int(expires_at.timestamp()),
+            "score": gitcoin.score if gitcoin else None,
+            "expires_at": int(gitcoin.expires_at.timestamp()) if gitcoin else None,
         }, 200
 
     @ns.doc(
@@ -219,9 +220,9 @@ class AntisybilStatus(OctantResource):
         app.logger.info(f"Updating user {user_address} antisybil status")
         status = update_user_antisybil_status(user_address)
         app.logger.info(f"Got status for user {user_address} = {status}")
-        (score, expires_at), (has_sbt, _) = status
+        passport, sbt = status
         app.logger.info(
-            f"User {user_address} antisybil status refreshed {[score, has_sbt, expires_at]}"
+            f"User {user_address} antisybil status refreshed {[passport.score, sbt.has_sbt, passport.expires_at]}"
         )
 
         return {}, 204

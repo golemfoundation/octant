@@ -1,6 +1,5 @@
-from datetime import datetime
 from decimal import Decimal
-from typing import Protocol, List, Optional, Tuple, runtime_checkable
+from typing import Protocol, Optional, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
@@ -9,13 +8,15 @@ from app.infrastructure.database.uniqueness_quotient import (
 )
 from app.modules.uq.core import calculate_uq
 from app.pydantic import Model
+from app.modules.user.antisybil.service.holonym import HolonymAntisybilDTO
+from app.modules.user.antisybil.service.passport import GitcoinAntisybilDTO
 
 
 @runtime_checkable
 class Passport(Protocol):
     def get_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[float, datetime]]:
+    ) -> Optional[GitcoinAntisybilDTO]:
         ...
 
 
@@ -23,7 +24,7 @@ class Passport(Protocol):
 class Holonym(Protocol):
     def get_sbt_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[bool, List[str]]]:
+    ) -> Optional[HolonymAntisybilDTO]:
         ...
 
 

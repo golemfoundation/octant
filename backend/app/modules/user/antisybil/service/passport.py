@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from flask import current_app as app
 
 from eth_utils.address import to_checksum_address
@@ -23,10 +24,16 @@ from app.infrastructure.external_api.gc_passport.score import (
 )
 
 
+@dataclass
+class GitcoinAntisybilDTO:
+    score: float
+    expires_at: datetime
+
+
 class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[float, datetime]]:
+    ) -> Optional[GitcoinAntisybilDTO]:
         user_address = to_checksum_address(user_address)
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
@@ -38,12 +45,12 @@ class GitcoinPassportAntisybil(Model):
         if score is not None:
             if user_address in GUEST_LIST and not _has_guest_stamp_applied_by_gp(score):
                 score.score = score.score + 21.0
-            return score.score, score.expires_at
+            return GitcoinAntisybilDTO(score=score.score, expires_at=score.expires_at)
         return None
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Tuple[float, datetime, any]:
+    ) -> Tuple[GitcoinAntisybilDTO, any]:
         score = issue_address_for_scoring(user_address)
 
         def _retry_fetch():
@@ -62,7 +69,10 @@ class GitcoinPassportAntisybil(Model):
             expires_at = _parse_expiration_date(
                 min([stamp["credential"]["expirationDate"] for stamp in valid_stamps])
             )
-        return float(score["score"]), expires_at, all_stamps
+        return (
+            GitcoinAntisybilDTO(score=float(score["score"]), expires_at=expires_at),
+            all_stamps,
+        )
 
     def update_antisybil_status(
         self,
