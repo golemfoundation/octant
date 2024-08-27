@@ -35,31 +35,6 @@ async def get_allocations_with_user_uqs(
 ) -> list[AllocationWithUserUQScore]:
     """Get all allocations for a given epoch, including the uniqueness quotients of the users."""
 
-    # result = await session.execute(
-    #     select(Allocation)
-    #     .filter(Allocation.epoch == epoch)
-    #     .filter(Allocation.deleted_at.is_(None))
-    #     .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
-    # )
-    # allocations = result.scalars().all()
-
-    # return [
-    #     AllocationWithUserUQScore(
-    #         project_address=a.project_address,
-    #         amount=int(a.amount),
-    #         user_address=a.user.address,
-    #         user_uq_score=next(
-    #             (
-    #                 uq.validated_score
-    #                 for uq in a.user.uniqueness_quotients
-    #                 if uq.epoch == epoch
-    #             ),
-    #             None,
-    #         ),
-    #     )
-    #     for a in allocations
-    # ]
-
     result = await session.execute(
         select(
             Allocation.project_address,
@@ -74,22 +49,6 @@ async def get_allocations_with_user_uqs(
         .filter(UniquenessQuotient.epoch == epoch_number)
     )
 
-    # result = await session.execute(
-    #     select(
-    #         Allocation.id.label('allocation_id'),
-    #         Allocation.amount.label('allocation_amount'),
-    #         User.id.label('user_id'),
-    #         User.name.label('user_name'),
-    #         UniquenessQuotient.id.label('uq_id'),
-    #         UniquenessQuotient.score.label('uq_score')
-    #     )
-    #     .join(User, Allocation.user_id == User.id)
-    #     .join(UniquenessQuotient, UniquenessQuotient.user_id == User.id)
-    #     .filter(Allocation.epoch == epoch_number)
-    #     .filter(Allocation.deleted_at.is_(None))
-    #     .filter(UniquenessQuotient.epoch == epoch_number)
-    # )
-
     rows = result.all()
 
     return [
@@ -101,36 +60,6 @@ async def get_allocations_with_user_uqs(
         )
         for project_address, amount, user_address, uq_score in rows
     ]
-
-
-# allocations = database.allocations.get_all_with_uqs(
-#     context.epoch_details.epoch_num
-# )
-
-# def get_all_allocations_with_uqs(epoch: int) -> List[AllocationDTO]:
-#     allocations = (
-#         Allocation.query.filter_by(epoch=epoch)
-#         .filter(Allocation.deleted_at.is_(None))
-#         .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
-#         .all()
-#     )
-
-#     return [
-#         AllocationDTO(
-#             amount=int(a.amount),
-#             project_address=a.project_address,
-#             user_address=a.user.address,
-#             uq_score=next(
-#                 (
-#                     uq.validated_score
-#                     for uq in a.user.uniqueness_quotients
-#                     if uq.epoch == epoch
-#                 ),
-#                 None,
-#             ),
-#         )
-#         for a in allocations
-#     ]
 
 
 async def soft_delete_user_allocations_by_epoch(
@@ -239,27 +168,3 @@ async def get_donations_by_project(
         )
         for a in allocations
     ]
-
-    # query: Query = Allocation.query.filter_by(
-    #     project_address=to_checksum_address(project_address), epoch=epoch
-    # ).options(joinedload(Allocation.user))
-
-    # if not with_deleted:
-    #     query = query.filter(Allocation.deleted_at.is_(None))
-
-    # return query.all()
-
-    # def get_allocations_by_project(
-    #     self, context: Context, project_address: str
-    # ) -> List[ProjectDonationDTO]:
-    #     allocations = database.allocations.get_all_by_project_addr_and_epoch(
-    #         project_address, context.epoch_details.epoch_num
-    #     )
-
-    #     return [
-    #         ProjectDonationDTO(
-    #             donor=a.user.address, amount=int(a.amount), project=project_address
-    #         )
-    #         for a in allocations
-    #         if int(a.amount) != 0
-    #     ]

@@ -86,16 +86,13 @@ async def get_estimated_project_matched_rewards_pending(
     # Arguments
     epoch_number: int,
 ) -> int:
+    """
+    Get the estimated matched rewards for the pending epoch.
+    """
+
     pending_snapshot = await get_pending_epoch_snapshot(session, epoch_number)
-    # if pending_snapshot is None:
-    #     raise ValueError(f"No pending snapshot for epoch {epoch_number}")
-
-    from app.infrastructure.database.models import PendingEpochSnapshot
-
-    pending_snapshot = PendingEpochSnapshot(
-        eth_proceeds="412042049081445321216",
-        locked_ratio="0.094755727584613854218098688",
-    )
+    if pending_snapshot is None:
+        raise ValueError(f"No pending snapshot for epoch {epoch_number}")
 
     epoch_details = await epochs_subgraph.get_epoch_by_number(epoch_number)
     patrons_rewards = await get_patrons_rewards(

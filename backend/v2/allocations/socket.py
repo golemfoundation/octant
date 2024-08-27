@@ -1,19 +1,14 @@
 import logging
-from typing import List
 
 import socketio
-from app.engine.projects.rewards import ProjectRewardDTO
-from app.exceptions import OctantException
 
 # from app.extensions import socketio, epochs
-from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
-from app.modules.dto import ProjectDonationDTO
 from eth_utils import to_checksum_address
 from v2.allocations.repositories import get_donations_by_project
 from v2.allocations.services import allocate
-from v2.core.dependencies import db_getter, get_w3, w3_getter
-from v2.epochs.dependencies import epochs_getter, epochs_subgraph_getter, get_epochs
-from v2.projects.depdendencies import get_projects, projects_getter
+from v2.core.dependencies import db_getter
+from v2.epochs.dependencies import epochs_getter, epochs_subgraph_getter
+from v2.projects.depdendencies import projects_getter
 from v2.projects.services import (
     get_estimated_project_rewards,
     get_projects_allocation_threshold,
@@ -37,28 +32,12 @@ class AllocateNamespace(socketio.AsyncNamespace):
         Handle client connection
         """
 
-        print("Type of sid", type(sid))
-        print("Type of environ", type(environ))
-
         logging.debug("Client connected")
-
-        print("Epochs are here")
-
-        await self.emit("epoch", {"epoch": "fuckup"})
 
         # We send the data only in PENDING state
         pending_epoch_number = await self.epochs_contracts.get_pending_epoch()
-
-        epoch_end = await self.epochs_contracts.get_current_epoch_end()
-
-        print("epocg_end", epoch_end)
-        print("Pending epoch =", pending_epoch_number)
-
-        # We do not handle requests outside of pending epoch state
-        # if pending_epoch_number is None:
-        #     return
-
-        pending_epoch_number = 124
+        if pending_epoch_number is None:
+            return
 
         async with self.db_session() as session:
             threshold = await get_projects_allocation_threshold(
@@ -85,7 +64,6 @@ class AllocateNamespace(socketio.AsyncNamespace):
             for project_address in project_rewards.amounts_by_project.keys()
         ]
 
-        # project_rewards = get_estimated_project_rewards().rewards
         await self.emit("project_rewards", rewards)
 
     async def on_disconnect(self, sid):
@@ -96,15 +74,12 @@ class AllocateNamespace(socketio.AsyncNamespace):
         Handle allocation request
         """
 
-        # # We do not handle requests outside of pending epoch state (Allocation Window)
-        # pending_epoch_number = await self.epochs_contracts.get_pending_epoch()
-        # if pending_epoch_number is None:
-        #     return
-
-        print("message", data, type(data))
+        # We do not handle requests outside of pending epoch state (Allocation Window)
+        pending_epoch_number = await self.epochs_contracts.get_pending_epoch()
+        if pending_epoch_number is None:
+            return
 
         request = from_dict(data)
-        pending_epoch_number = 124
 
         async with self.db_session() as session:
             await allocate(
@@ -154,41 +129,6 @@ class AllocateNamespace(socketio.AsyncNamespace):
                     {"project": project_address, "donors": donations},
                 )
 
-        # msg = json.loads(msg)
-
-        # print("MEssage", msg)
-
-        # is_manually_edited = data.get("isManuallyEdited", None)
-        # user_address = data["userAddress"]
-        # # is_manually_edited = (
-        # #     msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
-        # # )
-        # logging.info(f"User allocation payload: {msg}")
-
-        # controller.allocate(
-        #     user_address,
-        #     msg,
-        #     is_manually_edited=is_manually_edited,
-        # )
-        # socketio.logger.info(f"User: {user_address} allocated successfully")
-
-        # threshold = get_projects_allocation_threshold()
-        # await self.emit("threshold", {"threshold": str(threshold)}, broadcast=True)
-
-        # project_rewards = get_estimated_project_rewards().rewards
-        # await self.emit(
-        #     "project_rewards",
-        #     _serialize_project_rewards(project_rewards),
-        #     broadcast=True,
-        # )
-        # for project in project_rewards:
-        #     donors = controller.get_all_donations_by_project(project.address)
-        #     await self.emit(
-        #         "project_donors",
-        #         {"project": project.address, "donors": _serialize_donors(donors)},
-        #         broadcast=True,
-        #     )
-
 
 def from_dict(data: dict) -> UserAllocationRequest:
     """
@@ -234,52 +174,3 @@ def from_dict(data: dict) -> UserAllocationRequest:
         is_manually_edited  = is_manually_edited,
     )
     # fmt: on
-
-
-# def state_context(epoch_state: EpochState) -> Context:
-#     epoch_num = get_epoch_number(epoch_state)
-#     return build_context(epoch_num, epoch_state, with_block_range)
-
-
-# @socketio.on("project_donors")
-# def handle_project_donors(project_address: str):
-#     print("Project donors")
-#     emit(
-#         "project_donors",
-#         {"project": project_address, "donors": []},
-#     )
-#     donors = controller.get_all_donations_by_project(project_address)
-#     emit(
-#         "project_donors",
-#         {"project": project_address, "donors": _serialize_donors(donors)},
-#     )
-
-
-# @socketio.
-def default_error_handler(e):
-    ExceptionHandler.print_stacktrace(e)
-    if isinstance(e, OctantException):
-        emit("exception", {"message": str(e.message)})
-    else:
-        emit("exception", {"message": UNEXPECTED_EXCEPTION})
-
-
-def _serialize_project_rewards(project_rewards: List[ProjectRewardDTO]) -> List[dict]:
-    return [
-        {
-            "address": project_reward.address,
-            "allocated": str(project_reward.allocated),
-            "matched": str(project_reward.matched),
-        }
-        for project_reward in project_rewards
-    ]
-
-
-def _serialize_donors(donors: List[ProjectDonationDTO]) -> List[dict]:
-    return [
-        {
-            "address": donor.donor,
-            "amount": str(donor.amount),
-        }
-        for donor in donors
-    ]
