@@ -5,7 +5,7 @@ import styles from './style.module.scss';
 export const allocate: SvgImageConfig = {
   className: styles.allocate,
   markup:
-    '<g clip-path="url(#allocate-navigation)" stroke="#CDD1CD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.124 9.66 4.666 6.048a2.05 2.05 0 0 1 2.898-2.897l.565.566.565-.566a2.048 2.048 0 1 1 2.897 2.897L8.124 9.66ZM5.313 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125ZM11.563 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125Z"/><path d="m.625 5.912 1.942 6.573a1.25 1.25 0 0 0 1.207.927h9.016a1.25 1.25 0 0 0 1.21-.927l2.698-10.128A1.875 1.875 0 0 1 18.51.965h.865"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h20v20H0z"/></clipPath></defs>',
+    '<g clip-path="url(#allocate-navigation)" stroke="#CDD1CD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.124 9.66 4.666 6.048a2.05 2.05 0 0 1 2.898-2.897l.565.566.565-.566a2.048 2.048 0 1 1 2.897 2.897L8.124 9.66ZM5.313 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125ZM11.563 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125Z"/><path d="m.625 5.912 1.942 6.573a1.25 1.25 0 0 0 1.207.927h9.016a1.25 1.25 0 0 0 1.21-.927l2.698-10.128A1.875 1.875 0 0 1 18.51.965h.865"/></g><defs><clipPath id="allocate-navigation"><path fill="#fff" d="M0 0h20v20H0z"/></clipPath></defs>',
   viewBox: '0 0 20 20',
 };
 
