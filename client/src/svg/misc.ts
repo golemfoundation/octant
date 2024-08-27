@@ -116,6 +116,6 @@ export const magnifyingGlass: SvgImageConfig = {
 
 export const calendar: SvgImageConfig = {
   markup:
-    '<g clip-path="url(#a)" stroke="#2D9B87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5h-13a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1ZM.5 6.5h15M4.5 4V.5M11.5 4V.5"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs>',
+    '<g clip-path="url(#calendar)" stroke="#2D9B87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5h-13a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1ZM.5 6.5h15M4.5 4V.5M11.5 4V.5"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs>',
   viewBox: '0 0 16 16',
 };
