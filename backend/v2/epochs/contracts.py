@@ -26,7 +26,6 @@ class EpochsContracts(SmartContract):
     async def get_pending_epoch(self) -> Optional[int]:
         try:
             logging.debug("[Epochs contract] Getting pending epoch")
-            # return 5
             return await self.contract.functions.getPendingEpoch().call()
         except exceptions.ContractLogicError:
             logging.warning("[Epochs contract] No pending epoch")

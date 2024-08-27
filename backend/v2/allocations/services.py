@@ -225,12 +225,12 @@ async def verify_logic(
         session, payload.user_address, epoch_number
     )
 
-    # if user_budget is None:
-    #     raise exceptions.BudgetNotFound(payload.user_address, epoch_number)
+    if user_budget is None:
+        raise exceptions.BudgetNotFound(payload.user_address, epoch_number)
 
-    # # Check if the allocations are within the budget
-    # if sum(a.amount for a in payload.allocations) > user_budget:
-    #     raise exceptions.RewardsBudgetExceeded()
+    # Check if the allocations are within the budget
+    if sum(a.amount for a in payload.allocations) > user_budget:
+        raise exceptions.RewardsBudgetExceeded()
 
 
 async def get_next_user_nonce(
