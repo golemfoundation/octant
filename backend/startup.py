@@ -1,11 +1,7 @@
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-import io
 import os
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi.middleware.wsgi import WSGIMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
-from starlette.responses import Response
+
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -58,16 +54,8 @@ def teardown_session(*args, **kwargs):
 
 from v2.main import fastapi_app
 
-# Create FastAPI app
-# fastapi_app = FastAPI()
-
-# @fastapi_app.get("/fastapi-endpoint")
-# async def fastapi_endpoint():
-#     return {"message": "This is a FastAPI endpoint."}
-
 # Mount Flask app under a sub-path
 fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
-
 
 # Middleware to check if the path exists in FastAPI
 class PathCheckMiddleware(BaseHTTPMiddleware):
@@ -89,11 +77,7 @@ class PathCheckMiddleware(BaseHTTPMiddleware):
 fastapi_app.add_middleware(PathCheckMiddleware)
 
 
-# from app.extensions import socketio as our_socketio
-# import socketio
+if __name__ == "__main__":
+    import uvicorn
 
-# sio_asgi_app = socketio.ASGIApp(socketio_server=our_socketio, other_asgi_app=fastapi_app)
-
-# # app.mount("/static", StaticFiles(directory="static"), name="static")
-# fastapi_app.add_route("/socket.io/", route=sio_asgi_app)
-# fastapi_app.add_websocket_route("/socket.io/", sio_asgi_app)
+    uvicorn.run(fastapi_app, host="0.0.0.0", port=5000)
