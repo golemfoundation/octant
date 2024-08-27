@@ -1,14 +1,11 @@
-from typing import Dict, Literal, Optional, TypedDict
+import logging
+from typing import Dict, Optional
 
+from v2.core.contracts import SmartContract
 from web3 import exceptions
 
-import logging
 
-from backend.v2.core.contracts import SmartContract
-
-
-class Epochs(SmartContract):
-
+class EpochsContracts(SmartContract):
     async def is_decision_window_open(self) -> bool:
         logging.debug("[Epochs contract] Checking if decision window is open")
         return await self.contract.functions.isDecisionWindowOpen().call()
