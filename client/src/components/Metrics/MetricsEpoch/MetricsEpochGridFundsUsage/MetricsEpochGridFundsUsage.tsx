@@ -159,7 +159,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
         valueCrypto: ppf / 2n,
       }).primary,
     },
-  ];
+  ].filter(({ value }) => value > 0);
 
   return (
     <MetricsGridTile
