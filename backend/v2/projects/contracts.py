@@ -1,14 +1,14 @@
-
 import logging
-from backend.v2.core.contracts import SmartContract
+
+from v2.core.contracts import SmartContract
 
 
-class Projects(SmartContract):
-    async def get_project_addresses(self, epoch: int) -> list[str]:
+class ProjectsContracts(SmartContract):
+    async def get_project_addresses(self, epoch_number: int) -> list[str]:
         logging.debug(
-            f"[Projects contract] Getting project addresses for epoch: {epoch}"
+            f"[Projects contract] Getting project addresses for epoch: {epoch_number}"
         )
-        return await self.contract.functions.getProposalAddresses(epoch).call()
+        return await self.contract.functions.getProposalAddresses(epoch_number).call()
 
     async def get_project_cid(self):
         logging.debug("[Projects contract] Getting projects CID")

@@ -1,8 +1,8 @@
 import json
 from typing import List
 
-from flask import current_app
-# from flask_socketio import emit
+from flask import current_app as app
+from flask_socketio import emit
 
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import OctantException
@@ -17,42 +17,32 @@ from app.modules.user.allocations import controller
 
 
 @socketio.on("connect")
-async def handle_connect(sid: str, environ: dict):
+def handle_connect():
+    app.logger.debug("Client connected")
 
-    print("Type of sid", type(sid))
-    print("Type of environ", type(environ))
+    if epochs.get_pending_epoch() is not None:
+        threshold = get_allocation_threshold()
+        emit("threshold", {"threshold": str(threshold)})
 
-    # socketio.logger.debug("Client connected")
-    # app_instance = current_app._get_current_object()
-    with current_app.app_context():
+        project_rewards = get_estimated_project_rewards().rewards
+        emit("project_rewards", _serialize_project_rewards(project_rewards))
 
-        current_app.logger.debug("Cl/ient connected")
-
-        print("Epochs are here")
-
-        await socketio.emit("epoch", {"epoch": "fuckup"})
-
-        if epochs.get_pending_epoch() is not None:
-            threshold = get_allocation_threshold()
-            await socketio.emit("threshold", {"threshold": str(threshold)})
-
-            project_rewards = get_estimated_project_rewards().rewards
-            await socketio.emit("project_rewards", _serialize_project_rewards(project_rewards))
+        for project in project_rewards:
+            donors = controller.get_all_donations_by_project(project.address)
+            emit(
+                "project_donors",
+                {"project": project.address, "donors": _serialize_donors(donors)},
+            )
 
 
 @socketio.on("disconnect")
-async def handle_disconnect(sid):
-    socketio.logger.debug("Client disconnected")
+def handle_disconnect():
+    app.logger.debug("Client disconnected")
 
 
 @socketio.on("allocate")
-async def handle_allocate(sid, msg):
-  
-    print("message", msg)
+def handle_allocate(msg):
     msg = json.loads(msg)
-
-    print("MEssage", msg)
-
     is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
     user_address = msg["userAddress"]
     app.logger.info(f"User allocation payload: {msg}")
@@ -61,7 +51,7 @@ async def handle_allocate(sid, msg):
         msg,
         is_manually_edited=is_manually_edited,
     )
-    socketio.logger.info(f"User: {user_address} allocated successfully")
+    app.logger.info(f"User: {user_address} allocated successfully")
 
     threshold = get_allocation_threshold()
     emit("threshold", {"threshold": str(threshold)}, broadcast=True)
@@ -81,21 +71,16 @@ async def handle_allocate(sid, msg):
         )
 
 
-# @socketio.on("project_donors")
-# def handle_project_donors(project_address: str):
-#     print("Project donors")
-#     emit(
-#         "project_donors",
-#         {"project": project_address, "donors": []},
-#     )
-#     donors = controller.get_all_donations_by_project(project_address)
-#     emit(
-#         "project_donors",
-#         {"project": project_address, "donors": _serialize_donors(donors)},
-#     )
+@socketio.on("project_donors")
+def handle_project_donors(project_address: str):
+    donors = controller.get_all_donations_by_project(project_address)
+    emit(
+        "project_donors",
+        {"project": project_address, "donors": _serialize_donors(donors)},
+    )
 
 
-# @socketio.
+@socketio.on_error_default
 def default_error_handler(e):
     ExceptionHandler.print_stacktrace(e)
     if isinstance(e, OctantException):

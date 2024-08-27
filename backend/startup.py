@@ -27,6 +27,7 @@ from app.extensions import db  # noqa
 # Create Flask app
 flask_app = create_app()
 
+
 @flask_app.teardown_request
 def teardown_session(*args, **kwargs):
     db.session.remove()
@@ -55,12 +56,12 @@ class PathCheckMiddleware(BaseHTTPMiddleware):
                 # If path exists, proceed with the request
                 return await call_next(request)
         # If path does not exist, modify the request to forward to the Flask app
-        if path.startswith('/flask'):
+        if path.startswith("/flask"):
             return await call_next(request)
-        request.scope['path'] = '/flask' + path  # Adjust the path as needed
+        request.scope["path"] = "/flask" + path  # Adjust the path as needed
         response = await call_next(request)
         return response
-    
+
 
 fastapi_app.add_middleware(PathCheckMiddleware)
 
