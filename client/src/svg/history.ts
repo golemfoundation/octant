@@ -2,7 +2,7 @@ import { SvgImageConfig } from 'components/ui/Svg/types';
 
 export const allocate: SvgImageConfig = {
   markup:
-    '<path fill="#FAFAFA" d="M40 20c0 11.046-8.954 20-20 20S0 31.046 0 20 8.954 0 20 0s20 8.954 20 20Z"/><g clip-path="url(#a)"><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.249 23.752h-6a1.5 1.5 0 0 1-1.5-1.5v-12a1.5 1.5 0 0 1 1.5-1.5h18a1.5 1.5 0 0 1 1.5 1.5V17"/><circle cx="13.5" cy="12.5" r="1.5" fill="#171717"/><path stroke="#171717" stroke-linecap="round" d="M17.5 11.5h7M17.5 13.5h5M17.5 15.5h6"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M31.25 25.252a6 6 0 1 0-12 0 6 6 0 0 0 12 0ZM25.25 28.252v-6M25.25 22.252l2.25 2.25M25.25 22.252 23 24.502"/></g><defs><clipPath id="a"><path fill="#fff" d="M8 8h24v24H8z"/></clipPath></defs>',
+    '<path fill="#FAFAFA" d="M40 20c0 11.046-8.954 20-20 20S0 31.046 0 20 8.954 0 20 0s20 8.954 20 20Z"/><g clip-path="url(#allocate-history)"><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.249 23.752h-6a1.5 1.5 0 0 1-1.5-1.5v-12a1.5 1.5 0 0 1 1.5-1.5h18a1.5 1.5 0 0 1 1.5 1.5V17"/><circle cx="13.5" cy="12.5" r="1.5" fill="#171717"/><path stroke="#171717" stroke-linecap="round" d="M17.5 11.5h7M17.5 13.5h5M17.5 15.5h6"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M31.25 25.252a6 6 0 1 0-12 0 6 6 0 0 0 12 0ZM25.25 28.252v-6M25.25 22.252l2.25 2.25M25.25 22.252 23 24.502"/></g><defs><clipPath id="allocate-history"><path fill="#fff" d="M8 8h24v24H8z"/></clipPath></defs>',
   viewBox: '0 0 40 40',
 };
 
