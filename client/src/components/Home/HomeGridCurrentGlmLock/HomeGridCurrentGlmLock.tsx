@@ -1,19 +1,21 @@
 import _first from 'lodash/first';
 import React, { FC, useState } from 'react';
-import styles from './HomeGridCurrentGlmLock.module.scss';
-import DoubleValue from 'components/ui/DoubleValue';
+import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
+
+import GridTile from 'components/shared/Grid/GridTile';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import Button from 'components/ui/Button';
-import { useAccount } from 'wagmi';
-import { useTranslation } from 'react-i18next';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import DoubleValue from 'components/ui/DoubleValue';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import getIsPreLaunch from 'utils/getIsPreLaunch';
+import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useTransactionLocalStore from 'store/transactionLocal/store';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
+
+import styles from './HomeGridCurrentGlmLock.module.scss';
 import ModalLockGlm from './ModalLockGlm';
-import GridTile from 'components/shared/Grid/GridTile';
 import HomeGridCurrentGlmLockProps from './types';
 
 const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) => {
@@ -42,19 +44,18 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
       <GridTile className={className} title={t('currentGlmLock')}>
         <div className={styles.root}>
           <DoubleValue
+            cryptoCurrency="golem"
             isFetching={
               isFetchingDepositValue ||
               (isAppWaitingForTransactionToBeIndexed &&
                 _first(transactionsPending)?.type !== 'withdrawal')
             }
-            cryptoCurrency="golem"
-            valueCrypto={depositsValue}
             showCryptoSuffix
+            valueCrypto={depositsValue}
             variant={isMobile ? 'large' : 'extra-large'}
           />
           <div className={styles.divider} />
           <Sections
-            variant="standard"
             hasBottomDivider
             sections={[
               {
@@ -80,13 +81,14 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
                 },
               },
             ]}
+            variant="standard"
           />
           <Button
             className={styles.lockGlmButton}
-            isHigh
-            variant="cta"
-            onClick={() => setIsModalLockGlmOpen(true)}
             isDisabled={!isConnected}
+            isHigh
+            onClick={() => setIsModalLockGlmOpen(true)}
+            variant="cta"
           >
             {!depositsValue || (!!depositsValue && depositsValue === 0n)
               ? i18n.t('common.lockGlm')

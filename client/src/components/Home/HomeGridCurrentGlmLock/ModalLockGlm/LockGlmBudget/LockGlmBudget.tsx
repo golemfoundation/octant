@@ -5,6 +5,7 @@ import { FormFields } from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/
 
 import styles from './LockGlmBudget.module.scss';
 import LockGlmBudgetProps from './types';
+
 import LockGlmBudgetBox from '../LockGlmBudgetBox';
 
 const LockGlmBudget: FC<LockGlmBudgetProps> = ({ isVisible }) => {

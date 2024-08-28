@@ -25,9 +25,10 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './LockGlm.module.scss';
 import LockGlmProps, { Step, OnReset } from './types';
 import { formInitialValues, validationSchema } from './utils';
-import LockGlmStepper from '../LockGlmStepper';
-import LockGlmNotification from '../LockGlmNotification';
+
 import LockGlmBudget from '../LockGlmBudget';
+import LockGlmNotification from '../LockGlmNotification';
+import LockGlmStepper from '../LockGlmStepper';
 import LockGlmTabs from '../LockGlmTabs';
 
 const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {

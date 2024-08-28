@@ -15,6 +15,7 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './LockGlmTabs.module.scss';
 import LockGlmTabsProps from './types';
+
 import LockGlmTabsInputs from '../LockGlmTabsInputs';
 
 const LockGlmTabs: FC<LockGlmTabsProps> = ({
