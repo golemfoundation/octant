@@ -1,10 +1,10 @@
 // Media Query Ranges
 // **********************
 
-$phone-range: (0px, 471px);
-$tablet-range: (472px, 755px);
-$desktop-range: (756px);
-$large-desktop-range: (1264px);
+$phone-range: (0px, 743px);
+$tablet-range: (744px, 1279px);
+$desktop-range: (1280px);
+$large-desktop-range: (1640px);
 
 // Range functions
 // We use these functions to define ranges for various things, like media queries.

@@ -1,0 +1,59 @@
+.root {
+  border-top: 0.1rem solid $color-octant-grey1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4.8rem 3.2rem 15.2rem;
+  flex-direction: column-reverse;
+
+  @media #{$tablet-up} {
+    flex-direction: row;
+    padding: 4.8rem 2.4rem 18.4rem;
+  }
+
+  @media #{$desktop-up} {
+    padding: 4.8rem 11.2rem 5.6rem;
+    margin-bottom: 0;
+  }
+
+  .wrapper {
+    display: flex;
+    text-align: start;
+    align-items: center;
+    margin-right: 2.4rem;
+
+    .octantText {
+      font-size: $font-size-12;
+      min-width: 23.2rem;
+      margin-left: 1.6rem;
+      font-weight: $font-weight-semibold;
+      line-height: 2rem;
+      color: $color-octant-grey5;
+    }
+  }
+
+  .links {
+    display: grid;
+    grid-template-columns: repeat(3, 11.2rem [col-start]);
+    grid-template-rows: 2.4rem 2.4rem;
+    grid-auto-flow: column;
+    margin-bottom: 3.2rem;
+
+    @media #{$tablet-up} {
+      margin: 0;
+    }
+
+    .link {
+      cursor: pointer;
+      display: flex;
+      font-size: $font-size-14;
+      font-weight: $font-weight-semibold;
+      color: $color-octant-grey5;
+    }
+  }
+
+  .golemFoundationLink {
+    color: $color-octant-green;
+    text-decoration: underline;
+  }
+}

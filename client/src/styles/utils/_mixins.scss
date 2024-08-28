@@ -85,7 +85,6 @@
 @mixin layoutFloatingElementWidth() {
   width: 100%;
   min-width: 39rem;
-  max-width: 70rem + $layoutMarginHorizontal * 2;
 }
 
 @mixin tipTileConnectWalletImage() {
