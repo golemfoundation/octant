@@ -61,11 +61,29 @@
       }
     },
     "home": {
-"homeRewards": {
-  "currentRewards": "Current rewards",
-  "totalRewards":"Total rewards",
-  "rewardsRate": "Rewards rate"
-}
+      "homeRewards": {
+        "currentRewards": "Current rewards",
+        "totalRewards":"Total rewards",
+        "rewardsRate": "Rewards rate"
+      },
+      "homeGridCurrentGlmLock": {
+        "currentGlmLock": "Current GLM lock",
+        "editLockedGLM": "Edit Locked GLM",
+        "effective": "Effective",
+        "lockedBalance": "Locked balance",
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch.",
+        "modalLockGlm": {
+          "unlockGLM": "Unlock GLM",
+          "lockGlmBudgetBox": {
+            "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
+            "currentlyLocked": "Currently Locked",
+            "stakeWillUpdate": "Your stake will update when the transaction is confirmed",
+            "waitingForTransactionHash": "Waiting for transaction hash from Etherscan...",
+            "walletBalance": "Wallet balance",
+            "viewOnEtherscan": "View on Etherscan"
+          }
+        }
+      }
     },
     "settings": {
       "patronMode": {

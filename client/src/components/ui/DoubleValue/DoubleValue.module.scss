@@ -28,7 +28,11 @@
   font-size: $font-size-24;
 
   &.variant-- {
-    &big {
+    &extra-large {
+      font-size: $font-size-32;
+    }
+
+    &large {
       font-size: $font-size-24;
     }
 
@@ -54,6 +58,12 @@
 .secondary {
   font-size: $font-size-12;
   color: $color-octant-grey5;
+
+  &.variant-- {
+    &extra-large {
+      font-size: $font-size-16;
+    }
+  }
 
   &.isError {
     color: $color-octant-orange;

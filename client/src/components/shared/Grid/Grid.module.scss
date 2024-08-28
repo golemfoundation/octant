@@ -1,0 +1,20 @@
+$gridGap: 1.6rem;
+
+.root {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: $gridGap;
+  width: 100%;
+
+  @media #{$tablet-up} {
+    grid-template-columns: repeat(2, calc(50% - calc($gridGap / 2)));
+  }
+
+  @media #{$desktop-up} {
+    grid-template-columns: repeat(3, calc(calc(100% / 3) - calc(2 * $gridGap / 3)));
+  }
+
+  @media #{$large-desktop-up} {
+    grid-template-columns: repeat(4, calc(25% - calc(3 * $gridGap / 4)));
+  }
+}

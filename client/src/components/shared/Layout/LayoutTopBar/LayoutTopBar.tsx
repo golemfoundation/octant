@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { Fragment, ReactNode, useMemo } from 'react';
+import React, { FC, Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -18,8 +18,9 @@ import { allocate, settings } from 'svg/navigation';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './LayoutTopBar.module.scss';
+import LayoutTopBarProps from './types';
 
-const LayoutTopBar = (): ReactNode => {
+const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
@@ -68,7 +69,7 @@ const LayoutTopBar = (): ReactNode => {
   };
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, className)}>
       <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
       {isDesktop && (
         <div className={styles.links}>

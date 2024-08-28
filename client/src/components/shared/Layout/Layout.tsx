@@ -156,7 +156,7 @@ const Layout: FC<LayoutProps> = ({
   return (
     <Fragment>
       <div className={styles.root} data-test={dataTest}>
-        <LayoutTopBar />
+        <LayoutTopBar className={styles.section} />
         {/* {isHeaderVisible && (
           <Fragment>
             {showHeaderBlur && <div className={styles.headerBlur} />}
@@ -260,6 +260,7 @@ const Layout: FC<LayoutProps> = ({
         <div
           className={cx(
             styles.body,
+            styles.section,
             isLoading && styles.isLoading,
             !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
             classNameBody,
@@ -272,7 +273,7 @@ const Layout: FC<LayoutProps> = ({
         {!isDesktop && isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} />
         )}
-        <LayoutFooter />
+        <LayoutFooter className={styles.section} />
       </div>
       <ModalLayoutWallet
         modalProps={{
