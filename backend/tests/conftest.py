@@ -806,7 +806,12 @@ class Client:
         return json.loads(rv.text)
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        return json.loads(rv.text), rv.status_code
+        current_app.logger.debug(
+            "get_user_rewards_in_upcoming_epoch :",
+            self._flask_client.get(f"/rewards/budget/{address}/upcoming").request,
+        )
+        print(json.loads(rv.text))
+        return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
