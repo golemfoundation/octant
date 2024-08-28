@@ -5,6 +5,7 @@ from app.exceptions import UserNotFound
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
 from app.modules.user.antisybil.service.passport import GitcoinPassportAntisybil
+from app.modules.user.antisybil.service.holonym import HolonymAntisybil
 from tests.helpers.context import get_context
 
 
@@ -13,7 +14,40 @@ def before(app):
     pass
 
 
-def test_antisybil_service(
+def test_holonym_antisybil_service(
+    mock_users_db,
+    patch_holonym_check,
+):
+    context = get_context(4)
+    service = HolonymAntisybil()
+
+    # check unknown user
+    unknown_address = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
+    try:
+        service.get_sbt_status(context, unknown_address)
+    except UserNotFound:
+        pass  # expected
+
+    alice, _, _ = mock_users_db
+
+    # SBT not yet cached
+    assert service.get_sbt_status(context, alice.address) is None
+
+    # SBT fetching for known owner returns expected data
+    entry = service.fetch_sbt_status(context, alice.address)
+    assert entry.has_sbt is True
+    assert entry.sbt_details == ["phone"]
+
+    # Lets cache the result
+    service.update_sbt_status(context, alice.address, entry.has_sbt, entry.sbt_details)
+
+    # Check cache state
+    entry = service.get_sbt_status(context, alice.address)
+    assert entry.has_sbt is True
+    assert entry.sbt_details == ["phone"]
+
+
+def test_passport_antisybil_service(
     patch_gitcoin_passport_issue_address_for_scoring,
     patch_gitcoin_passport_fetch_score,
     patch_gitcoin_passport_fetch_stamps,
@@ -88,7 +122,7 @@ def test_guest_stamp_score_bump_for_both_gp_and_octant_side_application(
     )  # is on guest list, HAS GUEST LIST STAMP, score is from fetch
 
 
-def test_antisybil_cant_be_update_when_address_is_delegated(alice, bob):
+def test_passport_antisybil_cant_be_update_when_address_is_delegated(alice, bob):
     context = get_context(4)
     score = 2.572
     primary, secondary, both = get_hashed_addresses(alice.address, bob.address)

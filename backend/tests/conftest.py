@@ -96,6 +96,13 @@ MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
 
+def mock_holonym_check(*args, **kwargs):
+    if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
+        return (True, ["phone"])
+    else:
+        return (False, [])
+
+
 def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
     if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
         return {
@@ -1185,6 +1192,14 @@ def patch_user_budget(monkeypatch):
         MOCK_GET_USER_BUDGET,
     )
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
+
+
+@pytest.fixture(scope="function")
+def patch_holonym_check(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.user.antisybil.service.holonym.check",
+        mock_holonym_check,
+    )
 
 
 @pytest.fixture(scope="function")
