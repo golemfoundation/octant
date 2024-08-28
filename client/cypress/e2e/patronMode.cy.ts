@@ -30,7 +30,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
-      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: false });
     });
 
     after(() => {
@@ -365,7 +365,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
-      connectWallet({ isPatronModeEnabled: true, isTOSAccepted: true });
+      connectWallet({ isPatronModeEnabled: true });
     });
 
     after(() => {

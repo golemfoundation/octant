@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.61
+      targetRevision: 0.2.62
       chart: octant
       helm:
         parameters:
