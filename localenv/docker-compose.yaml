@@ -28,6 +28,7 @@ services:
       ethereum: localhost:http://anvil:8545
       GRAPH_LOG: debug
       ETHEREUM_REORG_THRESHOLD: 0
+    init: true
 
   ipfs:
     image: ipfs/kubo:v0.27.0
@@ -74,6 +75,7 @@ services:
       IPFS_URL: http://ipfs:5001
       SUBGRAPH_ADMIN_URL: http://graph-node:8020
       SUBGRAPH_QUERY_URL: http://graph-node:8000
+    init: true
 
 networks:
   octant:

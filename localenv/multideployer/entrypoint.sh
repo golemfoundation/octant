@@ -18,4 +18,4 @@ wait_for_rpc
 echo ""
 echo "anvil is ready!"
 
-python3 /app/server.py
+exec python3 /app/server.py
