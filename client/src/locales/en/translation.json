@@ -99,6 +99,39 @@
           "estimatedGasPrice": "Est. gas price",
           "withdrawAll": "Withdraw all"
         }
+      },
+      "homeGridUQScore": {
+        "yourUniquenessScore": "Your uniqueness score",
+        "recalculate": "Recalculate",
+        "delegate": "Delegate",
+        "whatIsThis": "What is this?",
+        "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
+        "addresses": "addresses",
+        "addressScore": {
+          "signMessage":"Sign message"
+        },
+        "progressPath": {
+          "checkingPassportScore":"Checking Passport score",
+          "finished": "Finished",
+          "checkingAllowlist": "Checking allowlist"
+        },
+        "modalCalculatingYourUniqueness": {
+          "calculatingYourUniqueness": "Calculating your uniqueness",
+          "calculatingYourUniquenessStep1": "To prove your uniqueness your need a <0>Gitcoin\u00a0Passport</0> score of 20 or higher.<br/><br/>If you have this your donations will attract the maximum amount of match funding. If not, maximum match funding will be set to 20%.<br/><br/>You can increase your score in a couple of different ways.",
+          "calculatingYourUniquenessStep2": "You can go to our <0>Passport dashboard</0> and add stamps to the score for your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 20+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
+          "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy guide to <0>scoring 20, for humans.</0>"
+        },
+        "modalCalculatingUQScore": {
+          "switchAccounts": "Switch accounts",
+          "signMessages": "Sign messages",
+          "switchAccount": "Switch account",
+          "calculatingScore":"Calculating score",
+          "delegationFailedText": "Delegation failed — your score needs to be 20 or higher. Please try another address",
+          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}"
+        },
+        "modalRecalculatingScore": {
+          "recalculatingScore":"Recalculating score"
+        }
       }
     },
     "settings": {

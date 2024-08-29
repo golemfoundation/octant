@@ -8,7 +8,6 @@ import SettingsMainInfoBox from 'components/Settings/SettingsMainInfoBox';
 import SettingsPatronModeBox from 'components/Settings/SettingsPatronModeBox';
 import SettingsShowOnboardingBox from 'components/Settings/SettingsShowOnboardingBox';
 import SettingsShowTipsBox from 'components/Settings/SettingsShowTipsBox';
-import SettingsUniquenessScoreBox from 'components/Settings/SettingsUniquenessScoreBox';
 import Layout from 'components/shared/Layout';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 
@@ -24,7 +23,6 @@ const SettingsView = (): ReactElement => {
       {!isProjectAdminMode && (
         <div className={styles.boxesWrapper}>
           <SettingsMainInfoBox />
-          {isConnected && <SettingsUniquenessScoreBox />}
         </div>
       )}
       <SettingsCurrencyBox />
