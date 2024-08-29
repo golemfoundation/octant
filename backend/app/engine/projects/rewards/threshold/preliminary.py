@@ -25,14 +25,15 @@ class PreliminaryProjectThreshold(ProjectThreshold):
     def get_total_allocations_below_threshold(
         self, allocations: List[AllocationItem], no_projects: int
     ) -> AllocationsBelowThreshold:
-        allocations_sum = sum(map(lambda x: x.amount, allocations))
+        allocations_sum = sum(map(lambda x: int(x.amount), allocations))
         threshold = self.calculate_threshold(
             ProjectThresholdPayload(allocations_sum, no_projects)
         )
 
         allocations_below_threshold = 0
         for allocation in allocations:
-            if allocation.amount < threshold:
-                allocations_below_threshold += allocation.amount
+            amount = int(allocation.amount)
+            if amount < threshold:
+                allocations_below_threshold += amount
 
         return AllocationsBelowThreshold(allocations_below_threshold, allocations_sum)

@@ -65,5 +65,5 @@ class ProjectRewards(ABC):
         self, allocations: List[AllocationItem], no_projects: int
     ) -> AllocationsBelowThreshold:
         return AllocationsBelowThreshold(
-            0, sum(map(lambda allocation: allocation.amount, allocations))
+            0, sum(map(lambda allocation: int(allocation.amount), allocations))
         )
