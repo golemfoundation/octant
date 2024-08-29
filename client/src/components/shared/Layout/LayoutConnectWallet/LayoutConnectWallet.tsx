@@ -67,7 +67,9 @@ const LayoutConnectWallet: FC = () => {
         rainbowkitConnectModalHeader?.querySelector('div:nth-child(2) > h1');
       rainbowkitConnectModalHeaderText?.classList.add('rainbowkitConnectModalHeaderText');
 
-      rainbowkitConnectModalHeaderText?.textContent = 'Choose a browser wallet';
+      if (rainbowkitConnectModalHeaderText) {
+        rainbowkitConnectModalHeaderText.textContent = 'Choose a browser wallet';
+      }
 
       const optionsWrapper = document.querySelector(
         '.iekbcc0.ju367v6p._1vwt0cg2.ju367v7a.ju367v7v',
