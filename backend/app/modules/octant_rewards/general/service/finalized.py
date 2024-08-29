@@ -28,13 +28,20 @@ class FinalizedOctantRewards(Model):
             int(finalized_snapshot.leftover), leftover_payload
         )
 
-        allocations_sum = database.allocations.get_alloc_sum_by_epoch(
+        allocations_for_epoch = database.allocations.get_all_by_epoch(
             context.epoch_details.epoch_num
         )
+        allocations_result = context.epoch_settings.project.rewards.get_total_allocations_below_threshold(
+            allocations_for_epoch, len(context.projects_details.projects)
+        )
+        allocations_sum = allocations_result.total
+        allocations_below_threshold = allocations_result.below_threshold
+
         donated_to_projects = (
             int(finalized_snapshot.matched_rewards)
             - unused_matched_rewards
             + allocations_sum
+            - allocations_below_threshold
         )
 
         return OctantRewardsDTO(

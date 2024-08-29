@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections import namedtuple
 from dataclasses import dataclass, field
 from typing import List, Optional
 
@@ -41,6 +42,11 @@ class ProjectRewardsResult:
     threshold: Optional[int] = None
 
 
+AllocationsBelowThreshold = namedtuple(
+    "AllocationsBelowThreshold", ["below_threshold", "total"]
+)
+
+
 @dataclass
 class ProjectRewards(ABC):
     projects_allocations: ProjectAllocations = field(init=False)
@@ -54,3 +60,10 @@ class ProjectRewards(ABC):
 
     def calculate_threshold(self, total_allocated: int, projects: List[str]) -> None:
         return None
+
+    def get_total_allocations_below_threshold(
+        self, allocations: List[AllocationItem], no_projects: int
+    ) -> AllocationsBelowThreshold:
+        return AllocationsBelowThreshold(
+            0, sum(map(lambda allocation: allocation.amount, allocations))
+        )
