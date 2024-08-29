@@ -42,23 +42,60 @@ const LayoutConnectWallet: FC = () => {
         element.classList.add('rainbowKitCustomFontFamily');
       });
 
+      const rainbowKitConnectModalWidth = document.querySelector(
+        '.iekbcc0._1ckjpok4._1ckjpok1.ju367vb6.ju367vdr.ju367vp.ju367vt.ju367vv.ju367vel.ju367va.ju367v15.ju367v6c.ju367v8r',
+      );
+      rainbowKitConnectModalWidth?.classList.add('rainbowKitConnectModalWidth');
+
+      const rainbowKitConnectModalDiv = document.querySelector(
+        '.iekbcc0.ju367va.ju367v15.ju367v4y._1vwt0cg4',
+      );
+      rainbowKitConnectModalDiv?.classList.add('rainbowKitConnectModalDiv');
+
       const rainbowkitConnectModalHeader = document.querySelector('.iekbcc0.ju367va.ju367v2r');
       rainbowkitConnectModalHeader?.classList.add('rainbowkitConnectModalHeader');
+
+      const rainbowkitConnectDummyDiv = document.querySelector('.iekbcc0.ju367v3s.ju367v94');
+      rainbowkitConnectDummyDiv?.classList.add('rainbowkitConnectDummyDiv');
+
+      const rainbowKitConnectHeaderTextWrapper = document.querySelector(
+        '.iekbcc0.ju367v7a.ju367v7v.ju367v3h.ju367v6k.ju367v86',
+      );
+      rainbowKitConnectHeaderTextWrapper?.classList.add('rainbowKitConnectHeaderTextWrapper');
 
       const rainbowkitConnectModalHeaderText =
         rainbowkitConnectModalHeader?.querySelector('div:nth-child(2) > h1');
       rainbowkitConnectModalHeaderText?.classList.add('rainbowkitConnectModalHeaderText');
 
+      rainbowkitConnectModalHeaderText.textContent = 'Choose a browser wallet';
+
+      const optionsWrapper = document.querySelector(
+        '.iekbcc0.ju367v6p._1vwt0cg2.ju367v7a.ju367v7v',
+      );
+      optionsWrapper?.classList.add('optionsWrapper');
+
+      const walletOptionsButtonsWrappers = document.querySelectorAll(
+        '.iekbcc0.ju367va.ju367v15.ju367v1n',
+      );
+      walletOptionsButtonsWrappers.forEach(element => {
+        element?.classList.add('walletOptionsButtonsWrapper');
+      });
+
       const walletOptionsButtons = document.querySelectorAll(
         '.iekbcc0.iekbcc9.ju367v89.ju367v6i.ju367v73.ju367v7o.ju367vo.ju367vt.ju367vv.ju367v8u.ju367v9f.ju367vb1.g5kl0l0._12cbo8i3.ju367v8r._12cbo8i6',
       );
-
       walletOptionsButtons.forEach(element => {
         element.classList.add('walletOptionsButton');
       });
 
-      const walletOptionsText = document.querySelectorAll('.iekbcc0.ju367v5p');
+      const walletOptionsContents = document.querySelectorAll(
+        '.iekbcc0.ju367v4.ju367va.ju367v14.ju367v1s',
+      );
+      walletOptionsContents.forEach(element => {
+        element?.classList.add('walletOptionsContent');
+      });
 
+      const walletOptionsText = document.querySelectorAll('.iekbcc0.ju367v5p');
       walletOptionsText.forEach(element => {
         element.classList.add('walletOptionsText');
       });
@@ -68,6 +105,33 @@ const LayoutConnectWallet: FC = () => {
       )[0];
 
       buttonClose.classList.add('buttonClose');
+
+      const walletOptionsIcons = document.querySelectorAll('.iekbcc0.ju367v2m.ju367v8p.ju367v9f');
+      walletOptionsIcons.forEach(element => {
+        element.classList.add('walletOptionsIcons');
+      });
+
+      // Installed, recommented
+      const sectionHeaders = document.querySelectorAll(
+        '.iekbcc0.ju367v3n.ju367v48.ju367v33.ju367v4y',
+      );
+      sectionHeaders.forEach(element => {
+        element.classList.add('sectionHeaders');
+      });
+
+      const walletSections = document.querySelectorAll('.iekbcc0.ju367va.ju367v15.ju367v1n');
+      if (walletSections) {
+        walletSections[1].classList.add('walletSections');
+      }
+
+      const linkBoxTopDividerLine = document.querySelector('.iekbcc0.ju367vau.ju367v24.ju367v57');
+      linkBoxTopDividerLine?.classList.add('linkBoxTopDividerLine');
+
+      // Div with "new to ethereum" text + link.
+      const linkBox = document.querySelector(
+        '.iekbcc0.ju367v7c.ju367v7x.ju367v8f.ju367v6o.ju367v4.ju367va.ju367v2r',
+      );
+      linkBox?.classList.add('linkBox');
     }, 100);
 
     return () => clearTimeout(timeout);

@@ -5,19 +5,51 @@
   font-family: 'Inter', sans-serif !important;
 }
 
+.rainbowKitConnectModalWidth {
+  width: 47.2rem !important;
+}
+
+.rainbowKitConnectModalDiv {
+  padding: 0 5.6rem 5.6rem !important;
+  margin: 0 !important;
+}
+
 .rainbowkitConnectModalHeader {
-  position: relative !important;
+  line-height: 8.8rem !important;
+  height: 8.8rem !important;
+  align-items: center !important;
+}
+
+.rainbowkitConnectDummyDiv {
+  display: none !important;
+}
+
+.rainbowKitConnectHeaderTextWrapper {
+  padding: 0 !important;
 }
 
 .rainbowkitConnectModalHeaderText {
-  position: absolute !important;
-  left: 1.8rem !important;
   font-size: 2rem !important;
   font-weight: $font-weight-bold !important;
 }
 
+.optionsWrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.walletOptionsButtonsWrapper {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
 .walletOptionsButton {
+  width: 33%;
   background: $color-octant-grey3 !important;
+}
+
+.walletOptionsContent {
+  flex-direction: column !important;
 }
 
 .walletOptionsText {
@@ -25,7 +57,14 @@
   font-size: $font-size-12 !important;
 }
 
+.walletOptionsIcons {
+  filter: grayscale(1) !important;
+}
+
 .buttonClose {
+  position: absolute !important;
+  top: 1.6rem !important;
+  right: 1.6rem !important;
   height: 3.2rem !important;
   width: 3.2rem !important;
   background: none !important;
@@ -40,4 +79,20 @@
   > svg > path {
     fill: $color-octant-purple2 !important;
   }
+}
+
+.sectionHeaders {
+  display: none !important;
+}
+
+.walletSections {
+  display: none !important;
+}
+
+.linkBoxTopDividerLine {
+  display: none !important;
+}
+
+.linkBox {
+  display: none !important;
 }
