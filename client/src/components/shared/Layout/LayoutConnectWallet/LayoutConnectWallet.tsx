@@ -83,11 +83,21 @@ const LayoutConnectWallet: FC = () => {
         element?.classList.add('walletOptionsButtonsWrapper');
       });
 
-      const walletOptionsButtons = document.querySelectorAll(
+      const walletOptionsButtons = document.querySelectorAll('.iekbcc0.ju367va.ju367v15.ju367v1n');
+      walletOptionsButtons.forEach(element => {
+        element.classList.add('walletOptionsButtons');
+      });
+
+      const walletOptionsButtonsOuter = document.querySelectorAll('.iekbcc0.ju367va.ju367v15');
+      walletOptionsButtonsOuter.forEach(element => {
+        element.classList.add('walletOptionsButtonsOuter');
+      });
+
+      const walletOptionsButtonsContent = document.querySelectorAll(
         '.iekbcc0.iekbcc9.ju367v89.ju367v6i.ju367v73.ju367v7o.ju367vo.ju367vt.ju367vv.ju367v8u.ju367v9f.ju367vb1.g5kl0l0._12cbo8i3.ju367v8r._12cbo8i6',
       );
-      walletOptionsButtons.forEach(element => {
-        element.classList.add('walletOptionsButton');
+      walletOptionsButtonsContent.forEach(element => {
+        element.classList.add('walletOptionsButtonsContent');
       });
 
       const walletOptionsContents = document.querySelectorAll(
@@ -113,7 +123,7 @@ const LayoutConnectWallet: FC = () => {
         element.classList.add('walletOptionsIcons');
       });
 
-      // Installed, recommented
+      // Installed, recommended.
       const sectionHeaders = document.querySelectorAll(
         '.iekbcc0.ju367v3n.ju367v48.ju367v33.ju367v4y',
       );
@@ -134,7 +144,7 @@ const LayoutConnectWallet: FC = () => {
         '.iekbcc0.ju367v7c.ju367v7x.ju367v8f.ju367v6o.ju367v4.ju367va.ju367v2r',
       );
       linkBox?.classList.add('linkBox');
-    }, 100);
+    }, 0);
 
     return () => clearTimeout(timeout);
   }, [isConnectModalOpen]);

@@ -43,13 +43,31 @@
   flex-direction: row !important;
 }
 
-.walletOptionsButton {
-  width: 33%;
+.walletOptionsButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100% !important;
+  gap: 1.6rem !important;
+}
+
+.walletOptionsButtonsContent {
+  height: 9.6rem;
+  padding: 0 !important;
   background: $color-octant-grey3 !important;
+}
+
+.walletOptionsButtonsOuter {
+  width: 10.9rem;
 }
 
 .walletOptionsContent {
   flex-direction: column !important;
+
+  > div:nth-child(2) > div {
+    text-align: center;
+    font-size: 1.4rem !important;
+  }
 }
 
 .walletOptionsText {
