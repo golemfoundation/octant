@@ -15,7 +15,7 @@ export default function useProjectsIpfs(
   projectsAddresses?: string[],
   epoch?: number,
   isEnabled?: boolean,
-): { data: ExtendedProject[]; isFetching: boolean; refetch: () => void } {
+): { data: ExtendedProject[]; isAnyIpfsError: boolean; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
   const { data: currentEpoch } = useCurrentEpoch();
   const {
@@ -35,9 +35,9 @@ export default function useProjectsIpfs(
       })),
     });
 
-  const isAnyError = projectsIpfsResults.some(element => element.isError);
+  const isAnyIpfsError = projectsIpfsResults.some(element => element.isError);
   useEffect(() => {
-    if (!isAnyError) {
+    if (!isAnyIpfsError) {
       return;
     }
     toastService.showToast({
@@ -46,7 +46,7 @@ export default function useProjectsIpfs(
       name: 'ipfsError',
       type: 'error',
     });
-  }, [isAnyError, t]);
+  }, [isAnyIpfsError, t]);
 
   const isProjectsIpfsResultsFetching =
     isFetchingProjectsEpoch ||
@@ -56,6 +56,7 @@ export default function useProjectsIpfs(
   if (isProjectsIpfsResultsFetching) {
     return {
       data: [],
+      isAnyIpfsError,
       isFetching: isProjectsIpfsResultsFetching,
       refetch,
     };
@@ -71,6 +72,7 @@ export default function useProjectsIpfs(
 
   return {
     data: projectsIpfsResultsWithAddresses,
+    isAnyIpfsError,
     isFetching: false,
     refetch,
   };
