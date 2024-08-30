@@ -13,7 +13,28 @@ import useSettingsStore from 'store/settings/store';
 import { browserWallet, walletConnect, ledgerConnect } from 'svg/wallet';
 
 import styles from './LayoutConnectWallet.module.scss';
+import { setCustomStylesForRainbowKitModal } from './utils';
+
 import './LayoutConnectWallet.scss';
+
+/**
+ * Determines when RainbwKit modal is in "list of wallets" mode.
+ * Mutations on RainbowKit modal DOM fire when:
+ * 1. User chooses any of the wallets (opens wallet-specific loading state).
+ * 2. User cancels the signature and goes back to the list.
+ * 3. Custom styles (setCustomStylesForRainbowKitModal) are applied.
+ *
+ * Custom styles can not be applied when wallet-specific loading state is visible, because:
+ * 1. It is not designed.
+ * 2. Some of the DOM elements are not available then.
+ *
+ * Hence, the logic triggers setCustomStylesForRainbowKitModal when modal is being opened
+ * and then when user goes back to the list of wallets.
+ *
+ * Observer checks for childList-type changes and whether user is in list mode,
+ * then applies custom styles.
+ */
+let isInListMode = false;
 
 const LayoutConnectWallet: FC = () => {
   const { isDesktop } = useMediaQuery();
@@ -32,121 +53,22 @@ const LayoutConnectWallet: FC = () => {
     if (!isConnectModalOpen) {
       return;
     }
-    const timeout = setTimeout(() => {
-      // RaibowKit connect modal.
-      const rainbowkitConnectModal = document.querySelectorAll('body > div')[4];
-      const allChildren = rainbowkitConnectModal.querySelectorAll('*');
-      // font-family is set for all children, as !important doesn't work here.
-      allChildren.forEach(element => {
-        // eslint-disable-next-line no-param-reassign
-        element.classList.add('rainbowKitCustomFontFamily');
-      });
 
-      const rainbowKitConnectModalWidth = document.querySelector(
-        '.iekbcc0._1ckjpok4._1ckjpok1.ju367vb6.ju367vdr.ju367vp.ju367vt.ju367vv.ju367vel.ju367va.ju367v15.ju367v6c.ju367v8r',
-      );
-      rainbowKitConnectModalWidth?.classList.add('rainbowKitConnectModalWidth');
+    setCustomStylesForRainbowKitModal(t);
+    isInListMode = true;
 
-      const rainbowKitConnectModalDiv = document.querySelector(
-        '.iekbcc0.ju367va.ju367v15.ju367v4y._1vwt0cg4',
-      );
-      rainbowKitConnectModalDiv?.classList.add('rainbowKitConnectModalDiv');
+    const target = document.querySelector('.iekbcc0.ju367va.ju367v14');
 
-      const rainbowkitConnectModalHeader = document.querySelector('.iekbcc0.ju367va.ju367v2r');
-      rainbowkitConnectModalHeader?.classList.add('rainbowkitConnectModalHeader');
-
-      const rainbowkitConnectDummyDiv = document.querySelector('.iekbcc0.ju367v3s.ju367v94');
-      rainbowkitConnectDummyDiv?.classList.add('rainbowkitConnectDummyDiv');
-
-      const rainbowKitConnectHeaderTextWrapper = document.querySelector(
-        '.iekbcc0.ju367v7a.ju367v7v.ju367v3h.ju367v6k.ju367v86',
-      );
-      rainbowKitConnectHeaderTextWrapper?.classList.add('rainbowKitConnectHeaderTextWrapper');
-
-      const rainbowkitConnectModalHeaderText =
-        rainbowkitConnectModalHeader?.querySelector('div:nth-child(2) > h1');
-      rainbowkitConnectModalHeaderText?.classList.add('rainbowkitConnectModalHeaderText');
-
-      if (rainbowkitConnectModalHeaderText) {
-        rainbowkitConnectModalHeaderText.textContent = 'Choose a browser wallet';
+    const observer = new MutationObserver(mutations => {
+      if (mutations.every(({ type }) => type === 'childList') && !isInListMode) {
+        setCustomStylesForRainbowKitModal(t);
       }
+      isInListMode = !isInListMode;
+    });
 
-      const optionsWrapper = document.querySelector(
-        '.iekbcc0.ju367v6p._1vwt0cg2.ju367v7a.ju367v7v',
-      );
-      optionsWrapper?.classList.add('optionsWrapper');
-
-      const walletOptionsButtonsWrappers = document.querySelectorAll(
-        '.iekbcc0.ju367va.ju367v15.ju367v1n',
-      );
-      walletOptionsButtonsWrappers.forEach(element => {
-        element?.classList.add('walletOptionsButtonsWrapper');
-      });
-
-      const walletOptionsButtons = document.querySelectorAll('.iekbcc0.ju367va.ju367v15.ju367v1n');
-      walletOptionsButtons.forEach(element => {
-        element.classList.add('walletOptionsButtons');
-      });
-
-      const walletOptionsButtonsOuter = document.querySelectorAll('.iekbcc0.ju367va.ju367v15');
-      walletOptionsButtonsOuter.forEach(element => {
-        element.classList.add('walletOptionsButtonsOuter');
-      });
-
-      const walletOptionsButtonsContent = document.querySelectorAll(
-        '.iekbcc0.iekbcc9.ju367v89.ju367v6i.ju367v73.ju367v7o.ju367vo.ju367vt.ju367vv.ju367v8u.ju367v9f.ju367vb1.g5kl0l0._12cbo8i3.ju367v8r._12cbo8i6',
-      );
-      walletOptionsButtonsContent.forEach(element => {
-        element.classList.add('walletOptionsButtonsContent');
-      });
-
-      const walletOptionsContents = document.querySelectorAll(
-        '.iekbcc0.ju367v4.ju367va.ju367v14.ju367v1s',
-      );
-      walletOptionsContents.forEach(element => {
-        element?.classList.add('walletOptionsContent');
-      });
-
-      const walletOptionsText = document.querySelectorAll('.iekbcc0.ju367v5p');
-      walletOptionsText.forEach(element => {
-        element.classList.add('walletOptionsText');
-      });
-
-      const buttonClose = document.querySelectorAll(
-        '.iekbcc0.iekbcc9.ju367v4.ju367va0.ju367vc6.ju367vs.ju367vt.ju367vv.ju367vff.ju367va.ju367v2b.ju367v2q.ju367v8u.ju367v94._12cbo8i3.ju367v8r._12cbo8i5._12cbo8i7',
-      )[0];
-
-      buttonClose.classList.add('buttonClose');
-
-      const walletOptionsIcons = document.querySelectorAll('.iekbcc0.ju367v2m.ju367v8p.ju367v9f');
-      walletOptionsIcons.forEach(element => {
-        element.classList.add('walletOptionsIcons');
-      });
-
-      // Installed, recommended.
-      const sectionHeaders = document.querySelectorAll(
-        '.iekbcc0.ju367v3n.ju367v48.ju367v33.ju367v4y',
-      );
-      sectionHeaders.forEach(element => {
-        element.classList.add('sectionHeaders');
-      });
-
-      const walletSections = document.querySelectorAll('.iekbcc0.ju367va.ju367v15.ju367v1n');
-      if (walletSections) {
-        walletSections[1].classList.add('walletSections');
-      }
-
-      const linkBoxTopDividerLine = document.querySelector('.iekbcc0.ju367vau.ju367v24.ju367v57');
-      linkBoxTopDividerLine?.classList.add('linkBoxTopDividerLine');
-
-      // Div with "new to ethereum" text + link.
-      const linkBox = document.querySelector(
-        '.iekbcc0.ju367v7c.ju367v7x.ju367v8f.ju367v6o.ju367v4.ju367va.ju367v2r',
-      );
-      linkBox?.classList.add('linkBox');
-    }, 0);
-
-    return () => clearTimeout(timeout);
+    // pass in the target node, as well as the observer options
+    observer.observe(target as Element, { attributes: true, characterData: true, childList: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnectModalOpen]);
 
   const browserWalletConnector = connectors.find(
