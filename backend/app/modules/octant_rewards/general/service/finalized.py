@@ -5,6 +5,7 @@ from app.infrastructure import database
 from app.modules.dto import OctantRewardsDTO
 from app.pydantic import Model
 from app.engine.octant_rewards.leftover import LeftoverPayload
+from app.engine.projects.rewards.allocations import ProjectAllocationsPayload
 
 
 class FinalizedOctantRewards(Model):
@@ -31,8 +32,11 @@ class FinalizedOctantRewards(Model):
         allocations_for_epoch = database.allocations.get_all_by_epoch(
             context.epoch_details.epoch_num
         )
+        grouped_allocations = context.epoch_settings.project.rewards.projects_allocations.segregate_allocations(
+            ProjectAllocationsPayload(allocations=allocations_for_epoch)
+        )
         allocations_result = context.epoch_settings.project.rewards.get_total_allocations_below_threshold(
-            allocations_for_epoch, len(context.projects_details.projects)
+            grouped_allocations
         )
         allocations_sum = allocations_result.total
         allocations_below_threshold = allocations_result.below_threshold

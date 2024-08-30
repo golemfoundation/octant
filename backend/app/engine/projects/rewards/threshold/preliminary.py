@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
-from app.engine.projects.rewards import AllocationItem, AllocationsBelowThreshold
+from app.engine.projects.rewards import AllocationsBelowThreshold
 from app.engine.projects.rewards.threshold import (
     ProjectThreshold,
     ProjectThresholdPayload,
 )
+from app.engine.projects.rewards import AllocationItem
 
 
 @dataclass
@@ -23,17 +24,22 @@ class PreliminaryProjectThreshold(ProjectThreshold):
         )
 
     def get_total_allocations_below_threshold(
-        self, allocations: List[AllocationItem], no_projects: int
+        self, allocations: Dict[str, List[AllocationItem]]
     ) -> AllocationsBelowThreshold:
-        allocations_sum = sum(map(lambda x: int(x.amount), allocations))
+        summed_allocations = {
+            project: sum(map(lambda value: int(value.amount), values))
+            for project, values in allocations.items()
+        }
+        total_allocations = sum(summed_allocations.values())
+        no_projects = len(allocations.keys())
+
         threshold = self.calculate_threshold(
-            ProjectThresholdPayload(allocations_sum, no_projects)
+            ProjectThresholdPayload(total_allocations, no_projects)
         )
 
         allocations_below_threshold = 0
-        for allocation in allocations:
-            amount = int(allocation.amount)
-            if amount < threshold:
-                allocations_below_threshold += amount
+        for allocations_sum_for_project in summed_allocations.values():
+            if allocations_sum_for_project < threshold:
+                allocations_below_threshold += allocations_sum_for_project
 
-        return AllocationsBelowThreshold(allocations_below_threshold, allocations_sum)
+        return AllocationsBelowThreshold(allocations_below_threshold, total_allocations)

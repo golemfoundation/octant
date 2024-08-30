@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from dataclass_wizard import JSONWizard
 
@@ -62,8 +62,10 @@ class ProjectRewards(ABC):
         return None
 
     def get_total_allocations_below_threshold(
-        self, allocations: List[AllocationItem], no_projects: int
+        self, allocations: Dict[str, List[AllocationItem]]
     ) -> AllocationsBelowThreshold:
-        return AllocationsBelowThreshold(
-            0, sum(map(lambda allocation: int(allocation.amount), allocations))
+        allocations_sum = sum(
+            sum(int(item.amount) for item in project_allocations)
+            for project_allocations in allocations.values()
         )
+        return AllocationsBelowThreshold(0, allocations_sum)

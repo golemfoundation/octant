@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
-from app.engine.projects.rewards import AllocationItem, AllocationsBelowThreshold
+from app.engine.projects.rewards import AllocationsBelowThreshold
+from app.engine.projects.rewards import AllocationItem
 
 
 @dataclass
@@ -19,6 +20,6 @@ class ProjectThreshold(ABC):
 
     @abstractmethod
     def get_total_allocations_below_threshold(
-        self, allocations: List[AllocationItem], no_projects: int
+        self, allocations: Dict[str, List[AllocationItem]]
     ) -> AllocationsBelowThreshold:
         pass

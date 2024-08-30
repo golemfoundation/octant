@@ -1,6 +1,6 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
-from typing import List
+from typing import List, Dict
 
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
@@ -45,10 +45,10 @@ class PreliminaryProjectRewards(ProjectRewards):
         )
 
     def get_total_allocations_below_threshold(
-        self, allocations: List[AllocationItem], no_projects: int
+        self, allocations: Dict[str, List[AllocationItem]]
     ) -> AllocationsBelowThreshold:
         return self.projects_threshold.get_total_allocations_below_threshold(
-            allocations, no_projects
+            allocations
         )
 
     def calculate_project_rewards(
