@@ -6,17 +6,17 @@
 }
 
 .modalWidth {
-  width: 47.2rem !important;
+  width: $modalDesktopWidth !important;
 }
 
 .primaryWrapper {
-  padding: 0 5.6rem 5.6rem !important;
+  padding: $modalPadding !important;
   margin: 0 !important;
 }
 
 .modalHeader {
-  line-height: 8.8rem !important;
-  height: 8.8rem !important;
+  line-height: $modalHeaderHeight !important;
+  height: $modalHeaderHeight !important;
   align-items: center !important;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .headerText {
-  font-size: 2rem !important;
+  font-size: $modalHeaderFontSize !important;
   font-weight: $font-weight-bold !important;
 }
 

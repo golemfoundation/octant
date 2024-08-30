@@ -66,7 +66,6 @@ const LayoutConnectWallet: FC = () => {
       isInListMode = !isInListMode;
     });
 
-    // pass in the target node, as well as the observer options
     observer.observe(target as Element, { attributes: true, characterData: true, childList: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnectModalOpen]);
