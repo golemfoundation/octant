@@ -7,6 +7,7 @@ import styles from './HomeGrid.module.scss';
 
 import HomeGridCurrentGlmLock from '../HomeGridCurrentGlmLock';
 import HomeGridPersonalAllocation from '../HomeGridPersonalAllocation';
+import HomeGridRewardsEstimator from '../HomeGridRewardsEstimator';
 import HomeGridUQScore from '../HomeGridUQScore';
 
 const HomeGrid = (): ReactNode => {
@@ -17,6 +18,7 @@ const HomeGrid = (): ReactNode => {
       <HomeGridCurrentGlmLock className={styles.gridTile} />
       <HomeGridPersonalAllocation className={styles.gridTile} />
       {isConnected && <HomeGridUQScore className={styles.gridTile} />}
+      <HomeGridRewardsEstimator className={styles.gridTile} />
     </Grid>
   );
 };

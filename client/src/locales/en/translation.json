@@ -132,6 +132,16 @@
         "modalRecalculatingScore": {
           "recalculatingScore":"Recalculating score"
         }
+      },
+      "homeGridRewardsEstimator": {
+        "rewardsEstimator": "Rewards estimator",
+        "enterGLMAmount": "Enter a GLM amount",
+        "lockForEpoch_one": "Lock for {{count}} epoch",
+        "lockForEpoch_other": "Lock for {{count}} epochs",
+        "uq20+": "UQ 20+",
+        "errors": {
+          "valueCryptoTooBig": "That isn’t a valid amount"
+        }
       }
     },
     "settings": {
