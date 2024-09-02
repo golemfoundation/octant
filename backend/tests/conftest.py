@@ -957,6 +957,24 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
+    def delegation_recalculate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.put(
+            "/delegation/recalculate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
+
     @property
     def config(self):
         return self._flask_client.application.config
