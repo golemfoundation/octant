@@ -704,7 +704,6 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
-            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
