@@ -30,8 +30,11 @@ const ProjectsList: FC<ProjectsListProps> = ({
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: projectsEpoch, isFetching: isFetchingProjectsEpoch } = useProjectsEpoch(epoch);
-  const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
-    useProjectsIpfsWithRewards(epoch);
+  const {
+    data: projectsIpfsWithRewards,
+    isFetching: isFetchingProjectsWithRewards,
+    isAnyIpfsError,
+  } = useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
   const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
@@ -43,7 +46,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
   };
 
   const areProjectsIpfsWithRewardsAvailable =
-    projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards;
+    projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards && !isAnyIpfsError;
   const projectsIpfsWithRewardsFiltered = areProjectsIpfsWithRewardsAvailable
     ? projectsIpfsWithRewards.filter(projectIpfsWithRewards => {
         return (

@@ -704,6 +704,7 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
+            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
@@ -931,6 +932,11 @@ class Client:
 
     def get_healthcheck(self) -> tuple[dict, int]:
         rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
+
+    def check_delegation(self, *addresses) -> tuple[dict, int]:
+        addresses = ",".join(addresses)
+        rv = self._flask_client.get(f"/delegation/check/{addresses}")
         return json.loads(rv.text), rv.status_code
 
     def delegate(

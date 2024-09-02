@@ -185,6 +185,26 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
+        if path == "/remove":
+            query = self.query_data()
+            if "name" not in query:
+                self.send_response(400)
+                self.wfile.write(
+                    'Missing "name" field in GET query fields'.encode("utf-8")
+                )
+                return
+            subgraph_name = query["name"]
+            if subgraph_name not in deployments:
+                self.send_response(400)
+                self.wfile.write(r"No deployment with {subgraph_name}".encode("utf-8"))
+                return
+
+            self.drop_env(subgraph_name)
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            return
+
         query = self.query_data()
         if "name" not in query:
             self.send_response(400)

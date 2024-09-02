@@ -15,14 +15,16 @@ export interface ProjectIpfsWithRewards extends ExtendedProject {
 
 export default function useProjectsIpfsWithRewards(epoch?: number): {
   data: ProjectIpfsWithRewards[];
+  isAnyIpfsError: boolean;
   isFetching: boolean;
 } {
   const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
     useProjectsEpoch(epoch);
-  const { data: projectsIpfs, isFetching: isFetchingProjectsIpfs } = useProjectsIpfs(
-    projectsAddresses?.projectsAddresses,
-    epoch,
-  );
+  const {
+    data: projectsIpfs,
+    isFetching: isFetchingProjectsIpfs,
+    isAnyIpfsError,
+  } = useProjectsIpfs(projectsAddresses?.projectsAddresses, epoch);
   const {
     data: matchedProjectRewards,
     isFetching: isFetchingMatchedProjectRewards,
@@ -43,6 +45,7 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
   if (isFetching) {
     return {
       data: [],
+      isAnyIpfsError,
       isFetching,
     };
   }
@@ -71,6 +74,7 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
 
   return {
     data: getSortedElementsByTotalValueOfAllocationsAndAlphabetical(projectsWithRewards),
+    isAnyIpfsError,
     isFetching,
   };
 }
