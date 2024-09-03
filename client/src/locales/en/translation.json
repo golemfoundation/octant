@@ -163,7 +163,7 @@
         "connecting": "Connecting ...",
         "walletConnect": "WalletConnect",
         "ledgerConnect": "Ledger",
-        "walletSelectHeader":  "Choose a browser wallet"
+        "walletSelectHeader": "Choose a browser wallet"
       },
       "donationEstimateBox": {
         "donationEstimate": "Donation estimate",

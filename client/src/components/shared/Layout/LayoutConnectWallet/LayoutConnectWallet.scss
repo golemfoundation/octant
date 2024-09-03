@@ -55,6 +55,12 @@
   height: 9.6rem;
   padding: 0 !important;
   background: $color-octant-grey3 !important;
+
+  &:hover {
+    .walletOptionsIcons {
+      filter: none !important;
+    }
+  }
 }
 
 .walletOptionsButtonsOuter {

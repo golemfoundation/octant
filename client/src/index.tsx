@@ -14,6 +14,7 @@ import env, { envViteKeys, envsAllowedToBeEmpty } from 'env';
 import clientReactQuery from './api/clients/client-react-query';
 import { wagmiConfig } from './api/clients/client-wagmi';
 import App from './App';
+import { RAINBOW_KIT_PROVIDER } from './constants/domElementsIds';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -59,6 +60,7 @@ if (window.location.hash) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={clientReactQuery}>
         <RainbowKitProvider
+          id={RAINBOW_KIT_PROVIDER}
           modalSize="compact"
           theme={lightTheme({
             accentColor: '#2d9b87',

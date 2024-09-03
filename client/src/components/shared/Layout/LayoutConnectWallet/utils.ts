@@ -1,14 +1,16 @@
 import { TFunction } from 'i18next';
 
+import { RAINBOW_KIT_PROVIDER } from 'constants/domElementsIds';
+
 export const setCustomStylesForRainbowKitModal = (t: TFunction): void => {
-  const modalRootWrapper = document.querySelector('[aria-labelledby="rk_connect_title"]');
+  const modalRootWrapper = document.querySelector(`[data-rk="${RAINBOW_KIT_PROVIDER}"]`);
 
   if (!modalRootWrapper) {
     return;
   }
 
   // RaibowKit connect modal.
-  const rainbowkitConnectModal = modalRootWrapper?.parentNode?.parentNode;
+  const rainbowkitConnectModal = modalRootWrapper?.parentNode;
 
   if (!rainbowkitConnectModal) {
     return;
