@@ -1,0 +1,59 @@
+.root {
+  padding: 0rem 2.4rem 2.4rem;
+  overflow: auto;
+
+  .divider {
+    margin-top: 2rem;
+    width: 100%;
+    height: 0.1rem;
+    background-color: $color-octant-grey1;
+  }
+
+  .withdrawEthButton {
+    margin-top: 2.4rem;
+    width: 100%;
+  }
+}
+
+.titleWrapper {
+  display: flex;
+
+  .numberOfAllocations {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-white;
+    background-color: $color-octant-dark;
+    font-size: $font-size-08;
+    font-weight: $font-weight-superbold;
+    border-radius: 50%;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-left: 1rem;
+  }
+}
+
+.noDonationsYet {
+  height: 100%;
+  width: 100%;
+
+  .noDonationsYetImage {
+    width: 12.9rem;
+    margin-top: 0.6rem;
+  }
+
+  .noDonationsYetLabel {
+    line-height: 2rem;
+    margin-top: 4.6rem;
+    font-size: $font-size-14;
+    font-weight: $font-weight-bold;
+    color: $color-octant-grey5;
+  }
+}
+
+.editButton {
+  margin-left: auto;
+  width: 6rem;
+  padding: 0;
+  min-height: 3.2rem;
+}

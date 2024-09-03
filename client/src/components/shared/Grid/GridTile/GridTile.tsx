@@ -10,10 +10,11 @@ const GridTile: FC<GridTileProps> = ({
   children,
   className,
   dataTest = 'GridTile',
+  showTitleDivider,
 }) => (
   <div className={cx(styles.root, className)} data-test={dataTest}>
-    <div className={cx(styles.groupTitleWrapper)}>
-      <div className={styles.title} data-test={`${dataTest}__group__title`}>
+    <div className={cx(styles.titleWrapper, showTitleDivider && styles.showTitleDivider)}>
+      <div className={styles.title} data-test={`${dataTest}__title`}>
         {title}
       </div>
       {titleSuffix}
