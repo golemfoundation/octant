@@ -7,6 +7,23 @@
   border-radius: $border-radius-16;
   background-color: $color-octant-grey3;
 
+  &.noWalletConnected {
+    .octantLogo {
+      path {
+        fill: $color-octant-grey2;
+      }
+    }
+
+    .addresses .addressesGroup {
+      max-width: 13.2rem;
+      opacity: 0.5;
+    }
+
+    .score {
+      color: $color-octant-grey5;
+    }
+  }
+
   .avatarsGroup {
     position: relative;
     display: flex;

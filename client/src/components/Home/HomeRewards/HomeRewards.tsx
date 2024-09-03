@@ -13,7 +13,7 @@ import styles from './HomeRewards.module.scss';
 
 const HomeRewards = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: individualRewardAllEpochs, isFetching: isFetchingIndividualRewardAllEpochs } =
     useIndividualRewardAllEpochs();
@@ -54,10 +54,11 @@ const HomeRewards = (): ReactNode => {
       value: currentRewardsToDisplay,
     },
     {
-      isLoadingValue:
-        isFetchingIndividualRewardAllEpochs ||
-        isFetchingUserAllAllocations ||
-        isFetchingEpochPatronsAllEpochs,
+      isLoadingValue: isConnected
+        ? isFetchingIndividualRewardAllEpochs ||
+          isFetchingUserAllAllocations ||
+          isFetchingEpochPatronsAllEpochs
+        : false,
       key: 'totalRewards',
       label: t('totalRewards'),
       value: totalRewardsToDisplay,

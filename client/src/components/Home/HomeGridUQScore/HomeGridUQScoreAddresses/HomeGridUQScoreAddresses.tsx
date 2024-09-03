@@ -14,10 +14,12 @@ import styles from './HomeGridUQScoreAddresses.module.scss';
 import HomeGridUQScoreAddressesProps from './types';
 
 const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchingScore }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.home.homeGridUQScore',
+  });
   const ref = useRef<HTMLDivElement>(null);
 
-  const { address: accountAddress } = useAccount();
+  const { address: accountAddress, isConnected } = useAccount();
 
   const {
     isDelegationCompleted,
@@ -47,14 +49,18 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchin
   const showMoreThanOneAddress = addresses.length > 1;
 
   const addressesToShow = useMemo(() => {
+    if (!isConnected) {
+      return t('noWalletConnected');
+    }
     if (showMoreThanOneAddress) {
       return addresses.map(address => address.slice(0, 5)).join(', ');
     }
     return truncateEthAddress(addresses.at(0) || '');
-  }, [showMoreThanOneAddress, addresses]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showMoreThanOneAddress, addresses, isConnected]);
 
   useEffect(() => {
-    if (isFetchingScore || !ref?.current) {
+    if (isFetchingScore || !ref?.current || !isConnected) {
       return;
     }
     const controls = animate(
@@ -72,15 +78,21 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchin
     );
 
     return () => controls.complete();
-  }, [isFetchingScore, isDelegationCompleted, secondaryAddressScore, primaryAddressScore]);
+  }, [
+    isFetchingScore,
+    isDelegationCompleted,
+    secondaryAddressScore,
+    primaryAddressScore,
+    isConnected,
+  ]);
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, !isConnected && styles.noWalletConnected)}>
       <div className={styles.avatarsGroup}>
         {addresses.map(address => (
           <div key={address} className={styles.addressAvatar}>
-            {address === '0x???' ? (
-              <Svg img={octant} size={1.4} />
+            {!isConnected || address === '0x???' ? (
+              <Svg classNameSvg={styles.octantLogo} img={octant} size={1.4} />
             ) : (
               <Identicon className={styles.avatar} username={address} />
             )}
