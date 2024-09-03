@@ -1,4 +1,5 @@
-import React, { memo, ReactElement } from 'react';
+import cx from 'classnames';
+import React, { FC, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
@@ -14,8 +15,9 @@ import {
 import { octantSemiTransparent } from 'svg/logo';
 
 import styles from './LayoutFooter.module.scss';
+import LayoutFooterProps from './types';
 
-const LayoutFooter = (): ReactElement => {
+const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.footer' });
 
   const links = [
@@ -28,7 +30,7 @@ const LayoutFooter = (): ReactElement => {
   ];
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, className)}>
       <div className={styles.wrapper}>
         <Svg img={octantSemiTransparent} size={4.8} />
         <div className={styles.octantText}>

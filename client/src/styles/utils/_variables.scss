@@ -35,3 +35,10 @@ $modalVariantSmallPaddingMobile: 2.4rem;
 $modalVariantSmallPaddingDesktop: 5.6rem;
 $projectItemPadding: 2.4rem;
 $historyHorizontalPadding: 1.6rem;
+
+// layout
+$layout-horizontal-padding-small: 2.4rem;
+$layout-horizontal-padding-large: 11.2rem;
+$layout-section-width-large-desktop: calc(
+  nth($large-desktop-range, 1) - 2 * $layout-horizontal-padding-large
+);

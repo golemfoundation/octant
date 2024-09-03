@@ -3,16 +3,24 @@
   min-height: 8rem;
   width: 100%;
   align-items: center;
-  padding: 0 2.4rem;
   position: relative;
-  border-bottom: 0.1rem solid $color-octant-grey1;
 
-  @media #{$desktop-up} {
-    padding: 0 4rem;
-  }
+  &::after {
+    position: absolute;
+    bottom: 0;
+    left: -$layout-horizontal-padding-small;
+    content: '';
+    width: 100vw;
+    height: 0.1rem;
+    background-color: $color-octant-grey1;
 
-  @media #{$desktop-up} {
-    padding: 0 11.2rem;
+    @media #{$desktop-up} {
+      left: -$layout-horizontal-padding-large;
+    }
+
+    @media #{$large-desktop-up} {
+      left: calc(calc(-100vw + $layout-section-width-large-desktop) / 2);
+    }
   }
 
   .octantLogo {
