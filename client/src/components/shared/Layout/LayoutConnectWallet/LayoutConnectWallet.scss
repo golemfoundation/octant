@@ -46,7 +46,7 @@
 .walletOptionsButtons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100% !important;
   gap: 1.6rem !important;
 }

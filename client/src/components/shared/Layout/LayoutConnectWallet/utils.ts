@@ -1,8 +1,18 @@
 import { TFunction } from 'i18next';
 
 export const setCustomStylesForRainbowKitModal = (t: TFunction): void => {
+  const modalRootWrapper = document.querySelector('[aria-labelledby="rk_connect_title"]');
+
+  if (!modalRootWrapper) {
+    return;
+  }
+
   // RaibowKit connect modal.
-  const rainbowkitConnectModal = document.querySelectorAll('body > div')[4];
+  const rainbowkitConnectModal = modalRootWrapper?.parentNode?.parentNode;
+
+  if (!rainbowkitConnectModal) {
+    return;
+  }
 
   const allChildren = rainbowkitConnectModal.querySelectorAll('*');
   // font-family is set for all children, as inherited !important doesn't work here.
