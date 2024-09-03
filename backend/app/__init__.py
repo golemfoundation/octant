@@ -7,7 +7,6 @@ from app.extensions import (
     db,
     migrate,
     cors,
-    socketio,
     cache,
     init_web3,
     api,

@@ -52,10 +52,11 @@ def teardown_session(*args, **kwargs):
     db.session.remove()
 
 
-from v2.main import fastapi_app
+from v2.main import fastapi_app  # noqa
 
 # Mount Flask app under a sub-path
 fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
+
 
 # Middleware to check if the path exists in FastAPI
 class PathCheckMiddleware(BaseHTTPMiddleware):

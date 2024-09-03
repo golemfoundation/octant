@@ -1,60 +1,103 @@
 import logging
+from typing import Tuple
 
 import socketio
 
-# from app.extensions import socketio, epochs
 from eth_utils import to_checksum_address
-from v2.allocations.repositories import get_donations_by_project
-from v2.allocations.services import allocate
-from v2.core.dependencies import db_getter
-from v2.epochs.dependencies import epochs_getter, epochs_subgraph_getter
-from v2.projects.depdendencies import projects_getter
-from v2.projects.services import (
-    get_estimated_project_rewards,
-    get_projects_allocation_threshold,
+from v2.allocations.dependencies import (
+    SignatureVerifierSettings,
+    get_allocations,
+    get_signature_verifier,
 )
+from v2.epochs.contracts import EpochsContracts
+from v2.projects.services import (
+    EstimatedProjectRewards,
+    ProjectsAllocationThresholdGetter,
+)
+from v2.uniqueness_quotients.dependencies import UQScoreSettings, get_uq_score_getter
+from v2.allocations.repositories import get_donations_by_project
+from v2.allocations.services import Allocations
+from v2.core.dependencies import (
+    DatabaseSettings,
+    Web3ProviderSettings,
+    get_db_session,
+    get_w3,
+)
+from v2.epochs.dependencies import (
+    EpochsSettings,
+    EpochsSubgraphSettings,
+    get_epochs_contracts,
+    get_epochs_subgraph,
+)
+from v2.projects.depdendencies import (
+    EstimatedProjectMatchedRewardsSettings,
+    ProjectsAllocationThresholdSettings,
+    ProjectsSettings,
+    get_estimated_project_matched_rewards,
+    get_estimated_project_rewards,
+    get_projects_contracts,
+)
+from v2.projects.depdendencies import get_projects_allocation_threshold_getter
 
-from .models import AllocationRequest, UserAllocationRequest
+from .schemas import AllocationRequest, UserAllocationRequest
+
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AllocateNamespace(socketio.AsyncNamespace):
-    def __init__(self, namespace: str):
-        super().__init__(namespace=namespace)
+    def create_dependencies_on_connect(
+        self,
+        session: AsyncSession,
+    ) -> Tuple[
+        ProjectsAllocationThresholdGetter, EstimatedProjectRewards, EpochsContracts
+    ]:
+        """
+        Create and return all service dependencies.
+        TODO: how could we cache this one ?
+        """
+        w3 = get_w3(Web3ProviderSettings())  # type: ignore
+        projects_contracts = get_projects_contracts(w3, ProjectsSettings())
+        threshold_getter = get_projects_allocation_threshold_getter(
+            session, projects_contracts, ProjectsAllocationThresholdSettings()
+        )
+        epochs_contracts = get_epochs_contracts(w3, EpochsSettings())
+        epochs_subgraph = get_epochs_subgraph(EpochsSubgraphSettings())
+        estimated_matched_rewards = get_estimated_project_matched_rewards(
+            session, epochs_subgraph, EstimatedProjectMatchedRewardsSettings()
+        )
+        estimated_project_rewards = get_estimated_project_rewards(
+            session,
+            projects_contracts,
+            estimated_matched_rewards,
+        )
 
-        # self.w3 = w3_getter()
-        self.epochs_contracts = epochs_getter()
-        self.epochs_subgraph = epochs_subgraph_getter()
-        self.projects_contracts = projects_getter()
-        self.db_session = db_getter()
+        return (threshold_getter, estimated_project_rewards, epochs_contracts)
 
-    async def on_connect(self, sid: str, environ: dict):
+    async def handle_on_connect(
+        self,
+        epochs_contracts: EpochsContracts,
+        projects_allocation_threshold_getter: ProjectsAllocationThresholdGetter,
+        estimated_project_rewards: EstimatedProjectRewards,
+    ):
         """
         Handle client connection
         """
 
         logging.debug("Client connected")
 
-        # We send the data only in PENDING state
-        pending_epoch_number = await self.epochs_contracts.get_pending_epoch()
+        pending_epoch_number = await epochs_contracts.get_pending_epoch()
         if pending_epoch_number is None:
             return
 
-        async with self.db_session() as session:
-            threshold = await get_projects_allocation_threshold(
-                session=session,
-                projects=self.projects_contracts,
-                epoch_number=pending_epoch_number,
-            )
+        # Get the allocation threshold and send it to the client
+        allocation_threshold = await projects_allocation_threshold_getter.get(
+            epoch_number=pending_epoch_number
+        )
+        await self.emit("threshold", {"threshold": str(allocation_threshold)})
 
-            await self.emit("threshold", {"threshold": str(threshold)})
-
-            project_rewards = await get_estimated_project_rewards(
-                session=session,
-                projects=self.projects_contracts,
-                epochs_subgraph=self.epochs_subgraph,
-                epoch_number=pending_epoch_number,
-            )
-
+        # Get the estimated project rewards and send them to the client
+        project_rewards = await estimated_project_rewards.get(pending_epoch_number)
         rewards = [
             {
                 "address": project_address,
@@ -66,68 +109,142 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
         await self.emit("project_rewards", rewards)
 
+    async def on_connect(self, sid: str, environ: dict):
+        async with get_db_session(DatabaseSettings()) as session:
+            (
+                projects_allocation_threshold_getter,
+                estimated_project_rewards,
+                epochs_contracts,
+            ) = self.create_dependencies_on_connect(session)
+
+            await self.handle_on_connect(
+                epochs_contracts,
+                projects_allocation_threshold_getter,
+                estimated_project_rewards,
+            )
+
     async def on_disconnect(self, sid):
         logging.debug("Client disconnected")
 
-    async def on_allocate(self, sid: str, data: dict):
+    def create_dependencies_on_allocate(
+        self,
+        session: AsyncSession,
+    ) -> Tuple[
+        Allocations,
+        EpochsContracts,
+        ProjectsAllocationThresholdGetter,
+        EstimatedProjectRewards,
+    ]:
+        """
+        Create and return all service dependencies.
+        """
+
+        w3 = get_w3(Web3ProviderSettings())
+        epochs_contracts = get_epochs_contracts(w3, EpochsSettings())
+        projects_contracts = get_projects_contracts(w3, ProjectsSettings())
+        epochs_subgraph = get_epochs_subgraph(EpochsSubgraphSettings())
+        threshold_getter = get_projects_allocation_threshold_getter(
+            session, projects_contracts, ProjectsAllocationThresholdSettings()
+        )
+        estimated_matched_rewards = get_estimated_project_matched_rewards(
+            session, epochs_subgraph, EstimatedProjectMatchedRewardsSettings()
+        )
+        estimated_project_rewards = get_estimated_project_rewards(
+            session,
+            projects_contracts,
+            estimated_matched_rewards,
+        )
+
+        signature_verifier = get_signature_verifier(
+            session, epochs_subgraph, projects_contracts, SignatureVerifierSettings()
+        )
+
+        uq_score_getter = get_uq_score_getter(session, UQScoreSettings())
+
+        allocations = get_allocations(
+            session,
+            signature_verifier,
+            uq_score_getter,
+            projects_contracts,
+            estimated_matched_rewards,
+        )
+
+        return (
+            allocations,
+            epochs_contracts,
+            threshold_getter,
+            estimated_project_rewards,
+        )
+
+    async def handle_on_allocate(
+        self,
+        session: AsyncSession,
+        epochs_contracts: EpochsContracts,
+        allocations: Allocations,
+        threshold_getter: ProjectsAllocationThresholdGetter,
+        estimated_project_rewards: EstimatedProjectRewards,
+        data: dict,
+    ):
         """
         Handle allocation request
         """
 
         # We do not handle requests outside of pending epoch state (Allocation Window)
-        pending_epoch_number = await self.epochs_contracts.get_pending_epoch()
+        pending_epoch_number = await epochs_contracts.get_pending_epoch()
         if pending_epoch_number is None:
             return
 
+        pending_epoch_number = 1
         request = from_dict(data)
 
-        async with self.db_session() as session:
-            await allocate(
+        await allocations.make(pending_epoch_number, request)
+
+        logging.debug("Allocation request handled")
+
+        threshold = await threshold_getter.get(pending_epoch_number)
+        await self.emit("threshold", {"threshold": str(threshold)})
+
+        project_rewards = await estimated_project_rewards.get(pending_epoch_number)
+        rewards = [
+            {
+                "address": project_address,
+                "allocated": str(project_rewards.amounts_by_project[project_address]),
+                "matched": str(project_rewards.matched_by_project[project_address]),
+            }
+            for project_address in project_rewards.amounts_by_project.keys()
+        ]
+
+        await self.emit("project_rewards", rewards)
+
+        for project_address in project_rewards.amounts_by_project.keys():
+            donations = await get_donations_by_project(
                 session=session,
-                projects_contracts=self.projects_contracts,
-                epochs_subgraph=self.epochs_subgraph,
+                project_address=project_address,
                 epoch_number=pending_epoch_number,
-                request=request,
             )
 
-            threshold = await get_projects_allocation_threshold(
-                session=session,
-                projects=self.projects_contracts,
-                epoch_number=pending_epoch_number,
+            await self.emit(
+                "project_donors",
+                {"project": project_address, "donors": donations},
             )
 
-            await self.emit("threshold", {"threshold": str(threshold)})
-            project_rewards = await get_estimated_project_rewards(
-                session=session,
-                projects=self.projects_contracts,
-                epochs_subgraph=self.epochs_subgraph,
-                epoch_number=pending_epoch_number,
+    async def on_allocate(self, sid: str, data: dict):
+        async with get_db_session(DatabaseSettings()) as session:
+            (
+                allocations,
+                epochs_contracts,
+                threshold_getter,
+                estimated_project_rewards,
+            ) = self.create_dependencies_on_allocate(session)
+
+            await self.handle_on_allocate(
+                session,
+                epochs_contracts,
+                allocations,
+                threshold_getter,
+                estimated_project_rewards,
+                data,
             )
-
-            rewards = [
-                {
-                    "address": project_address,
-                    "allocated": str(
-                        project_rewards.amounts_by_project[project_address]
-                    ),
-                    "matched": str(project_rewards.matched_by_project[project_address]),
-                }
-                for project_address in project_rewards.amounts_by_project.keys()
-            ]
-
-            await self.emit("project_rewards", rewards)
-
-            for project_address in project_rewards.amounts_by_project.keys():
-                donations = await get_donations_by_project(
-                    session=session,
-                    project_address=project_address,
-                    epoch_number=pending_epoch_number,
-                )
-
-                await self.emit(
-                    "project_donors",
-                    {"project": project_address, "donors": donations},
-                )
 
 
 def from_dict(data: dict) -> UserAllocationRequest:
@@ -165,12 +282,10 @@ def from_dict(data: dict) -> UserAllocationRequest:
     signature = payload.get("signature")
     is_manually_edited = data.get("isManuallyEdited", False)
 
-    # fmt: off
     return UserAllocationRequest(
-        user_address        = user_address,
-        allocations         = allocations,
-        nonce               = nonce,
-        signature           = signature,
-        is_manually_edited  = is_manually_edited,
+        user_address=user_address,
+        allocations=allocations,
+        nonce=nonce,
+        signature=signature,
+        is_manually_edited=is_manually_edited,
     )
-    # fmt: on

@@ -11,7 +11,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
 from v2.users.repositories import get_user_by_address
 
-from .models import AllocationWithUserUQScore, ProjectDonation, UserAllocationRequest
+from .schemas import AllocationWithUserUQScore, ProjectDonation, UserAllocationRequest
 
 
 async def sum_allocations_by_epoch(session: AsyncSession, epoch_number: int) -> int:
@@ -150,15 +150,17 @@ async def get_donations_by_project(
     project_address: str,
     epoch_number: int,
 ) -> list[ProjectDonation]:
+    """Get all donations for a project in a given epoch."""
+
     result = await session.execute(
         select(Allocation)
+        .options(joinedload(Allocation.user))
         .filter(Allocation.project_address == project_address)
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
-        .options(joinedload(Allocation.user))
     )
 
-    allocations = result.all()
+    allocations = result.scalars().all()
 
     return [
         ProjectDonation(

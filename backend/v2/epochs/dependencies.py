@@ -1,8 +1,8 @@
-from typing import Callable
+from typing import Annotated
 
+from fastapi import Depends
 from pydantic_settings import BaseSettings
-from v2.core.dependencies import w3_getter
-from web3 import AsyncWeb3
+from v2.core.dependencies import Web3
 
 from .contracts import EPOCHS_ABI, EpochsContracts
 from .subgraphs import EpochsSubgraph
@@ -12,25 +12,17 @@ class EpochsSettings(BaseSettings):
     epochs_contract_address: str
 
 
-# TODO: cache
-def get_epochs(w3: AsyncWeb3, epochs_contract_address: str) -> EpochsContracts:
-    return EpochsContracts(w3, EPOCHS_ABI, epochs_contract_address)  # type: ignore
-
-
-def epochs_getter() -> EpochsContracts:
-    settings = EpochsSettings()  # type: ignore
-    return get_epochs(w3_getter(), settings.epochs_contract_address)
-
-
-getter = Callable[[], EpochsContracts]
+def get_epochs_contracts(
+    w3: Web3, settings: Annotated[EpochsSettings, Depends(EpochsSettings)]
+) -> EpochsContracts:
+    return EpochsContracts(w3, EPOCHS_ABI, settings.epochs_contract_address)
 
 
 class EpochsSubgraphSettings(BaseSettings):
     subgraph_endpoint: str
 
-    # url = config["SUBGRAPH_ENDPOINT"]
 
-
-def epochs_subgraph_getter() -> EpochsSubgraph:
-    settings = EpochsSubgraphSettings()  # type: ignore
+def get_epochs_subgraph(
+    settings: Annotated[EpochsSubgraphSettings, Depends(EpochsSubgraphSettings)]
+) -> EpochsSubgraph:
     return EpochsSubgraph(settings.subgraph_endpoint)

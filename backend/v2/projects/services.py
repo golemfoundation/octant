@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from decimal import Decimal
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,6 +14,24 @@ from v2.project_rewards.capped_quadriatic import (
 )
 from v2.projects.contracts import ProjectsContracts
 from v2.user_patron_mode.repositories import get_patrons_rewards
+
+
+@dataclass
+class ProjectsAllocationThresholdGetter:
+    session: AsyncSession
+    projects: ProjectsContracts
+    project_count_multiplier: int = 1
+
+    async def get(
+        self,
+        epoch_number: int,
+    ) -> int:
+        return await get_projects_allocation_threshold(
+            session=self.session,
+            projects=self.projects,
+            epoch_number=epoch_number,
+            project_count_multiplier=self.project_count_multiplier,
+        )
 
 
 async def get_projects_allocation_threshold(
@@ -48,41 +67,35 @@ def _calculate_threshold(
     )
 
 
-async def get_estimated_project_rewards(
+@dataclass
+class EstimatedProjectMatchedRewards:
     # Dependencies
-    session: AsyncSession,
-    projects: ProjectsContracts,
-    epochs_subgraph: EpochsSubgraph,
-    # Arguments
-    epoch_number: int,
-) -> CappedQuadriaticFunding:
-    # project_settings  project is ProjectSettings
-    all_projects = await projects.get_project_addresses(epoch_number)
+    session: AsyncSession
+    epochs_subgraph: EpochsSubgraph
+    # Settings
+    tr_percent: Decimal
+    ire_percent: Decimal
+    matched_rewards_percent: Decimal
 
-    matched_rewards = await get_estimated_project_matched_rewards_pending(
-        session,
-        epochs_subgraph=epochs_subgraph,
-        epoch_number=epoch_number,
-    )
-    allocations = await get_allocations_with_user_uqs(session, epoch_number)
-
-    return capped_quadriatic_funding(
-        project_addresses=all_projects,
-        allocations=allocations,
-        matched_rewards=matched_rewards,
-    )
-
-
-TR_PERCENT = Decimal("0.7")
-IRE_PERCENT = Decimal("0.35")
-MATCHED_REWARDS_PERCENT = Decimal("0.35")
+    async def get(self, epoch_number: int) -> int:
+        return await get_estimated_project_matched_rewards_pending(
+            session=self.session,
+            epochs_subgraph=self.epochs_subgraph,
+            tr_percent=self.tr_percent,
+            ire_percent=self.ire_percent,
+            matched_rewards_percent=self.matched_rewards_percent,
+            epoch_number=epoch_number,
+        )
 
 
 async def get_estimated_project_matched_rewards_pending(
     # Dependencies
     session: AsyncSession,
     epochs_subgraph: EpochsSubgraph,
-    # projects: Projects,
+    # Settings
+    tr_percent: Decimal,
+    ire_percent: Decimal,
+    matched_rewards_percent: Decimal,
     # Arguments
     epoch_number: int,
 ) -> int:
@@ -99,16 +112,14 @@ async def get_estimated_project_matched_rewards_pending(
         session, epoch_details.finalized_timestamp.datetime(), epoch_number
     )
 
-    # fmt: off
     return _calculate_percentage_matched_rewards(
-        locked_ratio            = Decimal(pending_snapshot.locked_ratio),
-        tr_percent              = TR_PERCENT,
-        ire_percent             = IRE_PERCENT,
-        staking_proceeds        = int(pending_snapshot.eth_proceeds),
-        patrons_rewards         = patrons_rewards,
-        matched_rewards_percent = MATCHED_REWARDS_PERCENT,
+        locked_ratio=Decimal(pending_snapshot.locked_ratio),
+        tr_percent=tr_percent,
+        ire_percent=ire_percent,
+        staking_proceeds=int(pending_snapshot.eth_proceeds),
+        patrons_rewards=patrons_rewards,
+        matched_rewards_percent=matched_rewards_percent,
     )
-    # fmt: on
 
 
 def _calculate_percentage_matched_rewards(
@@ -124,6 +135,44 @@ def _calculate_percentage_matched_rewards(
 
     if locked_ratio < ire_percent:
         return int(matched_rewards_percent * staking_proceeds + patrons_rewards)
-    elif ire_percent <= locked_ratio < tr_percent:
+
+    if ire_percent <= locked_ratio < tr_percent:
         return int((tr_percent - locked_ratio) * staking_proceeds + patrons_rewards)
+
     return patrons_rewards
+
+
+@dataclass
+class EstimatedProjectRewards:
+    # Dependencies
+    session: AsyncSession
+    projects: ProjectsContracts
+    estimated_matched_rewards: EstimatedProjectMatchedRewards
+
+    async def get(self, epoch_number: int) -> CappedQuadriaticFunding:
+        return await estimate_project_rewards(
+            session=self.session,
+            projects=self.projects,
+            estimated_matched_rewards=self.estimated_matched_rewards,
+            epoch_number=epoch_number,
+        )
+
+
+async def estimate_project_rewards(
+    # Dependencies
+    session: AsyncSession,
+    projects: ProjectsContracts,
+    estimated_matched_rewards: EstimatedProjectMatchedRewards,
+    # Arguments
+    epoch_number: int,
+) -> CappedQuadriaticFunding:
+    # project_settings  project is ProjectSettings
+    all_projects = await projects.get_project_addresses(epoch_number)
+    matched_rewards = await estimated_matched_rewards.get(epoch_number)
+    allocations = await get_allocations_with_user_uqs(session, epoch_number)
+
+    return capped_quadriatic_funding(
+        project_addresses=all_projects,
+        allocations=allocations,
+        matched_rewards=matched_rewards,
+    )
