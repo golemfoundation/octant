@@ -1,13 +1,12 @@
 import React, { memo, ReactNode } from 'react';
 import { useAccount } from 'wagmi';
 
+import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
+import HomeGridPersonalAllocation from 'components/Home/HomeGridPersonalAllocation';
+import HomeGridUQScore from 'components/Home/HomeGridUQScore';
 import Grid from 'components/shared/Grid';
 
 import styles from './HomeGrid.module.scss';
-
-import HomeGridCurrentGlmLock from '../HomeGridCurrentGlmLock';
-import HomeGridPersonalAllocation from '../HomeGridPersonalAllocation';
-import HomeGridUQScore from '../HomeGridUQScore';
 
 const HomeGrid = (): ReactNode => {
   const { isConnected } = useAccount();

@@ -4,6 +4,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
+import ModalWithdrawEth from 'components/Home/HomeGridPersonalAllocation/ModalWithdrawEth';
 import GridTile from 'components/shared/Grid/GridTile';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import Button from 'components/ui/Button';
@@ -22,7 +23,6 @@ import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './HomeGridPersonalAllocation.module.scss';
-import ModalWithdrawEth from './ModalWithdrawEth';
 import HomeGridPersonalAllocationProps from './types';
 
 const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ className }) => {

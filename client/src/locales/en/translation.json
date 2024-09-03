@@ -63,7 +63,7 @@
     "home": {
       "homeRewards": {
         "currentRewards": "Current rewards",
-        "totalRewards":"Total rewards",
+        "totalRewards": "Total rewards",
         "rewardsRate": "Rewards rate"
       },
       "homeGridCurrentGlmLock": {
@@ -398,7 +398,6 @@
         "docs": "Docs",
         "brandAssets": "Brand assets",
         "termsOfUse": "Terms of use"
-
       }
     },
     "main": {
@@ -647,7 +646,7 @@
       "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
       "recalculatingScore": "Recalculating score",
       "calculatingScore": "Calculating score",
-      "checkingPassportScore":"Checking Passport score",
+      "checkingPassportScore": "Checking Passport score",
       "finished": "Finished",
       "checkingAllowlist": "Checking allowlist",
       "checkOutDocs": "Check out the docs",
