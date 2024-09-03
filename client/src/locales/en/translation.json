@@ -83,6 +83,22 @@
             "viewOnEtherscan": "View on Etherscan"
           }
         }
+      },
+      "homeGridPersonalAllocation": {
+        "personalAllocation":"Personal allocation",
+        "patronEarnings": "Patron earnings",
+        "pending": "Pending",
+        "withdrawToWallet": "Withdraw to wallet",
+        "pendingFundsAvailableAfter": "Pending funds available after",
+        "currentEpoch": "Current epoch",
+        "modalWithdrawEth": {
+          "withdrawETH":"Withdraw ETH",
+          "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
+          "rewardsBudget": "Rewards Budget",
+          "amount": "Amount",
+          "estimatedGasPrice": "Est. gas price",
+          "withdrawAll": "Withdraw all"
+        }
       }
     },
     "settings": {
