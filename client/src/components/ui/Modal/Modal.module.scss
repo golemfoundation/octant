@@ -1,4 +1,4 @@
-$desktop-width: 47.2rem;
+
 
 .root {
   display: flex;
@@ -32,8 +32,8 @@ $desktop-width: 47.2rem;
       }
 
       @media #{$desktop-up} {
-        width: $desktop-width;
-        margin: 0 0 0 calc($desktop-width / -2);
+        width: $modalDesktopWidth;
+        margin: 0 0 0 calc($modalDesktopWidth / -2);
 
         .header {
           font-size: $font-size-20;
@@ -46,11 +46,11 @@ $desktop-width: 47.2rem;
   .header {
     position: relative;
     font-weight: $font-weight-bold;
-    font-size: $font-size-20;
+    font-size: $modalHeaderFontSize;
     color: $color-octant-dark;
     width: 100%;
     overflow: hidden;
-    line-height: 8.8rem;
+    line-height: $modalHeaderHeight;
   }
 }
 
@@ -96,11 +96,11 @@ $desktop-width: 47.2rem;
 
 @media #{$desktop-up} {
   .root {
-    width: $desktop-width;
+    width: $modalDesktopWidth;
     left: 50%;
     box-shadow: $box-shadow-1;
     border-radius: $border-radius-20;
-    margin-left: calc($desktop-width / -2);
+    margin-left: calc($modalDesktopWidth / -2);
   }
 
   .buttonClose {
@@ -110,7 +110,7 @@ $desktop-width: 47.2rem;
   }
 
   .body {
-    padding: 0 5.6rem 5.6rem;
+    padding: $modalPadding;
 
     &.hasImage {
       border-radius: 0 0 $border-radius-20 $border-radius-20;
