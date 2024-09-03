@@ -3,7 +3,7 @@ from decimal import Decimal
 from math import sqrt
 from typing import Dict, NamedTuple
 
-from v2.allocations.models import AllocationWithUserUQScore
+from v2.allocations.schemas import AllocationWithUserUQScore
 
 
 class CappedQuadriaticFunding(NamedTuple):
@@ -136,3 +136,48 @@ def cqf_calculate_individual_leverage(
     leverage = total_difference / new_allocations_amount
 
     return float(leverage)
+
+
+def cqf_simulate_leverage(
+    existing_allocations: list[AllocationWithUserUQScore],
+    new_allocations: list[AllocationWithUserUQScore],
+    matched_rewards: int,
+    project_addresses: list[str],
+    MR_FUNDING_CAP_PERCENT: Decimal = MR_FUNDING_CAP_PERCENT,
+) -> float:
+    """Simulate the leverage of a user's new allocations in capped quadratic funding."""
+
+    if not new_allocations:
+        raise ValueError("No new allocations provided")
+
+    # Get the user address associated with the allocations
+    user_address = new_allocations[0].user_address
+
+    # Remove allocations made by this user (as they will be removed in a second)
+    allocations_without_user = [
+        a for a in existing_allocations if a.user_address != user_address
+    ]
+
+    # Calculate capped quadratic funding before and after the user's allocation
+    before_allocation = capped_quadriatic_funding(
+        allocations_without_user,
+        matched_rewards,
+        project_addresses,
+        MR_FUNDING_CAP_PERCENT,
+    )
+    after_allocation = capped_quadriatic_funding(
+        allocations_without_user + new_allocations,
+        matched_rewards,
+        project_addresses,
+        MR_FUNDING_CAP_PERCENT,
+    )
+
+    # Calculate leverage
+    leverage = cqf_calculate_individual_leverage(
+        new_allocations_amount=sum(a.amount for a in new_allocations),
+        project_addresses=[a.project_address for a in new_allocations],
+        before_allocation_matched=before_allocation.matched_by_project,
+        after_allocation_matched=after_allocation.matched_by_project,
+    )
+
+    return leverage

@@ -31,7 +31,7 @@ async def get_all_patrons_at_timestamp(
 
     result = await session.execute(
         select(alias.user_address)
-        .filter(alias.patron_mode_enabled == True)
+        .filter(alias.patron_mode_enabled)
         .group_by(alias.user_address)
     )
 
