@@ -24,7 +24,7 @@ const HomeRewards = (): ReactNode => {
   const getValuesToDisplay = useGetValuesToDisplay();
 
   // We count only rewards from epochs user did an action -- allocation or was a patron.
-  const totalRewardsUsed = individualRewardAllEpochs.reduce((acc, curr, currentIndex) => {
+  const totalRewards = individualRewardAllEpochs.reduce((acc, curr, currentIndex) => {
     const hasUserAlreadyDoneAllocationInGivenEpoch =
       userAllocationsAllEpochs[currentIndex]?.hasUserAlreadyDoneAllocation || false;
     const wasPatronInGivenEpoch =
@@ -43,7 +43,7 @@ const HomeRewards = (): ReactNode => {
   const totalRewardsToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
-    valueCrypto: totalRewardsUsed,
+    valueCrypto: totalRewards,
   }).primary;
 
   const tiles = [

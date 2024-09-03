@@ -4,6 +4,7 @@ import React, { FC, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { FormFields } from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlm/types';
+import LockGlmTabsInputs from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlmTabsInputs';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import ButtonProps from 'components/ui/Button/types';
@@ -15,8 +16,6 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './LockGlmTabs.module.scss';
 import LockGlmTabsProps from './types';
-
-import LockGlmTabsInputs from '../LockGlmTabsInputs';
 
 const LockGlmTabs: FC<LockGlmTabsProps> = ({
   buttonUseMaxRef,

@@ -1,11 +1,10 @@
 import React, { memo, ReactNode } from 'react';
 
+import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
+import HomeGridPersonalAllocation from 'components/Home/HomeGridPersonalAllocation';
 import Grid from 'components/shared/Grid';
 
 import styles from './HomeGrid.module.scss';
-
-import HomeGridCurrentGlmLock from '../HomeGridCurrentGlmLock';
-import HomeGridPersonalAllocation from '../HomeGridPersonalAllocation';
 
 const HomeGrid = (): ReactNode => (
   <Grid>
