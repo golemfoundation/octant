@@ -1,20 +1,19 @@
 import React, { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
-import GridTile from 'components/shared/Grid/GridTile';
-
-import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpochs';
 import DonationsList from 'components/Home/HomeGridDonations/DonationsList';
-
 import { getReducedUserAllocationsAllEpochs } from 'components/Metrics/MetricsPersonal/MetricsPersonalGridAllocations/utils';
+import GridTile from 'components/shared/Grid/GridTile';
+import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
+import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpochs';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 
 import styles from './HomeGridDonations.module.scss';
 import HomeGridDonationsProps from './types';
-import Button from 'components/ui/Button';
-import { useAccount } from 'wagmi';
+
 const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridDonations',
@@ -34,8 +33,8 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
 
   return (
     <GridTile
-      showTitleDivider={!areAllocationsEmpty}
       className={className}
+      showTitleDivider={!areAllocationsEmpty}
       title={
         <div className={styles.titleWrapper}>
           {!isDecisionWindowOpen && !areAllocationsEmpty ? t('donationHistory') : t('donations')}
@@ -48,7 +47,8 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
       }
       titleSuffix={
         isDecisionWindowOpen && userAllocations?.hasUserAlreadyDoneAllocation ? (
-          <Button variant="cta" className={styles.editButton}>
+          // TODO: open allocation drawer in edit mode -> https://linear.app/golemfoundation/issue/OCT-1907/allocate-drawer
+          <Button className={styles.editButton} variant="cta">
             {t('edit')}
           </Button>
         ) : null
@@ -59,14 +59,14 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
           <div className={styles.noDonationsYet}>
             <Img className={styles.noDonationsYetImage} src="/images/headphones_girl.webp" />
             <div className={styles.noDonationsYetLabel}>
-              <Trans i18nKey="components.home.homeGridDonations.noDonationsYet"></Trans>
+              <Trans i18nKey="components.home.homeGridDonations.noDonationsYet" />
             </div>
           </div>
         ) : (
           <DonationsList
+            donations={reducedUserAllocationsAllEpochs}
             isLoading={isFetchingUserAllocationsAllEpochs}
             numberOfSkeletons={4}
-            donations={reducedUserAllocationsAllEpochs}
           />
         )}
       </div>

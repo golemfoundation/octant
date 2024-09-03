@@ -4,9 +4,9 @@ type GridTileProps = {
   children: ReactNode;
   className?: string;
   dataTest?: string;
+  showTitleDivider?: boolean;
   title: string | ReactNode;
   titleSuffix?: ReactNode;
-  showTitleDivider?: boolean;
 };
 
 export default GridTileProps;

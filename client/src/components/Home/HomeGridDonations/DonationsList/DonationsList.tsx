@@ -1,11 +1,10 @@
 import React, { FC } from 'react';
 
-import DonationsListSkeletonItem from 'components/Home/HomeGridDonations/DonationsListSkeletonItem';
 import DonationsListItem from 'components/Home/HomeGridDonations/DonationsListItem';
+import DonationsListSkeletonItem from 'components/Home/HomeGridDonations/DonationsListSkeletonItem';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
 import styles from './DonationsList.module.scss';
-
 import DonationsListProps from './types';
 
 const DonationsList: FC<DonationsListProps> = ({
@@ -37,8 +36,8 @@ const DonationsList: FC<DonationsListProps> = ({
                       shouldIgnoreGwei: true,
                       shouldIgnoreWei: true,
                     },
-                    valueCrypto: donation.value,
                     showCryptoSuffix: true,
+                    valueCrypto: donation.value,
                   }).primary
                 }
               />
