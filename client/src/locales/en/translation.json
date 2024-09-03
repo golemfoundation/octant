@@ -60,6 +60,13 @@
         "reopenOnboarding": "Reopen onboarding"
       }
     },
+    "home": {
+      "homeRewards": {
+        "currentRewards": "Current rewards",
+        "totalRewards": "Total rewards",
+        "rewardsRate": "Rewards rate"
+      }
+    },
     "settings": {
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
@@ -324,7 +331,6 @@
         "docs": "Docs",
         "brandAssets": "Brand assets",
         "termsOfUse": "Terms of use"
-
       }
     },
     "main": {
@@ -351,6 +357,9 @@
     }
   },
   "views": {
+    "home": {
+      "title": "Welcome to Epoch {{epoch}}"
+    },
     "allocation": {
       "lowUQScoreModal": {
         "header": "Your UQ score is too low!",
@@ -570,7 +579,7 @@
       "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
       "recalculatingScore": "Recalculating score",
       "calculatingScore": "Calculating score",
-      "checkingPassportScore":"Checking Passport score",
+      "checkingPassportScore": "Checking Passport score",
       "finished": "Finished",
       "checkingAllowlist": "Checking allowlist",
       "checkOutDocs": "Check out the docs",
