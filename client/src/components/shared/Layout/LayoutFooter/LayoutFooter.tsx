@@ -7,10 +7,12 @@ import {
   BLOG_POST,
   BRAND_ASSETS_FIGMA_LINK,
   DISCORD_LINK,
+  FARCASTER_LINK,
   GOLEM_FOUNDATION_LINK,
   OCTANT_BUILD_LINK,
   OCTANT_DOCS,
   TERMS_OF_USE,
+  TWITTER_LINK,
 } from 'constants/urls';
 import { octantSemiTransparent } from 'svg/logo';
 
@@ -23,9 +25,11 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   const links = [
     { label: t('links.website'), link: OCTANT_BUILD_LINK },
     { label: t('links.discord'), link: DISCORD_LINK },
-    { label: t('links.blog'), link: BLOG_POST },
+    { isVisibleAtLowerWidth: false, label: t('links.blog'), link: BLOG_POST },
     { label: t('links.docs'), link: OCTANT_DOCS },
-    { label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
+    { label: t('links.farcaster'), link: FARCASTER_LINK },
+    { label: t('links.twitterX'), link: TWITTER_LINK },
+    { isVisibleAtLowerWidth: false, label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
     { label: t('links.termsOfUse'), link: TERMS_OF_USE },
   ];
 
@@ -49,8 +53,14 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
         </div>
       </div>
       <div className={styles.links}>
-        {links.map(({ link, label }) => (
-          <a key={link} className={styles.link} href={link} rel="noreferrer" target="_blank">
+        {links.map(({ link, label, isVisibleAtLowerWidth = true }) => (
+          <a
+            key={link}
+            className={cx(styles.link, isVisibleAtLowerWidth && styles.isVisibleAtLowerWidth)}
+            href={link}
+            rel="noreferrer"
+            target="_blank"
+          >
             {`→ ${label}`}
           </a>
         ))}

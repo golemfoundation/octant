@@ -67,6 +67,12 @@
       font-size: $font-size-14;
       font-weight: $font-weight-semibold;
       color: $color-octant-grey5;
+
+      @media #{$tablet-down} {
+        &:not(.isVisibleAtLowerWidth) {
+          display: none;
+        }
+      }
     }
   }
 
