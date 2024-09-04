@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -8,6 +8,7 @@ import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
 import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpochs';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 
@@ -23,13 +24,15 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
     useUserAllocationsAllEpochs();
   const reducedUserAllocationsAllEpochs =
     getReducedUserAllocationsAllEpochs(userAllocationsAllEpochs);
+  const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const areAllocationsEmpty =
     !isConnected ||
-    (!isFetchingUserAllocationsAllEpochs && reducedUserAllocationsAllEpochs?.length === 0);
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-
-  const { data: userAllocations } = useUserAllocations();
+    (isDecisionWindowOpen
+      ? !isFetchingUserAllocations && userAllocations?.elements.length === 0
+      : !isFetchingUserAllocationsAllEpochs && reducedUserAllocationsAllEpochs?.length === 0);
 
   return (
     <GridTile
@@ -38,15 +41,13 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
       title={
         <div className={styles.titleWrapper}>
           {!isDecisionWindowOpen && !areAllocationsEmpty ? t('donationHistory') : t('donations')}
-          {isDecisionWindowOpen &&
-            userAllocations?.elements &&
-            userAllocations?.elements?.length > 0 && (
-              <div className={styles.numberOfAllocations}>{userAllocations?.elements?.length}</div>
-            )}
+          {isDecisionWindowOpen && userAllocations?.elements !== undefined && (
+            <div className={styles.numberOfAllocations}>{userAllocations?.elements?.length}</div>
+          )}
         </div>
       }
       titleSuffix={
-        isDecisionWindowOpen && userAllocations?.hasUserAlreadyDoneAllocation ? (
+        isDecisionWindowOpen ? (
           // TODO: open allocation drawer in edit mode -> https://linear.app/golemfoundation/issue/OCT-1907/allocate-drawer
           <Button className={styles.editButton} variant="cta">
             {t('edit')}
@@ -59,13 +60,21 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
           <div className={styles.noDonationsYet}>
             <Img className={styles.noDonationsYetImage} src="/images/headphones_girl.webp" />
             <div className={styles.noDonationsYetLabel}>
-              <Trans i18nKey="components.home.homeGridDonations.noDonationsYet" />
+              <Trans
+                i18nKey={`components.home.homeGridDonations.${isDecisionWindowOpen ? 'noDonationsYetAWOpen' : 'noDonationsYet'}`}
+              />
             </div>
           </div>
         ) : (
           <DonationsList
-            donations={reducedUserAllocationsAllEpochs}
-            isLoading={isFetchingUserAllocationsAllEpochs}
+            donations={
+              isDecisionWindowOpen && userAllocations?.elements
+                ? userAllocations.elements.map(a => ({ ...a, epoch: currentEpoch! - 1 }))
+                : reducedUserAllocationsAllEpochs
+            }
+            isLoading={
+              isDecisionWindowOpen ? isFetchingUserAllocations : isFetchingUserAllocationsAllEpochs
+            }
             numberOfSkeletons={4}
           />
         )}
