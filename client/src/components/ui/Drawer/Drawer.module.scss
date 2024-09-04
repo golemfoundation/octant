@@ -1,0 +1,18 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  right: 0;
+  background: $color-octant-grey6;
+  top: 0;
+  z-index: $z-index-8;
+  box-shadow: 0 0 5rem 0 $color-black-08;
+
+  .buttonClose {
+    position: absolute;
+    top: 4rem;
+    right: 4rem;
+    z-index: $z-index-6;
+  }
+}

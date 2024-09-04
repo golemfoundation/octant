@@ -4,7 +4,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
-import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';
 import {
@@ -94,7 +93,7 @@ const ProjectsView = (): ReactElement => {
   }, [loadedArchivedEpochsNumber]);
 
   return (
-    <Layout dataTest="ProjectsView">
+    <>
       <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <TipTile
@@ -141,7 +140,7 @@ const ProjectsView = (): ReactElement => {
           ))}
         </InfiniteScroll>
       )}
-    </Layout>
+    </>
   );
 };
 

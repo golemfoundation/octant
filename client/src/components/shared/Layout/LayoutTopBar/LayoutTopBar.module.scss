@@ -117,17 +117,45 @@
     margin-left: 1.6rem;
   }
 
-  .allocateButtonIcon {
-    margin-left: 0.3rem;
+  .allocateButton {
+    &:hover {
+      .allocateButtonIcon path {
+        stroke: $color-octant-grey5;
+      }
+    }
 
-    path {
-      stroke: $color-octant-grey2;
+    &:active {
+      .allocateButtonIcon path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    .allocateButtonIcon {
+      margin-left: 0.3rem;
+
+      path {
+        stroke: $color-octant-grey2;
+      }
     }
   }
 
-  .settingsButtonIcon {
-    path {
-      stroke: $color-octant-grey2;
+  .settingsButton {
+    &:hover {
+      .settingsButtonIcon path {
+        stroke: $color-octant-grey5;
+      }
+    }
+
+    &:active {
+      .settingsButtonIcon path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    .settingsButtonIcon {
+      path {
+        stroke: $color-octant-grey2;
+      }
     }
   }
 }
