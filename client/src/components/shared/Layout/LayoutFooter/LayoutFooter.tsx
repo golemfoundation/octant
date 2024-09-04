@@ -24,9 +24,9 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
 
   const links = [
     { label: t('links.website'), link: OCTANT_BUILD_LINK },
-    { label: t('links.discord'), link: DISCORD_LINK },
-    { isVisibleAtLowerWidth: false, label: t('links.blog'), link: BLOG_POST },
     { label: t('links.docs'), link: OCTANT_DOCS },
+    { isVisibleAtLowerWidth: false, label: t('links.blog'), link: BLOG_POST },
+    { label: t('links.discord'), link: DISCORD_LINK },
     { label: t('links.farcaster'), link: FARCASTER_LINK },
     { label: t('links.twitterX'), link: TWITTER_LINK },
     { isVisibleAtLowerWidth: false, label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
