@@ -69,7 +69,8 @@ def test_rewards_basic(
     res = client.finalized_snapshot()
     assert res["epoch"] == STARTING_EPOCH
 
-    # get estimated budget by number of epochs to be fixed in
+    # get estimated budget by number of epochs
+    # TODO uncomment assertions after fix of OCT-1933
     res = client.get_estimated_budget_by_epochs(1, 10000)
     one_epoch_budget_estimation = int(res["budget"])
     # assert one_epoch_budget_estimation > 0
