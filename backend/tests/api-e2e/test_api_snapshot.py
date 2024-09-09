@@ -30,7 +30,9 @@ def test_pending_snapshot(
     assert res["epoch"] > 0
 
     # check if both users have a budget
-    res = client.get_user_rewards_in_epoch(address=ua_alice.address, epoch=STARTING_EPOCH)
+    res = client.get_user_rewards_in_epoch(
+        address=ua_alice.address, epoch=STARTING_EPOCH
+    )
     alice_budget = int(res["budget"])
     assert alice_budget > 0
 

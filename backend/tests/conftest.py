@@ -804,13 +804,13 @@ class Client:
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
         return json.loads(rv.text)
+
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
         current_app.logger.debug(
             "get_user_rewards_in_upcoming_epoch :",
             self._flask_client.get(f"/rewards/budget/{address}/upcoming").request,
         )
-        print(json.loads(rv.text))
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
@@ -821,53 +821,47 @@ class Client:
         )
         return json.loads(rv.text)
 
-    def get_total_users_rewards_in_epoch(self, epoch) -> tuple[dict, int]:
+    def get_total_users_rewards_in_epoch(self, epoch):
         rv = self._flask_client.get(f"/rewards/budgets/epoch/{epoch}")
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
     def get_estimated_budget_by_days(self, number_of_days, amount):
         rv = self._flask_client.post(
             "/rewards/estimated_budget/by_days",
-            json={
-                "days": number_of_days,
-                "glmAmount": amount
-            },
+            json={"days": number_of_days, "glmAmount": amount},
         )
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
     def get_estimated_budget_by_epochs(self, number_of_epochs, amount):
         rv = self._flask_client.post(
             "/rewards/estimated_budget",
-            json={
-                "numberOfEpochs": number_of_epochs,
-                "glmAmount": amount
-            },
+            json={"numberOfEpochs": number_of_epochs, "glmAmount": amount},
         )
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
-    def get_rewards_leverage(self, epoch) -> tuple[dict, int]:
+    def get_rewards_leverage(self, epoch):
         rv = self._flask_client.get(f"/rewards/leverage/{epoch}")
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
-    def get_rewards_merkle_tree(self, epoch) -> tuple[dict, int]:
+    def get_rewards_merkle_tree(self, epoch):
         rv = self._flask_client.get(f"/rewards/merkle_tree/{epoch}")
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
-    def get_projects_with_matched_rewards_in_epoch(self, epoch) -> tuple[dict, int]:
+    def get_projects_with_matched_rewards_in_epoch(self, epoch):
         rv = self._flask_client.get(f"/rewards/projects/epoch/{epoch}")
         return json.loads(rv.text), rv.status_code
 
-    def get_estimated_projects_rewards(self) -> tuple[dict, int]:
+    def get_estimated_projects_rewards(self):
         rv = self._flask_client.get("/rewards/projects/estimated")
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
     def get_proposals_treshold_in_epoch(self, epoch) -> tuple[dict, int]:
         rv = self._flask_client.get(f"/rewards/threshold/{epoch}")
         return json.loads(rv.text), rv.status_code
 
-    def get_unused_rewards(self, epoch) -> tuple[dict, int]:
+    def get_unused_rewards(self, epoch):
         rv = self._flask_client.get(f"/rewards/unused/{epoch}")
-        return json.loads(rv.text), rv.status_code
+        return json.loads(rv.text)
 
     def get_withdrawals_for_address(self, address: str):
         rv = self._flask_client.get(f"/withdrawals/{address}").text
