@@ -1,0 +1,60 @@
+.gridTile {
+  @media #{$tablet-up} {
+    grid-column: span 2;
+  }
+
+  @media #{$desktop-up} {
+    grid-column: span 3;
+  }
+
+  @media #{$large-desktop-up} {
+    grid-column: span 2;
+  }
+}
+
+.root {
+  padding: 0 0.8rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.arrowsWrapper {
+  user-select: none;
+  display: flex;
+  margin-left: auto;
+
+  .arrow {
+    cursor: pointer;
+    width: 3.2rem;
+    height: 3.2rem;
+    background: $color-octant-grey8;
+    border-radius: $border-radius-10;
+    transition: all $transition-time-5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.leftArrow {
+      svg {
+        transform: rotate(180deg);
+      }
+    }
+
+    &.isDisabled {
+      background: $color-octant-grey6;
+
+      svg path {
+        fill: $color-octant-grey5;
+      }
+    }
+
+    &:not(.isDisabled):hover {
+      background: $color-octant-grey1;
+    }
+
+    &:first-child {
+      margin-right: 1.6rem;
+    }
+  }
+}

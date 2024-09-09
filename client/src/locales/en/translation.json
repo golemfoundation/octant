@@ -193,6 +193,14 @@
         "donationHistory": "Donation history",
         "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
         "edit": "Edit"
+      },
+      "homeGridEpochResults": {
+        "epochResults": "Epoch {{epoch}} results",
+        "epochLive": "Epoch {{epoch}} live",
+        "donations": "Donations",
+        "matching": "Matching",
+        "total": "Total",
+        "clickToVisitProject": "Click to visit project"
       }
     },
     "settings": {

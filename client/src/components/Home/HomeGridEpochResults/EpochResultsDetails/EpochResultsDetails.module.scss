@@ -1,0 +1,52 @@
+.root {
+  display: flex;
+  font-size: $font-size-12;
+  height: 3.2rem;
+  align-items: center;
+  padding: 0 0.8rem 0rem 1.6rem;
+  background-color: $color-octant-grey6;
+  border-radius: $border-radius-08;
+
+  .projectName {
+    color: $color-octant-dark;
+    font-weight: $font-weight-bold;
+  }
+
+  .donations {
+    color: $color-octant-green;
+  }
+
+  .matching {
+    color: $color-octant-orange2;
+  }
+
+  .total {
+    color: $color-octant-dark;
+  }
+
+  .donations,
+  .matching,
+  .total {
+    font-weight: $font-weight-semibold;
+    margin-left: 0.8rem;
+
+    @media #{$tablet-up} {
+      margin-left: 1.6rem;
+    }
+  }
+
+  .link {
+    color: $color-octant-grey5;
+    margin-left: auto;
+    font-weight: $font-weight-semibold;
+    padding: 0 1.6rem 0 0;
+
+    &:hover {
+      color: $color-octant-dark;
+    }
+
+    path {
+      stroke: $color-octant-grey5;
+    }
+  }
+}

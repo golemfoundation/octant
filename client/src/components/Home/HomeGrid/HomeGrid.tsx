@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
 import HomeGridDivider from 'components/Home/HomeGridDivider';
 import HomeGridDonations from 'components/Home/HomeGridDonations';
+import HomeGridEpochResults from 'components/Home/HomeGridEpochResults';
 import HomeGridPersonalAllocation from 'components/Home/HomeGridPersonalAllocation';
 import HomeGridRewardsEstimator from 'components/Home/HomeGridRewardsEstimator';
 import HomeGridTransactions from 'components/Home/HomeGridTransactions';
@@ -27,6 +28,7 @@ const HomeGrid = (): ReactNode => {
       <HomeGridTransactions className={styles.gridTile} />
       <HomeGridRewardsEstimator className={styles.gridTile} />
       {!isLargeDesktop && (isDesktop || isTablet) && <HomeGridDivider />}
+      <HomeGridEpochResults className={styles.gridTile} />
     </Grid>
   );
 };
