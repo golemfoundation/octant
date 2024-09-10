@@ -409,7 +409,9 @@
         "blog": "Blog",
         "docs": "Docs",
         "brandAssets": "Brand assets",
-        "termsOfUse": "Terms of use"
+        "termsOfUse": "Terms of use",
+        "farcaster":  "Farcaster",
+        "twitterX": "Twitter/X"
       }
     },
     "main": {
