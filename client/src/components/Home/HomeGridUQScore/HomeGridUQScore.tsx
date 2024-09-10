@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnectors } from 'wagmi';
 
 import { wagmiConfig } from 'api/clients/client-wagmi';
+import HomeGridUQScoreAddresses from 'components/Home/HomeGridUQScore/HomeGridUQScoreAddresses';
+import ModalCalculatingUQScore from 'components/Home/HomeGridUQScore/ModalCalculatingUQScore';
+import ModalCalculatingYourUniqueness from 'components/Home/HomeGridUQScore/ModalCalculatingYourUniqueness';
+import ModalRecalculatingScore from 'components/Home/HomeGridUQScore/ModalRecalculatingScore';
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
 import { DELEGATION_MIN_SCORE } from 'constants/delegation';
@@ -19,17 +23,13 @@ import toastService from 'services/toastService';
 import useDelegationStore from 'store/delegation/store';
 
 import styles from './HomeGridUQScore.module.scss';
-import HomeGridUQScoreAddresses from './HomeGridUQScoreAddresses';
-import ModalCalculatingUQScore from './ModalCalculatingUQScore';
-import ModalCalculatingYourUniqueness from './ModalCalculatingYourUniqueness';
-import ModalRecalculatingScore from './ModalRecalculatingScore';
 import HomeGridUQScoreProps from './types';
 
 const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridUQScore',
   });
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const connectors = useConnectors();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isUserTOSAccepted } = useUserTOS();
@@ -79,12 +79,14 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
   );
 
   const isRecalculateButtonDisabled =
+    !isConnected ||
     isDelegationCompleted ||
     isFetchingScore ||
     isFetchingUqScore ||
     delegationSecondaryAddress === '0x???';
 
   const isDelegateButtonDisabled =
+    !isConnected ||
     isDelegationCompleted ||
     isFetchingScore ||
     primaryAddressScore === null ||

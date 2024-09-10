@@ -13,7 +13,7 @@ import styles from './HomeRewards.module.scss';
 
 const HomeRewards = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: individualRewardAllEpochs, isFetching: isFetchingIndividualRewardAllEpochs } =
     useIndividualRewardAllEpochs();
@@ -24,7 +24,7 @@ const HomeRewards = (): ReactNode => {
   const getValuesToDisplay = useGetValuesToDisplay();
 
   // We count only rewards from epochs user did an action -- allocation or was a patron.
-  const totalRewardsUsed = individualRewardAllEpochs.reduce((acc, curr, currentIndex) => {
+  const totalRewards = individualRewardAllEpochs.reduce((acc, curr, currentIndex) => {
     const hasUserAlreadyDoneAllocationInGivenEpoch =
       userAllocationsAllEpochs[currentIndex]?.hasUserAlreadyDoneAllocation || false;
     const wasPatronInGivenEpoch =
@@ -43,7 +43,7 @@ const HomeRewards = (): ReactNode => {
   const totalRewardsToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
-    valueCrypto: totalRewardsUsed,
+    valueCrypto: totalRewards,
   }).primary;
 
   const tiles = [
@@ -54,10 +54,11 @@ const HomeRewards = (): ReactNode => {
       value: currentRewardsToDisplay,
     },
     {
-      isLoadingValue:
-        isFetchingIndividualRewardAllEpochs ||
-        isFetchingUserAllAllocations ||
-        isFetchingEpochPatronsAllEpochs,
+      isLoadingValue: isConnected
+        ? isFetchingIndividualRewardAllEpochs ||
+          isFetchingUserAllAllocations ||
+          isFetchingEpochPatronsAllEpochs
+        : false,
       key: 'totalRewards',
       label: t('totalRewards'),
       value: totalRewardsToDisplay,

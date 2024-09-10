@@ -107,6 +107,8 @@
         "whatIsThis": "What is this?",
         "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
         "addresses": "addresses",
+        "primary": "Primary",
+        "noWalletConnected": "No wallet connected",
         "addressScore": {
           "signMessage": "Sign message"
         },
@@ -192,6 +194,7 @@
         "donations": "Donations",
         "donationHistory": "Donation history",
         "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
+        "noDonationsYetAWOpen": "No donations yet in this<br/>allocation window.",
         "edit": "Edit"
       }
     },
@@ -416,7 +419,9 @@
         "blog": "Blog",
         "docs": "Docs",
         "brandAssets": "Brand assets",
-        "termsOfUse": "Terms of use"
+        "termsOfUse": "Terms of use",
+        "farcaster":  "Farcaster",
+        "twitterX": "Twitter/X"
       }
     },
     "main": {

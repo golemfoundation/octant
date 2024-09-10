@@ -1,5 +1,4 @@
 import React, { memo, ReactNode } from 'react';
-import { useAccount } from 'wagmi';
 
 import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
 import HomeGridDivider from 'components/Home/HomeGridDivider';
@@ -14,7 +13,6 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import styles from './HomeGrid.module.scss';
 
 const HomeGrid = (): ReactNode => {
-  const { isConnected } = useAccount();
   const { isLargeDesktop, isDesktop, isTablet } = useMediaQuery();
 
   return (
@@ -22,8 +20,9 @@ const HomeGrid = (): ReactNode => {
       <HomeGridCurrentGlmLock className={styles.gridTile} />
       <HomeGridPersonalAllocation className={styles.gridTile} />
       <HomeGridDonations className={styles.gridTile} />
-      {isConnected && <HomeGridUQScore className={styles.gridTile} />}
+      <HomeGridUQScore className={styles.gridTile} />
       {isLargeDesktop && <HomeGridDivider />}
+      <HomeGridRewardsEstimator className={styles.gridTile} />
       <HomeGridTransactions className={styles.gridTile} />
       <HomeGridRewardsEstimator className={styles.gridTile} />
       {!isLargeDesktop && (isDesktop || isTablet) && <HomeGridDivider />}
