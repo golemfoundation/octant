@@ -70,25 +70,24 @@ def test_rewards_basic(
     assert res["epoch"] == STARTING_EPOCH
 
     # get estimated budget by number of epochs
-    # TODO uncomment assertions after fix of OCT-1933
-    res = client.get_estimated_budget_by_epochs(1, 10000)
+    res = client.get_estimated_budget_by_epochs(1, 10000000000000000000000)
     one_epoch_budget_estimation = int(res["budget"])
-    # assert one_epoch_budget_estimation > 0
+    assert one_epoch_budget_estimation > 0
 
-    res = client.get_estimated_budget_by_epochs(2, 10000)
+    res = client.get_estimated_budget_by_epochs(2, 10000000000000000000000)
     two_epochs_budget_estimation = int(res["budget"])
-    # assert two_epochs_budget_estimation > 0
-    # assert two_epochs_budget_estimation > one_epoch_budget_estimation
+    assert two_epochs_budget_estimation > 0
+    assert two_epochs_budget_estimation > one_epoch_budget_estimation
 
     # get estimated budget by number of days
-    res = client.get_estimated_budget_by_days(200, 10000)
+    res = client.get_estimated_budget_by_days(200, 10000000000000000000000)
     two_hundreds_days_budget_estimation = int(res["budget"])
-    # assert two_hundreds_days_budget_estimation > 0
+    assert two_hundreds_days_budget_estimation > 0
 
-    res = client.get_estimated_budget_by_days(300, 10000)
+    res = client.get_estimated_budget_by_days(300, 10000000000000000000000)
     three_hundreds_days_budget_estimation = int(res["budget"])
-    # assert three_hundreds_days_budget_estimation > 0
-    # assert three_hundreds_days_budget_estimation > two_hundreds_days_budget_estimation
+    assert three_hundreds_days_budget_estimation > 0
+    assert three_hundreds_days_budget_estimation > two_hundreds_days_budget_estimation
 
     # write merkle root for withdrawals
     vault_core.confirm_withdrawals()
