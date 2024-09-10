@@ -1,6 +1,8 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
+import AddressScore from 'components/Home/HomeGridUQScore/AddressScore';
+import ProgressPath from 'components/Home/HomeGridUQScore/ProgressPath';
 import { DELEGATION_MIN_SCORE } from 'constants/delegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -10,9 +12,6 @@ import useUserTOS from 'hooks/queries/useUserTOS';
 import useDelegationStore from 'store/delegation/store';
 
 import RecalculatingScoreProps from './types';
-
-import AddressScore from '../../AddressScore';
-import ProgressPath from '../../ProgressPath';
 
 const RecalculatingScore: FC<RecalculatingScoreProps> = ({ onLastStepDone }) => {
   const { data: currentEpoch } = useCurrentEpoch();

@@ -34,12 +34,12 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
   const sections: SectionProps[] = [
     {
       dataTest: isPatronDonation
-        ? 'EarnHistoryItemDetailsRest__matchingFundDonation'
-        : 'EarnHistoryItemDetailsRest__amount',
+        ? 'TransactionDetailsRest__matchingFundDonation'
+        : 'TransactionDetailsRest__amount',
       doubleValueProps: {
         dataTest: isPatronDonation
-          ? 'EarnHistoryItemDetailsRest__matchingFundDonation__DoubleValue'
-          : 'EarnHistoryItemDetailsRest__amount__DoubleValue',
+          ? 'TransactionDetailsRest__matchingFundDonation__DoubleValue'
+          : 'TransactionDetailsRest__amount__DoubleValue',
         valueCrypto: eventData.amount,
         ...(['withdrawal', 'patron_mode_donation'].includes(type)
           ? { cryptoCurrency: 'ethereum', getFormattedEthValueProps: { shouldIgnoreGwei: true } }

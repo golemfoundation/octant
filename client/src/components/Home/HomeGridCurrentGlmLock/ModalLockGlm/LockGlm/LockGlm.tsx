@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useWalletClient, usePublicClient, useWaitForTransactionReceipt } from 'wagmi';
 
 import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
+import LockGlmBudget from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlmBudget';
+import LockGlmNotification from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlmNotification';
+import LockGlmStepper from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlmStepper';
+import LockGlmTabs from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlmTabs';
 import networkConfig from 'constants/networkConfig';
 import env from 'env';
 import { writeContractERC20 } from 'hooks/contracts/writeContracts';
@@ -25,11 +29,6 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './LockGlm.module.scss';
 import LockGlmProps, { Step, OnReset } from './types';
 import { formInitialValues, validationSchema } from './utils';
-
-import LockGlmBudget from '../LockGlmBudget';
-import LockGlmNotification from '../LockGlmNotification';
-import LockGlmStepper from '../LockGlmStepper';
-import LockGlmTabs from '../LockGlmTabs';
 
 const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
   const { i18n } = useTranslation();
