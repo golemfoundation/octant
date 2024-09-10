@@ -63,7 +63,7 @@
     "home": {
       "homeRewards": {
         "currentRewards": "Current rewards",
-        "totalRewards":"Total rewards",
+        "totalRewards": "Total rewards",
         "rewardsRate": "Rewards rate"
       },
       "homeGridCurrentGlmLock": {
@@ -85,14 +85,14 @@
         }
       },
       "homeGridPersonalAllocation": {
-        "personalAllocation":"Personal allocation",
+        "personalAllocation": "Personal allocation",
         "patronEarnings": "Patron earnings",
         "pending": "Pending",
         "withdrawToWallet": "Withdraw to wallet",
         "pendingFundsAvailableAfter": "Pending funds available after",
         "currentEpoch": "Current epoch",
         "modalWithdrawEth": {
-          "withdrawETH":"Withdraw ETH",
+          "withdrawETH": "Withdraw ETH",
           "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
           "rewardsBudget": "Rewards Budget",
           "amount": "Amount",
@@ -107,11 +107,13 @@
         "whatIsThis": "What is this?",
         "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
         "addresses": "addresses",
+        "primary": "Primary",
+        "noWalletConnected": "No wallet connected",
         "addressScore": {
-          "signMessage":"Sign message"
+          "signMessage": "Sign message"
         },
         "progressPath": {
-          "checkingPassportScore":"Checking Passport score",
+          "checkingPassportScore": "Checking Passport score",
           "finished": "Finished",
           "checkingAllowlist": "Checking allowlist"
         },
@@ -125,12 +127,12 @@
           "switchAccounts": "Switch accounts",
           "signMessages": "Sign messages",
           "switchAccount": "Switch account",
-          "calculatingScore":"Calculating score",
+          "calculatingScore": "Calculating score",
           "delegationFailedText": "Delegation failed — your score needs to be 20 or higher. Please try another address",
           "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}"
         },
         "modalRecalculatingScore": {
-          "recalculatingScore":"Recalculating score"
+          "recalculatingScore": "Recalculating score"
         }
       },
       "homeGridRewardsEstimator": {
@@ -408,7 +410,6 @@
         "docs": "Docs",
         "brandAssets": "Brand assets",
         "termsOfUse": "Terms of use"
-
       }
     },
     "main": {
@@ -657,7 +658,7 @@
       "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
       "recalculatingScore": "Recalculating score",
       "calculatingScore": "Calculating score",
-      "checkingPassportScore":"Checking Passport score",
+      "checkingPassportScore": "Checking Passport score",
       "finished": "Finished",
       "checkingAllowlist": "Checking allowlist",
       "checkOutDocs": "Check out the docs",
