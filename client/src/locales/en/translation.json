@@ -189,6 +189,13 @@
           "pending": "Pending",
           "pendingMultisig": "Pending multisig"
         }
+      },
+      "homeGridDonations": {
+        "donations": "Donations",
+        "donationHistory": "Donation history",
+        "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
+        "noDonationsYetAWOpen": "No donations yet in this<br/>allocation window.",
+        "edit": "Edit"
       }
     },
     "settings": {

@@ -9,11 +9,15 @@
   max-height: 100%;
 }
 
-.groupTitleWrapper {
+.titleWrapper {
   padding: 2.4rem;
   display: flex;
   align-items: center;
   margin: 0;
+
+  &.showTitleDivider {
+    border-bottom: 0.1rem solid $color-octant-grey3;
+  }
 
   .title {
     padding: 0 1rem;
@@ -29,4 +33,3 @@
     border-radius: $border-radius-10;
   }
 }
-// }
