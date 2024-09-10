@@ -3,6 +3,8 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useSignMessage } from 'wagmi';
 
+import AddressScore from 'components/Home/HomeGridUQScore/AddressScore';
+import ProgressPath from 'components/Home/HomeGridUQScore/ProgressPath';
 import BoxRounded from 'components/ui/BoxRounded';
 import Svg from 'components/ui/Svg';
 import { DELEGATION_MIN_SCORE } from 'constants/delegation';
@@ -16,9 +18,6 @@ import { notificationIconWarning } from 'svg/misc';
 
 import styles from './CalculatingUQScore.module.scss';
 import CalculatingUQScoreProps from './types';
-
-import AddressScore from '../../AddressScore';
-import ProgressPath from '../../ProgressPath';
 
 const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton }) => {
   const { t } = useTranslation('translation', {
