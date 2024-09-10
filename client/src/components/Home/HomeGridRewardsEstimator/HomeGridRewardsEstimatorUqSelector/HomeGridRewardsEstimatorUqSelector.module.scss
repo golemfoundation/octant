@@ -1,0 +1,17 @@
+.root {
+  margin-left: auto;
+  display: flex;
+  border-radius: $border-radius-10;
+  background-color: $color-octant-grey8;
+  width: 11.2rem;
+  height: 3.2rem;
+  padding: 0 0.8rem 0 1.6rem;
+  align-items: center;
+
+  .label {
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+    color: $color-octant-grey5;
+    margin-right: auto;
+  }
+}
