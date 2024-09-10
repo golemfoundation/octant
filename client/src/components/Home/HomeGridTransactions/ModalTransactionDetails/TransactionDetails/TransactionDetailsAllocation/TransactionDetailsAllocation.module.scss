@@ -1,0 +1,22 @@
+.projects {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.6rem;
+  font-size: $font-size-14;
+
+  @media #{$tablet-down} {
+    font-size: $font-size-12;
+  }
+}
+
+.leverage {
+  color: $color-octant-dark;
+
+  &.isFetchingEpochLeverage {
+    @include skeleton();
+  }
+}
+
+.tooltip {
+  max-width: 25rem;
+}

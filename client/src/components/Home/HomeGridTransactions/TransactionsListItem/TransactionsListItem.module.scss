@@ -1,0 +1,57 @@
+.box {
+  display: flex;
+  position: relative;
+  border-radius: 0;
+  padding: 0.6rem 0;
+  border-bottom: 0.1rem solid $color-octant-grey8;
+
+  &:first-child {
+    border-top: 0.1rem solid $color-octant-grey8;
+  }
+}
+
+.child {
+  padding: 1.3rem 0;
+  border-radius: $border-radius-06;
+
+  &:hover {
+    background: $color-octant-grey6;
+  }
+}
+
+.titleAndSubtitle {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.title {
+  font-size: $font-size-14;
+}
+
+.patronDonationTimestamp {
+  color: $color-octant-grey5;
+  font-size: $font-size-10;
+  font-weight: $font-weight-semibold;
+  margin-top: 0.2rem;
+  line-height: 1.5rem;
+}
+
+.transactionLabel {
+  color: $color-white;
+  font-size: $font-size-10;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  border-radius: $border-radius-04;
+  padding: 0.2rem 0.5rem;
+  letter-spacing: 0.02rem;
+
+  &.isFinalized {
+    background: $color-octant-green;
+  }
+
+  &:not(.isFinalized) {
+    background: $color-octant-orange3;
+  }
+}

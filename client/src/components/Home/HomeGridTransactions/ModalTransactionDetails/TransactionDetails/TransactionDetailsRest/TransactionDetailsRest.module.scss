@@ -1,0 +1,8 @@
+.viewOnEtherscan {
+  padding: 0;
+
+  &.isMultisig {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
