@@ -23,11 +23,11 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
+import InputText from 'components/ui/InputText';
+import Svg from 'components/ui/Svg';
+import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
-import InputText from '../../components/ui/InputText';
-import Svg from '../../components/ui/Svg';
-import { magnifyingGlass } from '../../svg/misc.ts';
 
 const ProjectsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();

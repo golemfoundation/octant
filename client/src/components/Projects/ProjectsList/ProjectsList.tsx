@@ -91,7 +91,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
             </span>
           </div>
         </>
-      )}z
+      )}
       {isLatestEpochAndDecisionWindowOpen &&
         !isFetchingProjectsWithRewards &&
         projectsIpfsWithRewardsFiltered.length === 0 && (
