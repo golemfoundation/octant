@@ -91,19 +91,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
             </span>
           </div>
         </>
-      )}
-      {isLatestEpochAndDecisionWindowOpen && (
-        <InputText
-          className={styles.inputSearch}
-          dataTest="ProjectsList__InputText"
-          Icon={<Svg img={magnifyingGlass} size={3.2} />}
-          onChange={onChangeSearchQuery}
-          onClear={() => setSearchQuery('')}
-          placeholder={t('searchInputPlaceholder')}
-          value={searchQuery}
-          variant="search"
-        />
-      )}
+      )}z
       {isLatestEpochAndDecisionWindowOpen &&
         !isFetchingProjectsWithRewards &&
         projectsIpfsWithRewardsFiltered.length === 0 && (

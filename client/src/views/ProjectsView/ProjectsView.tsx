@@ -1,4 +1,11 @@
-import React, { ReactElement, useState, useMemo, useLayoutEffect, useEffect } from 'react';
+import React, {
+  ReactElement,
+  useState,
+  useMemo,
+  useLayoutEffect,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -18,12 +25,18 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
 
 import styles from './ProjectsView.module.scss';
+import InputText from '../../components/ui/InputText';
+import Svg from '../../components/ui/Svg';
+import { magnifyingGlass } from '../../svg/misc.ts';
 
 const ProjectsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.projects',
   });
+
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
@@ -44,6 +57,10 @@ const ProjectsView = (): ReactElement => {
 
     return projectsLoadedArchivedEpochsNumber ?? 0;
   });
+
+  const onChangeSearchQuery = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
+  };
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -108,6 +125,16 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
+      <InputText
+        className={styles.inputSearch}
+        dataTest="ProjectsList__InputText"
+        Icon={<Svg img={magnifyingGlass} size={3.2} />}
+        onChange={onChangeSearchQuery}
+        onClear={() => setSearchQuery('')}
+        placeholder={t('searchInputPlaceholder')}
+        value={searchQuery}
+        variant="search"
+      />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

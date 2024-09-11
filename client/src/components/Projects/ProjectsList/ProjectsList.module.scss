@@ -14,8 +14,16 @@ $elementMargin: 1.6rem;
   }
 }
 
+<<<<<<< Updated upstream
 .inputSearch {
   margin-bottom: $elementMargin;
+=======
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+>>>>>>> Stashed changes
 }
 
 .element {
