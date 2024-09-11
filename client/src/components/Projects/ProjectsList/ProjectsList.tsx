@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
+import Grid from 'components/shared/Grid';
 import Img from 'components/ui/Img';
 import InputText from 'components/ui/InputText/InputText';
 import Svg from 'components/ui/Svg';
@@ -115,34 +116,36 @@ const ProjectsList: FC<ProjectsListProps> = ({
             {t('noSearchResults')}
           </div>
         )}
-      {areProjectsIpfsWithRewardsAvailable
-        ? projectsAddressesToIterate.map((address, index) => {
-            const projectIpfsWithRewards = projectsIpfsWithRewardsFiltered.find(
-              element => element.address === address,
-            );
+      <Grid>
+        {areProjectsIpfsWithRewardsAvailable
+          ? projectsAddressesToIterate.map((address, index) => {
+              const projectIpfsWithRewards = projectsIpfsWithRewardsFiltered.find(
+                element => element.address === address,
+              );
 
-            if (!projectIpfsWithRewards) {
-              return null;
-            }
+              if (!projectIpfsWithRewards) {
+                return null;
+              }
 
-            return (
-              <ProjectsListItem
-                key={projectIpfsWithRewards.address}
-                className={styles.element}
-                dataTest={
-                  epoch
-                    ? `ProjectsView__ProjectsListItem--archive--${index}`
-                    : `ProjectsView__ProjectsListItem--${index}`
-                }
-                epoch={epoch}
-                projectIpfsWithRewards={projectIpfsWithRewards}
-              />
-            );
-          })
-        : projectsEpoch?.projectsAddresses?.map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ProjectsListSkeletonItem key={index} className={styles.element} />
-          ))}
+              return (
+                <ProjectsListItem
+                  key={projectIpfsWithRewards.address}
+                  className={styles.element}
+                  dataTest={
+                    epoch
+                      ? `ProjectsView__ProjectsListItem--archive--${index}`
+                      : `ProjectsView__ProjectsListItem--${index}`
+                  }
+                  epoch={epoch}
+                  projectIpfsWithRewards={projectIpfsWithRewards}
+                />
+              );
+            })
+          : projectsEpoch?.projectsAddresses?.map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <ProjectsListSkeletonItem key={index} className={styles.element} />
+            ))}
+      </Grid>
     </div>
   );
 };
