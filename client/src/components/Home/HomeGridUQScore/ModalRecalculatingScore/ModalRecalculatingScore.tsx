@@ -1,10 +1,10 @@
 import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import RecalculatingScore from 'components/Home/HomeGridUQScore/ModalRecalculatingScore/RecalculatingScore';
 import Modal from 'components/ui/Modal';
 
 import styles from './ModalRecalculatingScore.module.scss';
-import RecalculatingScore from './RecalculatingScore';
 import ModalRecalculatingScoreProps from './types';
 
 const ModalRecalculatingScore: FC<ModalRecalculatingScoreProps> = ({ modalProps }) => {

@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import CalculatingUQScore from 'components/Home/HomeGridUQScore/ModalCalculatingUQScore/CalculatingUQScore';
 import Button from 'components/ui/Button';
 import Modal from 'components/ui/Modal';
 import useDelegationStore from 'store/delegation/store';
 
-import CalculatingUQScore from './CalculatingUQScore';
 import styles from './ModalCalculatingUQScore.module.scss';
 import ModalCalculatingUQScoreProps from './types';
 

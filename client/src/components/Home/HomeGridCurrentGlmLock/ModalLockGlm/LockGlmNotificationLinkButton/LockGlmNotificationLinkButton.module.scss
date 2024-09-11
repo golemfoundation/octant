@@ -1,0 +1,10 @@
+.root {
+  font-size: $font-size-12;
+  min-height: 2rem;
+  font-weight: $font-weight-semibold;
+
+  &:hover {
+    cursor: pointer;
+    transform: none;
+  }
+}

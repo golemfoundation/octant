@@ -2,28 +2,13 @@ import React, { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/ui/BoxRounded';
-import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
-import networkConfig from 'constants/networkConfig';
-import { arrowTopRight, checkMark, notificationIconWarning } from 'svg/misc';
+import { checkMark, notificationIconWarning } from 'svg/misc';
 
 import styles from './LockGlmNotification.module.scss';
 import LockGlmNotificationProps from './types';
 
-const ButtonLinkWithIcon: FC<{ children?: React.ReactNode; transactionHash: string }> = ({
-  children,
-  transactionHash,
-}) => {
-  return (
-    <Button
-      className={styles.link}
-      href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
-      variant="link3"
-    >
-      {children} <Svg img={arrowTopRight} size={0.7} />
-    </Button>
-  );
-};
+import LockGlmNotificationLinkButton from '../LockGlmNotificationLinkButton';
 
 const LockGlmNotification: FC<LockGlmNotificationProps> = ({
   className,
@@ -80,7 +65,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
               <Trans
                 components={
                   type === 'success'
-                    ? [<ButtonLinkWithIcon transactionHash={transactionHash!} />]
+                    ? [<LockGlmNotificationLinkButton transactionHash={transactionHash!} />]
                     : undefined
                 }
                 i18nKey={text}
