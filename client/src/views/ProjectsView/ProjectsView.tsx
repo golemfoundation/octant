@@ -13,7 +13,9 @@ import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
+import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
+import Svg from 'components/ui/Svg';
 import {
   WINDOW_PROJECTS_SCROLL_Y,
   WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
@@ -23,8 +25,6 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
-import InputText from 'components/ui/InputText';
-import Svg from 'components/ui/Svg';
 import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
