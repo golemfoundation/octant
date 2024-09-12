@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import current_app as app
 
 from eth_utils.address import to_checksum_address
@@ -52,7 +54,7 @@ class GitcoinPassportAntisybil(Model):
                 raise ExternalApiException("GP: scoring is not completed yet", 503)
 
         if score["status"] != "DONE":
-            score = retry_request(_retry_fetch, 200)
+            score = retry_request(_retry_fetch, HTTPStatus.OK)
 
         all_stamps = fetch_stamps(user_address)["items"]
         cutoff = datetime.now()

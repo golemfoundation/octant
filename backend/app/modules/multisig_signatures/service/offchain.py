@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import List, Dict
 
 from app.context.manager import Context
@@ -101,7 +102,7 @@ class OffchainMultisigSignatures(Model):
     def _verify_owner(self, user_address: str, message_hash: str):
         message_details = retry_request(
             req_func=get_message_details,
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             message_hash=message_hash,
             is_mainnet=self.is_mainnet,
         )
