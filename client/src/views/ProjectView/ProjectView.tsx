@@ -144,7 +144,7 @@ const ProjectView = (): ReactElement => {
   }
 
   return (
-    <Layout classNameBody={styles.mainLayoutBody} dataTest="ProjectView">
+    <>
       <InfiniteScroll
         hasMore={loadedProjects?.length !== projectsIpfsWithRewards?.length}
         initialLoad
@@ -160,7 +160,7 @@ const ProjectView = (): ReactElement => {
         <ProjectList epoch={epoch} projects={loadedProjects} />
       </InfiniteScroll>
       <AnimatePresence>{isBackToTopButtonVisible && <ProjectBackToTopButton />}</AnimatePresence>
-    </Layout>
+    </>
   );
 };
 

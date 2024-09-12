@@ -1,8 +1,8 @@
 .root {
   padding: 4.4rem 2.2rem 0.5rem;
 
-  @media #{$desktop-up} {
-    padding: 4.6rem 2.2rem 4.3rem;
+  @media #{$tablet-up} {
+    padding: 4.6rem 2.2rem 1rem;
   }
 
   .infoTitle {
@@ -17,7 +17,7 @@
     font-weight: $font-weight-bold;
     line-height: 1.6rem;
 
-    @media #{$desktop-up} {
+    @media #{$tablet-up} {
       font-size: $font-size-14;
     }
   }
@@ -33,10 +33,9 @@
       color: $color-octant-grey5;
     }
 
-    @media #{$desktop-up} {
-      justify-content: flex-end;
-      min-height: 8rem;
+    @media #{$tablet-up} {
       margin-top: 3.6rem;
+      min-height: 8rem;
 
       .info {
         line-height: 2rem;
@@ -56,7 +55,7 @@
       font-weight: $font-weight-semibold;
       min-height: 2rem;
 
-      @media #{$desktop-up} {
+      @media #{$tablet-up} {
         font-size: $font-size-14;
       }
     }

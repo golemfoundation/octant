@@ -12,6 +12,7 @@ import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import localStorageService, { LocalStorageInitParams } from 'services/localStorageService';
 import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
+import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
@@ -60,8 +61,13 @@ export default function useAppConnectManager(
   const { setValuesFromLocalStorage: setValuesFromLocalStorageTips } = useTipsStore(state => ({
     setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));
-  const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings, isDelegationInProgress } =
-    useSettingsStore(state => ({
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings } = useSettingsStore(
+    state => ({
+      setValuesFromLocalStorage: state.setValuesFromLocalStorage,
+    }),
+  );
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageDelegation, isDelegationInProgress } =
+    useDelegationStore(state => ({
       isDelegationInProgress: state.data.isDelegationInProgress,
       setValuesFromLocalStorage: state.setValuesFromLocalStorage,
     }));
@@ -90,6 +96,7 @@ export default function useAppConnectManager(
     // Store is populated with data from LS, hence init here.
     localStorageService.init(localStorageInitParams as LocalStorageInitParams);
     setValuesFromLocalStorageSettings();
+    setValuesFromLocalStorageDelegation();
     setValuesFromLocalStorageOnboarding();
     setValuesFromLocalStorageTips();
 

@@ -3,6 +3,7 @@ import React, { ReactElement, useState, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
 import AppLoader from 'components/shared/AppLoader';
+import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
 import OnboardingStepper from 'components/shared/OnboardingStepper';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
@@ -44,7 +45,9 @@ const App = (): ReactElement => {
 
   return (
     <Fragment>
-      <RootRoutes isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers} />
+      <Layout isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers}>
+        <RootRoutes />
+      </Layout>
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}

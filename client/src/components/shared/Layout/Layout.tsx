@@ -13,7 +13,9 @@ import React, {
 // } from 'react-router-dom';
 // import { useAccount } from 'wagmi';
 
+import LayoutFooter from 'components/shared/Layout/LayoutFooter';
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
+import LayoutTopBar from 'components/shared/Layout/LayoutTopBar';
 import ModalLayoutConnectWallet from 'components/shared/Layout/ModalLayoutConnectWallet';
 import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
 import Loader from 'components/ui/Loader';
@@ -29,6 +31,8 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 // import useUserTOS from 'hooks/queries/useUserTOS';
 // import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useLayoutStore from 'store/layout/store';
+import SyncView from 'views/SyncView/SyncView';
+
 // import useSettingsStore from 'store/settings/store';
 // import { chevronLeft } from 'svg/navigation';
 // import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
@@ -37,8 +41,6 @@ import useLayoutStore from 'store/layout/store';
 // import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './Layout.module.scss';
-import LayoutFooter from './LayoutFooter/LayoutFooter';
-import LayoutTopBar from './LayoutTopBar/LayoutTopBar';
 import LayoutProps from './types';
 
 const Layout: FC<LayoutProps> = ({
@@ -49,6 +51,7 @@ const Layout: FC<LayoutProps> = ({
   isLoading,
   isNavigationVisible = true,
   classNameBody,
+  isSyncingInProgress,
   // isAbsoluteHeaderPosition = false,
   // showHeaderBlur = true,
 }) => {
@@ -152,6 +155,10 @@ const Layout: FC<LayoutProps> = ({
   //   return () => clearInterval(intervalId);
   //   // eslint-disable-next-line  react-hooks/exhaustive-deps
   // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
+  if (isSyncingInProgress) {
+    return <SyncView />;
+  }
 
   return (
     <Fragment>

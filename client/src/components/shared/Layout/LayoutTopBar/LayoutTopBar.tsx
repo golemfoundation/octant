@@ -1,10 +1,12 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
+import Settings from 'components/Settings';
 import Button from 'components/ui/Button';
+import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
@@ -25,6 +27,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
+  const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -68,6 +71,22 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     navigate(ROOT_ROUTES.home.absolute);
   };
 
+  useEffect(() => {
+    if (pathname !== ROOT_ROUTES.settings.absolute || !isDesktop) {
+      return;
+    }
+
+    setIsSettingsDrawerOpen(true);
+  }, [isDesktop, pathname]);
+
+  useEffect(() => {
+    if (isSettingsDrawerOpen && pathname !== ROOT_ROUTES.settings.absolute && !isDesktop) {
+      navigate(ROOT_ROUTES.settings.absolute);
+      setIsSettingsDrawerOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDesktop, pathname, isSettingsDrawerOpen]);
+
   return (
     <div className={cx(styles.root, className)}>
       <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
@@ -100,13 +119,22 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       </Button>
       {isDesktop && (
         <Fragment>
-          <div className={styles.settingsButton}>
+          <div
+            className={styles.settingsButton}
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            onClick={() => setIsSettingsDrawerOpen(prev => !prev)}
+          >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
           <div className={styles.allocateButton}>
             <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
           </div>
         </Fragment>
+      )}
+      {isDesktop && (
+        <Drawer isOpen={isSettingsDrawerOpen} onClose={() => setIsSettingsDrawerOpen(false)}>
+          <Settings />
+        </Drawer>
       )}
     </div>
   );

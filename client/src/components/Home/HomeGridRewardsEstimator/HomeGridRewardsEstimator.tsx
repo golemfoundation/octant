@@ -132,6 +132,7 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
           isButtonClearVisible={false}
           label={t('enterGLMAmount')}
           onChange={e => onCryptoValueChange(e.target.value)}
+          shouldAutoFocusAndSelect={false}
           suffix="GLM"
           value={formik.values.valueCrypto}
         />

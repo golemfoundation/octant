@@ -1,0 +1,57 @@
+.root {
+  padding-bottom: 8.8rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @media #{$tablet-up} {
+    padding-bottom: 14.4rem;
+  }
+
+  @media #{$desktop-up} {
+    padding-bottom: 0;
+    width: 42.4rem;
+    min-height: 0;
+  }
+
+  .title {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    min-height: 8.8rem;
+    width: 100%;
+    color: $color-octant-dark;
+    font-size: $font-size-24;
+    font-weight: $font-weight-bold;
+    line-height: 1.4rem;
+
+    @media #{$tablet-up} {
+      font-size: $font-size-32;
+      min-height: 14.4rem;
+    }
+
+    @media #{$desktop-up} {
+      padding: 0 4rem;
+    }
+  }
+
+  .mainInfoBoxWrapper {
+    flex-direction: column;
+    display: flex;
+    gap: 1.6rem;
+    width: 100%;
+
+    @media #{$desktop-up} {
+      flex-direction: row;
+    }
+  }
+
+  .boxesWrapper {
+    width: 100%;
+
+    @media #{$desktop-up} {
+      padding: 0 4rem 4rem;
+      overflow: auto;
+    }
+  }
+}
