@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import SettingsCryptoMainValueBox from 'components/Settings/SettingsCryptoMainValueBox';
@@ -12,13 +13,14 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import styles from './Settings.module.scss';
 
 const Settings = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'components.settings' });
   const { isConnected } = useAccount();
 
   const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
     <div className={styles.root}>
-      <div className={styles.title}>Settings</div>
+      <div className={styles.title}>{t('title')}</div>
       <div className={styles.boxesWrapper}>
         {!isProjectAdminMode && (
           <div className={styles.mainInfoBoxWrapper}>

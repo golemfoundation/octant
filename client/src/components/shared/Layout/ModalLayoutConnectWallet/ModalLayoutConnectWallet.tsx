@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 
 import LayoutConnectWallet from 'components/shared/Layout/LayoutConnectWallet';
 import Modal from 'components/ui/Modal';
-import useSettingsStore from 'store/settings/store';
+import useDelegationStore from 'store/delegation/store';
 
 import ModalLayoutConnectWalletProps from './types';
 
@@ -12,7 +12,7 @@ const ModalLayoutConnectWallet: FC<ModalLayoutConnectWalletProps> = ({ modalProp
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.modalConnectWallet',
   });
-  const { isDelegationConnectModalOpen, setIsDelegationConnectModalOpen } = useSettingsStore(
+  const { isDelegationConnectModalOpen, setIsDelegationConnectModalOpen } = useDelegationStore(
     state => ({
       isDelegationConnectModalOpen: state.data.isDelegationConnectModalOpen,
       setIsDelegationConnectModalOpen: state.setIsDelegationConnectModalOpen,

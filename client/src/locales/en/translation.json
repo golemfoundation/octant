@@ -207,6 +207,7 @@
       }
     },
     "settings": {
+      "title": "Settings",
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
@@ -428,7 +429,7 @@
         "docs": "Docs",
         "brandAssets": "Brand assets",
         "termsOfUse": "Terms of use",
-        "farcaster":  "Farcaster",
+        "farcaster": "Farcaster",
         "twitterX": "Twitter/X"
       }
     },
