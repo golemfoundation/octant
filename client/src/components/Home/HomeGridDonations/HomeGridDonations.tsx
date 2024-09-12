@@ -11,6 +11,8 @@ import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpoc
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useAllocationsStore from 'store/allocations/store';
+import useLayoutStore from 'store/layout/store';
 
 import styles from './HomeGridDonations.module.scss';
 import HomeGridDonationsProps from './types';
@@ -27,6 +29,13 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { setShowAllocationDrawer } = useLayoutStore(state => ({
+    setShowAllocationDrawer: state.setShowAllocationDrawer,
+  }));
+
+  const { setCurrentView } = useAllocationsStore(state => ({
+    setCurrentView: state.setCurrentView,
+  }));
 
   const areAllocationsEmpty =
     !isConnected ||
@@ -49,7 +58,14 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
       titleSuffix={
         isDecisionWindowOpen ? (
           // TODO: open allocation drawer in edit mode -> https://linear.app/golemfoundation/issue/OCT-1907/allocate-drawer
-          <Button className={styles.editButton} variant="cta">
+          <Button
+            className={styles.editButton}
+            onClick={() => {
+              setCurrentView('edit');
+              setShowAllocationDrawer(true);
+            }}
+            variant="cta"
+          >
             {t('edit')}
           </Button>
         ) : null

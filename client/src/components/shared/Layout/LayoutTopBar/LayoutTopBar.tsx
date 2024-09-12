@@ -1,9 +1,11 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useEffect, useMemo, useState } from 'react';
+import { useAnimate } from 'framer-motion';
+import React, { FC, Fragment, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
+import Allocation from 'components/Allocation';
 import Settings from 'components/Settings';
 import Button from 'components/ui/Button';
 import Drawer from 'components/ui/Drawer';
@@ -13,6 +15,7 @@ import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useAllocationsStore from 'store/allocations/store';
 import useLayoutStore from 'store/layout/store';
 import { octant } from 'svg/logo';
 import { calendar, chevronBottom } from 'svg/misc';
@@ -27,16 +30,32 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
-  const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { setShowWalletModal, setShowConnectWalletModal } = useLayoutStore(state => ({
+  const {
+    showSettingsDrawer,
+    showAllocationDrawer,
+    setShowWalletModal,
+    setShowConnectWalletModal,
+    setShowAllocationDrawer,
+    setShowSettingsDrawer,
+  } = useLayoutStore(state => ({
+    setShowAllocationDrawer: state.setShowAllocationDrawer,
     setShowConnectWalletModal: state.setShowConnectWalletModal,
+    setShowSettingsDrawer: state.setShowSettingsDrawer,
     setShowWalletModal: state.setShowWalletModal,
+    showAllocationDrawer: state.data.showAllocationDrawer,
+    showSettingsDrawer: state.data.showSettingsDrawer,
   }));
 
+  const { allocations } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
+  }));
+  const allocationsPrevRef = useRef(allocations);
+
   const tabs = useNavigationTabs(true);
+  const [scope, animate] = useAnimate();
 
   const allocationInfoText = useMemo(() => {
     const epoch = currentEpoch! - 1;
@@ -76,16 +95,46 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       return;
     }
 
-    setIsSettingsDrawerOpen(true);
+    setShowSettingsDrawer(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDesktop, pathname]);
 
   useEffect(() => {
-    if (isSettingsDrawerOpen && pathname !== ROOT_ROUTES.settings.absolute && !isDesktop) {
+    if (showSettingsDrawer && pathname !== ROOT_ROUTES.settings.absolute && !isDesktop) {
       navigate(ROOT_ROUTES.settings.absolute);
-      setIsSettingsDrawerOpen(false);
+      setShowSettingsDrawer(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDesktop, pathname, isSettingsDrawerOpen]);
+  }, [isDesktop, pathname, showSettingsDrawer]);
+
+  useEffect(() => {
+    if (pathname !== ROOT_ROUTES.allocation.absolute || !isDesktop) {
+      return;
+    }
+
+    setShowAllocationDrawer(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDesktop, pathname]);
+
+  useEffect(() => {
+    if (showAllocationDrawer && pathname !== ROOT_ROUTES.allocation.absolute && !isDesktop) {
+      navigate(ROOT_ROUTES.allocation.absolute);
+      setShowAllocationDrawer(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDesktop, pathname, showAllocationDrawer]);
+
+  useEffect(() => {
+    if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
+      return;
+    }
+    animate([
+      [scope?.current, { scale: 1.5 }, { duration: 0.15, ease: 'easeOut' }],
+      [scope?.current, { scale: 1 }, { duration: 0.15, ease: 'easeOut' }],
+    ]);
+    allocationsPrevRef.current = allocations;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allocations]);
 
   return (
     <div className={cx(styles.root, className)}>
@@ -121,20 +170,36 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         <Fragment>
           <div
             className={styles.settingsButton}
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            onClick={() => setIsSettingsDrawerOpen(prev => !prev)}
+            onClick={() => setShowSettingsDrawer(!showSettingsDrawer)}
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
-          <div className={styles.allocateButton}>
+          <div
+            className={styles.allocateButton}
+            onClick={() => setShowAllocationDrawer(!showAllocationDrawer)}
+          >
             <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
+            {allocations.length > 0 && (
+              <div
+                ref={scope}
+                className={styles.numberOfAllocations}
+                data-test="Navbar__numberOfAllocations"
+              >
+                {allocations.length}
+              </div>
+            )}
           </div>
         </Fragment>
       )}
       {isDesktop && (
-        <Drawer isOpen={isSettingsDrawerOpen} onClose={() => setIsSettingsDrawerOpen(false)}>
-          <Settings />
-        </Drawer>
+        <>
+          <Drawer isOpen={showSettingsDrawer} onClose={() => setShowSettingsDrawer(false)}>
+            <Settings />
+          </Drawer>
+          <Drawer isOpen={showAllocationDrawer} onClose={() => setShowAllocationDrawer(false)}>
+            <Allocation />
+          </Drawer>
+        </>
       )}
     </div>
   );

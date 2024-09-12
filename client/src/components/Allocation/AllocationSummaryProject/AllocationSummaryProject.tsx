@@ -21,7 +21,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   value,
 }) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'views.allocation.allocationItem',
+    keyPrefix: 'components.allocation.allocationItem',
   });
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ projectAddress: address });
   const {

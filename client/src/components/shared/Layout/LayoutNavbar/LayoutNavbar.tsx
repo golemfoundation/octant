@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
+import { LAYOUT_NAVBAR_ID } from 'constants/domElementsIds';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
@@ -46,10 +47,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
         className={cx(styles.navigationWrapper, ELEMENT_POSITION_FIXED_CLASSNAME)}
         data-test="Navbar"
       >
-        <nav className={styles.navigation}>
-          {navigationBottomSuffix && (
-            <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
-          )}
+        <nav className={styles.navigation} id={LAYOUT_NAVBAR_ID}>
           <div
             className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}
             data-test="Navbar__buttons"

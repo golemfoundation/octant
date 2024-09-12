@@ -4,13 +4,14 @@ import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import { person } from 'svg/misc';
+import { hammer, person } from 'svg/misc';
 import bigintAbs from 'utils/bigIntAbs';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -98,7 +99,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   value,
 }) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'views.allocation.allocationItem',
+    keyPrefix: 'components.allocation.allocationItem',
   });
   const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
@@ -106,6 +107,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   const { data: uqScore } = useUqScore(currentEpoch!);
+  const { isMobile } = useMediaQuery();
 
   const { data: projectsDonors } = useProjectsDonors();
   const projectDonors = projectsDonors?.[address];
@@ -137,9 +139,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   const getValuesToDisplay = useGetValuesToDisplay();
 
-  const isNewSimulatedPositive = userAllocationToThisProject
-    ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
-    : true;
+  const isNewSimulatedPositive =
+    isDecisionWindowOpen && userAllocationToThisProject
+      ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
+      : true;
 
   const simulatedMatchedBigInt = simulatedMatched
     ? parseUnitsBigInt(simulatedMatched, 'wei')
@@ -221,6 +224,27 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         userAllocationToThisProject={userAllocationToThisProject}
         valueToUse={valueToUse}
       />
+      {!isMobile && !isLoadingAllocateSimulate && !isSimulateVisible && (
+        <div
+          className={cx(
+            styles.element,
+            isDecisionWindowOpen && styles.isDecisionWindowOpen,
+            isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
+            isError && styles.isError,
+          )}
+          data-test="AllocationItemRewardsImpact"
+        >
+          <Svg
+            classNameSvg={cx(
+              styles.icon,
+              isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
+            )}
+            img={hammer}
+            size={1.2}
+          />
+          {`${isNewSimulatedPositive ? '' : '-'}${yourImpactFormatted.primary}`}
+        </div>
+      )}
     </div>
   );
 };

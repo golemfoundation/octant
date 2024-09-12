@@ -3,7 +3,7 @@ import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 import { LayoutData, LayoutMethods } from './types';
 
 export const initialState: LayoutData = {
-  showAllocateDrawer: false,
+  showAllocationDrawer: false,
   showConnectWalletModal: false,
   showSettingsDrawer: false,
   showWalletModal: false,
@@ -12,9 +12,9 @@ export const initialState: LayoutData = {
 export default getStoreWithMeta<LayoutData, LayoutMethods>({
   getStoreMethods: set => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    setShowAllocateDrawer: payload => {
+    setShowAllocationDrawer: payload => {
       set(state => {
-        return { data: { ...state.data, showAllocateDrawer: payload } };
+        return { data: { ...state.data, showAllocationDrawer: payload } };
       });
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention

@@ -11,14 +11,16 @@ import styles from './AllocationLowUqScore.module.scss';
 import AllocationLowUqScoreProps from './types';
 
 const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.lowUQScoreModal' });
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.allocation.lowUQScoreModal',
+  });
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   return (
     <>
       <div className={styles.text}>
-        <Trans components={[<b />]} i18nKey="views.allocation.lowUQScoreModal.text" />
+        <Trans components={[<b />]} i18nKey="components.allocation.lowUQScoreModal.text" />
       </div>
       <BoxRounded className={styles.box} hasPadding={false} isGrey>
         <InputCheckbox

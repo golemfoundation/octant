@@ -1,6 +1,27 @@
 .root {
   display: flex;
   justify-content: space-between;
+  background-color: $color-white;
+  align-items: center;
+  width: 100%;
+  padding: 1.6rem;
+  border-radius: $border-radius-32 $border-radius-32 0 0;
+  border-bottom: 0.1rem solid $color-octant-grey3;
+  @media #{$tablet-up} {
+    padding: 2.4rem;
+  }
+
+  @media #{$desktop-up} {
+    border-bottom: none;
+    border-radius: 0;
+    z-index: $z-index-5;
+    position: fixed;
+    box-shadow: 0 0 5rem 0 $color-black-08;
+    padding: 0 4rem;
+    height: 12.8rem;
+    bottom: 0;
+    left: 0;
+  }
 
   .button {
     flex: 1;
