@@ -10,10 +10,12 @@ import Settings from 'components/Settings';
 import Button from 'components/ui/Button';
 import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import useLayoutStore from 'store/layout/store';
@@ -48,7 +50,8 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     showAllocationDrawer: state.data.showAllocationDrawer,
     showSettingsDrawer: state.data.showSettingsDrawer,
   }));
-
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
   const { allocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
   }));
@@ -77,12 +80,16 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       return !isMobile ? t('connectWallet') : t('connect');
     }
 
+    if (isProjectAdminMode || isPatronMode) {
+      return `${isProjectAdminMode ? t('admin') : t('patron')}${isMobile ? '' : ` ${truncateEthAddress(address!, true)}`}`;
+    }
+
     return truncateEthAddress(address!, isMobile);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isConnected, isMobile]);
+  }, [address, isConnected, isMobile, isProjectAdminMode, isPatronMode]);
 
   const onLogoClick = () => {
-    if (pathname === ROOT_ROUTES.projects.absolute) {
+    if (pathname === ROOT_ROUTES.home.absolute) {
       window.scrollTo({ behavior: 'smooth', top: 0 });
       return;
     }
@@ -157,7 +164,12 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         {allocationInfoText}
       </div>
       <Button
-        className={cx(styles.buttonWallet, !isConnected && styles.isConnectButton)}
+        className={cx(
+          styles.buttonWallet,
+          !isConnected && styles.isConnectButton,
+          isPatronMode && styles.isPatronMode,
+          isProjectAdminMode && styles.isProjectAdminMode,
+        )}
         onClick={() => (isConnected ? setShowWalletModal(true) : setShowConnectWalletModal(true))}
         variant="cta"
       >
@@ -174,21 +186,23 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
-          <div
-            className={styles.allocateButton}
-            onClick={() => setShowAllocationDrawer(!showAllocationDrawer)}
-          >
-            <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
-            {allocations.length > 0 && (
-              <div
-                ref={scope}
-                className={styles.numberOfAllocations}
-                data-test="Navbar__numberOfAllocations"
-              >
-                {allocations.length}
-              </div>
-            )}
-          </div>
+          {!isProjectAdminMode && !isPatronMode && (
+            <div
+              className={styles.allocateButton}
+              onClick={() => setShowAllocationDrawer(!showAllocationDrawer)}
+            >
+              <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
+              {allocations.length > 0 && (
+                <div
+                  ref={scope}
+                  className={styles.numberOfAllocations}
+                  data-test="Navbar__numberOfAllocations"
+                >
+                  {allocations.length}
+                </div>
+              )}
+            </div>
+          )}
         </Fragment>
       )}
       {isDesktop && (

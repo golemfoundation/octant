@@ -6,8 +6,10 @@ import { useAccount } from 'wagmi';
 import useEpochPatronsAllEpochs from 'hooks/helpers/useEpochPatronsAllEpochs';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualRewardAllEpochs from 'hooks/helpers/useIndividualRewardAllEpochs';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpochs';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
 import styles from './HomeRewards.module.scss';
 
@@ -22,6 +24,8 @@ const HomeRewards = (): ReactNode => {
   const { data: epochPatronsAllEpochs, isFetching: isFetchingEpochPatronsAllEpochs } =
     useEpochPatronsAllEpochs();
   const getValuesToDisplay = useGetValuesToDisplay();
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   // We count only rewards from epochs user did an action -- allocation or was a patron.
   const totalRewards = individualRewardAllEpochs.reduce((acc, curr, currentIndex) => {
@@ -50,7 +54,7 @@ const HomeRewards = (): ReactNode => {
     {
       isLoadingValue: isFetchingIndividualReward,
       key: 'currentRewards',
-      label: t('currentRewards'),
+      label: isProjectAdminMode ? t('currentDonations') : t('currentRewards'),
       value: currentRewardsToDisplay,
     },
     {
@@ -60,12 +64,12 @@ const HomeRewards = (): ReactNode => {
           isFetchingEpochPatronsAllEpochs
         : false,
       key: 'totalRewards',
-      label: t('totalRewards'),
+      label: isProjectAdminMode ? t('currentMatchFunding') : t('totalRewards'),
       value: totalRewardsToDisplay,
     },
     {
       key: 'rewardsRate',
-      label: t('rewardsRate'),
+      label: isProjectAdminMode || isPatronMode ? t('epochTotalMatchFunding') : t('rewardsRate'),
       // TODO: https://linear.app/golemfoundation/issue/OCT-1870/home-rewards-rate
       value: null,
     },

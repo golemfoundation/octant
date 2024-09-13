@@ -9,6 +9,11 @@
 
   @media #{$large-desktop-up} {
     grid-column: span 2;
+
+    &.isProjectAdminMode,
+    &.isPatronMode {
+      grid-column: span 4;
+    }
   }
 }
 

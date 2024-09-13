@@ -9,24 +9,30 @@ import HomeGridRewardsEstimator from 'components/Home/HomeGridRewardsEstimator';
 import HomeGridTransactions from 'components/Home/HomeGridTransactions';
 import HomeGridUQScore from 'components/Home/HomeGridUQScore';
 import Grid from 'components/shared/Grid';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
 import styles from './HomeGrid.module.scss';
 
 const HomeGrid = (): ReactNode => {
   const { isLargeDesktop, isDesktop, isTablet } = useMediaQuery();
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   return (
     <Grid>
       <HomeGridCurrentGlmLock className={styles.gridTile} />
-      <HomeGridPersonalAllocation className={styles.gridTile} />
-      <HomeGridDonations className={styles.gridTile} />
-      <HomeGridUQScore className={styles.gridTile} />
-      {isLargeDesktop && <HomeGridDivider />}
-      <HomeGridRewardsEstimator className={styles.gridTile} />
+      {!isProjectAdminMode && !isPatronMode && (
+        <HomeGridPersonalAllocation className={styles.gridTile} />
+      )}
+      {!isProjectAdminMode && !isPatronMode && <HomeGridDonations className={styles.gridTile} />}
+      {!isProjectAdminMode && <HomeGridUQScore className={styles.gridTile} />}
+      {!isProjectAdminMode && !isPatronMode && isLargeDesktop && <HomeGridDivider />}
       <HomeGridTransactions className={styles.gridTile} />
       <HomeGridRewardsEstimator className={styles.gridTile} />
-      {!isLargeDesktop && (isDesktop || isTablet) && <HomeGridDivider />}
+      {((!isLargeDesktop && (isDesktop || isTablet)) ||
+        (isLargeDesktop && (isProjectAdminMode || isPatronMode))) && <HomeGridDivider />}
       <HomeGridEpochResults className={styles.gridTile} />
     </Grid>
   );

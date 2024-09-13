@@ -5,6 +5,7 @@
   width: 100%;
   padding: 4.8rem 0 15.2rem;
   flex-direction: column-reverse;
+  margin-top: 8rem;
 
   &::before {
     position: absolute;
@@ -32,6 +33,7 @@
   @media #{$desktop-up} {
     padding: 4.8rem 0 5.6rem;
     margin-bottom: 0;
+    margin-top: 4rem;
   }
 
   .wrapper {

@@ -3,6 +3,8 @@ import React, {
   FC,
   // useState,
   Fragment,
+  useEffect,
+  useRef,
   // useMemo,
   //  useEffect
 } from 'react';
@@ -23,6 +25,7 @@ import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
 // import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 // import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 // import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 // import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 // import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -30,6 +33,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 // import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 // import useUserTOS from 'hooks/queries/useUserTOS';
 // import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useLayoutStore from 'store/layout/store';
 import SyncView from 'views/SyncView/SyncView';
 
@@ -55,7 +59,14 @@ const Layout: FC<LayoutProps> = ({
   // isAbsoluteHeaderPosition = false,
   // showHeaderBlur = true,
 }) => {
-  const { isDesktop } = useMediaQuery();
+  const { isMobile, isDesktop } = useMediaQuery();
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
+
+  const ref = useRef(null);
+  const topBarWrapperRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef(window.scrollY);
+  const lastScrollYUpRef = useRef(0);
   // const { data: isPatronMode } = useIsPatronMode();
   // const { i18n, t  } = useTranslation('translation', { keyPrefix: 'layout.main' });
   // const { address, isConnected } = useAccount();
@@ -66,7 +77,6 @@ const Layout: FC<LayoutProps> = ({
   // const { pathname } = useLocation();
   // const navigate = useNavigate();
   // const { data: isUserTOSAccepted } = useUserTOS();
-  // const isProjectAdminMode = useIsProjectAdminMode();
   // const {
   //   data: { isCryptoMainValueDisplay },
   // } = useSettingsStore(({ data }) => ({
@@ -138,15 +148,6 @@ const Layout: FC<LayoutProps> = ({
   //   // eslint-disable-next-line  react-hooks/exhaustive-deps
   // }, [individualReward, currentEpoch, isDecisionWindowOpen, isCryptoMainValueDisplay]);
 
-  // const onLogoClick = () => {
-  //   if (pathname === ROOT_ROUTES.projects.absolute) {
-  //     window.scrollTo({ behavior: 'smooth', top: 0 });
-  //     return;
-  //   }
-
-  //   navigate(ROOT_ROUTES.projects.absolute);
-  // };
-
   // useEffect(() => {
   //   const intervalId = setInterval(() => {
   //     setCurrentPeriod(getCurrentPeriod());
@@ -156,14 +157,67 @@ const Layout: FC<LayoutProps> = ({
   //   // eslint-disable-next-line  react-hooks/exhaustive-deps
   // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  useEffect(() => {
+    if (!topBarWrapperRef?.current) {
+      return;
+    }
+    const topBarWrapperEl = topBarWrapperRef.current;
+
+    const listener = e => {
+      if (e.target.body.className === 'bodyFixed') {
+        return;
+      }
+      const { offsetTop, clientHeight } = topBarWrapperEl;
+
+      if (window.scrollY > scrollRef.current) {
+        topBarWrapperEl.style.position = 'absolute';
+        if (window.scrollY < lastScrollYUpRef.current + clientHeight) {
+          topBarWrapperEl.style.top = `${lastScrollYUpRef.current}px`;
+        } else if (window.scrollY >= clientHeight) {
+          topBarWrapperEl.style.top = `${window.scrollY - clientHeight}px`;
+        }
+      } else {
+        lastScrollYUpRef.current = window.scrollY;
+        if (window.scrollY <= offsetTop) {
+          topBarWrapperEl.style.top = '0px';
+          topBarWrapperEl.style.position = 'fixed';
+        }
+      }
+
+      scrollRef.current = window.scrollY;
+    };
+
+    if (!isMobile) {
+      return;
+    }
+
+    lastScrollYUpRef.current = window.scrollY;
+    document.addEventListener('scroll', listener);
+
+    return () => {
+      topBarWrapperEl.style.position = 'fixed';
+      topBarWrapperEl.style.top = '0px';
+      document.removeEventListener('scroll', listener);
+    };
+  }, [isMobile]);
+
   if (isSyncingInProgress) {
     return <SyncView />;
   }
 
   return (
     <Fragment>
-      <div className={styles.root} data-test={dataTest}>
-        <LayoutTopBar className={styles.section} />
+      <div ref={ref} className={styles.root} data-test={dataTest}>
+        <div
+          ref={topBarWrapperRef}
+          className={cx(
+            styles.topBarWrapper,
+            isProjectAdminMode && styles.isProjectAdminMode,
+            isPatronMode && styles.isPatronMode,
+          )}
+        >
+          <LayoutTopBar className={styles.section} />
+        </div>
         {/* {isHeaderVisible && (
           <Fragment>
             {showHeaderBlur && <div className={styles.headerBlur} />}

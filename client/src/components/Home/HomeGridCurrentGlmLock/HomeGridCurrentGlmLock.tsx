@@ -3,10 +3,12 @@ import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
+import ModalLockGlm from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm';
 import GridTile from 'components/shared/Grid/GridTile';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import Button from 'components/ui/Button';
 import DoubleValue from 'components/ui/DoubleValue';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -15,7 +17,6 @@ import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './HomeGridCurrentGlmLock.module.scss';
-import ModalLockGlm from './ModalLockGlm';
 import HomeGridCurrentGlmLockProps from './types';
 
 const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) => {
@@ -38,10 +39,14 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
     <>
-      <GridTile className={className} title={t('currentGlmLock')}>
+      <GridTile
+        className={className}
+        title={isProjectAdminMode ? t('yourFunds') : t('currentGlmLock')}
+      >
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
@@ -72,7 +77,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
                   valueCrypto: estimatedEffectiveDeposit,
                 },
                 isDisabled: isPreLaunch && !isConnected,
-                label: t('effective'),
+                label: isProjectAdminMode ? t('pending') : t('effective'),
                 tooltipProps: {
                   dataTest: 'TooltipEffectiveLockedBalance',
                   position: 'bottom-right',

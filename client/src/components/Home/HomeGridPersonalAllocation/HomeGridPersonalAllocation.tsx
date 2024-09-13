@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import _first from 'lodash/first';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -51,19 +51,9 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
 
-  const title = useMemo(() => {
-    if (isProjectAdminMode) {
-      return i18n.t('common.donations');
-    }
-    if (isPatronMode) {
-      return t('patronEarnings');
-    }
-    return i18n.t('common.personalAllocation');
-  }, [isProjectAdminMode, isPatronMode, i18n, t]);
-
   return (
     <>
-      <GridTile className={className} title={title}>
+      <GridTile className={className} title={i18n.t('common.personalAllocation')}>
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"

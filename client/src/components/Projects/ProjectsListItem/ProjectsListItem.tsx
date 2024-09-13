@@ -11,8 +11,10 @@ import Img from 'components/ui/Img';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -32,6 +34,8 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
   const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
@@ -63,6 +67,11 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
   }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProject = epoch !== undefined;
+
+  const showAddToAllocateButton =
+    !isProjectAdminMode &&
+    !isPatronMode &&
+    ((isAllocatedTo && isArchivedProject) || !isArchivedProject);
 
   return (
     <div
@@ -100,7 +109,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
               }
               sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             />
-            {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
+            {showAddToAllocateButton && (
               <ButtonAddToAllocate
                 className={styles.button}
                 dataTest={

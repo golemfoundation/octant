@@ -106,13 +106,18 @@
     "home": {
       "homeRewards": {
         "currentRewards": "Current rewards",
+        "currentDonations": "Current donations",
         "totalRewards": "Total rewards",
-        "rewardsRate": "Rewards rate"
+        "currentMatchFunding": "Current match funding",
+        "rewardsRate": "Rewards rate",
+        "epochTotalMatchFunding": "Epoch total match funding"
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
+        "yourFunds": "Your funds",
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
+        "pending": "Pending",
         "lockedBalance": "Locked balance",
         "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch.",
         "modalLockGlm": {
@@ -460,7 +465,9 @@
       "epochAllocationWindowClosed": "Epoch {{epoch}} allocation window is closed",
       "epochAllocationWindowClosedShort": "E{{epoch}} allocation is closed",
       "connectWallet": "Connect wallet",
-      "connect": "Connect"
+      "connect": "Connect",
+      "admin": "Admin",
+      "patron": "Patron"
     },
     "footer": {
       "octantText": "Octant is a <0>Golem Foundation</0> project,<br/> launched in 2023.",
@@ -663,7 +670,7 @@
       "poweredByCoinGeckoApi": "Powered by CoinGecko API",
       "termsAndConditions": "Terms & Conditions",
       "chooseDisplayCurrency": "Choose a display currency",
-      "cryptoMainValueDisplay": "Use crypto as main value display",
+      "cryptoMainValueDisplay": "Use ETH as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
       "alwaysShowOctantTips": "Always show tips",
       "enablePatronMode": "Enable patron mode",

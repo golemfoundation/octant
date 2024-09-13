@@ -83,6 +83,24 @@
     justify-content: left;
     min-width: 8.5rem;
 
+    &.isProjectAdminMode {
+      background-color: $color-octant-green;
+      border: none;
+
+      &:active {
+        background-color: $color-octant-green2;
+      }
+    }
+
+    &.isPatronMode {
+      background-color: $color-octant-purple;
+      border: none;
+
+      &:active {
+        background-color: $color-octant-green2;
+      }
+    }
+
     @media #{$tablet-up} {
       font-size: $font-size-14;
       padding-left: 1.5rem;
