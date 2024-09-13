@@ -2,16 +2,21 @@
   display: flex;
   align-items: center;
   position: relative;
+
+  &.variant-- {
+    &underselect {
+      width: 20rem;
+      height: 4rem;
+    }
+  }
 }
 
 .selectedValue {
   display: flex;
   align-items: center;
+  align-self: stretch;
+  flex: 1;
   cursor: pointer;
-
-  .label {
-    padding: 0.2rem 0.8rem;
-  }
 
   .chevron {
     margin: 0 1.2rem;
@@ -22,9 +27,27 @@
       transition: 0.3s all;
     }
   }
+
+  &.variant-- {
+    &overselect {
+      .label {
+        padding: 0.2rem 0.8rem;
+      }
+    }
+    &underselect {
+      background: $color-octant-grey8;
+      border-radius: $border-radius-16;
+
+      .label {
+        padding: 0.2rem 1.6rem;
+      }
+    }
+  }
 }
 
 .overlay {
+  position: absolute;
+
   @media #{$tablet-down} {
     @include overlay(100%, 100%);
   }
@@ -46,11 +69,21 @@
 
   @media #{$desktop-up} {
     position: absolute;
-    top: -2rem;
-    right: -0.73rem;
-    bottom: auto;
     width: 12.8rem;
     padding: 1.6rem 0;
+    bottom: auto;
+
+    &.variant-- {
+      &overselect {
+        top: -2rem;
+        right: -0.73rem;
+      }
+
+      &underselect {
+        width: 100%;
+        top: 5rem;
+      }
+    }
   }
 }
 
@@ -77,19 +110,46 @@
   font-size: $font-size-18;
   padding-left: 5.6rem;
 
+  .iconTick {
+    position: absolute;
+  }
+
   @media #{$desktop-up} {
     font-size: $font-size-12;
     height: 3.2rem;
-    justify-content: center;
     padding-left: 0;
-  }
-
-  .iconTick {
-    position: absolute;
-    left: 2.5rem;
   }
 
   &:hover {
     background: $color-octant-grey6;
+  }
+
+  &.variant-- {
+    &overselect {
+      .iconTick {
+        left: 2.5rem;
+      }
+
+      @media #{$desktop-up} {
+        justify-content: center;
+      }
+    }
+    &underselect {
+      flex-direction: row-reverse;
+      padding: 0 5.6rem;
+
+      .iconTick {
+        left: 2.5rem;
+      }
+
+      @media #{$desktop-up} {
+        padding: 0 2.4rem;
+
+        .iconTick {
+          left: auto;
+          right: 1.5rem;
+        }
+      }
+    }
   }
 }

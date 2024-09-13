@@ -19,6 +19,7 @@ const InputSelect: FC<InputSelectProps> = ({
   options,
   onChange,
   selectedOption,
+  variant = 'overselect',
 }) => {
   const { isDesktop } = useMediaQuery();
   const durationOfTransition = isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile;
@@ -63,8 +64,12 @@ const InputSelect: FC<InputSelectProps> = ({
   }, [isMenuOpen, isDesktop]);
 
   return (
-    <div className={styles.root} data-test={dataTest}>
-      <div ref={ref} className={styles.selectedValue} onClick={() => setIsMenuOpen(true)}>
+    <div className={cx(styles.root, styles[`variant--${variant}`])} data-test={dataTest}>
+      <div
+        ref={ref}
+        className={cx(styles.selectedValue, styles[`variant--${variant}`])}
+        onClick={() => setIsMenuOpen(true)}
+      >
         <span className={styles.label} data-test={`${dataTest}__SingleValue`}>
           {_selectedOption?.label}
         </span>
@@ -90,7 +95,7 @@ const InputSelect: FC<InputSelectProps> = ({
               <motion.div
                 key="menu"
                 animate={{ y: '0%' }}
-                className={styles.menu}
+                className={cx(styles.menu, styles[`variant--${variant}`])}
                 exit={{ opacity: isDesktop ? 0 : 1, y: '100%' }}
                 initial={{ y: '100%' }}
                 onAnimationComplete={definition => {
@@ -119,7 +124,7 @@ const InputSelect: FC<InputSelectProps> = ({
                 {options.map(option => (
                   <div
                     key={option.value}
-                    className={styles.option}
+                    className={cx(styles.option, styles[`variant--${variant}`])}
                     data-test={`${dataTest}__Option--${option.label}`}
                     onClick={e => {
                       e.stopPropagation();

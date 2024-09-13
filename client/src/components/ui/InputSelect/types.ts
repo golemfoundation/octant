@@ -8,4 +8,5 @@ export default interface InputSelectProps {
   onChange?: (option: Option) => void;
   options: Option[];
   selectedOption?: Option;
+  variant?: 'overselect' | 'underselect';
 }
