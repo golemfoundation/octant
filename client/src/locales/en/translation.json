@@ -201,8 +201,11 @@
         "epochResults": "Epoch {{epoch}} results",
         "epochLive": "Epoch {{epoch}} live",
         "donations": "Donations",
+        "donationsShort": "D",
         "matching": "Matching",
+        "matchingShort": "M",
         "total": "Total",
+        "totalShort": "T",
         "clickToVisitProject": "Click to visit project"
       }
     },
