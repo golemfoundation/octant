@@ -13,6 +13,8 @@ import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
+import InputSelect from 'components/ui/InputSelect';
+import { Option } from 'components/ui/InputSelect/types';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
@@ -28,6 +30,7 @@ import useTipsStore from 'store/tips/store';
 import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
+import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
@@ -36,6 +39,7 @@ const ProjectsView = (): ReactElement => {
   });
 
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [orderOption, setOrderOption] = useState<Option['value']>(ORDER_OPTIONS[0].value);
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
@@ -125,16 +129,25 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
-      <InputText
-        className={styles.inputSearch}
-        dataTest="ProjectsList__InputText"
-        Icon={<Svg img={magnifyingGlass} size={3.2} />}
-        onChange={onChangeSearchQuery}
-        onClear={() => setSearchQuery('')}
-        placeholder={t('searchInputPlaceholder')}
-        value={searchQuery}
-        variant="search"
-      />
+      <div className={styles.searchAndFilter}>
+        <InputText
+          className={styles.inputSearch}
+          dataTest="ProjectsList__InputText"
+          Icon={<Svg img={magnifyingGlass} size={3.2} />}
+          onChange={onChangeSearchQuery}
+          onClear={() => setSearchQuery('')}
+          placeholder={t('searchInputPlaceholder')}
+          value={searchQuery}
+          variant="search"
+        />
+        <InputSelect
+          className={styles.inputOrder}
+          onChange={option => setOrderOption(option!.value)}
+          options={ORDER_OPTIONS}
+          selectedOption={ORDER_OPTIONS.find(({ value }) => value === orderOption)}
+          variant="underselect"
+        />
+      </div>
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

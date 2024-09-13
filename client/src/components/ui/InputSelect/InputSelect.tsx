@@ -15,6 +15,7 @@ const durationOfTransitionDesktop = 0;
 const durationOfTransitionMobile = 0.3;
 
 const InputSelect: FC<InputSelectProps> = ({
+  className,
   dataTest = 'InputSelect',
   options,
   onChange,
@@ -64,7 +65,7 @@ const InputSelect: FC<InputSelectProps> = ({
   }, [isMenuOpen, isDesktop]);
 
   return (
-    <div className={cx(styles.root, styles[`variant--${variant}`])} data-test={dataTest}>
+    <div className={cx(styles.root, styles[`variant--${variant}`], className)} data-test={dataTest}>
       <div
         ref={ref}
         className={cx(styles.selectedValue, styles[`variant--${variant}`])}

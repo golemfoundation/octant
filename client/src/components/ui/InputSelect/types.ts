@@ -4,6 +4,7 @@ export interface Option {
 }
 
 export default interface InputSelectProps {
+  className?: string;
   dataTest?: string;
   onChange?: (option: Option) => void;
   options: Option[];

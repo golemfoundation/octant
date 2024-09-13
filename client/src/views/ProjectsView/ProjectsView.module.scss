@@ -13,8 +13,30 @@ $elementMargin: 1.6rem;
   justify-content: center;
 }
 
-.inputSearch {
+.searchAndFilter {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   margin-bottom: $elementMargin;
+
+  @media #{$phone-down} {
+    flex-direction: column;
+  }
+}
+
+.inputSearch {
+  max-width: 70rem;
+  margin-right: 2.4rem;
+
+  @media #{$phone-down} {
+    margin-bottom: $elementMargin;
+  }
+}
+
+.inputOrder {
+  @media #{$phone-down} {
+    width: 100% !important;
+  }
 }
 
 .archives {
