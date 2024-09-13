@@ -41,6 +41,7 @@ def test_calculate_octant_rewards_before_overhaul(
     assert result.total_rewards == expected_tr
     assert result.vanilla_individual_rewards == expected_ir
     assert result.operational_cost == expected_operational_cost
+    assert result.donated_to_projects is None
 
 
 def test_calculate_octant_rewards_after_overhaul(
@@ -69,3 +70,4 @@ def test_calculate_octant_rewards_after_overhaul(
     assert result.ppf == overhaul_formulas.ppf(
         result.staking_proceeds, result.vanilla_individual_rewards, LOCKED_RATIO
     )
+    assert result.donated_to_projects is None

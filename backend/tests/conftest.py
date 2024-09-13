@@ -6,15 +6,16 @@ import json
 import logging
 import os
 import time
+import urllib.error
 import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
-from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
+from gql.transport.exceptions import TransportQueryError
 from requests import RequestException
 from web3 import Web3
 
@@ -22,8 +23,8 @@ from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
-from app.infrastructure import database
 from app.infrastructure import Client as GQLClient
+from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -703,7 +704,6 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
-            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
@@ -901,6 +901,18 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
+    def get_user_history(self, user_address: str) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/history/{user_address}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_uq(self, user_address: str, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/uq/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_all_uqs(self, epoch: int) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"user/uq/{epoch}/all")
+        return json.loads(rv.text), rv.status_code
+
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
         return json.loads(rv.text), rv.status_code
@@ -908,6 +920,59 @@ class Client:
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
         return rv.text, rv.status_code
+
+    def get_chain_info(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/chain-info")
+        return json.loads(rv.text), rv.status_code
+
+    def get_version(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/version")
+        return json.loads(rv.text), rv.status_code
+
+    def get_healthcheck(self) -> tuple[dict, int]:
+        rv = self._flask_client.get("/info/healthcheck")
+        return json.loads(rv.text), rv.status_code
+
+    def check_delegation(self, *addresses) -> tuple[dict, int]:
+        addresses = ",".join(addresses)
+        rv = self._flask_client.get(f"/delegation/check/{addresses}")
+        return json.loads(rv.text), rv.status_code
+
+    def delegate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.post(
+            "/delegation/delegate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def delegation_recalculate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.put(
+            "/delegation/recalculate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
 
     @property
     def config(self):
@@ -1249,10 +1314,14 @@ def mock_users_db(app, user_accounts):
 
 @pytest.fixture(scope="function")
 def mock_pending_epoch_snapshot_db_since_epoch3(
-    app, mock_users_db, ppf=PPF, cf=COMMUNITY_FUND
+    app,
+    mock_users_db,
+    ppf=PPF,
+    cf=COMMUNITY_FUND,
+    epoch=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
 ):
     create_pending_snapshot(
-        epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        epoch_nr=epoch,
         mock_users_db=mock_users_db,
         optional_ppf=ppf,
         optional_cf=cf,
@@ -1280,22 +1349,9 @@ def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.save_snapshot(
-        MOCKED_FINALIZED_EPOCH_NO,
-        MATCHED_REWARDS,
-        NO_PATRONS_REWARDS,
-        LEFTOVER,
-        total_withdrawals=TOTAL_WITHDRAWALS,
-    )
-
-    db.session.commit()
-
-
-@pytest.fixture(scope="function")
-def mock_allocations_db(app, mock_users_db, project_accounts):
-    prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
-    pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
+def mock_allocations_db(mock_users_db, project_accounts, epoch=MOCKED_PENDING_EPOCH_NO):
+    prev_epoch_context = get_context(epoch - 1)
+    pending_epoch_context = get_context(epoch)
     user1, user2, _ = mock_users_db
 
     user1_allocations = [

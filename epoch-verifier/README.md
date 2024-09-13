@@ -18,8 +18,14 @@ Check usage with:
 yarn verify:help
 ```
 
+If you want to use the script before the end of the AW, you can use the `--simulated` option. This will use the current state of the BE and simulate the end of the AW.
 
-Script has already defined several, most important deployments (`--deployment` option), but one can connect to any other octant backend using `--url` option. 
+e.g
+```
+yarn verify:mainnet <epoch> --simulated
+```
+
+Script has already defined several, most important deployments (`--deployment` option), but one can connect to any other octant backend using `--url` option.
 
 
 
