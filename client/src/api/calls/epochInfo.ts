@@ -5,6 +5,7 @@ import apiService from 'services/apiService';
 
 export type Response = {
   communityFund: string | null;
+  donatedToProjects: string | null;
   leftover: string | null;
   matchedRewards: string | null;
   operationalCost: string;

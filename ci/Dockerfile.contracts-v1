@@ -1,4 +1,4 @@
-FROM local-docker-registry.wildland.dev:80/library/node:16-alpine AS root
+FROM local-docker-registry.wildland.dev:80/library/node:18-alpine AS root
 
 WORKDIR /app
 

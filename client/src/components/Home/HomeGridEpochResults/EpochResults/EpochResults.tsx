@@ -40,7 +40,7 @@ const EpochResults = (): ReactNode => {
         return d.donations;
       }
       return d.matching;
-    }) as any;
+    }) as { donations: bigint, matching: bigint; };
     return matching > donations ? matching : donations;
   };
 

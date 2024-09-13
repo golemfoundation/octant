@@ -1,20 +1,23 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
-from typing import List
+from typing import List, Dict
 
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
     ProjectRewards,
     ProjectRewardDTO,
+    AllocationsBelowThreshold,
 )
 from app.engine.projects.rewards.allocations import (
     ProjectAllocations,
     ProjectAllocationsPayload,
+    AllocationItem,
 )
 from app.engine.projects.rewards.allocations.preliminary import (
     PreliminaryProjectAllocations,
 )
+from app.engine.projects.rewards.leverage.preliminary import PreliminaryLeverage
 from app.engine.projects.rewards.threshold import (
     ProjectThreshold,
     ProjectThresholdPayload,
@@ -22,7 +25,6 @@ from app.engine.projects.rewards.threshold import (
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
-from app.engine.projects.rewards.leverage.preliminary import PreliminaryLeverage
 
 
 @dataclass
@@ -40,6 +42,13 @@ class PreliminaryProjectRewards(ProjectRewards):
             ProjectThresholdPayload(
                 total_allocated=total_allocated, projects_count=len(projects)
             )
+        )
+
+    def get_total_allocations_below_threshold(
+        self, allocations: Dict[str, List[AllocationItem]]
+    ) -> AllocationsBelowThreshold:
+        return self.projects_threshold.get_total_allocations_below_threshold(
+            allocations
         )
 
     def calculate_project_rewards(

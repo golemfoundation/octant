@@ -7,6 +7,7 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochInfo = {
   communityFund: bigint;
+  donatedToProjects: bigint;
   leftover: bigint;
   matchedRewards: bigint;
   operationalCost: bigint;
@@ -48,6 +49,9 @@ export default function useEpochInfo(
     select: response => ({
       communityFund: response.communityFund
         ? parseUnitsBigInt(response.communityFund, 'wei')
+        : BigInt(0),
+      donatedToProjects: response.donatedToProjects
+        ? parseUnitsBigInt(response.donatedToProjects, 'wei')
         : BigInt(0),
       matchedRewards: response.matchedRewards
         ? parseUnitsBigInt(response.matchedRewards, 'wei')

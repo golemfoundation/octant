@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import SettingsCryptoMainValueBox from 'components/Settings/SettingsCryptoMainValueBox';
@@ -13,6 +14,7 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import styles from './Settings.module.scss';
 
 const Settings = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'components.settings' });
   const { isConnected } = useAccount();
 
   const { data: isPatronMode } = useIsPatronMode();
@@ -20,7 +22,7 @@ const Settings = (): ReactElement => {
 
   return (
     <div className={styles.root}>
-      <div className={styles.title}>Settings</div>
+      <div className={styles.title}>{t('title')}</div>
       <div className={styles.boxesWrapper}>
         {!isProjectAdminMode && (
           <div className={styles.mainInfoBoxWrapper}>

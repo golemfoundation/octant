@@ -11,6 +11,8 @@ from app.settings import Config, config
 from app.infrastructure.exception_handler import ExceptionHandler
 from flask import current_app as app
 
+from app.exceptions import InvalidAddressFormat
+
 default_decorators = {
     "delete": ExceptionHandler.print_stacktrace_on_exception(True, True),
     "get": ExceptionHandler.print_stacktrace_on_exception(False, True),
@@ -30,8 +32,12 @@ class OctantResource(Resource):
             def _decorated(*args, **kwargs):
                 field_value = kwargs.get(field_name)
                 if force or field_value is not None:
-                    updated_field = to_checksum_address(field_value)
-                    kwargs.update([(field_name, updated_field)])
+                    try:
+                        updated_field = to_checksum_address(field_value)
+                    except ValueError:
+                        raise InvalidAddressFormat()
+                    else:
+                        kwargs.update([(field_name, updated_field)])
 
                 return handler(*args, **kwargs)
 
