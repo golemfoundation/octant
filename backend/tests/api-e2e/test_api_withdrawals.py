@@ -43,21 +43,25 @@ def test_withdrawals(
     assert res["epoch"] > 0
 
     # save account budget for assertion
-    res = client.get_rewards_budget(address=ua_alice.address, epoch=STARTING_EPOCH)
+    res = client.get_user_rewards_in_epoch(
+        address=ua_alice.address, epoch=STARTING_EPOCH
+    )
     alice_budget = int(res["budget"])
 
     # make empty vote to get personal rewards
     ua_alice.allocate(0, alice_proposals)
 
     # save account budget for assertion
-    res = client.get_rewards_budget(address=ua_bob.address, epoch=STARTING_EPOCH)
+    res = client.get_user_rewards_in_epoch(address=ua_bob.address, epoch=STARTING_EPOCH)
     bob_budget = int(res["budget"])
 
     # make empty vote to get personal rewards
     ua_bob.allocate(0, bob_proposals)
 
     # save account budget for assertion
-    res = client.get_rewards_budget(address=ua_carol.address, epoch=STARTING_EPOCH)
+    res = client.get_user_rewards_in_epoch(
+        address=ua_carol.address, epoch=STARTING_EPOCH
+    )
     carol_budget = int(res["budget"])
 
     # make empty vote to get personal rewards
