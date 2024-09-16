@@ -2,17 +2,18 @@
 
 ## Definition of Done
 
-1. [ ] Acceptance criteria are met.
-2. [ ] PR is manually tested before the merge by developer(s).
+1. [ ] If required, the desciption of your change is added to the [QA changelog](https://www.notion.so/octantapp/Changelog-for-the-QA-d96fa3b411cf488bb1d8d9a598d88281) 
+2. [ ] Acceptance criteria are met.
+3. [ ] PR is manually tested before the merge by developer(s).
     - [ ] Happy path is manually checked.
-3. [ ] PR is manually tested by QA when their assistance is required (1).
+4. [ ] PR is manually tested by QA when their assistance is required (1).
     - [ ] Octant Areas & Test Cases are checked for impact and updated if required (2).
-4. [ ] Unit tests are added unless there is a reason to omit them.
-5. [ ] Automated tests are added when required.
-6. [ ] The code is merged.
-7. [ ] Tech documentation is added / updated, reviewed and approved (including mandatory approval by a code owner, should such exist for changed files).
+5. [ ] Unit tests are added unless there is a reason to omit them.
+6. [ ] Automated tests are added when required.
+7. [ ] The code is merged.
+8. [ ] Tech documentation is added / updated, reviewed and approved (including mandatory approval by a code owner, should such exist for changed files).
     - [ ] BE: Swagger documentation is updated.
-8. [ ] When required by QA:
+9. [ ] When required by QA:
     - [ ] Deployed to the relevant environment.
     - [ ] Passed system tests.
 
