@@ -382,7 +382,6 @@
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive",
-        "searchInputPlaceholder": "Search for projects",
         "noSearchResults": "No luck, please try again"
       },
       "timeCounter": {
@@ -658,7 +657,8 @@
           "desktop": "Save projects to the Allocate view with the heart icon so you can donate rewards to them. You can also slide any allocate tile to remove them",
           "mobile": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
         }
-      }
+      },
+      "searchInputPlaceholder": "Search for projects and epochs eg Tor E1,E2"
     },
     "settings": {
       "epoch": "Epoch {{epoch}}",

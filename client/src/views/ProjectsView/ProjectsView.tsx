@@ -1,11 +1,20 @@
-import React, { ReactElement, useState, useMemo, useLayoutEffect, useEffect } from 'react';
+import React, {
+  ReactElement,
+  useState,
+  useMemo,
+  useLayoutEffect,
+  useEffect,
+  ChangeEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import TipTile from 'components/shared/TipTile';
+import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
+import Svg from 'components/ui/Svg';
 import {
   WINDOW_PROJECTS_SCROLL_Y,
   WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
@@ -15,6 +24,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
+import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
 
@@ -23,6 +33,9 @@ const ProjectsView = (): ReactElement => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.projects',
   });
+
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
@@ -43,6 +56,10 @@ const ProjectsView = (): ReactElement => {
 
     return projectsLoadedArchivedEpochsNumber ?? 0;
   });
+
+  const onChangeSearchQuery = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
+  };
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -107,6 +124,16 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
+      <InputText
+        className={styles.inputSearch}
+        dataTest="ProjectsList__InputText"
+        Icon={<Svg img={magnifyingGlass} size={3.2} />}
+        onChange={onChangeSearchQuery}
+        onClear={() => setSearchQuery('')}
+        placeholder={t('searchInputPlaceholder')}
+        value={searchQuery}
+        variant="search"
+      />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
