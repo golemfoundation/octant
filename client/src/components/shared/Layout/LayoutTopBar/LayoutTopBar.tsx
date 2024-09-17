@@ -34,19 +34,19 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const {
-    showSettingsDrawer,
-    showAllocationDrawer,
-    setShowWalletModal,
-    setShowConnectWalletModal,
-    setShowAllocationDrawer,
-    setShowSettingsDrawer,
+    isSettingsDrawerOpen,
+    isAllocationDrawerOpen,
+    setIsWalletModalOpen,
+    setIsConnectWalletModalOpen,
+    setIsAllocationDrawerOpen,
+    setIsSettingsDrawerOpen,
   } = useLayoutStore(state => ({
-    setShowAllocationDrawer: state.setShowAllocationDrawer,
-    setShowConnectWalletModal: state.setShowConnectWalletModal,
-    setShowSettingsDrawer: state.setShowSettingsDrawer,
-    setShowWalletModal: state.setShowWalletModal,
-    showAllocationDrawer: state.data.showAllocationDrawer,
-    showSettingsDrawer: state.data.showSettingsDrawer,
+    isAllocationDrawerOpen: state.data.isAllocationDrawerOpen,
+    isSettingsDrawerOpen: state.data.isSettingsDrawerOpen,
+    setIsAllocationDrawerOpen: state.setIsAllocationDrawerOpen,
+    setIsConnectWalletModalOpen: state.setIsConnectWalletModalOpen,
+    setIsSettingsDrawerOpen: state.setIsSettingsDrawerOpen,
+    setIsWalletModalOpen: state.setIsWalletModalOpen,
   }));
 
   const { allocations } = useAllocationsStore(state => ({
@@ -95,34 +95,34 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       return;
     }
 
-    setShowSettingsDrawer(true);
+    setIsSettingsDrawerOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDesktop, pathname]);
 
   useEffect(() => {
-    if (showSettingsDrawer && pathname !== ROOT_ROUTES.settings.absolute && !isDesktop) {
+    if (isSettingsDrawerOpen && pathname !== ROOT_ROUTES.settings.absolute && !isDesktop) {
       navigate(ROOT_ROUTES.settings.absolute);
-      setShowSettingsDrawer(false);
+      setIsSettingsDrawerOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDesktop, pathname, showSettingsDrawer]);
+  }, [isDesktop, pathname, isSettingsDrawerOpen]);
 
   useEffect(() => {
     if (pathname !== ROOT_ROUTES.allocation.absolute || !isDesktop) {
       return;
     }
 
-    setShowAllocationDrawer(true);
+    setIsAllocationDrawerOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDesktop, pathname]);
 
   useEffect(() => {
-    if (showAllocationDrawer && pathname !== ROOT_ROUTES.allocation.absolute && !isDesktop) {
+    if (isAllocationDrawerOpen && pathname !== ROOT_ROUTES.allocation.absolute && !isDesktop) {
       navigate(ROOT_ROUTES.allocation.absolute);
-      setShowAllocationDrawer(false);
+      setIsAllocationDrawerOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDesktop, pathname, showAllocationDrawer]);
+  }, [isDesktop, pathname, isAllocationDrawerOpen]);
 
   useEffect(() => {
     if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
@@ -158,7 +158,9 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       </div>
       <Button
         className={cx(styles.buttonWallet, !isConnected && styles.isConnectButton)}
-        onClick={() => (isConnected ? setShowWalletModal(true) : setShowConnectWalletModal(true))}
+        onClick={() =>
+          isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
+        }
         variant="cta"
       >
         {buttonWalletText}
@@ -170,13 +172,13 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         <Fragment>
           <div
             className={styles.settingsButton}
-            onClick={() => setShowSettingsDrawer(!showSettingsDrawer)}
+            onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
           <div
             className={styles.allocateButton}
-            onClick={() => setShowAllocationDrawer(!showAllocationDrawer)}
+            onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
           >
             <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
             {allocations.length > 0 && (
@@ -193,10 +195,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       )}
       {isDesktop && (
         <>
-          <Drawer isOpen={showSettingsDrawer} onClose={() => setShowSettingsDrawer(false)}>
+          <Drawer isOpen={isSettingsDrawerOpen} onClose={() => setIsSettingsDrawerOpen(false)}>
             <Settings />
           </Drawer>
-          <Drawer isOpen={showAllocationDrawer} onClose={() => setShowAllocationDrawer(false)}>
+          <Drawer isOpen={isAllocationDrawerOpen} onClose={() => setIsAllocationDrawerOpen(false)}>
             <Allocation />
           </Drawer>
         </>
