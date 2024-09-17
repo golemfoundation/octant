@@ -22,10 +22,8 @@ const ProjectsList: FC<ProjectsListProps> = ({
   });
 
   const { data: projectsEpoch, isFetching: isFetchingProjectsEpoch } = useProjectsEpoch(epoch);
-  const {
-    data: projectsIpfsWithRewards,
-    isFetching: isFetchingProjectsWithRewards,
-  } = useProjectsIpfsWithRewards(epoch);
+  const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
+    useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
   const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
@@ -60,22 +58,22 @@ const ProjectsList: FC<ProjectsListProps> = ({
       <Grid>
         {projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards
           ? projectsIpfsWithRewards.map((projectIpfsWithRewards, index) => (
-            <ProjectsListItem
-              key={projectIpfsWithRewards.address}
-              className={styles.element}
-              dataTest={
-                epoch
-                  ? `ProjectsView__ProjectsListItem--archive--${index}`
-                  : `ProjectsView__ProjectsListItem--${index}`
-              }
-              epoch={epoch}
-              projectIpfsWithRewards={projectIpfsWithRewards}
-            />
-          ))
+              <ProjectsListItem
+                key={projectIpfsWithRewards.address}
+                className={styles.element}
+                dataTest={
+                  epoch
+                    ? `ProjectsView__ProjectsListItem--archive--${index}`
+                    : `ProjectsView__ProjectsListItem--${index}`
+                }
+                epoch={epoch}
+                projectIpfsWithRewards={projectIpfsWithRewards}
+              />
+            ))
           : projectsEpoch?.projectsAddresses?.map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ProjectsListSkeletonItem key={index} className={styles.element} />
-          ))}
+              // eslint-disable-next-line react/no-array-index-key
+              <ProjectsListSkeletonItem key={index} className={styles.element} />
+            ))}
       </Grid>
     </div>
   );

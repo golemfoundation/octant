@@ -12,12 +12,9 @@ import DoubleValue from 'components/ui/DoubleValue';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -37,10 +34,6 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
   const { timeCurrentEpochStart, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { data: withdrawals, isFetching: isFetchingWithdrawals } = useWithdrawals();
-  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
-  const { data: isPatronMode } = useIsPatronMode();
-  const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
-    useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
   const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
     state => ({
       isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
@@ -58,85 +51,75 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
           <DoubleValue
             cryptoCurrency="golem"
             isFetching={
-              (isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals) ||
+              isFetchingWithdrawals ||
               (isAppWaitingForTransactionToBeIndexed &&
                 _first(transactionsPending)?.type === 'withdrawal')
             }
             showCryptoSuffix
-            valueCrypto={isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available}
+            valueCrypto={withdrawals?.sums.available}
             variant={isMobile ? 'large' : 'extra-large'}
           />
-          {!isProjectAdminMode && (
-            <>
-              <div className={styles.divider} />
-              <Sections
-                hasBottomDivider
-                sections={[
-                  {
-                    dataTest: 'BoxPersonalAllocation__Section',
-                    doubleValueProps: {
-                      cryptoCurrency: 'ethereum',
-                      dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
-                      isFetching:
-                        (isPatronMode ? isFetchingIndividualReward : isFetchingWithdrawals) ||
-                        (isAppWaitingForTransactionToBeIndexed &&
-                          _first(transactionsPending)?.type === 'withdrawal'),
-                      showCryptoSuffix: true,
-                      valueCrypto: isPatronMode ? individualReward : withdrawals?.sums.pending,
-                    },
-                    label: isPatronMode ? t('currentEpoch') : t('pending'),
-                    tooltipProps: isPatronMode
-                      ? undefined
-                      : {
-                          position: 'bottom-right',
-                          text: (
-                            <div className={styles.pendingTooltip}>
-                              <div className={styles.pendingTooltipLabel}>
-                                {t('pendingFundsAvailableAfter')}
-                              </div>
-                              <div className={styles.pendingTooltipDate}>
-                                {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
-                                {currentEpochProps &&
-                                timeCurrentEpochStart &&
-                                timeCurrentAllocationEnd
-                                  ? format(
-                                      new Date(
-                                        isDecisionWindowOpen
-                                          ? timeCurrentAllocationEnd
-                                          : // When AW is closed, it's when the last AW closed.
-                                            timeCurrentEpochStart +
-                                            currentEpochProps.decisionWindow,
-                                      ),
-                                      'haaa z, d LLLL',
-                                    )
-                                  : ''}
-                              </div>
-                            </div>
-                          ),
-                        },
-                  },
-                ]}
-                variant="standard"
-              />
-            </>
-          )}
-          {!isPatronMode && !isProjectAdminMode && (
-            <Button
-              className={styles.withdrawEthButton}
-              isDisabled={
-                isPreLaunch ||
-                !isConnected ||
-                isFetchingWithdrawals ||
-                isAppWaitingForTransactionToBeIndexed ||
-                !!(withdrawals?.sums.available && withdrawals.sums.available === 0n)
-              }
-              isHigh
-              onClick={() => setIsModalWithdrawEthOpen(true)}
-              variant={isProjectAdminMode ? 'cta' : 'secondary'}
-            >
-              {t('withdrawToWallet')}
-            </Button>
-          )}
+
+          <div className={styles.divider} />
+          <Sections
+            hasBottomDivider
+            sections={[
+              {
+                dataTest: 'BoxPersonalAllocation__Section',
+                doubleValueProps: {
+                  cryptoCurrency: 'ethereum',
+                  dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
+                  isFetching:
+                    isFetchingWithdrawals ||
+                    (isAppWaitingForTransactionToBeIndexed &&
+                      _first(transactionsPending)?.type === 'withdrawal'),
+                  showCryptoSuffix: true,
+                  valueCrypto: withdrawals?.sums.pending,
+                },
+                label: t('pending'),
+                tooltipProps: {
+                  position: 'bottom-right',
+                  text: (
+                    <div className={styles.pendingTooltip}>
+                      <div className={styles.pendingTooltipLabel}>
+                        {t('pendingFundsAvailableAfter')}
+                      </div>
+                      <div className={styles.pendingTooltipDate}>
+                        {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
+                        {currentEpochProps && timeCurrentEpochStart && timeCurrentAllocationEnd
+                          ? format(
+                              new Date(
+                                isDecisionWindowOpen
+                                  ? timeCurrentAllocationEnd
+                                  : // When AW is closed, it's when the last AW closed.
+                                    timeCurrentEpochStart + currentEpochProps.decisionWindow,
+                              ),
+                              'haaa z, d LLLL',
+                            )
+                          : ''}
+                      </div>
+                    </div>
+                  ),
+                },
+              },
+            ]}
+            variant="standard"
+          />
+          <Button
+            className={styles.withdrawEthButton}
+            isDisabled={
+              isPreLaunch ||
+              !isConnected ||
+              isFetchingWithdrawals ||
+              isAppWaitingForTransactionToBeIndexed ||
+              !!(withdrawals?.sums.available && withdrawals.sums.available === 0n)
+            }
+            isHigh
+            onClick={() => setIsModalWithdrawEthOpen(true)}
+            variant={isProjectAdminMode ? 'cta' : 'secondary'}
+          >
+            {t('withdrawToWallet')}
+          </Button>
         </div>
       </GridTile>
       <ModalWithdrawEth

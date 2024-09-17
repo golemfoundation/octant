@@ -107,10 +107,13 @@
       "homeRewards": {
         "currentRewards": "Current rewards",
         "currentDonations": "Current donations",
+        "donations": "Donations",
         "totalRewards": "Total rewards",
         "currentMatchFunding": "Current match funding",
+        "matchFunding": "Match funding",
         "rewardsRate": "Rewards rate",
-        "epochTotalMatchFunding": "Epoch total match funding"
+        "epochTotalMatchFunding": "Epoch total match funding",
+        "epochMF": "Epoch MF"
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
