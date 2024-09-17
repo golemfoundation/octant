@@ -14,8 +14,11 @@ $elementMargin: 1.6rem;
   }
 }
 
-.inputSearch {
-  margin-bottom: $elementMargin;
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .element {

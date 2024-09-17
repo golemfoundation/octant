@@ -4,6 +4,7 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
 import useAllocationsStore from 'store/allocations/store';
+import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
@@ -19,7 +20,10 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
-  const { isInitialized: isSettingsInitialized, isDelegationInProgress } = useSettingsStore(
+  const { isInitialized: isSettingsInitialized } = useSettingsStore(state => ({
+    isInitialized: state.meta.isInitialized,
+  }));
+  const { isInitialized: isDelegationInitialized, isDelegationInProgress } = useDelegationStore(
     state => ({
       isDelegationInProgress: state.data.isDelegationInProgress,
       isInitialized: state.meta.isInitialized,
@@ -42,6 +46,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
+    !isDelegationInitialized ||
     isFlushRequired ||
     !isTipsStoreInitialized ||
     (isFetchingUserTOS && !isRefetchingUserTOS) ||

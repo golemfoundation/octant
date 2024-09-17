@@ -4,6 +4,8 @@ from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.dto import OctantRewardsDTO
 from app.pydantic import Model
+from app.engine.octant_rewards.leftover import LeftoverPayload
+from app.engine.projects.rewards.allocations import ProjectAllocationsPayload
 
 
 class FinalizedOctantRewards(Model):
@@ -13,6 +15,37 @@ class FinalizedOctantRewards(Model):
         )
         finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
+        )
+
+        leftover_payload = LeftoverPayload(
+            staking_proceeds=int(pending_snapshot.eth_proceeds),
+            operational_cost=int(pending_snapshot.operational_cost),
+            community_fund=pending_snapshot.validated_community_fund,
+            ppf=pending_snapshot.validated_ppf,
+            total_withdrawals=int(finalized_snapshot.total_withdrawals),
+        )
+
+        unused_matched_rewards = context.epoch_settings.octant_rewards.leftover.extract_unused_matched_rewards(
+            int(finalized_snapshot.leftover), leftover_payload
+        )
+
+        allocations_for_epoch = database.allocations.get_all_by_epoch(
+            context.epoch_details.epoch_num
+        )
+        grouped_allocations = context.epoch_settings.project.rewards.projects_allocations.segregate_allocations(
+            ProjectAllocationsPayload(allocations=allocations_for_epoch)
+        )
+        allocations_result = context.epoch_settings.project.rewards.get_total_allocations_below_threshold(
+            grouped_allocations
+        )
+        allocations_sum = allocations_result.total
+        allocations_below_threshold = allocations_result.below_threshold
+
+        donated_to_projects = (
+            int(finalized_snapshot.matched_rewards)
+            - unused_matched_rewards
+            + allocations_sum
+            - allocations_below_threshold
         )
 
         return OctantRewardsDTO(
@@ -28,6 +61,7 @@ class FinalizedOctantRewards(Model):
             total_withdrawals=int(finalized_snapshot.total_withdrawals),
             ppf=pending_snapshot.validated_ppf,
             community_fund=pending_snapshot.validated_community_fund,
+            donated_to_projects=donated_to_projects,
         )
 
     def get_leverage(self, context: Context) -> float:

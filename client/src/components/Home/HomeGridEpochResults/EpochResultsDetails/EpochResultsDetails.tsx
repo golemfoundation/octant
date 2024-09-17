@@ -48,13 +48,13 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
         <>
           <div className={styles.projectName}>{projectsIpfs?.[0]?.name}</div>
           <div className={styles.donations}>
-            {isMobile ? 'D' : t('donations')} {donationsToDisplay}
+            {isMobile ? t('donationsShort') : t('donations')} {donationsToDisplay}
           </div>
           <div className={styles.matching}>
-            {isMobile ? 'M' : t('matching')} {matchingToDisplay}
+            {isMobile ? t('matchingShort') : t('matching')} {matchingToDisplay}
           </div>
           <div className={styles.total}>
-            {isMobile ? 'T' : t('total')} {totalToDisplay}
+            {isMobile ? t('totalShort') : t('total')} {totalToDisplay}
           </div>
           {!isMobile && (
             <Button className={styles.link} variant="link">

@@ -346,3 +346,11 @@ class InvalidDelegationForLockingAddress(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidAddressFormat(OctantException):
+    code = 400
+    description = "Invalid address format"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
