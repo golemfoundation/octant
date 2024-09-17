@@ -1,5 +1,7 @@
+$elementMargin: 1.6rem;
+
 .tip {
-  margin-bottom: 1.6rem;
+  margin-bottom: $elementMargin;
 
   @media #{$desktop-up} {
     margin-bottom: 2.8rem;
@@ -9,6 +11,10 @@
 .loaderWrapper {
   display: flex;
   justify-content: center;
+}
+
+.inputSearch {
+  margin-bottom: $elementMargin;
 }
 
 .archives {
