@@ -14,7 +14,6 @@ import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import InputSelect from 'components/ui/InputSelect';
-import { Option } from 'components/ui/InputSelect/types';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
@@ -30,6 +29,7 @@ import useTipsStore from 'store/tips/store';
 import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
+import { OrderOption } from './types';
 import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
@@ -39,13 +39,18 @@ const ProjectsView = (): ReactElement => {
   });
 
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [orderOption, setOrderOption] = useState<Option['value']>(ORDER_OPTIONS[0].value);
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+
+  // TODO OCT-1952: settle on when & how randomised order should work.
+  const [orderOption, setOrderOption] = useState<OrderOption>(
+    isDecisionWindowOpen ? 'randomized' : 'totalsDescending',
+  );
+
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
   const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
@@ -142,8 +147,13 @@ const ProjectsView = (): ReactElement => {
         />
         <InputSelect
           className={styles.inputOrder}
-          onChange={option => setOrderOption(option!.value)}
-          options={ORDER_OPTIONS}
+          onChange={option => setOrderOption(option!.value as OrderOption)}
+          // TODO OCT-1952: settle on when & how randomised order should work.
+          options={
+            isDecisionWindowOpen
+              ? ORDER_OPTIONS
+              : ORDER_OPTIONS.filter(element => element.value !== 'randomized')
+          }
           selectedOption={ORDER_OPTIONS.find(({ value }) => value === orderOption)}
           variant="underselect"
         />
@@ -153,6 +163,7 @@ const ProjectsView = (): ReactElement => {
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
             areCurrentEpochsProjectsHiddenOutsideAllocationWindow
           }
+          orderOption={orderOption}
         />
       )}
       {archivedEpochs.length > 0 && (
@@ -177,6 +188,7 @@ const ProjectsView = (): ReactElement => {
               }
               epoch={epoch}
               isFirstArchive={index === 0}
+              orderOption={orderOption}
             />
           ))}
         </InfiniteScroll>
