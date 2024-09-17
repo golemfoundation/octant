@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable, Set
+from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable, Container
 
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO, ProjectRewardsResult
@@ -240,7 +240,9 @@ class ScoreDelegation(Protocol):
     def recalculate(self, context: Context, payload: ScoreDelegationPayload):
         ...
 
-    def check(self, context: Context, addresses: List[str]) -> Set[Tuple[str, str]]:
+    def check(
+        self, context: Context, addresses: List[str]
+    ) -> Container[Tuple[str, str]]:
         ...
 
 

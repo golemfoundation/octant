@@ -52,6 +52,14 @@ class GPStamps(BaseModel):
     stamps = Column(db.String, nullable=False)
 
 
+class HolonymSBT(BaseModel):
+    __tablename__ = "holonym_sbts"
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    has_sbt = Column(db.Boolean, nullable=False, default=False)
+    sbt_details = Column(db.String, nullable=False, default="[]")
+
+
 class PatronModeEvent(BaseModel):
     __tablename__ = "patron_events"
 

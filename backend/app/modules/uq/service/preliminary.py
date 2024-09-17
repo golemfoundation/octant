@@ -1,6 +1,5 @@
-from datetime import datetime
 from decimal import Decimal
-from typing import Protocol, Optional, Tuple, runtime_checkable
+from typing import Protocol, Optional, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
@@ -9,13 +8,23 @@ from app.infrastructure.database.uniqueness_quotient import (
 )
 from app.modules.uq.core import calculate_uq
 from app.pydantic import Model
+from app.modules.user.antisybil.service.holonym import HolonymAntisybilDTO
+from app.modules.user.antisybil.service.passport import GitcoinAntisybilDTO
 
 
 @runtime_checkable
-class Antisybil(Protocol):
+class Passport(Protocol):
     def get_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[float, datetime]]:
+    ) -> Optional[GitcoinAntisybilDTO]:
+        ...
+
+
+@runtime_checkable
+class Holonym(Protocol):
+    def get_sbt_status(
+        self, _: Context, user_address: str
+    ) -> Optional[HolonymAntisybilDTO]:
         ...
 
 
@@ -26,7 +35,8 @@ class UserBudgets(Protocol):
 
 
 class PreliminaryUQ(Model):
-    antisybil: Antisybil
+    passport: Passport
+    holonym: Holonym
     budgets: UserBudgets
     uq_threshold: int
 
@@ -56,7 +66,7 @@ class PreliminaryUQ(Model):
         return calculate_uq(gp_score, self.uq_threshold)
 
     def _get_gp_score(self, context: Context, address: str) -> float:
-        antisybil_status = self.antisybil.get_antisybil_status(context, address)
-        if antisybil_status is None:
+        passport_status = self.passport.get_antisybil_status(context, address)
+        if passport_status is None:
             return 0.0
-        return antisybil_status[0]
+        return passport_status[0]

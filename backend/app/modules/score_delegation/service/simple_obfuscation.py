@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Protocol, runtime_checkable, Tuple, Container, List
+from typing import Protocol, runtime_checkable, Tuple, Container, List, Optional
 
 from app.context.manager import Context
 from app.extensions import db
@@ -9,6 +9,7 @@ from app.modules.common.verifier import Verifier
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.score_delegation import core
 from app.modules.score_delegation.core import ActionType
+from app.modules.user.antisybil.service.passport import GitcoinAntisybilDTO
 from app.pydantic import Model
 
 from flask import current_app as app
@@ -20,7 +21,7 @@ from app.modules.modules_factory.protocols import UserEffectiveDeposits
 class Antisybil(Protocol):
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Tuple[float, datetime, any]:
+    ) -> Optional[GitcoinAntisybilDTO]:
         ...
 
     def update_antisybil_status(
@@ -85,7 +86,7 @@ class SimpleObfuscationDelegation(Model):
         hashed_addresses = get_hashed_addresses(
             payload.primary_addr, payload.secondary_addr
         )
-        score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
+        score, stamps = self.antisybil.fetch_antisybil_status(
             context, payload.secondary_addr
         )
         secondary_budget = self.user_deposits_service.get_user_effective_deposit(
@@ -95,10 +96,10 @@ class SimpleObfuscationDelegation(Model):
             context,
             hashed_addresses=hashed_addresses,
             payload=payload,
-            score=score,
+            score=score.score,
             secondary_budget=secondary_budget,
             action_type=action,
         )
         self.antisybil.update_antisybil_status(
-            context, payload.primary_addr, score, expires_at, stamps
+            context, payload.primary_addr, score.score, score.expires_at, stamps
         )

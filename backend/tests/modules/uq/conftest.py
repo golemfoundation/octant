@@ -15,9 +15,17 @@ def mock_antisybil():
 
 
 @pytest.fixture
-def service(mock_antisybil, mock_user_budgets):
+def mock_holonym():
+    mock = Mock()
+    mock.get_sbt_status.return_value = (False, ["phone"])
+    return mock
+
+
+@pytest.fixture
+def service(mock_antisybil, mock_holonym, mock_user_budgets):
     return PreliminaryUQ(
-        antisybil=mock_antisybil,
+        passport=mock_antisybil,
+        holonym=mock_holonym,
         budgets=mock_user_budgets,
         uq_threshold=UQ_THRESHOLD_MAINNET,
     )
