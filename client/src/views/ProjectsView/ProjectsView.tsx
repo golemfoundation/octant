@@ -38,9 +38,10 @@ const ProjectsView = (): ReactElement => {
     keyPrefix: 'views.projects',
   });
 
+  const { data: currentEpoch } = useCurrentEpoch();
+
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -119,6 +120,8 @@ const ProjectsView = (): ReactElement => {
     };
   }, [loadedArchivedEpochsNumber]);
 
+  const orderOptionsTranslated = ORDER_OPTIONS(t);
+
   return (
     <Layout dataTest="ProjectsView">
       <ProjectsTimelineWidget />
@@ -151,13 +154,14 @@ const ProjectsView = (): ReactElement => {
           // TODO OCT-1952: settle on when & how randomised order should work.
           options={
             isDecisionWindowOpen
-              ? ORDER_OPTIONS
-              : ORDER_OPTIONS.filter(element => element.value !== 'randomized')
+              ? orderOptionsTranslated
+              : orderOptionsTranslated.filter(element => element.value !== 'randomized')
           }
-          selectedOption={ORDER_OPTIONS.find(({ value }) => value === orderOption)}
+          selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
           variant="underselect"
         />
       </div>
+      s
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

@@ -646,7 +646,16 @@
           "mobile": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
         }
       },
-      "searchInputPlaceholder": "Search for projects and epochs eg Tor E1,E2"
+      "searchInputPlaceholder": "Search for projects and epochs eg Tor E1,E2",
+      "sortOptions": {
+        "randomized": "Randomised",
+        "alphabeticalAscending": "A -> Z",
+        "alphabeticalDescending": "Z -> A",
+        "totalsDescending": "Totals high to low",
+        "totalsAscending": "Total low to high",
+        "donorsDescending": "Donors most to least",
+        "donorsAscending": "Donors least to most"
+      }
     },
     "settings": {
       "epoch": "Epoch {{epoch}}",

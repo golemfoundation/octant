@@ -1,32 +1,34 @@
+import { TFunction } from 'i18next';
+
 import { Option } from 'components/ui/InputSelect/types';
 
-export const ORDER_OPTIONS: Option[] = [
+export const ORDER_OPTIONS = (t: TFunction): Option[] => [
   {
-    label: 'Randomised',
+    label: t('sortOptions.randomised'),
     value: 'randomized',
   },
   {
-    label: 'A -> Z',
+    label: t('sortOptions.alphabeticalAscending'),
     value: 'alphabeticalAscending',
   },
   {
-    label: 'Z -> A',
+    label: t('sortOptions.alphabeticalDescending'),
     value: 'alphabeticalDescending',
   },
   {
-    label: 'Totals high to low',
+    label: t('sortOptions.totalsDescending'),
     value: 'totalsDescending',
   },
   {
-    label: 'Totals low to high',
+    label: t('sortOptions.totalsAscending'),
     value: 'totalsAscending',
   },
   {
-    label: 'Donors most to least',
+    label: t('sortOptions.donorsDescending'),
     value: 'donorsDescending',
   },
   {
-    label: 'Donors least to most',
+    label: t('sortOptions.donorsAscending'),
     value: 'donorsAscending',
   },
 ];
