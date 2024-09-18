@@ -157,6 +157,7 @@ const Layout: FC<LayoutProps> = ({
   //   // eslint-disable-next-line  react-hooks/exhaustive-deps
   // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  // Logic that hides TopBar when scrolling down and shows when scrolling up (only on mobile devices)
   useEffect(() => {
     if (!topBarWrapperRef?.current) {
       return;

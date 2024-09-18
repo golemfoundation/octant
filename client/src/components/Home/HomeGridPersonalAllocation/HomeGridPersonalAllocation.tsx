@@ -65,10 +65,10 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
             hasBottomDivider
             sections={[
               {
-                dataTest: 'BoxPersonalAllocation__Section',
+                dataTest: 'HomeGridPersonalAllocation__Section',
                 doubleValueProps: {
                   cryptoCurrency: 'ethereum',
-                  dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
+                  dataTest: 'HomeGridPersonalAllocation__Section--pending__DoubleValue',
                   isFetching:
                     isFetchingWithdrawals ||
                     (isAppWaitingForTransactionToBeIndexed &&

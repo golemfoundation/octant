@@ -198,7 +198,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
                 <div
                   ref={scope}
                   className={styles.numberOfAllocations}
-                  data-test="Navbar__numberOfAllocations"
+                  data-test="LayoutTopBar__numberOfAllocations"
                 >
                   {allocations.length}
                 </div>
