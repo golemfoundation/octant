@@ -204,3 +204,16 @@ class UniquenessQuotient(BaseModel):
     @property
     def validated_score(self):
         return Decimal(self.score)
+
+
+class ProjectDetails(BaseModel):
+    """
+    This model represents the details of a project that is consistent with data on the IPFS node.
+    Records here are created only by migrations.
+    """
+
+    __tablename__ = "project_details"
+
+    id = Column(db.Integer, primary_key=True)
+    address = Column(db.String(42), nullable=False, unique=True)
+    name = Column(db.String, nullable=False, unique=True)
