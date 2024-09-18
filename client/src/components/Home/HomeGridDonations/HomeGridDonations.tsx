@@ -29,8 +29,8 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { setShowAllocationDrawer } = useLayoutStore(state => ({
-    setShowAllocationDrawer: state.setShowAllocationDrawer,
+  const { setIsAllocationDrawerOpen } = useLayoutStore(state => ({
+    setIsAllocationDrawerOpen: state.setIsAllocationDrawerOpen,
   }));
 
   const { setCurrentView } = useAllocationsStore(state => ({
@@ -62,7 +62,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
             className={styles.editButton}
             onClick={() => {
               setCurrentView('edit');
-              setShowAllocationDrawer(true);
+              setIsAllocationDrawerOpen(true);
             }}
             variant="cta"
           >

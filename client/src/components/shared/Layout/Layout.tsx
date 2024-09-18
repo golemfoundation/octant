@@ -86,16 +86,16 @@ const Layout: FC<LayoutProps> = ({
   // }));
 
   const {
-    setShowWalletModal,
-    setShowConnectWalletModal,
-    data: { showWalletModal, showConnectWalletModal },
+    setIsWalletModalOpen,
+    setIsConnectWalletModalOpen,
+    data: { isWalletModalOpen, isConnectWalletModalOpen },
   } = useLayoutStore(state => ({
     data: {
-      showConnectWalletModal: state.data.showConnectWalletModal,
-      showWalletModal: state.data.showWalletModal,
+      isConnectWalletModalOpen: state.data.isConnectWalletModalOpen,
+      isWalletModalOpen: state.data.isWalletModalOpen,
     },
-    setShowConnectWalletModal: state.setShowConnectWalletModal,
-    setShowWalletModal: state.setShowWalletModal,
+    setIsConnectWalletModalOpen: state.setIsConnectWalletModalOpen,
+    setIsWalletModalOpen: state.setIsWalletModalOpen,
   }));
 
   // const isPreLaunch = getIsPreLaunch(currentEpoch);
@@ -338,14 +338,14 @@ const Layout: FC<LayoutProps> = ({
       </div>
       <ModalLayoutWallet
         modalProps={{
-          isOpen: showWalletModal,
-          onClosePanel: () => setShowWalletModal(false),
+          isOpen: isWalletModalOpen,
+          onClosePanel: () => setIsWalletModalOpen(false),
         }}
       />
       <ModalLayoutConnectWallet
         modalProps={{
-          isOpen: showConnectWalletModal,
-          onClosePanel: () => setShowConnectWalletModal(false),
+          isOpen: isConnectWalletModalOpen,
+          onClosePanel: () => setIsConnectWalletModalOpen(false),
         }}
       />
     </Fragment>

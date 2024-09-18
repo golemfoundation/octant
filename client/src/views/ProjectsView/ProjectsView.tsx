@@ -12,6 +12,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import TipTile from 'components/shared/TipTile';
+import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
@@ -27,6 +28,8 @@ import useTipsStore from 'store/tips/store';
 import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
+import { OrderOption } from './types';
+import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
@@ -34,13 +37,20 @@ const ProjectsView = (): ReactElement => {
     keyPrefix: 'views.projects',
   });
 
+  const { data: currentEpoch } = useCurrentEpoch();
+
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+
+  // TODO OCT-1952: settle on when & how randomised order should work.
+  const [orderOption, setOrderOption] = useState<OrderOption>(
+    isDecisionWindowOpen ? 'randomized' : 'totalsDescending',
+  );
+
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
   const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
@@ -109,6 +119,8 @@ const ProjectsView = (): ReactElement => {
     };
   }, [loadedArchivedEpochsNumber]);
 
+  const orderOptionsTranslated = ORDER_OPTIONS(t);
+
   return (
     <>
       <ProjectsTimelineWidget />
@@ -124,21 +136,37 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
-      <InputText
-        className={styles.inputSearch}
-        dataTest="ProjectsList__InputText"
-        Icon={<Svg img={magnifyingGlass} size={3.2} />}
-        onChange={onChangeSearchQuery}
-        onClear={() => setSearchQuery('')}
-        placeholder={t('searchInputPlaceholder')}
-        value={searchQuery}
-        variant="search"
-      />
+      <div className={styles.searchAndFilter}>
+        <InputText
+          className={styles.inputSearch}
+          dataTest="ProjectsList__InputText"
+          Icon={<Svg img={magnifyingGlass} size={3.2} />}
+          onChange={onChangeSearchQuery}
+          onClear={() => setSearchQuery('')}
+          placeholder={t('searchInputPlaceholder')}
+          value={searchQuery}
+          variant="search"
+        />
+        <InputSelect
+          className={styles.inputOrder}
+          onChange={option => setOrderOption(option!.value as OrderOption)}
+          // TODO OCT-1952: settle on when & how randomised order should work.
+          options={
+            isDecisionWindowOpen
+              ? orderOptionsTranslated
+              : orderOptionsTranslated.filter(element => element.value !== 'randomized')
+          }
+          selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
+          variant="underselect"
+        />
+      </div>
+      s
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
             areCurrentEpochsProjectsHiddenOutsideAllocationWindow
           }
+          orderOption={orderOption}
         />
       )}
       {archivedEpochs.length > 0 && (
@@ -163,6 +191,7 @@ const ProjectsView = (): ReactElement => {
               }
               epoch={epoch}
               isFirstArchive={index === 0}
+              orderOption={orderOption}
             />
           ))}
         </InfiniteScroll>
