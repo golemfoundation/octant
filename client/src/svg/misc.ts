@@ -119,3 +119,9 @@ export const calendar: SvgImageConfig = {
     '<g clip-path="url(#calendar)" stroke="#2D9B87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5h-13a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1ZM.5 6.5h15M4.5 4V.5M11.5 4V.5"/></g><defs><clipPath id="calendar"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs>',
   viewBox: '0 0 16 16',
 };
+
+export const hammer: SvgImageConfig = {
+  markup:
+    '<g stroke="#171717" stroke-linecap="round" stroke-linejoin="round"><path d="m8.009 7.583-4.823 4.823a.75.75 0 0 1-1.06 0l-.531-.53a.75.75 0 0 1 0-1.06l4.823-4.824"/><path d="m7.1 1.594-2.011 2.01a.75.75 0 0 0 0 1.061L9.33 8.908a.75.75 0 0 0 1.061 0l2.01-2.01a.75.75 0 0 0 0-1.061L8.16 1.594a.75.75 0 0 0-1.06 0Z"/></g>',
+  viewBox: '0 0 14 14',
+};

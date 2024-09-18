@@ -14,6 +14,8 @@
 }
 
 .navigation {
+  display: flex;
+  flex-direction: column;
   border-radius: $border-radius-32;
   background: $color-white;
   box-shadow: $box-shadow-1;
@@ -25,16 +27,8 @@
     width: 43.2rem;
   }
 
-  .navigationBottomSuffix {
-    padding: 1.6rem;
-    border-bottom: 0.1rem solid $color-octant-grey3;
-
-    @media #{$tablet-up} {
-      padding: 2.4rem;
-    }
-  }
-
   .buttons {
+    order: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;

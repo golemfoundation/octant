@@ -1,13 +1,13 @@
 export interface LayoutData {
-  showAllocateDrawer: boolean;
-  showConnectWalletModal: boolean;
-  showSettingsDrawer: boolean;
-  showWalletModal: boolean;
+  isAllocationDrawerOpen: boolean;
+  isConnectWalletModalOpen: boolean;
+  isSettingsDrawerOpen: boolean;
+  isWalletModalOpen: boolean;
 }
 
 export interface LayoutMethods {
-  setShowAllocateDrawer: (showAllocateDrawer: boolean) => void;
-  setShowConnectWalletModal: (showConnectWalletModal: boolean) => void;
-  setShowSettingsDrawer: (showSettingsDrawer: boolean) => void;
-  setShowWalletModal: (showWalletModal: boolean) => void;
+  setIsAllocationDrawerOpen: (isAllocationDrawerOpen: boolean) => void;
+  setIsConnectWalletModalOpen: (isConnectWalletModalOpen: boolean) => void;
+  setIsSettingsDrawerOpen: (isSettingsDrawerOpen: boolean) => void;
+  setIsWalletModalOpen: (isWalletModalOpen: boolean) => void;
 }

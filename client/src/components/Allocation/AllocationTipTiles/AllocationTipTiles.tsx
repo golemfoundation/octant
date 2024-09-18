@@ -18,7 +18,7 @@ import styles from './AllocationTipTiles.module.scss';
 import AllocationTipTilesProps from './types';
 
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
+  const { t } = useTranslation('translation', { keyPrefix: 'components.allocation.tip' });
   const navigate = useNavigate();
   const { isDesktop } = useMediaQuery();
   const { address, isConnected } = useAccount();
@@ -101,8 +101,8 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
             components={[<span className={styles.bold} />]}
             i18nKey={
               isDesktop
-                ? 'views.allocation.tip.uqTooLow.text.desktop'
-                : 'views.allocation.tip.uqTooLow.text.mobile'
+                ? 'components.allocation.tip.uqTooLow.text.desktop'
+                : 'components.allocation.tip.uqTooLow.text.mobile'
             }
           />
         }

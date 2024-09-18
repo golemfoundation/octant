@@ -29,7 +29,10 @@ const RootRoutes = (): ReactNode => {
   const lastSeenPathRef = useRef(ROOT_ROUTES.home.absolute);
 
   useEffect(() => {
-    if (pathname === ROOT_ROUTES.settings.absolute) {
+    if (
+      pathname === ROOT_ROUTES.settings.absolute ||
+      pathname === ROOT_ROUTES.allocation.absolute
+    ) {
       return;
     }
     lastSeenPathRef.current = pathname;
@@ -42,7 +45,12 @@ const RootRoutes = (): ReactNode => {
           {!isProjectAdminMode && (
             <>
               {!isPatronMode && (
-                <Route element={<AllocationView />} path={`${ROOT_ROUTES.allocation.relative}/*`} />
+                <Route
+                  element={
+                    isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <AllocationView />
+                  }
+                  path={`${ROOT_ROUTES.allocation.relative}/*`}
+                />
               )}
               <Route element={<HomeView />} path={`${ROOT_ROUTES.home.relative}/*`} />
               <Route element={<MetricsView />} path={`${ROOT_ROUTES.metrics.relative}/*`} />

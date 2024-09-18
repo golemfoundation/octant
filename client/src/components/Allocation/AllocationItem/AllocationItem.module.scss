@@ -28,7 +28,7 @@ $removeButtonHeightWidthDesktop: 10.4rem;
     background-color: $color-octant-grey1;
   }
 
-  @media #{$desktop-up} {
+  @media #{$tablet-up} {
     height: $removeButtonHeightWidthDesktop;
     width: $removeButtonHeightWidthDesktop;
   }
@@ -65,9 +65,10 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   border-radius: 50%;
   height: 4.8rem;
   width: 4.8rem;
+  display: none;
 
-  @media #{$tablet-down} {
-    display: none;
+  @media #{$tablet-up} {
+    display: initial;
   }
 }
 

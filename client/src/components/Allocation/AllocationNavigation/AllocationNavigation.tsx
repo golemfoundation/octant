@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
+import useAllocationsStore from 'store/allocations/store';
 
 import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
@@ -9,16 +10,19 @@ import AllocationNavigationProps from './types';
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   isLeftButtonDisabled,
   areButtonsDisabled,
-  currentView,
   isLoading,
   onAllocate,
   onResetValues,
-  setCurrentView,
   isWaitingForAllMultisigSignatures,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
   });
+
+  const { currentView, setCurrentView } = useAllocationsStore(state => ({
+    currentView: state.data.currentView,
+    setCurrentView: state.setCurrentView,
+  }));
 
   const commonProps = {
     isDisabled: areButtonsDisabled,

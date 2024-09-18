@@ -13,7 +13,9 @@ const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
   modalProps,
   onAllocate,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.lowUQScoreModal' });
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.allocation.lowUQScoreModal',
+  });
 
   return (
     <Modal

@@ -3,36 +3,36 @@ import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 import { LayoutData, LayoutMethods } from './types';
 
 export const initialState: LayoutData = {
-  showAllocateDrawer: false,
-  showConnectWalletModal: false,
-  showSettingsDrawer: false,
-  showWalletModal: false,
+  isAllocationDrawerOpen: false,
+  isConnectWalletModalOpen: false,
+  isSettingsDrawerOpen: false,
+  isWalletModalOpen: false,
 };
 
 export default getStoreWithMeta<LayoutData, LayoutMethods>({
   getStoreMethods: set => ({
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    setShowAllocateDrawer: payload => {
+    setIsAllocationDrawerOpen: payload => {
       set(state => {
-        return { data: { ...state.data, showAllocateDrawer: payload } };
+        return { data: { ...state.data, isAllocationDrawerOpen: payload } };
       });
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    setShowConnectWalletModal: payload => {
+    setIsConnectWalletModalOpen: payload => {
       set(state => {
-        return { data: { ...state.data, showConnectWalletModal: payload } };
+        return { data: { ...state.data, isConnectWalletModalOpen: payload } };
       });
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    setShowSettingsDrawer: payload => {
+    setIsSettingsDrawerOpen: payload => {
       set(state => {
-        return { data: { ...state.data, showSettingsDrawer: payload } };
+        return { data: { ...state.data, isSettingsDrawerOpen: payload } };
       });
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    setShowWalletModal: payload => {
+    setIsWalletModalOpen: payload => {
       set(state => {
-        return { data: { ...state.data, showWalletModal: payload } };
+        return { data: { ...state.data, isWalletModalOpen: payload } };
       });
     },
   }),

@@ -118,6 +118,7 @@
   }
 
   .allocateButton {
+    position: relative;
     &:hover {
       .allocateButtonIcon path {
         stroke: $color-octant-grey5;
@@ -136,6 +137,22 @@
       path {
         stroke: $color-octant-grey2;
       }
+    }
+
+    .numberOfAllocations {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2rem;
+      width: 2rem;
+      position: absolute;
+      top: -0.6rem;
+      right: -0.6rem;
+      color: $color-white;
+      font-size: $font-size-08;
+      background: $color-octant-dark;
+      border-radius: 50%;
+      transform: translateZ(0); // On webkit solves the flickering of text during the scale.
     }
   }
 
