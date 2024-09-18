@@ -1,7 +1,9 @@
+import cx from 'classnames';
 import React, { FC, memo } from 'react';
 
 import Img from 'components/ui/Img/Img';
 import env from 'env';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 
 import styles from './MetricsProjectsListItem.module.scss';
@@ -10,27 +12,46 @@ import MetricsProjectsListItemProps from './types';
 const MetricsProjectsListItem: FC<MetricsProjectsListItemProps> = ({
   address,
   epoch,
-  value,
+  numberOfDonors,
+  donations,
+  matchFunding,
+  total,
   dataTest = 'MetricsProjectsListItem',
 }) => {
   const { ipfsGateways } = env;
   const { data: projectsIpfs } = useProjectsIpfs([address], epoch);
+  const { isLargeDesktop } = useMediaQuery();
 
   const image = projectsIpfs.at(0)?.profileImageSmall;
   const name = projectsIpfs.at(0)?.name;
 
   return (
     <div className={styles.root} data-test={dataTest}>
-      <Img
-        alt="project logo"
-        className={styles.image}
-        sources={ipfsGateways.split(',').map(element => `${element}${image}`)}
-      />
-      <div className={styles.name} data-test={`${dataTest}__name`}>
-        {name}
+      <div className={styles.logoNameGroup}>
+        <Img
+          alt="project logo"
+          className={styles.image}
+          sources={ipfsGateways.split(',').map(element => `${element}${image}`)}
+        />
+        <div className={styles.name} data-test={`${dataTest}__name`}>
+          {name}
+        </div>
       </div>
-      <div className={styles.value} data-test={`${dataTest}__value`}>
-        {value}
+      {isLargeDesktop && (
+        <>
+          <div className={styles.value} data-test={`${dataTest}__value`}>
+            {numberOfDonors}
+          </div>
+          <div className={styles.value} data-test={`${dataTest}__value`}>
+            {donations}
+          </div>
+          <div className={styles.value} data-test={`${dataTest}__value`}>
+            {matchFunding}
+          </div>
+        </>
+      )}
+      <div className={cx(styles.value, styles.total)} data-test={`${dataTest}__value`}>
+        {total}
       </div>
     </div>
   );

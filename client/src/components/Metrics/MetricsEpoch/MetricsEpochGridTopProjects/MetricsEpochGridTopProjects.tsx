@@ -18,22 +18,17 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch, lastEpoch } = useMetricsEpoch();
-  const { isDesktop } = useMediaQuery();
+  const { isLargeDesktop } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
-  const numberOfProjects = isDesktop ? 10 : 5;
-
   const projects =
-    projectsIpfsWithRewards
-      .slice(0, numberOfProjects)
-      .map(({ totalValueOfAllocations, ...rest }) => ({
-        epoch,
-        value: totalValueOfAllocations!,
-        ...rest,
-      })) || [];
+    projectsIpfsWithRewards.map(props => ({
+      epoch,
+      ...props,
+    })) || [];
 
   return (
     <MetricsGridTile
@@ -45,11 +40,19 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
             <MetricsProjectsList
               dataTest="MetricsEpochGridTopProjects__list"
               isLoading={isLoading}
-              numberOfSkeletons={numberOfProjects}
+              numberOfSkeletons={12}
               projects={projects}
             />
           ),
-          title: t('topProjectsByEthRaised', { numberOfProjects }),
+          title: t('fundingLeaderboard'),
+          titleSuffix: isLargeDesktop ? (
+            <div className={styles.headers}>
+              <div className={styles.label}>{t('donors')}</div>
+              <div className={styles.label}>{t('donations')}</div>
+              <div className={styles.label}>{t('matchFunding')}</div>
+              <div className={styles.label}>{t('total')}</div>
+            </div>
+          ) : null,
         },
       ]}
       size="custom"

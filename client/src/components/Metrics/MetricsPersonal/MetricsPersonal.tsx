@@ -13,7 +13,6 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './MetricsPersonal.module.scss';
-import MetricsPersonalGridAllocations from './MetricsPersonalGridAllocations';
 import MetricsPersonalGridDonationsProgressBar from './MetricsPersonalGridDonationsProgressBar';
 import MetricsPersonalGridPatronDonations from './MetricsPersonalGridPatronDonations';
 import MetricsPersonalGridTotalRewardsWithdrawals from './MetricsPersonalGridTotalRewardsWithdrawals';
@@ -50,10 +49,6 @@ const MetricsPersonal = (): ReactElement => {
       <MetricsHeader title={t('yourMetrics')} />
       {isConnected ? (
         <MetricsGrid className={styles.grid} dataTest="MetricsPersonal__MetricsGrid">
-          <MetricsPersonalGridAllocations
-            isLoading={isLoading}
-            size={isDesktop && wasUserEverAPatron ? 'custom' : 'L'}
-          />
           <MetricsPersonalGridTotalRewardsWithdrawals isLoading={isLoading} />
           <MetricsPersonalGridDonationsProgressBar isLoading={isLoading} />
           {wasUserEverAPatron && (

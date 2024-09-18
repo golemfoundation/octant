@@ -12,7 +12,7 @@ export interface AllocationItemWithAllocations extends ProjectIpfsWithRewards {
 export default interface AllocationItemProps
   extends Omit<
     AllocationItemWithAllocations,
-    'totalValueOfAllocations' | 'percentage' | 'numberOfDonors'
+    'totalValueOfAllocations' | 'percentage' | 'numberOfDonors' | 'matchedRewards' | 'donations'
   > {
   className?: string;
   isError: boolean;
