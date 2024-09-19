@@ -160,7 +160,6 @@ const ProjectsView = (): ReactElement => {
           variant="underselect"
         />
       </div>
-      s
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
