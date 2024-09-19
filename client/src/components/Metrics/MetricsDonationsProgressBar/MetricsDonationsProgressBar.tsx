@@ -12,6 +12,7 @@ const MetricsDonationsProgressBar: FC<MetricsDonationsProgressBarProps> = ({
   isDisabled,
   isLoading,
   donationsValue,
+  compareValueLabel,
 }) => {
   const { i18n } = useTranslation('translation');
   const donationsPercentage = isDisabled ? 0 : donationsValue.toFixed(2).replace(dotAndZeroes, '');
@@ -50,7 +51,7 @@ const MetricsDonationsProgressBar: FC<MetricsDonationsProgressBarProps> = ({
           ) : (
             <>
               <div className={styles.percentage}>{personalPercentage}%</div>
-              <div className={styles.label}>{i18n.t('common.personal')}</div>
+              <div className={styles.label}>{compareValueLabel}</div>
             </>
           )}
         </div>

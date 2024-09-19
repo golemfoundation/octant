@@ -5,43 +5,46 @@ import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProg
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
-import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
+import MetricsEpochGridDonationsVsMatchingProps from './types';
 
-const MetricsEpochGridDonationsVsPersonalAllocations: FC<
-  MetricsEpochGridDonationsVsPersonalAllocationsProps
-> = ({ totalUserDonationsWithPatronRewards, isLoading, totalPersonal, className }) => {
+const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchingProps> = ({
+  totalUserDonationsWithPatronRewards,
+  isLoading,
+  matchingFund,
+  className,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const totalUserDonationWithPatronRewardsNumber = parseFloat(
     formatUnitsBigInt(totalUserDonationsWithPatronRewards),
   );
-  const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
+  const matchingFundNumber = parseFloat(formatUnitsBigInt(matchingFund));
 
   const donationsValue =
     totalUserDonationWithPatronRewardsNumber > 0
       ? (totalUserDonationWithPatronRewardsNumber /
-          (totalPersonalNumber + totalUserDonationWithPatronRewardsNumber)) *
+          (matchingFundNumber + totalUserDonationWithPatronRewardsNumber)) *
         100
       : 0;
 
   return (
     <MetricsGridTile
       className={className}
-      dataTest="MetricsEpochGridDonationsVsPersonalAllocations"
+      dataTest="MetricsEpochGridDonationsVsMatching"
       groups={[
         {
           children: (
             <MetricsDonationsProgressBar
-              compareValueLabel={t('personal')}
+              compareValueLabel={t('matching')}
               donationsValue={donationsValue}
               isLoading={isLoading}
             />
           ),
-          title: t('donationsVsPersonal'),
+          title: t('donationsVsMatchFunding'),
         },
       ]}
     />
   );
 };
 
-export default MetricsEpochGridDonationsVsPersonalAllocations;
+export default MetricsEpochGridDonationsVsMatching;

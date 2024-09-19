@@ -554,8 +554,10 @@
       }
     },
     "metrics": {
+      "exploreTheData": "Explore the data",
       "fundingLeaderboard": "Funding leaderboard",
       "donors": "Donors",
+      "personal": "Personal",
       "donations": "Donations",
       "matchFunding": "Match funding",
       "total": "Total",
@@ -571,7 +573,10 @@
       "allocationsInEth": "Allocations in ETH",
       "generalMetrics": "General metrics",
       "totalWithdrawals": "Total withdrawals",
-      "donationsVsPersonalAllocationValue": "Donations vs personal allocation value",
+      "donationsVsPersonal": "Donations vs personal",
+      "donationsVsMatchFunding": "Donations vs match funding",
+      "totalMatching": "Total matching",
+      "matching": "Matching",
       "patronModeActive": "Patron mode active",
       "patronModeActiveLabel": "{{numberOfEpochs}} epochs",
       "donatedAsPatron": "Donated as patron",
