@@ -11,6 +11,7 @@ import Img from 'components/ui/Img';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsAddToAllocateButtonVisible from 'hooks/helpers/useIsAddToAllocateButtonVisible';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -64,6 +65,11 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProject = epoch !== undefined;
 
+  const isAddToAllocateButtonVisible = useIsAddToAllocateButtonVisible({
+    isAllocatedTo,
+    isArchivedProject,
+  });
+
   return (
     <div
       className={cx(
@@ -100,7 +106,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
               }
               sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             />
-            {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
+            {isAddToAllocateButtonVisible && (
               <ButtonAddToAllocate
                 className={styles.button}
                 dataTest={

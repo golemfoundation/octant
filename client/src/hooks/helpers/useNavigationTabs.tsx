@@ -5,12 +5,15 @@ import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octantInverted } from 'svg/logo';
 import { allocate, metrics, project, settings } from 'svg/navigation';
 import { NavigationTab } from 'types/navigationTabs';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
+
+import useIsProjectAdminMode from './useIsProjectAdminMode';
 
 const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
   //   TODO: project admin mode support -> https://linear.app/golemfoundation/issue/OCT-1892/layout-project-admin-mode
@@ -25,6 +28,8 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
   const { pathname } = useLocation();
   const { data: currentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   const navigationTabs: NavigationTab[] = [
     {
@@ -71,6 +76,10 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
 
   if (isTopBar) {
     return navigationTabs.filter(({ key }) => key !== 'allocate' && key !== 'settings');
+  }
+
+  if (isPatronMode || isProjectAdminMode) {
+    return navigationTabs.filter(({ key }) => key !== 'allocate');
   }
 
   return navigationTabs;

@@ -10,6 +10,7 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsAddToAllocateButtonVisible from 'hooks/helpers/useIsAddToAllocateButtonVisible';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -53,6 +54,11 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   const isAllocatedTo = !!userAllocations?.elements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
+
+  const isAddToAllocateButtonVisible = useIsAddToAllocateButtonVisible({
+    isAllocatedTo,
+    isArchivedProject,
+  });
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
@@ -101,7 +107,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
               size={3.2}
             />
           </Tooltip>
-          {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
+          {isAddToAllocateButtonVisible && (
             <ButtonAddToAllocate
               className={styles.buttonAddToAllocate}
               dataTest="ProjectListItemHeader__ButtonAddToAllocate"

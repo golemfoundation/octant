@@ -48,7 +48,7 @@ function parseResponse(response: Response): ProjectRewards[] {
 
 export default function useMatchedProjectRewards(
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, ProjectRewards[], any>,
+  options?: Omit<UseQueryOptions<Response, unknown, ProjectRewards[], any>, 'queryKey'>,
 ): UseQueryResult<ProjectRewards[], unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();

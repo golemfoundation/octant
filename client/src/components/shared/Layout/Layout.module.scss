@@ -5,6 +5,7 @@
   min-height: 100%;
   padding: 0 $layout-horizontal-padding-small;
   align-items: center;
+  margin-top: 8rem;
 
   @media #{$desktop-up} {
     padding: 0 $layout-horizontal-padding-large;
@@ -15,6 +16,33 @@
 
     @media #{$large-desktop-up} {
       width: $layout-section-width-large-desktop;
+      margin: 0 auto;
+    }
+  }
+
+  .topBarWrapper {
+    position: absolute;
+    top: 0;
+    background: $color-octant-grey3;
+    width: 100%;
+    padding: 0 $layout-horizontal-padding-small;
+    z-index: $z-index-8;
+    backdrop-filter: blur(2.5rem);
+
+    &.isPatronMode {
+      background: $color-octant-purple3-20;
+    }
+
+    &.isProjectAdminMode {
+      background: $color-octant-green5-60;
+    }
+
+    @media #{$tablet-up} {
+      position: fixed;
+    }
+
+    @media #{$desktop-up} {
+      padding: 0 $layout-horizontal-padding-large;
     }
   }
 }
@@ -23,6 +51,9 @@
   position: relative;
   height: 4rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .testnetIndicatorWrapper {

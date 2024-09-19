@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 import GridTile from 'components/shared/Grid/GridTile';
 import Svg from 'components/ui/Svg';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { arrowRight } from 'svg/misc';
 
 import EpochResults from './EpochResults';
@@ -20,13 +22,20 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
+  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   const isRightArrowDisabled = epoch === currentEpoch! - 1;
   const isLeftArrowDisabled = epoch < 2;
 
   return (
     <GridTile
-      className={cx(styles.gridTile, className)}
+      className={cx(
+        styles.gridTile,
+        className,
+        isProjectAdminMode && styles.isProjectAdminMode,
+        isPatronMode && styles.isPatronMode,
+      )}
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,
       })}
