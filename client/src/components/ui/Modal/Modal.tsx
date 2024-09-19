@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { FC, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
@@ -75,7 +76,7 @@ const Modal: FC<ModalProps> = ({
    */
   useEffect(() => () => setDocumentOverflowModal(false, durationOfTransition * 1000), []);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOverflowEnabled && isOpen && (
         <motion.div
@@ -157,7 +158,8 @@ const Modal: FC<ModalProps> = ({
           )}
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 

@@ -1,5 +1,4 @@
 import React, { FC, useMemo } from 'react';
-import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 import SettingsPatronMode from 'components/Settings/SettingsPatronMode';
@@ -16,7 +15,7 @@ const ModalSettingsPatronMode: FC<ModalSettingsPatronModeProps> = ({ modalProps 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const isPatronModeEnabled = useMemo(() => isPatronMode, [modalProps.isOpen]);
 
-  return createPortal(
+  return (
     <Modal
       dataTest="ModalPatronMode"
       header={isPatronModeEnabled ? t('disablePatronMode') : t('enablePatronMode')}
@@ -24,8 +23,7 @@ const ModalSettingsPatronMode: FC<ModalSettingsPatronModeProps> = ({ modalProps 
       className={styles.root}
     >
       <SettingsPatronMode onPatronModeStatusChange={modalProps.onClosePanel} />
-    </Modal>,
-    document.body,
+    </Modal>
   );
 };
 

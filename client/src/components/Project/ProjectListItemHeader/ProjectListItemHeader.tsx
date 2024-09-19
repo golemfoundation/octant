@@ -10,10 +10,9 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
-import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useIsAddToAllocateButtonVisible from 'hooks/helpers/useIsAddToAllocateButtonVisible';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -36,8 +35,6 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const isProjectAdminMode = useIsProjectAdminMode();
-  const { data: isPatronMode } = useIsPatronMode();
   const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
@@ -58,10 +55,10 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
 
-  const showAddToAllocateButton =
-    !isProjectAdminMode &&
-    !isPatronMode &&
-    ((isAllocatedTo && isArchivedProject) || !isArchivedProject);
+  const isAddToAllocateButtonVisible = useIsAddToAllocateButtonVisible({
+    isAllocatedTo,
+    isArchivedProject,
+  });
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
@@ -110,7 +107,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
               size={3.2}
             />
           </Tooltip>
-          {showAddToAllocateButton && (
+          {isAddToAllocateButtonVisible && (
             <ButtonAddToAllocate
               className={styles.buttonAddToAllocate}
               dataTest="ProjectListItemHeader__ButtonAddToAllocate"
