@@ -17,9 +17,8 @@ const TransactionsList: FC<TransactionsListProps> = ({ history }) => {
 
   return (
     <Fragment>
-      {history.map((element, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <TransactionsListItem key={index} {...element} />
+      {history.map(element => (
+        <TransactionsListItem key={`${element.type}_${element.timestamp}`} {...element} />
       ))}
     </Fragment>
   );
