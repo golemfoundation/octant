@@ -215,5 +215,8 @@ class ProjectDetails(BaseModel):
     __tablename__ = "project_details"
 
     id = Column(db.Integer, primary_key=True)
-    address = Column(db.String(42), nullable=False, unique=True)
-    name = Column(db.String, nullable=False, unique=True)
+    address = Column(db.String(42), nullable=False)
+    name = Column(db.String, nullable=False)
+    epoch = Column(db.Integer, nullable=False)
+
+    __table_args__ = (UniqueConstraint("address", "epoch", name="uq_address_epoch"),)

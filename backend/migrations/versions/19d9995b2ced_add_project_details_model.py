@@ -1,14 +1,15 @@
-"""Add ProjectsDetails model
+"""Add Project Details model
 
-Revision ID: 2a116ab607a5
+Revision ID: 19d9995b2ced
 Revises: 8b425b454a86
-Create Date: 2024-09-18 13:24:05.146072
+Create Date: 2024-09-19 10:51:23.771153
 
 """
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
 
-revision = "2a116ab607a5"
+
+revision = "19d9995b2ced"
 down_revision = "8b425b454a86"
 branch_labels = None
 depends_on = None
@@ -20,10 +21,10 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("address", sa.String(length=42), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("epoch", sa.Integer(), nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("address"),
-        sa.UniqueConstraint("name"),
+        sa.UniqueConstraint("address", "epoch", name="uq_address_epoch"),
     )
 
 

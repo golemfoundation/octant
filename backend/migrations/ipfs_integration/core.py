@@ -1,15 +1,8 @@
-from datetime import datetime
 import re
 
 
-def build_filename(prefix: str) -> str:
-    today = datetime.today()
-
-    day = today.strftime("%d")
-    month = today.strftime("%m")
-    year = today.strftime("%Y")
-
-    json_filename = f"{prefix}_{day}_{month}_{year}.json"
+def build_filename(prefix: str, epoch: int) -> str:
+    json_filename = f"{prefix}_epoch_{epoch}.json"
 
     return json_filename
 

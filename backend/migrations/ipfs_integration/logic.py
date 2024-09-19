@@ -87,7 +87,7 @@ def extract_details_from_json(json_data, *, details_to_extract: List[ProjectDeta
 def main():
     all_projects_details = []
 
-    for cid in Config.CIDS:
+    for cid in Config.CID:
         print(f"\nProcessing CID: {cid}")
         addresses = get_addresses_from_cid(cid)
         if not addresses:

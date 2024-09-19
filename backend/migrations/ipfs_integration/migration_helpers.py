@@ -5,7 +5,6 @@ from typing import Dict
 
 
 def load_json_data(filepath: str) -> Dict:
-    """Load data from a JSON file."""
     with open(filepath, "r") as file:
         data = json.load(file)
     return data[0]
@@ -16,20 +15,20 @@ def get_json_path(filename: str) -> str:
     return json_filename
 
 
-def prepare_project_upsert_query(project: dict) -> str:
+def prepare_project_upsert_query(project: dict, epoch: int) -> str:
     current_time = datetime.utcnow()
 
     return f"""
-        INSERT INTO project_details (name, address, created_at)
-        VALUES ('{project["name"]}', '{project["address"]}', '{current_time}')
-        ON CONFLICT (address)
+        INSERT INTO project_details (name, address, created_at, epoch)
+        VALUES ('{project["name"]}', '{project["address"]}', '{current_time}', {epoch})
+        ON CONFLICT (address, epoch)
         DO UPDATE SET
             name = EXCLUDED.name,
             created_at = '{current_time}';
     """
 
 
-def prepare_delete_project_query(project: dict) -> str:
+def prepare_delete_project_query(project: dict, epoch: int) -> str:
     return f"""
-        DELETE FROM project_details WHERE address = '{project["address"]}'
+        DELETE FROM project_details WHERE address = '{project["address"]} AND epoch = {epoch}
     """
