@@ -1,15 +1,15 @@
-"""Add Project Details model
+"""Add ProjectsDetails table
 
-Revision ID: 19d9995b2ced
+Revision ID: 87b2cefcfa11
 Revises: 8b425b454a86
-Create Date: 2024-09-19 10:51:23.771153
+Create Date: 2024-09-20 11:12:33.753739
 
 """
 from alembic import op
 import sqlalchemy as sa
 
 
-revision = "19d9995b2ced"
+revision = "87b2cefcfa11"
 down_revision = "8b425b454a86"
 branch_labels = None
 depends_on = None

@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List
+from typing import List, Optional, Dict
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,7 +9,7 @@ from config import Config, ProjectDetails
 from core import is_valid_ethereum_address
 
 
-def get_addresses_from_cid(cid: str):
+def get_addresses_from_cid(cid: str) -> List[str]:
     """
     Retrieves a list of Ethereum addresses from the CID by parsing the HTML content.
 
@@ -41,8 +41,8 @@ def get_addresses_from_cid(cid: str):
 
 
 def get_json_data_from_address(
-    cid: str, address: str, gateway_url: str = "https://octant.infura-ipfs.io/ipfs/"
-):
+    cid: str, address: str, gateway_url: str = Config.GATEWAY_URL
+) -> Optional[str]:
     """
     Fetches the JSON data from the given Ethereum address under the CID.
 
@@ -70,7 +70,9 @@ def get_json_data_from_address(
         return None
 
 
-def extract_details_from_json(json_data, *, details_to_extract: List[ProjectDetails]):
+def extract_details_from_json(
+    json_data: Dict, *, details_to_extract: List[ProjectDetails]
+) -> Dict:
     """
     Extracts the 'name' field from the JSON data.
 

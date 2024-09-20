@@ -15,6 +15,7 @@ from app.modules.modules_factory.protocols import (
     UserAllocationNonceProtocol,
     ScoreDelegation,
     UniquenessQuotients,
+    ProjectsDetailsService,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -45,6 +46,9 @@ from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
@@ -61,6 +65,7 @@ class CurrentServices(Model):
     simulated_pending_snapshot_service: SimulatePendingSnapshots
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    projects_details_service: ProjectsDetailsService
     user_budgets_service: UpcomingUserBudgets
     score_delegation_service: ScoreDelegation
     uniqueness_quotients: UniquenessQuotients
@@ -144,6 +149,7 @@ class CurrentServices(Model):
             user_tos_service=user_tos,
             user_antisybil_service=user_antisybil_service,
             projects_metadata_service=StaticProjectsMetadataService(),
+            projects_details_service=StaticProjectsDetailsService(),
             user_budgets_service=user_budgets,
             score_delegation_service=score_delegation,
             uniqueness_quotients=uniqueness_quotients,

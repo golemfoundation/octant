@@ -206,7 +206,7 @@ class UniquenessQuotient(BaseModel):
         return Decimal(self.score)
 
 
-class ProjectDetails(BaseModel):
+class ProjectsDetails(BaseModel):
     """
     This model represents the details of a project that is consistent with data on the IPFS node.
     Records here are created only by migrations.

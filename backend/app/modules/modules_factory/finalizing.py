@@ -13,6 +13,7 @@ from app.modules.modules_factory.protocols import (
     WithdrawalsService,
     SavedProjectRewardsService,
     ProjectsMetadataService,
+    ProjectsDetailsService,
 )
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
 from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
@@ -29,6 +30,9 @@ from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )
 from app.pydantic import Model
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 
 
 class FinalizingOctantRewards(OctantRewards, Leverage, Protocol):
@@ -50,6 +54,7 @@ class FinalizingServices(Model):
     withdrawals_service: WithdrawalsService
     project_rewards_service: SavedProjectRewardsService
     projects_metadata_service: ProjectsMetadataService
+    projects_details_service: ProjectsDetailsService
 
     @staticmethod
     def create() -> "FinalizingServices":
@@ -90,4 +95,5 @@ class FinalizingServices(Model):
             withdrawals_service=withdrawals_service,
             project_rewards_service=SavedProjectRewards(),
             projects_metadata_service=StaticProjectsMetadataService(),
+            projects_details_service=StaticProjectsDetailsService(),
         )
