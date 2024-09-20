@@ -4,7 +4,7 @@ import { Option } from 'components/ui/InputSelect/types';
 
 export const ORDER_OPTIONS = (t: TFunction): Option[] => [
   {
-    label: t('sortOptions.randomised'),
+    label: t('sortOptions.randomized'),
     value: 'randomized',
   },
   {
