@@ -8,7 +8,9 @@ import Grid from 'components/shared/Grid';
 import { PROJECTS_ADDRESSES_RANDOMIZED_ORDER } from 'constants/localStorageKeys';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
-import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
+import useProjectsIpfsWithRewards, {
+  ProjectIpfsWithRewards,
+} from 'hooks/queries/useProjectsIpfsWithRewards';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 
 import styles from './ProjectsList.module.scss';
@@ -31,13 +33,21 @@ const ProjectsList: FC<ProjectsListProps> = ({
 
   const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
 
-  const projectsIpfsWithRewardsSorted = useMemo(() => {
+  const projectsIpfsWithRewardsSorted = useMemo((): ProjectIpfsWithRewards[] => {
     switch (orderOption) {
       case 'randomized': {
         const projectsAddressesRandomizedOrder = JSON.parse(
           localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER)!,
         ) as ProjectsAddressesRandomizedOrder;
-        return projectsAddressesRandomizedOrder.addressesRandomizedOrder;
+
+        const { addressesRandomizedOrder } = projectsAddressesRandomizedOrder;
+
+        return projectsIpfsWithRewards.sort((a, b) => {
+          return (
+            addressesRandomizedOrder.indexOf(a.address) -
+            addressesRandomizedOrder.indexOf(b.address)
+          );
+        });
       }
       case 'alphabeticalAscending': {
         const projectIpfsWithRewardsFiltered = projectsIpfsWithRewards.filter(
