@@ -7,7 +7,7 @@ def build_filename(prefix: str, epoch: int) -> str:
     return json_filename
 
 
-def is_valid_ethereum_address(address):
+def is_valid_ethereum_address(address: str) -> bool:
     """
     Validates if the provided string is a valid Ethereum address.
 

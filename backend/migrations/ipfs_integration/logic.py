@@ -99,18 +99,20 @@ def main():
         projects_details = []
         for address in addresses:
             json_data = get_json_data_from_address(cid, address)
-            if json_data:
-                project_details = extract_details_from_json(
-                    json_data, details_to_extract=[ProjectDetails.NAME]
-                )
-                project_details["address"] = address
 
-                name = project_details.get(ProjectDetails.NAME.value)
-                projects_details.append(project_details)
-
-                print(f"Project name for address {address}: {name}")
-            else:
+            if not json_data:
                 print(f"Failed to retrieve JSON data for address: {address}")
+                continue
+
+            project_details = extract_details_from_json(
+                json_data, details_to_extract=[ProjectDetails.NAME]
+            )
+            project_details["address"] = address
+
+            name = project_details.get(ProjectDetails.NAME.value)
+            projects_details.append(project_details)
+
+            print(f"Project name for address {address}: {name}")
 
         print(f"Number of projects for {cid}", len(projects_details))
         all_projects_details.append(projects_details)
