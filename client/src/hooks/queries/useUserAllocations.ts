@@ -43,6 +43,7 @@ export default function useUserAllocations(
         isManuallyEdited: !!response.isManuallyEdited,
       };
     },
+    staleTime: Infinity,
     ...options,
   });
 }
