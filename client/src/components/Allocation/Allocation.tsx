@@ -103,6 +103,9 @@ const Allocation = (): ReactElement => {
   const [showLowUQScoreModal, setShowLowUQScoreModal] = useState(false);
   const { refetch: refetchEpochAllocations } = useEpochAllocations(
     isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+    {
+      enabled: isDecisionWindowOpen === true,
+    },
   );
   const { isDesktop } = useMediaQuery();
 
