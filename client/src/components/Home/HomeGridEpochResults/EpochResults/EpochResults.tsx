@@ -1,51 +1,45 @@
 import { maxBy } from 'lodash';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 
 import EpochResultsBar from 'components/Home/HomeGridEpochResults/EpochResultsBar';
 import EpochResultsDetails from 'components/Home/HomeGridEpochResults/EpochResultsDetails';
 import { EPOCH_RESULTS_BAR_ID } from 'constants/domElementsIds';
+import env from 'env';
+import useProjectsIpfsWithRewards, {
+  ProjectIpfsWithRewards,
+} from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './EpochResults.module.scss';
 
-// TODO: replace with real data -> https://linear.app/golemfoundation/issue/OCT-1931/home-epoch-results-live-connect-with-be
-const data = [
-  {
-    address: '0x576edCed7475D8F64a5e2D5227c93Ca57d7f5d20',
-    donations: 10n,
-    matching: 100n,
-  },
-  {
-    address: '0x53390590476dC98860316e4B46Bb9842AF55efc4',
-    donations: 15n,
-    matching: 250n,
-  },
-  {
-    address: '0x9531C059098e3d194fF87FebB587aB07B30B1306',
-    donations: 40n,
-    matching: 100n,
-  },
-];
-
-const EpochResults = (): ReactNode => {
+const EpochResults: FC<{ epoch: number }> = ({ epoch }) => {
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const [highlightedBarAddress, setHighlightedBarAddress] = useState<null | string>(null);
+  const { ipfsGateways } = env;
 
-  const details = useMemo(() => {
-    const projectData = data.find(d => d.address === highlightedBarAddress);
-    return projectData;
-  }, [highlightedBarAddress]);
+  const projects =
+    projectsIpfsWithRewards.map(props => ({
+      epoch,
+      ...props,
+    })) || [];
+
+  const details = projects.find(d => d.address === highlightedBarAddress);
 
   const getMaxValue = (): bigint => {
-    const { matching, donations } = maxBy(data, d => {
-      if (d.donations > d.matching) {
+    const { matchingFund, donations } = maxBy(projects, d => {
+      if (d.donations > d.matchingFund) {
         return d.donations;
       }
-      return d.matching;
-    }) as { donations: bigint; matching: bigint };
-    return matching > donations ? matching : donations;
+      return d.matchingFund;
+    }) as ProjectIpfsWithRewards;
+    return matchingFund > donations ? matchingFund : donations;
   };
 
   const getBarHeightPercentage = (value: bigint) => {
-    return (Number(value) / Number(getMaxValue())) * 100;
+    const maxValue = getMaxValue();
+    if (!maxValue || !value) {
+      return 0;
+    }
+    return (Number(value) / Number(maxValue)) * 100;
   };
 
   useEffect(() => {
@@ -72,19 +66,20 @@ const EpochResults = (): ReactNode => {
   return (
     <div className={styles.root}>
       <div className={styles.graphContainer}>
-        {data.map(({ address, matching, donations }) => (
+        {projects.map(({ address, matchingFund, donations, profileImageSmall }) => (
           <EpochResultsBar
-            key={address}
+            key={`${address}__${epoch}`}
             address={address}
             bottomBarHeightPercentage={getBarHeightPercentage(donations)}
+            imageSources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             isHighlighted={!!(highlightedBarAddress && highlightedBarAddress === address)}
             isLowlighted={!!(highlightedBarAddress && highlightedBarAddress !== address)}
             onClick={setHighlightedBarAddress}
-            topBarHeightPercentage={getBarHeightPercentage(matching)}
+            topBarHeightPercentage={getBarHeightPercentage(matchingFund)}
           />
         ))}
       </div>
-      <EpochResultsDetails details={highlightedBarAddress ? details : null} />
+      <EpochResultsDetails details={highlightedBarAddress ? details : undefined} />
     </div>
   );
 };

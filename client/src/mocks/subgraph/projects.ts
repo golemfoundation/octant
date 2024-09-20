@@ -9,6 +9,7 @@ export const mockedProjectATotalValueOfAllocations1: ProjectIpfsWithRewards = {
   numberOfDonors: 10,
   percentage: 1,
   totalValueOfAllocations: BigInt(1),
+  matchingFund: BigInt(1),
 };
 
 export const mockedProjectATotalValueOfAllocationsUndefined = {

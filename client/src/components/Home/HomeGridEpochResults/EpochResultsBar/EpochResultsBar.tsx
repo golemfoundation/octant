@@ -3,8 +3,6 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 
 import Img from 'components/ui/Img';
 import { EPOCH_RESULTS_BAR_ID } from 'constants/domElementsIds';
-import env from 'env';
-import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 
 import styles from './EpochResultsBar.module.scss';
 import EpochResultsBarProps from './types';
@@ -16,8 +14,8 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
   onClick,
   isHighlighted,
   isLowlighted,
+  imageSources,
 }) => {
-  const { ipfsGateways } = env;
   const topBarRef = useRef(null);
   const bottomBarRef = useRef(null);
   const ref = useRef(null);
@@ -25,12 +23,6 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
   const isInView = useInView(ref);
 
   const [isProjectLogoVisible, setIsProjectLogoVisible] = useState(false);
-
-  const { data: projectIpfs } = useProjectsIpfs([address]);
-
-  const projectLogoImageSources = ipfsGateways
-    .split(',')
-    .map(element => `${element}${projectIpfs[0]?.profileImageSmall}`);
 
   useEffect(() => {
     if (!isInView) {
@@ -83,7 +75,7 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
               x: '50%',
             }}
           >
-            <Img className={styles.projectLogoImg} sources={projectLogoImageSources} />
+            <Img className={styles.projectLogoImg} sources={imageSources} />
             <div className={styles.triangle} />
           </motion.div>
         )}

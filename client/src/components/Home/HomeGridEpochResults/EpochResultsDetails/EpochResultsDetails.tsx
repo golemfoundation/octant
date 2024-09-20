@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import Button from 'components/ui/Button';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
 import styles from './EpochResultsDetails.module.scss';
 import EpochResultsDetailsProps from './types';
@@ -14,9 +15,8 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const { isMobile } = useMediaQuery();
+  const navigate = useNavigate();
   const getValuesToDisplay = useGetValuesToDisplay();
-
-  const { data: projectsIpfs } = useProjectsIpfs([details?.address], 5, details !== null);
 
   const donationsToDisplay = details
     ? getValuesToDisplay({
@@ -38,7 +38,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,
-        valueCrypto: details.donations + details.matching,
+        valueCrypto: details.donations + details.matchingFund,
       }).primary
     : null;
 
@@ -46,7 +46,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
     <div className={styles.root}>
       {details ? (
         <>
-          <div className={styles.projectName}>{projectsIpfs?.[0]?.name}</div>
+          <div className={styles.projectName}>{details.name}</div>
           <div className={styles.donations}>
             {isMobile ? t('donationsShort') : t('donations')} {donationsToDisplay}
           </div>
@@ -57,7 +57,13 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
             {isMobile ? t('totalShort') : t('total')} {totalToDisplay}
           </div>
           {!isMobile && (
-            <Button className={styles.link} variant="link">
+            <Button
+              className={styles.link}
+              onClick={() =>
+                navigate(`${ROOT_ROUTES.project.absolute}/${details.epoch}/${details.address}`)
+              }
+              variant="link"
+            >
               {t('clickToVisitProject')}
             </Button>
           )}
