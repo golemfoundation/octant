@@ -71,7 +71,7 @@ def calculate_rewards(
 
 def get_rewards_rate(_: int) -> float:
     """
-    Returns the APR for the given epoch.
+    Returns the rewards rate for the given epoch.
     """
     # TODO APR is a static value for now but it may be calculated dynamically in the future: https://linear.app/golemfoundation/issue/OCT-1916/make-apr-a-dynamically-computed-one
     return ESTIMATED_STAKING_APR
