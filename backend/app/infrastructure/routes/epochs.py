@@ -115,10 +115,7 @@ epoch_stats_model = api.model(
 
 epoch_apr_model = api.model(
     "EpochAPR",
-    {
-        "apr": fields.Float(
-            required=True, description="APR for the given epoch.")
-    }
+    {"apr": fields.Float(required=True, description="APR for the given epoch.")},
 )
 
 
@@ -152,6 +149,5 @@ class EpochAPR(OctantResource):
     @ns.marshal_with(epoch_apr_model)
     @ns.response(200, "Epoch's APR successfully retrieved.")
     def get(self, epoch: int):
-        app.logger.debug("Getting APR for epoch")
+        app.logger.debug(f"Getting APR for epoch {epoch}")
         return {"apr": get_epoch_apr(epoch)}
-
