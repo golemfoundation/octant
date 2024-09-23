@@ -25,13 +25,13 @@ const EpochResults: FC<{ epoch: number }> = ({ epoch }) => {
   const details = projects.find(d => d.address === highlightedBarAddress);
 
   const getMaxValue = (): bigint => {
-    const { matchingFund, donations } = maxBy(projects, d => {
-      if (d.donations > d.matchingFund) {
+    const { matchedRewards, donations } = maxBy(projects, d => {
+      if (d.donations > d.matchedRewards) {
         return d.donations;
       }
-      return d.matchingFund;
+      return d.matchedRewards;
     }) as ProjectIpfsWithRewards;
-    return matchingFund > donations ? matchingFund : donations;
+    return matchedRewards > donations ? matchedRewards : donations;
   };
 
   const getBarHeightPercentage = (value: bigint) => {
@@ -66,7 +66,7 @@ const EpochResults: FC<{ epoch: number }> = ({ epoch }) => {
   return (
     <div className={styles.root}>
       <div className={styles.graphContainer}>
-        {projects.map(({ address, matchingFund, donations, profileImageSmall }) => (
+        {projects.map(({ address, matchedRewards, donations, profileImageSmall }) => (
           <EpochResultsBar
             key={`${address}__${epoch}`}
             address={address}
@@ -75,7 +75,7 @@ const EpochResults: FC<{ epoch: number }> = ({ epoch }) => {
             isHighlighted={!!(highlightedBarAddress && highlightedBarAddress === address)}
             isLowlighted={!!(highlightedBarAddress && highlightedBarAddress !== address)}
             onClick={setHighlightedBarAddress}
-            topBarHeightPercentage={getBarHeightPercentage(matchingFund)}
+            topBarHeightPercentage={getBarHeightPercentage(matchedRewards)}
           />
         ))}
       </div>

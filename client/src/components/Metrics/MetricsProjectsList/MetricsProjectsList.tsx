@@ -48,7 +48,7 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
                       shouldIgnoreWei: true,
                     },
                     showCryptoSuffix: true,
-                    valueCrypto: project.matchingFund,
+                    valueCrypto: project.matchedRewards,
                   }).primary
                 }
                 name={project.name!}

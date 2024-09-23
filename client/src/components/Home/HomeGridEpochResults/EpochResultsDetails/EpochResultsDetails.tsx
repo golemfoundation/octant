@@ -30,7 +30,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,
-        valueCrypto: details.donations,
+        valueCrypto: details.matchedRewards,
       }).primary
     : null;
 
@@ -38,7 +38,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,
-        valueCrypto: details.donations + details.matchingFund,
+        valueCrypto: details.totalValueOfAllocations,
       }).primary
     : null;
 

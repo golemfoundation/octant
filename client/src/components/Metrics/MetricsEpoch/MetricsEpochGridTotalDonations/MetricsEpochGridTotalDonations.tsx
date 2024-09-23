@@ -9,17 +9,17 @@ import MetricsEpochGridTotalDonationsProps from './types';
 
 const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = ({
   isLoading,
-  totalUserDonationsWithPatronRewards,
+  totalUserDonations,
   className,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const getValuesToDisplay = useGetValuesToDisplay();
 
-  const totalUserDonationWithPatronRewardsValues = getValuesToDisplay({
+  const totalUserDonationsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
-    valueCrypto: totalUserDonationsWithPatronRewards,
+    valueCrypto: totalUserDonations,
   });
 
   return (
@@ -33,8 +33,8 @@ const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = 
               dataTest="MetricsEpochGridTotalDonations__MetricsGridTileValue"
               isLoading={isLoading}
               size="S"
-              subvalue={totalUserDonationWithPatronRewardsValues.secondary}
-              value={totalUserDonationWithPatronRewardsValues.primary}
+              subvalue={totalUserDonationsValues.secondary}
+              value={totalUserDonationsValues.primary}
             />
           ),
           title: t('totalDonations'),

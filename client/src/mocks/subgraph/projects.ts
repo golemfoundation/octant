@@ -5,7 +5,6 @@ export const mockedProjectATotalValueOfAllocations1: ProjectIpfsWithRewards = {
   donations: BigInt(1),
   isLoadingError: false,
   matchedRewards: BigInt(1),
-  matchingFund: BigInt(1),
   name: 'A',
   numberOfDonors: 10,
   percentage: 1,
