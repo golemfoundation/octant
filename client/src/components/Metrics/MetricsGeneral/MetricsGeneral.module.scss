@@ -1,10 +1,5 @@
 .root {
   width: 100%;
-  padding-bottom: 4rem;
-
-  @media #{$large-desktop-up} {
-    padding-bottom: 5.6rem;
-  }
 }
 
 .divider {

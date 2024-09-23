@@ -16,7 +16,6 @@
 
     @media #{$large-desktop-up} {
       width: $layout-section-width-large-desktop;
-      margin: 0 auto;
     }
   }
 
@@ -43,6 +42,12 @@
 
     @media #{$desktop-up} {
       padding: 0 $layout-horizontal-padding-large;
+    }
+
+    .section {
+      @media #{$large-desktop-up} {
+        margin: 0 auto;
+      }
     }
   }
 }
