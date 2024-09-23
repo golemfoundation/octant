@@ -12,7 +12,7 @@ import useProjectsIpfsWithRewards, {
 import styles from './EpochResults.module.scss';
 
 const EpochResults: FC<{ epoch: number }> = ({ epoch }) => {
-  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
   const [highlightedBarAddress, setHighlightedBarAddress] = useState<null | string>(null);
   const { ipfsGateways } = env;
 

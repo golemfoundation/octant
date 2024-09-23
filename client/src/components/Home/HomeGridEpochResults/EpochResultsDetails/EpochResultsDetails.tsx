@@ -21,6 +21,10 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
   const donationsToDisplay = details
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps: {
+          shouldIgnoreGwei: true,
+          shouldIgnoreWei: true,
+        },
         showCryptoSuffix: true,
         valueCrypto: details.donations,
       }).primary
@@ -29,6 +33,10 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
   const matchingToDisplay = details
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps: {
+          shouldIgnoreGwei: true,
+          shouldIgnoreWei: true,
+        },
         showCryptoSuffix: true,
         valueCrypto: details.matchedRewards,
       }).primary
@@ -37,6 +45,10 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
   const totalToDisplay = details
     ? getValuesToDisplay({
         cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps: {
+          shouldIgnoreGwei: true,
+          shouldIgnoreWei: true,
+        },
         showCryptoSuffix: true,
         valueCrypto: details.totalValueOfAllocations,
       }).primary
