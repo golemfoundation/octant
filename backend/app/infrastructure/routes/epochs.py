@@ -3,7 +3,7 @@ from flask_restx import fields, Namespace
 
 from app.extensions import api, epochs
 from app.infrastructure import OctantResource, graphql
-from app.modules.octant_rewards.controller import get_octant_rewards
+from app.modules.octant_rewards.controller import get_octant_rewards, get_epoch_apr
 
 ns = Namespace("epochs", description="Octant epochs")
 api.add_namespace(ns)
@@ -113,6 +113,14 @@ epoch_stats_model = api.model(
     },
 )
 
+epoch_apr_model = api.model(
+    "EpochAPR",
+    {
+        "apr": fields.Float(
+            required=True, description="APR for the given epoch.")
+    }
+)
+
 
 @ns.route("/info/<int:epoch>")
 @ns.doc(
@@ -131,3 +139,19 @@ class EpochStats(OctantResource):
         app.logger.debug(f"Got: {stats}")
 
         return stats.to_dict()
+
+
+@ns.route("/apr/<int:epoch>")
+@ns.doc(
+    description="Returns APR for a given epoch. Returns data for all states of epochs.",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochAPR(OctantResource):
+    @ns.marshal_with(epoch_apr_model)
+    @ns.response(200, "Epoch's APR successfully retrieved.")
+    def get(self, epoch: int):
+        app.logger.debug("Getting APR for epoch")
+        return {"apr": get_epoch_apr(epoch)}
+
