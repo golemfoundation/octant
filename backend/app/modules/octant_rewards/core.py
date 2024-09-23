@@ -69,7 +69,7 @@ def calculate_rewards(
     )
 
 
-def get_epoch_apr(_: int) -> float:
+def get_rewards_rate(_: int) -> float:
     """
     Returns the APR for the given epoch.
     """

@@ -27,6 +27,6 @@ def get_last_finalized_epoch_leverage() -> float:
     return service.get_leverage(context)
 
 
-def get_epoch_apr(epoch_num: int) -> float:
+def get_epoch_rewards_rate(epoch_num: int) -> float:
     context = epoch_context(epoch_num)
-    return core.get_epoch_apr(context.epoch_details.epoch_num)
+    return core.get_rewards_rate(context.epoch_details.epoch_num)
