@@ -7,7 +7,7 @@ from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.ppf import PPFPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
-from app.modules.staking.proceeds.core import ESTIMATED_STAKING_APR
+from app.modules.staking.proceeds.core import ESTIMATED_STAKING_REWARDS_RATE
 
 
 @dataclass
@@ -73,5 +73,5 @@ def get_rewards_rate(_: int) -> float:
     """
     Returns the rewards rate for the given epoch.
     """
-    # TODO APR is a static value for now but it may be calculated dynamically in the future: https://linear.app/golemfoundation/issue/OCT-1916/make-apr-a-dynamically-computed-one
-    return ESTIMATED_STAKING_APR
+    # TODO Staking Rewards Rate is a static value for now but it may be calculated dynamically in the future: https://linear.app/golemfoundation/issue/OCT-1916/make-apr-a-dynamically-computed-one
+    return ESTIMATED_STAKING_REWARDS_RATE
