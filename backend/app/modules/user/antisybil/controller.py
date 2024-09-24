@@ -1,12 +1,13 @@
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Optional
 
 from app.context.epoch_state import EpochState
 from app.context.manager import state_context
 from app.modules.registry import get_services
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 
 
-def get_user_antisybil_status(user_address: str) -> Tuple[int, datetime]:
+def get_user_antisybil_status(user_address: str) -> Optional[AntisybilStatusDTO]:
     context = state_context(EpochState.CURRENT)
     service = get_services(context.epoch_state).user_antisybil_service
     return service.get_antisybil_status(context, user_address)

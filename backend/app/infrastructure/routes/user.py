@@ -24,12 +24,16 @@ user_antisybil_status_model = api.model(
     "UserAntisybilStatus",
     {
         "status": fields.String(required=True, description="Unknown or Known"),
-        "expires_at": fields.String(
+        "expiresAt": fields.String(
             required=False, description="Expiry date, unix timestamp"
         ),
         "score": fields.String(
             required=False,
             description="Score, parses as a float",
+        ),
+        "isOnTimeOutList": fields.Boolean(
+            required=False,
+            description="Flag indicating whether user is on timeout list",
         ),
     },
 )
@@ -192,15 +196,25 @@ class AntisybilStatus(OctantResource):
     @ns.response(200, "User's cached antisybil status retrieved")
     def get(self, user_address: str):
         app.logger.debug(f"Getting user {user_address} cached antisybil status")
+
         antisybil_status = get_user_antisybil_status(user_address)
+
         app.logger.debug(f"User {user_address} antisybil status: {antisybil_status}")
+
         if antisybil_status is None:
             return {"status": "Unknown"}, 404
-        score, expires_at = antisybil_status
+
+        score, expires_at, is_on_timeout_list = (
+            antisybil_status.score,
+            antisybil_status.expires_at,
+            antisybil_status.is_on_timeout_list,
+        )
+
         return {
             "status": "Known",
             "score": score,
-            "expires_at": int(expires_at.timestamp()),
+            "expiresAt": int(expires_at.timestamp()),
+            "isOnTimeOutList": is_on_timeout_list,
         }, 200
 
     @ns.doc(

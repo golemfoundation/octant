@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import datetime
-from http import HTTPStatus
 import json
-import logging
 import os
 import time
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 
 import gql
@@ -19,6 +18,7 @@ from gql.transport.exceptions import TransportQueryError
 from requests import RequestException
 from web3 import Web3
 
+import logging
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -1284,6 +1284,12 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
         "app.modules.user.antisybil.service.initial.fetch_stamps",
         mock_gitcoin_passport_fetch_stamps,
     )
+
+
+@pytest.fixture(scope="function")
+def patch_timeout_list(mocker):
+    timeout_list = ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]
+    mocker.patch("app.modules.user.antisybil.core.TIMEOUT_LIST", timeout_list)
 
 
 @pytest.fixture(scope="function")

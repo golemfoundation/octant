@@ -1,6 +1,5 @@
-from datetime import datetime
 from decimal import Decimal
-from typing import Protocol, Optional, Tuple, runtime_checkable
+from typing import Protocol, Optional, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
@@ -8,6 +7,7 @@ from app.infrastructure.database.uniqueness_quotient import (
     save_uq_from_address,
 )
 from app.modules.uq.core import calculate_uq
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from app.pydantic import Model
 
 
@@ -15,7 +15,7 @@ from app.pydantic import Model
 class Antisybil(Protocol):
     def get_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[float, datetime]]:
+    ) -> Optional[AntisybilStatusDTO]:
         ...
 
 
