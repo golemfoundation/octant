@@ -39,18 +39,18 @@ const MetricsProjectsListItem: FC<MetricsProjectsListItemProps> = ({
       </div>
       {isLargeDesktop && (
         <>
-          <div className={styles.value} data-test={`${dataTest}__value`}>
+          <div className={styles.value} data-test={`${dataTest}__numberOfDonors`}>
             {numberOfDonors}
           </div>
-          <div className={styles.value} data-test={`${dataTest}__value`}>
+          <div className={styles.value} data-test={`${dataTest}__donations`}>
             {donations}
           </div>
-          <div className={styles.value} data-test={`${dataTest}__value`}>
+          <div className={styles.value} data-test={`${dataTest}__matchFunding`}>
             {matchFunding}
           </div>
         </>
       )}
-      <div className={cx(styles.value, styles.total)} data-test={`${dataTest}__value`}>
+      <div className={cx(styles.value, styles.total)} data-test={`${dataTest}__total`}>
         {total}
       </div>
     </div>
