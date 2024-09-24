@@ -144,6 +144,7 @@ const ProjectsView = (): ReactElement => {
           onChange={onChangeSearchQuery}
           onClear={() => setSearchQuery('')}
           placeholder={t('searchInputPlaceholder')}
+          shouldAutoFocusAndSelect={false}
           value={searchQuery}
           variant="search"
         />
