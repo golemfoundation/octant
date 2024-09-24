@@ -8,9 +8,11 @@ import useProjectsIpfs from './useProjectsIpfs';
 
 export interface ProjectIpfsWithRewards extends ExtendedProject {
   address: string;
+  donations: bigint;
+  matchedRewards: bigint;
   numberOfDonors: number;
   percentage: number | undefined;
-  totalValueOfAllocations: bigint | undefined;
+  totalValueOfAllocations: bigint;
 }
 
 export default function useProjectsIpfsWithRewards(epoch?: number): {
@@ -58,16 +60,17 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
      * For epochs finalized projectMatchedProjectRewards contains data only for projects that
      * passed threshold. For those that did not, we reduce on their donors and get the value.
      */
-    const totalValueOfAllocations =
-      projectMatchedProjectRewards?.sum ||
-      (isSuccessProjectsDonors
-        ? projectsDonors[project.address]?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) ||
-          BigInt(0)
-        : BigInt(0));
+    const donations = isSuccessProjectsDonors
+      ? projectsDonors[project.address]?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) ||
+        BigInt(0)
+      : BigInt(0);
+
     return {
+      donations,
+      matchedRewards: projectMatchedProjectRewards?.matched || 0n,
       numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address]?.length || 0 : 0,
       percentage: projectMatchedProjectRewards?.percentage,
-      totalValueOfAllocations,
+      totalValueOfAllocations: donations + (projectMatchedProjectRewards?.matched ?? 0n),
       ...project,
     };
   });

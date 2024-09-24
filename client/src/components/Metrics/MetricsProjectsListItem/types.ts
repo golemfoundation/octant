@@ -1,6 +1,9 @@
 export default interface MetricsProjectsListItemProps {
   address: string;
   dataTest?: string;
+  donations: string;
   epoch?: number;
-  value: string;
+  matchFunding: string;
+  numberOfDonors: number;
+  total: string;
 }

@@ -554,6 +554,11 @@
       }
     },
     "metrics": {
+      "fundingLeaderboard": "Funding leaderboard",
+      "donors": "Donors",
+      "donations": "Donations",
+      "matchFunding": "Match funding",
+      "total": "Total",
       "donatedToProjects": "Donated to projects",
       "claimedByUsers": "Claimed by users",
       "open": "Open",

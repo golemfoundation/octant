@@ -3,7 +3,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import DonationsList from 'components/Home/HomeGridDonations/DonationsList';
-import { getReducedUserAllocationsAllEpochs } from 'components/Metrics/MetricsPersonal/MetricsPersonalGridAllocations/utils';
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
@@ -16,6 +15,7 @@ import useLayoutStore from 'store/layout/store';
 
 import styles from './HomeGridDonations.module.scss';
 import HomeGridDonationsProps from './types';
+import { getReducedUserAllocationsAllEpochs } from './utils';
 
 const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
   const { t } = useTranslation('translation', {
