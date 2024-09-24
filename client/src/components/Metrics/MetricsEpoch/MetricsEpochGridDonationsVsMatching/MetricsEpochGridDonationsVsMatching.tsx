@@ -8,23 +8,19 @@ import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import MetricsEpochGridDonationsVsMatchingProps from './types';
 
 const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchingProps> = ({
-  totalUserDonationsWithPatronRewards,
+  totalUserDonations,
   isLoading,
   matchingFund,
   className,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const totalUserDonationWithPatronRewardsNumber = parseFloat(
-    formatUnitsBigInt(totalUserDonationsWithPatronRewards),
-  );
+  const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const matchingFundNumber = parseFloat(formatUnitsBigInt(matchingFund));
 
   const donationsValue =
-    totalUserDonationWithPatronRewardsNumber > 0
-      ? (totalUserDonationWithPatronRewardsNumber /
-          (matchingFundNumber + totalUserDonationWithPatronRewardsNumber)) *
-        100
+    totalUserDonationsNumber > 0
+      ? (totalUserDonationsNumber / (matchingFundNumber + totalUserDonationsNumber)) * 100
       : 0;
 
   return (

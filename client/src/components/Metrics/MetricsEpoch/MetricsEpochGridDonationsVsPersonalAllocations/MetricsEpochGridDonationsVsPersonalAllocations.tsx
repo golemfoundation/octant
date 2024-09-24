@@ -9,19 +9,15 @@ import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
 
 const MetricsEpochGridDonationsVsPersonalAllocations: FC<
   MetricsEpochGridDonationsVsPersonalAllocationsProps
-> = ({ totalUserDonationsWithPatronRewards, isLoading, totalPersonal, className }) => {
+> = ({ totalUserDonations, isLoading, totalPersonal, className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const totalUserDonationWithPatronRewardsNumber = parseFloat(
-    formatUnitsBigInt(totalUserDonationsWithPatronRewards),
-  );
+  const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
 
   const donationsValue =
-    totalUserDonationWithPatronRewardsNumber > 0
-      ? (totalUserDonationWithPatronRewardsNumber /
-          (totalPersonalNumber + totalUserDonationWithPatronRewardsNumber)) *
-        100
+    totalUserDonationsNumber > 0
+      ? (totalUserDonationsNumber / (totalPersonalNumber + totalUserDonationsNumber)) * 100
       : 0;
 
   return (

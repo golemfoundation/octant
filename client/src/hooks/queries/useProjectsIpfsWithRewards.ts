@@ -56,6 +56,9 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
     const projectMatchedProjectRewards = matchedProjectRewards?.find(
       ({ address }) => address === project.address,
     );
+
+    const matchedRewards = projectMatchedProjectRewards?.matched ?? 0n;
+
     /**
      * For epochs finalized projectMatchedProjectRewards contains data only for projects that
      * passed threshold. For those that did not, we reduce on their donors and get the value.
@@ -67,10 +70,10 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
 
     return {
       donations,
-      matchedRewards: projectMatchedProjectRewards?.matched || 0n,
+      matchedRewards,
       numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address]?.length || 0 : 0,
       percentage: projectMatchedProjectRewards?.percentage,
-      totalValueOfAllocations: donations + (projectMatchedProjectRewards?.matched ?? 0n),
+      totalValueOfAllocations: donations + matchedRewards,
       ...project,
     };
   });

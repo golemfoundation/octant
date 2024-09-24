@@ -26,7 +26,6 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
           : projects.map(project => (
               <MetricsProjectsListItem
                 key={project.address}
-                address={project.address}
                 dataTest={`${dataTest}__item`}
                 donations={
                   getValuesToDisplay({
@@ -40,7 +39,7 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
                     valueCrypto: project.donations,
                   }).primary
                 }
-                epoch={project.epoch}
+                image={project.profileImageSmall!}
                 matchFunding={
                   getValuesToDisplay({
                     cryptoCurrency: 'ethereum',
@@ -52,6 +51,7 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
                     valueCrypto: project.matchedRewards,
                   }).primary
                 }
+                name={project.name!}
                 numberOfDonors={project.numberOfDonors}
                 total={
                   getValuesToDisplay({

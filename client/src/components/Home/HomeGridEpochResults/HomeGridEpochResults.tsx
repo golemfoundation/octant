@@ -67,7 +67,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
       }
     >
       <div className={styles.root}>
-        <EpochResults />
+        <EpochResults epoch={epoch} />
       </div>
     </GridTile>
   );

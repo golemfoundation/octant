@@ -93,7 +93,6 @@ const MetricsEpoch = (): ReactElement => {
     (acc, curr) => acc + curr.matchedRewards,
     0n,
   );
-  const matchingFund = matchedRewards > 0n ? matchedRewards - patronsRewards : 0n;
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =
@@ -136,26 +135,26 @@ const MetricsEpoch = (): ReactElement => {
         <MetricsEpochGridTotalDonations
           className={styles.totalDonations}
           isLoading={isLoading}
-          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+          totalUserDonations={sumOfDonations}
         />
         <MetricsEpochGridTotalMatchingFund
           className={styles.totalMatching}
           isLoading={isLoading}
-          matchingFund={matchingFund}
+          matchingFund={matchedRewards}
         />
         <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
         <MetricsEpochGridAverageLeverage className={styles.averageLeverage} isLoading={isLoading} />
         <MetricsEpochGridDonationsVsMatching
           className={styles.donationsVsMatching}
           isLoading={isLoading}
-          matchingFund={matchingFund}
-          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+          matchingFund={matchedRewards}
+          totalUserDonations={sumOfDonations}
         />
         <MetricsEpochGridDonationsVsPersonalAllocations
           className={styles.donationsVsPersonal}
           isLoading={isLoading}
           totalPersonal={totalPersonal}
-          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+          totalUserDonations={sumOfDonations}
         />
         {epoch < 4 && (
           <MetricsEpochGridBelowThreshold
