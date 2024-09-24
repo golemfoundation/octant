@@ -7,18 +7,18 @@ import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useEpochUnusedRewards from 'hooks/queries/useEpochUnusedRewards';
 
-import MetricsEpochGridRewardsUnusedAndUnallocatedValueProps from './types';
+import MetricsEpochGridUnallocatedValueProps from './types';
 
-const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
-  MetricsEpochGridRewardsUnusedAndUnallocatedValueProps
-> = ({ isLoading, className }) => {
+const MetricsEpochGridUnallocatedValue: FC<MetricsEpochGridUnallocatedValueProps> = ({
+  isLoading,
+  className,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const { epoch } = useMetricsEpoch();
   const { data: epochUnusedRewards } = useEpochUnusedRewards(epoch);
   const getValuesToDisplay = useGetValuesToDisplay();
 
-  const users = `${epochUnusedRewards?.addresses.length || 0}`;
   const unallocatedValue = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
@@ -28,23 +28,12 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
   return (
     <MetricsGridTile
       className={className}
-      dataTest="MetricsEpochGridRewardsUnusedAndUnallocatedValue"
+      dataTest="MetricsEpochGridUnallocatedValue"
       groups={[
         {
           children: (
             <MetricsGridTileValue
-              isLoading={isLoading}
-              size="S"
-              subvalue={t('users').toUpperCase()}
-              value={users}
-            />
-          ),
-          title: t('rewardsUnused'),
-        },
-        {
-          children: (
-            <MetricsGridTileValue
-              dataTest="MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue"
+              dataTest="MetricsEpochGridUnallocatedValue"
               isLoading={isLoading}
               size="S"
               subvalue={unallocatedValue.secondary}
@@ -54,9 +43,9 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
           title: t('unallocatedValue'),
         },
       ]}
-      size="M"
+      size="S"
     />
   );
 };
 
-export default MetricsEpochGridRewardsUnusedAndUnallocatedValue;
+export default MetricsEpochGridUnallocatedValue;

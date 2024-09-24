@@ -17,7 +17,7 @@ const MetricsGridTile: FC<MetricsGridTileProps> = ({
         <div
           className={cx(
             styles.groupTitleWrapper,
-            group.hasTitileBottomPadding !== false && styles.hasTitileBottomPadding,
+            group.hasTitleLargeBottomPadding && styles.hasTitleLargeBottomPadding,
           )}
         >
           <div className={styles.title} data-test={`${dataTest}__group__title`}>

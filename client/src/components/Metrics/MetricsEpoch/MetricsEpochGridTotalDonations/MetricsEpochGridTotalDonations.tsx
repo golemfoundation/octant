@@ -5,11 +5,13 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
-import MetricsEpochGridTotalDonationsAndPersonalProps from './types';
+import MetricsEpochGridTotalDonationsProps from './types';
 
-const MetricsEpochGridTotalDonationsAndPersonal: FC<
-  MetricsEpochGridTotalDonationsAndPersonalProps
-> = ({ isLoading, totalUserDonationsWithPatronRewards, totalPersonal, className }) => {
+const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = ({
+  isLoading,
+  totalUserDonationsWithPatronRewards,
+  className,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const getValuesToDisplay = useGetValuesToDisplay();
@@ -20,21 +22,15 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
     valueCrypto: totalUserDonationsWithPatronRewards,
   });
 
-  const totalPersonalValues = getValuesToDisplay({
-    cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
-    valueCrypto: totalPersonal,
-  });
-
   return (
     <MetricsGridTile
       className={className}
-      dataTest="MetricsEpochGridTotalDonationsAndPersonal"
+      dataTest="MetricsEpochGridTotalDonations"
       groups={[
         {
           children: (
             <MetricsGridTileValue
-              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalDonations"
+              dataTest="MetricsEpochGridTotalDonations__MetricsGridTileValue"
               isLoading={isLoading}
               size="S"
               subvalue={totalUserDonationWithPatronRewardsValues.secondary}
@@ -43,22 +39,10 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
           ),
           title: t('totalDonations'),
         },
-        {
-          children: (
-            <MetricsGridTileValue
-              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalPersonal"
-              isLoading={isLoading}
-              size="S"
-              subvalue={totalPersonalValues.secondary}
-              value={totalPersonalValues.primary}
-            />
-          ),
-          title: t('totalPersonal'),
-        },
       ]}
-      size="M"
+      size="S"
     />
   );
 };
 
-export default MetricsEpochGridTotalDonationsAndPersonal;
+export default MetricsEpochGridTotalDonations;

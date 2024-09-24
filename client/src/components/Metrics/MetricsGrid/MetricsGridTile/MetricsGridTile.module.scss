@@ -6,22 +6,21 @@
 
   &.size {
     &--S {
-      height: 14.4rem;
       grid-column: span 1;
       grid-row: span 1;
+      height: 100%;
     }
 
     &--M {
-      height: 14.4rem;
+      height: 100%;
       grid-column: span 2;
       grid-row: span 1;
     }
 
     &--L {
-      min-height: 30.4rem;
+      height: 100%;
       grid-column: span 2;
       grid-row: span 2;
-      max-height: 50.4rem;
     }
   }
 }
@@ -50,6 +49,10 @@
     display: flex;
     align-items: center;
     margin: 0;
+
+    &.hasTitleLargeBottomPadding {
+      padding-bottom: 3.6rem;
+    }
 
     .title {
       text-align: left;

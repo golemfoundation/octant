@@ -1,3 +1,22 @@
-.layout {
-  padding-top: 10.4rem;
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  color: $color-octant-dark;
+  font-size: $font-size-24;
+  font-weight: $font-weight-bold;
+  height: 8.8rem;
+
+  @media #{$tablet-up} {
+    height: 14.4rem;
+    font-size: $font-size-32;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-40;
+  }
+
+  @media #{$large-desktop-up} {
+    font-size: $font-size-48;
+  }
 }

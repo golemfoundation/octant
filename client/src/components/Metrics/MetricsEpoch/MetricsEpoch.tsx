@@ -3,13 +3,16 @@ import React, { ReactElement } from 'react';
 import MetricsEpochGridAverageLeverage from 'components/Metrics/MetricsEpoch/MetricsEpochGridAverageLeverage';
 import MetricsEpochGridBelowThreshold from 'components/Metrics/MetricsEpoch/MetricsEpochGridBelowThreshold';
 import MetricsEpochGridCurrentDonors from 'components/Metrics/MetricsEpoch/MetricsEpochGridCurrentDonors';
+import MetricsEpochGridDonationsVsMatching from 'components/Metrics/MetricsEpoch/MetricsEpochGridDonationsVsMatching';
 import MetricsEpochGridDonationsVsPersonalAllocations from 'components/Metrics/MetricsEpoch/MetricsEpochGridDonationsVsPersonalAllocations';
 import MetricsEpochGridFundsUsage from 'components/Metrics/MetricsEpoch/MetricsEpochGridFundsUsage';
 import MetricsEpochGridPatrons from 'components/Metrics/MetricsEpoch/MetricsEpochGridPatrons';
-import MetricsEpochGridRewardsUnusedAndUnallocatedValue from 'components/Metrics/MetricsEpoch/MetricsEpochGridRewardsUnusedAndUnallocatedValue';
+import MetricsEpochGridRewardsUnused from 'components/Metrics/MetricsEpoch/MetricsEpochGridRewardsUnused';
 import MetricsEpochGridTopProjects from 'components/Metrics/MetricsEpoch/MetricsEpochGridTopProjects';
-import MetricsEpochGridTotalDonationsAndPersonal from 'components/Metrics/MetricsEpoch/MetricsEpochGridTotalDonationsAndPersonal';
+import MetricsEpochGridTotalDonations from 'components/Metrics/MetricsEpoch/MetricsEpochGridTotalDonations';
+import MetricsEpochGridTotalMatchingFund from 'components/Metrics/MetricsEpoch/MetricsEpochGridTotalMatchingFund';
 import MetricsEpochGridTotalUsers from 'components/Metrics/MetricsEpoch/MetricsEpochGridTotalUsers';
+import MetricsEpochGridUnallocatedValue from 'components/Metrics/MetricsEpoch/MetricsEpochGridUnallocatedValue';
 import MetricsEpochHeader from 'components/Metrics/MetricsEpoch/MetricsEpochHeader';
 import MetricsGrid from 'components/Metrics/MetricsGrid';
 import { METRICS_EPOCH_ID } from 'constants/domElementsIds';
@@ -47,9 +50,8 @@ const MetricsEpoch = (): ReactElement => {
   const { isFetching: isFetchingMatchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProjectsIpfsWithRewards } = useProjectsIpfsWithRewards(
-    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
-  );
+  const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsIpfsWithRewards } =
+    useProjectsIpfsWithRewards(isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch);
   const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
@@ -87,6 +89,11 @@ const MetricsEpoch = (): ReactElement => {
   const epochBudget = epochBudgets?.budgetsSum || BigInt(0);
 
   const totalPersonal = epochBudget - totalUserDonationsWithPatronRewards - unusedRewards;
+  const matchedRewards = projectsIpfsWithRewards.reduce(
+    (acc, curr) => acc + curr.matchedRewards,
+    0n,
+  );
+  const matchingFund = matchedRewards > 0n ? matchedRewards - patronsRewards : 0n;
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =
@@ -113,18 +120,6 @@ const MetricsEpoch = (): ReactElement => {
       <MetricsEpochHeader />
       <MetricsGrid className={styles.grid} dataTest="MetricsEpoch__MetricsGrid">
         <MetricsEpochGridTopProjects className={styles.topProjects} isLoading={isLoading} />
-        <MetricsEpochGridTotalDonationsAndPersonal
-          className={styles.totalDonationsAndPersonal}
-          isLoading={isLoading}
-          totalPersonal={totalPersonal}
-          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
-        />
-        <MetricsEpochGridDonationsVsPersonalAllocations
-          className={styles.donationsVsPersonal}
-          isLoading={isLoading}
-          totalPersonal={totalPersonal}
-          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
-        />
         <MetricsEpochGridFundsUsage
           className={styles.fundsUsage}
           isLoading={isLoading}
@@ -133,11 +128,34 @@ const MetricsEpoch = (): ReactElement => {
         />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />
+        <MetricsEpochGridRewardsUnused className={styles.rewardsUnused} isLoading={isLoading} />
+        <MetricsEpochGridUnallocatedValue
+          className={styles.unallocatedValue}
+          isLoading={isLoading}
+        />
+        <MetricsEpochGridTotalDonations
+          className={styles.totalDonations}
+          isLoading={isLoading}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+        />
+        <MetricsEpochGridTotalMatchingFund
+          className={styles.totalMatching}
+          isLoading={isLoading}
+          matchingFund={matchingFund}
+        />
         <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
         <MetricsEpochGridAverageLeverage className={styles.averageLeverage} isLoading={isLoading} />
-        <MetricsEpochGridRewardsUnusedAndUnallocatedValue
-          className={styles.unusedAndUnallocatedValue}
+        <MetricsEpochGridDonationsVsMatching
+          className={styles.donationsVsMatching}
           isLoading={isLoading}
+          matchingFund={matchingFund}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+        />
+        <MetricsEpochGridDonationsVsPersonalAllocations
+          className={styles.donationsVsPersonal}
+          isLoading={isLoading}
+          totalPersonal={totalPersonal}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
         />
         {epoch < 4 && (
           <MetricsEpochGridBelowThreshold
