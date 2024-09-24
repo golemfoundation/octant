@@ -7,13 +7,13 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
-import AllocationView from 'views/AllocationView/AllocationView';
-import HomeView from 'views/HomeView/HomeView';
-import MetricsView from 'views/MetricsView/MetricsView';
-import PlaygroundView from 'views/PlaygroundView/PlaygroundView';
-import ProjectsView from 'views/ProjectsView/ProjectsView';
-import ProjectView from 'views/ProjectView/ProjectView';
-import SettingsView from 'views/SettingsView/SettingsView';
+import AllocationView from 'views/AllocationView';
+import HomeView from 'views/HomeView';
+import MetricsView from 'views/MetricsView';
+import PlaygroundView from 'views/PlaygroundView';
+import ProjectsView from 'views/ProjectsView';
+import ProjectView from 'views/ProjectView';
+import SettingsView from 'views/SettingsView';
 
 import { ROOT_ROUTES } from './routes';
 

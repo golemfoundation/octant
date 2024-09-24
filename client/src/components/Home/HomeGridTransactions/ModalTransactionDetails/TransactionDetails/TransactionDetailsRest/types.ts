@@ -1,5 +1,5 @@
-import HistoryItemDetailsProps from 'components/Earn/EarnHistory/EarnHistoryItemDetails/types';
+import TransactionDetailsProps from 'components/Home/HomeGridTransactions/ModalTransactionDetails/TransactionDetails/types';
 
-type TransactionDetailsRestProps = HistoryItemDetailsProps;
+type TransactionDetailsRestProps = TransactionDetailsProps;
 
 export default TransactionDetailsRestProps;

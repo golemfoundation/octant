@@ -15,7 +15,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   onResetValues,
   isWaitingForAllMultisigSignatures,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
   });
 
@@ -39,7 +39,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
           onClick: onAllocate,
         }
       : {
-          label: t('edit'),
+          label: i18n.t('common.edit'),
           onClick: () => setCurrentView('edit'),
         };
 

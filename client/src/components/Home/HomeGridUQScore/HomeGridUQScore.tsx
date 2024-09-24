@@ -239,7 +239,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
     <>
       <GridTile
         className={className}
-        title="Your uniqueness score"
+        title={t('yourUniquenessScore')}
         titleSuffix={
           <div
             className={styles.titleSuffix}

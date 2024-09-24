@@ -18,7 +18,7 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import styles from './HomeRewards.module.scss';
 
 const HomeRewards = (): ReactNode => {
-  const { t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
   const { address, isConnected } = useAccount();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: individualRewardAllEpochs, isFetching: isFetchingIndividualRewardAllEpochs } =
@@ -94,7 +94,7 @@ const HomeRewards = (): ReactNode => {
   const currentRewardsLabel = useMemo(() => {
     if (isProjectAdminMode) {
       if (isMobile) {
-        return t('donations');
+        return i18n.t('common.donations');
       }
       return t('currentDonations');
     }
@@ -105,7 +105,7 @@ const HomeRewards = (): ReactNode => {
   const totalRewardsLabel = useMemo(() => {
     if (isProjectAdminMode) {
       if (isMobile) {
-        return t('matchFunding');
+        return i18n.t('common.matchFunding');
       }
       return t('currentMatchFunding');
     }

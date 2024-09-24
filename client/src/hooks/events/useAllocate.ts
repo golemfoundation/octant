@@ -4,11 +4,11 @@ import { useAccount, useSignTypedData } from 'wagmi';
 import { SignatureOpType, apiPostPendingMultisigSignatures } from 'api/calls/multisigSignatures';
 import { apiGetSafeMessages } from 'api/calls/safeMessages';
 import { handleError } from 'api/errorMessages';
+import { AllocationValues } from 'components/Allocation/types';
 import networkConfig from 'constants/networkConfig';
 import useIsContract from 'hooks/queries/useIsContract';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
-import { AllocationValues } from 'views/AllocationView/types';
 
 const websocketService = () => import('services/websocketService');
 

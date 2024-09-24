@@ -13,7 +13,7 @@ const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchin
   matchingFund,
   className,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const matchingFundNumber = parseFloat(formatUnitsBigInt(matchingFund));
@@ -31,7 +31,7 @@ const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchin
         {
           children: (
             <MetricsDonationsProgressBar
-              compareValueLabel={t('matching')}
+              compareValueLabel={i18n.t('common.matching')}
               donationsValue={donationsValue}
               isLoading={isLoading}
             />

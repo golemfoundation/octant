@@ -20,7 +20,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   isAllocatedTo,
   isArchivedProject,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.buttonAddToAllocate',
   });
   const [scope, animate] = useAnimate();
@@ -29,7 +29,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipText = useMemo(() => {
     if (isArchivedProject && isAllocatedTo) {
-      return t('donated');
+      return i18n.t('common.donated');
     }
     if (isAddedToAllocate && isTooltipClicked) {
       return t('saved');

@@ -40,9 +40,9 @@ const TransactionsListItem: FC<TransactionsListItemProps> = ({ ...props }) => {
           ? i18n.t('common.personalAllocation')
           : t('allocatedRewards');
       case 'lock':
-        return t('lockedGLM');
+        return i18n.t('common.lockedGLM');
       case 'unlock':
-        return t('unlockedGLM');
+        return i18n.t('common.unlockedGLM');
       default:
         return t('withdrawnFunds');
     }

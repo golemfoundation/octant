@@ -36,10 +36,6 @@
   );
 }
 
-@mixin boldText() {
-  font-weight: $font-weight-superbold;
-}
-
 @mixin layoutOverflowBlurCommonProperties() {
   backdrop-filter: blur(2rem);
   -webkit-backdrop-filter: blur(2rem);
@@ -80,17 +76,4 @@
    * This mixin solves this problem.
    */
   font-variant-ligatures: no-contextual;
-}
-
-@mixin layoutFloatingElementWidth() {
-  width: 100%;
-  min-width: 39rem;
-}
-
-@mixin tipTileConnectWalletImage() {
-  height: 8.2rem;
-
-  @media #{$desktop-up} {
-    height: 11.3rem;
-  }
 }

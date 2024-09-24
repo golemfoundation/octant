@@ -11,7 +11,7 @@ import styles from './EpochResultsDetails.module.scss';
 import EpochResultsDetailsProps from './types';
 
 const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const { isMobile } = useMediaQuery();
@@ -60,13 +60,13 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
         <>
           <div className={styles.projectName}>{details.name}</div>
           <div className={styles.donations}>
-            {isMobile ? t('donationsShort') : t('donations')} {donationsToDisplay}
+            {isMobile ? t('donationsShort') : i18n.t('common.donations')} {donationsToDisplay}
           </div>
           <div className={styles.matching}>
-            {isMobile ? t('matchingShort') : t('matching')} {matchingToDisplay}
+            {isMobile ? t('matchingShort') : i18n.t('common.matching')} {matchingToDisplay}
           </div>
           <div className={styles.total}>
-            {isMobile ? t('totalShort') : t('total')} {totalToDisplay}
+            {isMobile ? t('totalShort') : i18n.t('common.total')} {totalToDisplay}
           </div>
           {!isMobile && (
             <Button

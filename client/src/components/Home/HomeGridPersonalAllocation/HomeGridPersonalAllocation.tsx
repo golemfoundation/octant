@@ -76,7 +76,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
                   showCryptoSuffix: true,
                   valueCrypto: withdrawals?.sums.pending,
                 },
-                label: t('pending'),
+                label: i18n.t('common.pending'),
                 tooltipProps: {
                   position: 'bottom-right',
                   text: (

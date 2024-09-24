@@ -10,7 +10,7 @@ import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
 const MetricsEpochGridDonationsVsPersonalAllocations: FC<
   MetricsEpochGridDonationsVsPersonalAllocationsProps
 > = ({ totalUserDonations, isLoading, totalPersonal, className }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
@@ -28,7 +28,7 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
         {
           children: (
             <MetricsDonationsProgressBar
-              compareValueLabel={t('personal')}
+              compareValueLabel={i18n.t('common.personal')}
               donationsValue={donationsValue}
               isLoading={isLoading}
             />

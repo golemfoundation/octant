@@ -22,7 +22,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
   //   TODO: patron mode support -> https://linear.app/golemfoundation/issue/OCT-1893/layout-patron-mode
   //   const { data: isPatronMode } = useIsPatronMode();
 
-  const { t } = useTranslation('translation', { keyPrefix: 'layout.navigationTabs' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'layout.navigationTabs' });
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
   const { pathname } = useLocation();
@@ -45,7 +45,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
         ROOT_ROUTES.projects.absolute === pathname ||
         pathname.includes(`${ROOT_ROUTES.project.absolute}/`),
       key: 'projects',
-      label: t('projects'),
+      label: i18n.t('common.projects'),
       to: ROOT_ROUTES.projects.absolute,
     },
     {

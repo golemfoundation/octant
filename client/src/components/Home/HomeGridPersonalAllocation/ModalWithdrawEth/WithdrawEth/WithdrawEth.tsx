@@ -59,7 +59,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
         showCryptoSuffix: true,
         valueCrypto: withdrawals?.sums.available,
       },
-      label: t('amount'),
+      label: i18n.t('common.amount'),
     },
     {
       doubleValueProps: {

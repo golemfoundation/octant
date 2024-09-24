@@ -4,7 +4,8 @@
 }
 
 .navigationWrapper {
-  @include layoutFloatingElementWidth();
+  width: 100%;
+  min-width: 39rem;
   display: flex;
   justify-content: center;
   position: fixed;

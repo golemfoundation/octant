@@ -4,8 +4,6 @@ import isEmpty from 'lodash/isEmpty';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { FormFields } from 'components/Earn/EarnRewardsCalculator/types';
-import { formInitialValues, validationSchema } from 'components/Earn/EarnRewardsCalculator/utils';
 import GridTile from 'components/shared/Grid/GridTile';
 import InputText from 'components/ui/InputText';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
@@ -18,7 +16,8 @@ import styles from './HomeGridRewardsEstimator.module.scss';
 import HomeGridRewardsEstimatorEpochDaysSelector from './HomeGridRewardsEstimatorEpochDaysSelector';
 import HomeGridRewardsEstimatorEstimates from './HomeGridRewardsEstimatorEstimates';
 import HomeGridRewardsEstimatorUqSelector from './HomeGridRewardsEstimatorUqSelector';
-import HomeGridRewardsEstimatorProps from './types';
+import HomeGridRewardsEstimatorProps, { FormFields } from './types';
+import { formInitialValues, validationSchema } from './utils';
 
 const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className }) => {
   const { t } = useTranslation('translation', {
