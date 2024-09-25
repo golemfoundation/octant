@@ -11,7 +11,7 @@ from tests.helpers.allocations import make_user_allocation_with_uq_score
 from tests.helpers.constants import (
     MATCHED_REWARDS,
     USER2_BUDGET,
-    LOW_UQ_SCORE, MR_FUNDING_CAP_PERCENT,
+    MR_FUNDING_CAP_PERCENT,
 )
 from tests.helpers.context import get_context
 
