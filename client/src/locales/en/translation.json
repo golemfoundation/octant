@@ -224,7 +224,8 @@
         "donationsShort": "D",
         "matchingShort": "M",
         "totalShort": "T",
-        "clickToVisitProject": "Click to visit project"
+        "clickToVisitProject": "Click to visit project",
+        "loadingChartData": "Loading chart data "
       }
     },
     "settings": {

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,13 +10,14 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import styles from './EpochResultsDetails.module.scss';
 import EpochResultsDetailsProps from './types';
 
-const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
+const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const { isMobile } = useMediaQuery();
   const navigate = useNavigate();
   const getValuesToDisplay = useGetValuesToDisplay();
+  const [dots, setDots] = useState(0);
 
   const donationsToDisplay = details
     ? getValuesToDisplay({
@@ -54,9 +55,37 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
       }).primary
     : null;
 
+  useEffect(() => {
+    if (!isLoading) {
+      return;
+    }
+    const id = setInterval(
+      () =>
+        setDots(prev => {
+          if (prev === 3) {
+            return 0;
+          }
+          return prev + 1;
+        }),
+      300,
+    );
+    return () => {
+      clearInterval(id);
+      setDots(0);
+    };
+  }, [isLoading]);
+
   return (
     <div className={styles.root}>
-      {details ? (
+      {isLoading && (
+        <div className={styles.loading}>
+          {t('loadingChartData')}
+          {[...Array(dots).keys()].map(key => (
+            <span key={`dot__${key}`}>.</span>
+          ))}
+        </div>
+      )}
+      {details && (
         <>
           <div className={styles.projectName}>{details.name}</div>
           <div className={styles.donations}>
@@ -80,7 +109,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details }) => {
             </Button>
           )}
         </>
-      ) : null}
+      )}
     </div>
   );
 };
