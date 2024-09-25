@@ -47,17 +47,5 @@
         color: $color-octant-green;
       }
     }
-
-    .buttonLink {
-      display: block;
-      font-size: $font-size-12;
-      line-height: 2rem;
-      font-weight: $font-weight-semibold;
-      min-height: 2rem;
-
-      @media #{$tablet-up} {
-        font-size: $font-size-14;
-      }
-    }
   }
 }

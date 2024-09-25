@@ -16,7 +16,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   isLoading,
   className,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isLargeDesktop } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -47,10 +47,10 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
           title: t('fundingLeaderboard'),
           titleSuffix: isLargeDesktop ? (
             <div className={styles.headers}>
-              <div className={styles.label}>{t('donors')}</div>
-              <div className={styles.label}>{t('donations')}</div>
-              <div className={styles.label}>{t('matchFunding')}</div>
-              <div className={styles.label}>{t('total')}</div>
+              <div className={styles.label}>{i18n.t('common.donors')}</div>
+              <div className={styles.label}>{i18n.t('common.donations')}</div>
+              <div className={styles.label}>{i18n.t('common.matchFunding')}</div>
+              <div className={styles.label}>{i18n.t('common.total')}</div>
             </div>
           ) : null,
         },

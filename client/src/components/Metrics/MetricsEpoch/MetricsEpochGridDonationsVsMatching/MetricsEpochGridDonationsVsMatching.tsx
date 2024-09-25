@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
+import MetricsEpochDonationsProgressBar from 'components/Metrics/MetricsEpoch/MetricsEpochDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
@@ -13,7 +13,7 @@ const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchin
   matchingFund,
   className,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const matchingFundNumber = parseFloat(formatUnitsBigInt(matchingFund));
@@ -30,8 +30,8 @@ const MetricsEpochGridDonationsVsMatching: FC<MetricsEpochGridDonationsVsMatchin
       groups={[
         {
           children: (
-            <MetricsDonationsProgressBar
-              compareValueLabel={t('matching')}
+            <MetricsEpochDonationsProgressBar
+              compareValueLabel={i18n.t('common.matching')}
               donationsValue={donationsValue}
               isLoading={isLoading}
             />

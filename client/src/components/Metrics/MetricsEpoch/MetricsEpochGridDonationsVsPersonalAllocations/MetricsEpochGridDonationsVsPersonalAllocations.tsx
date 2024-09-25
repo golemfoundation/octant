@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
+import MetricsEpochDonationsProgressBar from 'components/Metrics/MetricsEpoch/MetricsEpochDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
@@ -10,7 +10,7 @@ import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
 const MetricsEpochGridDonationsVsPersonalAllocations: FC<
   MetricsEpochGridDonationsVsPersonalAllocationsProps
 > = ({ totalUserDonations, isLoading, totalPersonal, className }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
@@ -27,8 +27,8 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
       groups={[
         {
           children: (
-            <MetricsDonationsProgressBar
-              compareValueLabel={t('personal')}
+            <MetricsEpochDonationsProgressBar
+              compareValueLabel={i18n.t('common.personal')}
               donationsValue={donationsValue}
               isLoading={isLoading}
             />

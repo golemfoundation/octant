@@ -22,7 +22,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
   eventData: { amount, allocations, leverage },
   timestamp,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridTransactions.modalTransactionDetails',
   });
   const { data: currentEpoch } = useCurrentEpoch();
@@ -65,7 +65,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
         showCryptoSuffix: true,
         valueCrypto: individualReward ? individualReward - amount : BigInt(0),
       },
-      label: t('sections.allocationPersonal'),
+      label: i18n.t('common.personal'),
     },
     ...(isPersonalOnlyAllocation
       ? []

@@ -11,4 +11,12 @@
     height: 14.4rem;
     font-size: $font-size-32;
   }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-40;
+  }
+
+  @media #{$large-desktop-up} {
+    font-size: $font-size-48;
+  }
 }

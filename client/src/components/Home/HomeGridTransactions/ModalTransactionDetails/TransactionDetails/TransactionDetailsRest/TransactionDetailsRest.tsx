@@ -22,7 +22,7 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
   isWaitingForTransactionInitialized,
   isMultisig = false,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridTransactions.modalTransactionDetails',
   });
   const { data: transaction, isFetching: isFetchingTransaction } = useTransaction({
@@ -46,7 +46,7 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
           : { cryptoCurrency: 'golem' }),
         showCryptoSuffix: true,
       },
-      label: isPatronDonation ? t('sections.matchingFundDonation') : t('sections.amount'),
+      label: isPatronDonation ? t('sections.matchingFundDonation') : i18n.t('common.amount'),
     },
     ...((!isPatronDonation
       ? [

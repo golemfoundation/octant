@@ -22,7 +22,7 @@ const ModalLayoutConnectWallet: FC<ModalLayoutConnectWalletProps> = ({ modalProp
 
   return (
     <Modal
-      dataTest="ModalConnectWallet"
+      dataTest="ModalLayoutConnectWallet"
       header={t('connectVia')}
       isConnectWalletModal
       isOpen={(modalProps.isOpen && !isConnected) || isDelegationConnectModalOpen}

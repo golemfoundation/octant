@@ -76,15 +76,13 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
                   showCryptoSuffix: true,
                   valueCrypto: withdrawals?.sums.pending,
                 },
-                label: t('pending'),
+                label: i18n.t('common.pending'),
                 tooltipProps: {
                   position: 'bottom-right',
                   text: (
-                    <div className={styles.pendingTooltip}>
-                      <div className={styles.pendingTooltipLabel}>
-                        {t('pendingFundsAvailableAfter')}
-                      </div>
-                      <div className={styles.pendingTooltipDate}>
+                    <div>
+                      <div>{t('pendingFundsAvailableAfter')}</div>
+                      <div>
                         {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
                         {currentEpochProps && timeCurrentEpochStart && timeCurrentAllocationEnd
                           ? format(

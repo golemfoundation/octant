@@ -77,12 +77,11 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
                   valueCrypto: estimatedEffectiveDeposit,
                 },
                 isDisabled: isPreLaunch && !isConnected,
-                label: isProjectAdminMode ? t('pending') : t('effective'),
+                label: isProjectAdminMode ? i18n.t('common.pending') : t('effective'),
                 tooltipProps: {
                   dataTest: 'TooltipEffectiveLockedBalance',
                   position: 'bottom-right',
                   text: t('tooltipText'),
-                  tooltipClassName: styles.effectiveTooltip,
                 },
               },
             ]}

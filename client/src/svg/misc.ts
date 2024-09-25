@@ -36,18 +36,6 @@ export const heart: SvgImageConfig = {
   viewBox: '0 0 32 32',
 };
 
-export const plus: SvgImageConfig = {
-  markup:
-    '<path stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.344 7.657h12M7.344 13.657v-12"/>',
-  viewBox: '0 0 15 15',
-};
-
-export const minus: SvgImageConfig = {
-  markup:
-    '<path stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1.001h12"/>',
-  viewBox: '0 0 14 2',
-};
-
 export const notificationIconWarning: SvgImageConfig = {
   markup:
     '<path fill="#1D4558" d="M16.5 4c8.868 0 12 3.147 12 12 0 8.82-3.184 12-12 12-8.79 0-12-3.22-12-12 0-8.813 3.158-12 12-12Z"/><path fill="#fff" d="M15.05 18.53h2.058l.32-5.27V9.5H14.73v3.76l.319 5.27ZM16.079 23c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
@@ -76,12 +64,6 @@ export const checkMark: SvgImageConfig = {
   markup:
     '<circle cx="16" cy="16" r="8" fill="#2D9B87"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13.089 16.171 1.65 1.792 4.243-4.243"/>',
   viewBox: '0 0 32 32',
-};
-
-export const pencil: SvgImageConfig = {
-  markup:
-    '<path fill="#CDD1CD" d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path fill="#fff" fill-rule="evenodd" d="m8.022 15.977 2.475-.354 3.063-3.063-2.121-2.121-3.063 3.063-.354 2.475ZM12.5 9.378l2.122 2.122.917-.917a1.5 1.5 0 1 0-2.122-2.122l-.917.917Z" clip-rule="evenodd"/>',
-  viewBox: '0 0 24 24',
 };
 
 export const share: SvgImageConfig = {

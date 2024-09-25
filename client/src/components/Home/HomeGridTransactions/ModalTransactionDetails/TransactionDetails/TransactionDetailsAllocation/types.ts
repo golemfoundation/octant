@@ -1,7 +1,7 @@
-import HistoryItemDetailsProps from 'components/Earn/EarnHistory/EarnHistoryItemDetails/types';
+import TransactionDetailsProps from 'components/Home/HomeGridTransactions/ModalTransactionDetails/TransactionDetails/types';
 import { AllocationEventTypeParsed } from 'hooks/queries/useHistory';
 
-type TransactionDetailsAllocationProps = Omit<HistoryItemDetailsProps, 'eventData'> & {
+type TransactionDetailsAllocationProps = Omit<TransactionDetailsProps, 'eventData'> & {
   eventData: AllocationEventTypeParsed & { amount: bigint };
 };
 

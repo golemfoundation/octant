@@ -6,7 +6,7 @@ import styles from './TransactionLabel.module.scss';
 import TransactionLabelProps from './types';
 
 const TransactionLabel: FC<TransactionLabelProps> = ({ isFinalized, isMultisig }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridTransactions.transactionLabel',
   });
 
@@ -17,7 +17,7 @@ const TransactionLabel: FC<TransactionLabelProps> = ({ isFinalized, isMultisig }
     if (isFinalized) {
       return t('confirmed');
     }
-    return t('pending');
+    return i18n.t('common.pending');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinalized, isMultisig]);
 

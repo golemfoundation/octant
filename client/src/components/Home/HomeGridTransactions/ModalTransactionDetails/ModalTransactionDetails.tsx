@@ -29,9 +29,9 @@ const ModalTransactionDetails: FC<ModalTransactionDetailsProps> = ({
           },
         );
       case 'lock':
-        return t('header.lock');
+        return i18n.t('common.lockedGLM');
       case 'unlock':
-        return t('header.unlock');
+        return i18n.t('common.unlockedGLM');
       case 'allocation':
         return t('header.allocation', {
           epoch: epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : '?',
@@ -44,7 +44,7 @@ const ModalTransactionDetails: FC<ModalTransactionDetailsProps> = ({
   }, [t, type, epochTimestampHappenedIn, i18n]);
 
   return (
-    <Modal header={header} {...modalProps} dataTest="EarnHistoryItemDetailsModal">
+    <Modal header={header} {...modalProps} dataTest="ModalTransactionDetails">
       <TransactionDetails timestamp={timestamp} type={type} {...rest} />
     </Modal>
   );

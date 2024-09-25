@@ -80,7 +80,7 @@ const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
     : 50;
   const sections = [
     {
-      header: isLocked ? t('donated') : t('donate'),
+      header: isLocked ? i18n.t('common.donated') : t('donate'),
       value: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,

@@ -18,7 +18,7 @@ import HomeGridDonationsProps from './types';
 import { getReducedUserAllocationsAllEpochs } from './utils';
 
 const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridDonations',
   });
   const { isConnected } = useAccount();
@@ -50,7 +50,9 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
       showTitleDivider={!areAllocationsEmpty}
       title={
         <div className={styles.titleWrapper}>
-          {!isDecisionWindowOpen && !areAllocationsEmpty ? t('donationHistory') : t('donations')}
+          {!isDecisionWindowOpen && !areAllocationsEmpty
+            ? t('donationHistory')
+            : i18n.t('common.donations')}
           {isDecisionWindowOpen && userAllocations?.elements !== undefined && (
             <div className={styles.numberOfAllocations}>{userAllocations?.elements?.length}</div>
           )}
@@ -67,7 +69,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
             }}
             variant="cta"
           >
-            {t('edit')}
+            {i18n.t('common.edit')}
           </Button>
         ) : null
       }

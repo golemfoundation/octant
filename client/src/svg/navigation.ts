@@ -27,12 +27,6 @@ export const settings: SvgImageConfig = {
   viewBox: '0 0 22 22',
 };
 
-export const earn: SvgImageConfig = {
-  markup:
-    '<g clip-path="url(#earn)"><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 21.5v2.75a1.375 1.375 0 0 1-1.375 1.375H8.25a2.062 2.062 0 0 1-2.063-2.063V8.438A2.063 2.063 0 0 1 8.25 6.376h14.438a1.375 1.375 0 0 1 1.375 1.375v2.063"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 21.5a1.375 1.375 0 0 0 1.375-1.375V16a1.375 1.375 0 0 0-1.375-1.375H22a3.438 3.438 0 0 0 0 6.875h3.438Z"/><circle cx="21.945" cy="18.063" r="1" fill="#CDD1CD"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 14.625v-3.438a1.375 1.375 0 0 0-1.375-1.375H10.655a1.61 1.61 0 0 1-1.48-.82"/></g><defs><clipPath id="earn"><path fill="#fff" d="M5.5 5h22v22h-22z"/></clipPath></defs>',
-  viewBox: '0 0 32 32',
-};
-
 export const chevronLeft: SvgImageConfig = {
   markup:
     '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>',

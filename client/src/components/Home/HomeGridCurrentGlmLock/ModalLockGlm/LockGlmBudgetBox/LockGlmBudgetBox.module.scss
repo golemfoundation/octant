@@ -1,29 +1,3 @@
-.transactionHash {
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0 0 0;
-}
-
-.availableFunds {
-  height: 3.2rem;
-  display: flex;
-  align-items: flex-end;
-  border-top: 0.1rem solid $color-white;
-  margin-top: 1.6rem;
-
-  .value {
-    color: $color-black;
-
-    &.isError {
-      color: $color-octant-orange;
-    }
-  }
-}
-
-.button {
-  padding: 0;
-}
-
 .budgetRow {
   position: relative;
   height: 5.6rem;
@@ -49,7 +23,6 @@
     height: 1.7rem;
     width: 10rem;
   }
-
 
   .budgetLabel {
     color: $color-octant-grey5;
