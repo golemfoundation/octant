@@ -43,9 +43,7 @@ const HomeGridTransactions: FC<HomeGridTransactionsProps> = ({ className }) => {
     <GridTile className={className} title={t('transactions')}>
       <div className={styles.root}>
         {showLoader ? (
-          <div>
-            <TransactionsSkeleton />
-          </div>
+          <TransactionsSkeleton />
         ) : (
           <InfiniteScroll
             hasMore={hasNextPage}
