@@ -19,7 +19,7 @@ def test_antisybil(client: Client, ua_alice: UserAccount):
     assert code == 200  # score available
     assert score["status"] == "Known"
     assert float(score["score"]) > 0
-    assert int(score["expires_at"]) > 0
+    assert int(score["expiresAt"]) > 0
 
     # flow for a brand new address, which couldn't be scored by GP yet
     ua_jane = UserAccount(w3.eth.account.create(), client)
@@ -34,4 +34,4 @@ def test_antisybil(client: Client, ua_alice: UserAccount):
     assert code == 200  # score available
     assert score["status"] == "Known"
     assert float(score["score"]) == 0.0
-    assert int(score["expires_at"]) > 0
+    assert int(score["expiresAt"]) > 0
