@@ -8,7 +8,7 @@ from app.extensions import db
 from app.infrastructure import database
 from app.modules.uq import core
 from tests.helpers.allocations import mock_request
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
 
@@ -25,7 +25,7 @@ def test_calculate_uq_above_threshold(context, mock_antisybil, service):
 
 def test_calculate_uq_below_threshold(context, service):
     result = service.calculate(context, USER1_ADDRESS)
-    assert result == Decimal("0.2")
+    assert result == LOW_UQ_SCORE
 
 
 def test_retrieve_uq_when_score_in_the_db(service, mock_users_db_with_scores):
@@ -46,7 +46,7 @@ def test_retrieve_uq_when_score_calculated_dynamically(context, service, mock_us
     db.session.commit()
 
     result = service.retrieve(context, USER1_ADDRESS)
-    assert result == Decimal("0.2")
+    assert result == LOW_UQ_SCORE
 
 
 def test_get_all_user_uq_pairs(context, service, mock_users_db):
