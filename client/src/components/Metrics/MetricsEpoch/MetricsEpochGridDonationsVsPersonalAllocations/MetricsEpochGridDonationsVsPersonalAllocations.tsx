@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
+import MetricsEpochDonationsProgressBar from 'components/Metrics/MetricsEpoch/MetricsEpochDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
@@ -27,7 +27,7 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
       groups={[
         {
           children: (
-            <MetricsDonationsProgressBar
+            <MetricsEpochDonationsProgressBar
               compareValueLabel={i18n.t('common.personal')}
               donationsValue={donationsValue}
               isLoading={isLoading}

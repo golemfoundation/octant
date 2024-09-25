@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 
 import MetricsEpochGridAverageLeverage from 'components/Metrics/MetricsEpoch/MetricsEpochGridAverageLeverage';
-import MetricsEpochGridBelowThreshold from 'components/Metrics/MetricsEpoch/MetricsEpochGridBelowThreshold';
 import MetricsEpochGridCurrentDonors from 'components/Metrics/MetricsEpoch/MetricsEpochGridCurrentDonors';
 import MetricsEpochGridDonationsVsMatching from 'components/Metrics/MetricsEpoch/MetricsEpochGridDonationsVsMatching';
 import MetricsEpochGridDonationsVsPersonalAllocations from 'components/Metrics/MetricsEpoch/MetricsEpochGridDonationsVsPersonalAllocations';
@@ -17,7 +16,6 @@ import MetricsEpochHeader from 'components/Metrics/MetricsEpoch/MetricsEpochHead
 import MetricsGrid from 'components/Metrics/MetricsGrid';
 import { METRICS_EPOCH_ID } from 'constants/domElementsIds';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochEnd from 'hooks/queries/useCurrentEpochEnd';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
@@ -29,7 +27,6 @@ import useEpochPatrons from 'hooks/queries/useEpochPatrons';
 import useEpochUnusedRewards from 'hooks/queries/useEpochUnusedRewards';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
-import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import useLargestLockedAmount from 'hooks/subgraph/useLargestLockedAmount';
@@ -52,11 +49,7 @@ const MetricsEpoch = (): ReactElement => {
   );
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsIpfsWithRewards } =
     useProjectsIpfsWithRewards(isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch);
-  const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(
-    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
-  );
-  const { data: projectRewardsThreshold, isFetching: isFetchingProjectRewardsThreshold } =
-    useProjectRewardsThreshold(isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch);
+
   const { isFetching: isFetchingEpochLeverage } = useEpochLeverage(epoch);
   const { data: epochAllocations, isFetching: isFetchingEpochAllocations } =
     useEpochAllocations(epoch);
@@ -65,21 +58,6 @@ const MetricsEpoch = (): ReactElement => {
   const { data: epochBudgets, isFetching: isFetchingEpochBudgets } = useEpochBudgets(epoch);
   const { data: epochUnusedRewards, isFetching: isFetchingEpochUnusedRewards } =
     useEpochUnusedRewards(epoch);
-
-  const ethBelowThreshold =
-    projectRewardsThreshold === undefined || projectsDonors === undefined
-      ? BigInt(0)
-      : Object.values(projectsDonors).reduce((acc, curr) => {
-          const projectSumOfDonations = curr.reduce((acc2, curr2) => {
-            return acc2 + curr2.amount;
-          }, BigInt(0));
-
-          if (projectSumOfDonations < projectRewardsThreshold) {
-            return acc + projectSumOfDonations;
-          }
-
-          return acc;
-        }, BigInt(0));
 
   const patronsRewards = epochInfo?.patronsRewards || BigInt(0);
   const sumOfDonations =
@@ -110,8 +88,6 @@ const MetricsEpoch = (): ReactElement => {
     isFetchingEpochUnusedRewards ||
     isFetchingEpochBudgets ||
     isFetchingMatchedProjectRewards ||
-    isFetchingProjectsDonors ||
-    isFetchingProjectRewardsThreshold ||
     isFetchingEpochPatrons;
 
   return (
@@ -156,13 +132,6 @@ const MetricsEpoch = (): ReactElement => {
           totalPersonal={totalPersonal}
           totalUserDonations={sumOfDonations}
         />
-        {epoch < 4 && (
-          <MetricsEpochGridBelowThreshold
-            className={styles.belowThreshold}
-            ethBelowThreshold={ethBelowThreshold}
-            isLoading={isLoading}
-          />
-        )}
       </MetricsGrid>
     </div>
   );

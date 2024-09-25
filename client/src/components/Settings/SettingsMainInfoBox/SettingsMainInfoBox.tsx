@@ -33,7 +33,7 @@ const SettingsMainInfoBox = (): ReactNode => {
         <div className={cx(styles.info, styles.golemFoundationProject)}>
           {t('golemFoundationProject')}
         </div>
-        <div className={cx(styles.info, styles.poweredBy)}>{t('poweredByCoinGeckoApi')}</div>
+        <div className={styles.info}>{t('poweredByCoinGeckoApi')}</div>
       </div>
     </BoxRounded>
   );

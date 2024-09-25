@@ -53,11 +53,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
       isVertical
     >
       <div className={styles.notification}>
-        <Svg
-          classNameWrapper={styles.iconWrapper}
-          img={type === 'success' ? checkMark : notificationIconWarning}
-          size={3.2}
-        />
+        <Svg img={type === 'success' ? checkMark : notificationIconWarning} size={3.2} />
         <div className={styles.info}>
           {label && <div className={styles.label}>{label}</div>}
           {text && (

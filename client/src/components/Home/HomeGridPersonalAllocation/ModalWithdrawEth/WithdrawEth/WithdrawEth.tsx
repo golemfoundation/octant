@@ -74,7 +74,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
 
   return (
     <div className={styles.root}>
-      <BoxRounded className={styles.element} hasSections isGrey isVertical>
+      <BoxRounded hasSections isGrey isVertical>
         <Sections hasBottomDivider sections={sections} />
         <Button
           className={styles.button}

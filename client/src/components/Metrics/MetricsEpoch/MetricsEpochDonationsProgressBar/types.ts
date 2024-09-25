@@ -1,4 +1,4 @@
-export default interface MetricsDonationsProgressBarProps {
+export default interface MetricsEpochDonationsProgressBarProps {
   compareValueLabel: string;
   donationsValue: number;
   isDisabled?: boolean;

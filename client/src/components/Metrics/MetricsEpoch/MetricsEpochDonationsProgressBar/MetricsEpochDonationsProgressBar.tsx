@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import ProgressBar from 'components/ui/ProgressBar';
 import { dotAndZeroes } from 'utils/regExp';
 
-import styles from './MetricsDonationsProgressBar.module.scss';
-import MetricsDonationsProgressBarProps from './types';
+import styles from './MetricsEpochDonationsProgressBar.module.scss';
+import MetricsEpochDonationsProgressBarProps from './types';
 
-const MetricsDonationsProgressBar: FC<MetricsDonationsProgressBarProps> = ({
+const MetricsEpochDonationsProgressBar: FC<MetricsEpochDonationsProgressBarProps> = ({
   isDisabled,
   isLoading,
   donationsValue,
@@ -60,4 +60,4 @@ const MetricsDonationsProgressBar: FC<MetricsDonationsProgressBarProps> = ({
   );
 };
 
-export default memo(MetricsDonationsProgressBar);
+export default memo(MetricsEpochDonationsProgressBar);
