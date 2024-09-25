@@ -225,9 +225,9 @@ class AntisybilStatus(OctantResource):
     @ns.response(504, "Could not refresh antisybil status. Upstream is unavailable.")
     def put(self, user_address: str):
         app.logger.info(f"Updating user {user_address} antisybil status")
-        score, expires_at = update_user_antisybil_status(user_address)
+        result = update_user_antisybil_status(user_address)
         app.logger.info(
-            f"User {user_address} antisybil status refreshed {[score, expires_at]}"
+            f"User {user_address} antisybil status refreshed {[result.score, result.expires_at]}"
         )
 
         return {}, 204
