@@ -27,7 +27,7 @@ from tests.helpers.allocations import (
     create_payload,
     deserialize_allocations,
 )
-from tests.helpers.constants import MATCHED_REWARDS
+from tests.helpers.constants import MATCHED_REWARDS, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
 
@@ -416,7 +416,7 @@ def test_uq_added_while_allocating(project_accounts, tos_users):
     )
 
     uq_1 = get_uq_by_address(user_addr, context.epoch_details.epoch_num)
-    assert uq_1.score == LOW_UQ_SCORE
+    assert uq_1.score == str(LOW_UQ_SCORE)
 
     # Allocate for the second time
     payload = create_payload(project_accounts[0:4], None, 1)

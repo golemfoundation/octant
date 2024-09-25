@@ -60,4 +60,4 @@ def test_get_all_user_uq_pairs(context, service, mock_users_db):
     db.session.commit()
 
     result = core.get_all_uqs(1)
-    assert result == [(alice.address, Decimal("0.2")), (bob.address, Decimal("0.2"))]
+    assert result == [(alice.address, LOW_UQ_SCORE), (bob.address, LOW_UQ_SCORE)]
