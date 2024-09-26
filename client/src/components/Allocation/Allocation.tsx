@@ -137,10 +137,6 @@ const Allocation = (): ReactElement => {
   });
 
   const onAllocateSuccess = () => {
-    toastService.showToast({
-      name: 'allocationSuccessful',
-      title: t('allocationSuccessful'),
-    });
     refetchMatchedProjectRewards();
     refetchUserAllocations();
     refetchUserAllocationNonce();
@@ -604,7 +600,8 @@ const Allocation = (): ReactElement => {
               isLoading={
                 allocateEvent.isLoading ||
                 isWaitingForAllMultisigSignatures ||
-                isWaitingForFirstMultisigSignature
+                isWaitingForFirstMultisigSignature ||
+                isLoading
               }
               isWaitingForAllMultisigSignatures={
                 isWaitingForAllMultisigSignatures || isWaitingForFirstMultisigSignature

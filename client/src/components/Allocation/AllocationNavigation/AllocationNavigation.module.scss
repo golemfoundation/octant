@@ -7,6 +7,7 @@
   padding: 1.6rem;
   border-radius: $border-radius-32 $border-radius-32 0 0;
   border-bottom: 0.1rem solid $color-octant-grey3;
+  position: relative;
   @media #{$tablet-up} {
     padding: 2.4rem;
   }
@@ -24,6 +25,7 @@
   }
 
   .button {
+    position: relative;
     flex: 1;
     height: 4.8rem;
     padding: 1rem;
@@ -41,6 +43,44 @@
 
       @media #{$desktop-up} {
         margin-left: 1.2rem;
+      }
+    }
+  }
+
+  .animationsWrapper {
+    position: absolute;
+    left: 1.6rem;
+    display: flex;
+    align-items: center;
+    min-width: 4rem;
+    min-height: 4rem;
+
+    .loaderWrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .tickSvg,
+    .circleSvg {
+      position: absolute;
+      width: 1.6rem;
+      height: 1.6rem;
+      stroke: $color-white;
+    }
+
+    .circleSvg {
+      stroke-width: 2;
+
+      .circleLoader {
+        stroke: $color-white;
+      }
+
+      .circleLoaderBackground {
+        opacity: 0.2;
+        stroke: $color-white;
+        stroke-width: 2;
       }
     }
   }
