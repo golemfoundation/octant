@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
-import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import TipTile from 'components/shared/TipTile';
 import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
@@ -123,7 +122,6 @@ const ProjectsView = (): ReactElement => {
 
   return (
     <>
-      <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <TipTile
           className={styles.tip}
