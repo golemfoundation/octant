@@ -1,6 +1,5 @@
 {
   "name": "octant-coin-prices-server",
-  "type": "module",
   "version": "1.0.0",
   "repository": {
     "type": "git",
