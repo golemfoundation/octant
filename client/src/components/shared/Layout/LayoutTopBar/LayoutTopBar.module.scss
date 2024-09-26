@@ -25,15 +25,6 @@
 
   .octantLogo {
     cursor: pointer;
-    margin-right: 4rem;
-
-    @media #{$tablet-up} {
-      margin-right: 13rem;
-    }
-
-    @media #{$desktop-up} {
-      margin-right: 0;
-    }
   }
 
   .links {
@@ -79,7 +70,6 @@
     font-weight: $font-weight-bold;
     font-size: $font-size-12;
     padding: 0 0.2rem 0 1.2rem;
-    margin-left: 2.4rem;
     justify-content: left;
     min-width: 8.5rem;
 
