@@ -7,7 +7,6 @@ import SettingsCurrencyBox from 'components/Settings/SettingsCurrencyBox';
 import SettingsMainInfoBox from 'components/Settings/SettingsMainInfoBox';
 import SettingsPatronModeBox from 'components/Settings/SettingsPatronModeBox';
 import SettingsShowOnboardingBox from 'components/Settings/SettingsShowOnboardingBox';
-import SettingsShowTipsBox from 'components/Settings/SettingsShowTipsBox';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
@@ -33,10 +32,7 @@ const Settings = (): ReactElement => {
         <SettingsCurrencyBox />
         {isConnected && !isProjectAdminMode && <SettingsPatronModeBox />}
         {!isProjectAdminMode && !isPatronMode && (
-          <>
-            <SettingsShowTipsBox />
-            <SettingsShowOnboardingBox />
-          </>
+          <SettingsShowOnboardingBox />
         )}
       </div>
     </div>

@@ -11,7 +11,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
-import TipTile from 'components/shared/TipTile';
 import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
@@ -21,10 +20,8 @@ import {
   WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
 } from 'constants/window';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
-import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useTipsStore from 'store/tips/store';
 import { magnifyingGlass } from 'svg/misc';
 
 import styles from './ProjectsView.module.scss';
@@ -32,7 +29,6 @@ import { OrderOption } from './types';
 import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
-  const { isDesktop } = useMediaQuery();
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.projects',
   });
@@ -53,12 +49,6 @@ const ProjectsView = (): ReactElement => {
 
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
-  const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
-    state => ({
-      setWasAddFavouritesAlreadyClosed: state.setWasAddFavouritesAlreadyClosed,
-      wasAddFavouritesAlreadyClosed: state.data.wasAddFavouritesAlreadyClosed,
-    }),
-  );
 
   const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(() => {
     const projectsLoadedArchivedEpochsNumber =
@@ -70,10 +60,6 @@ const ProjectsView = (): ReactElement => {
   const onChangeSearchQuery = (e: ChangeEvent<HTMLInputElement>): void => {
     setSearchQuery(e.target.value);
   };
-
-  const isEpoch1 = currentEpoch === 1;
-
-  const isAddToFavouritesTipVisible = !wasAddFavouritesAlreadyClosed && !isEpoch1;
 
   const lastArchivedEpochNumber = useMemo(() => {
     if (!currentEpoch || currentEpoch < 2) {
@@ -124,18 +110,6 @@ const ProjectsView = (): ReactElement => {
   return (
     <>
       <ProjectsTimelineWidget />
-      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
-        <TipTile
-          className={styles.tip}
-          dataTest="ProjectsView__TipTile"
-          image="images/favourites.webp"
-          imageClassName={styles.favouritesImage}
-          isOpen={isAddToFavouritesTipVisible}
-          onClose={() => setWasAddFavouritesAlreadyClosed(true)}
-          text={isDesktop ? t('tip.text.desktop') : t('tip.text.mobile')}
-          title={t('tip.title')}
-        />
-      )}
       <div className={styles.searchAndFilter}>
         <InputText
           className={styles.inputSearch}

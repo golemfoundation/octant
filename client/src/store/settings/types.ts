@@ -1,5 +1,4 @@
 export interface SettingsData {
-  areOctantTipsAlwaysVisible: boolean;
   displayCurrency: 'usd' | 'aud' | 'eur' | 'jpy' | 'cny' | 'gbp';
   isAllocateOnboardingAlwaysVisible: boolean;
   isCryptoMainValueDisplay: boolean;
@@ -7,7 +6,6 @@ export interface SettingsData {
 
 export interface SettingsMethods {
   reset: () => void;
-  setAreOctantTipsAlwaysVisible: (payload: SettingsData['areOctantTipsAlwaysVisible']) => void;
   setDisplayCurrency: (payload: SettingsData['displayCurrency']) => void;
   setIsAllocateOnboardingAlwaysVisible: (
     payload: SettingsData['isAllocateOnboardingAlwaysVisible'],
