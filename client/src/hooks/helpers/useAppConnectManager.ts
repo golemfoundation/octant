@@ -15,7 +15,6 @@ import useAllocationsStore from 'store/allocations/store';
 import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
-import useTipsStore from 'store/tips/store';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 
 import useAvailableFundsEth from './useAvailableFundsEth';
@@ -58,9 +57,6 @@ export default function useAppConnectManager(
   const { reset: resetAllocationsStore } = useAllocationsStore(state => ({
     reset: state.reset,
   }));
-  const { setValuesFromLocalStorage: setValuesFromLocalStorageTips } = useTipsStore(state => ({
-    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
-  }));
   const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings } = useSettingsStore(
     state => ({
       setValuesFromLocalStorage: state.setValuesFromLocalStorage,
@@ -98,7 +94,6 @@ export default function useAppConnectManager(
     setValuesFromLocalStorageSettings();
     setValuesFromLocalStorageDelegation();
     setValuesFromLocalStorageOnboarding();
-    setValuesFromLocalStorageTips();
 
     // On init load reset is not required, when changing account -- yes.
     if (shouldDoReset) {

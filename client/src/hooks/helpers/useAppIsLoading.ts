@@ -7,7 +7,6 @@ import useAllocationsStore from 'store/allocations/store';
 import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
-import useTipsStore from 'store/tips/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 export default function useAppIsLoading(isFlushRequired: boolean): boolean {
@@ -29,9 +28,6 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
       isInitialized: state.meta.isInitialized,
     }),
   );
-  const { isInitialized: isTipsStoreInitialized } = useTipsStore(state => ({
-    isInitialized: state.meta.isInitialized,
-  }));
   const { isInitialized: isAllocationsInitialized } = useAllocationsStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
@@ -48,7 +44,6 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     !isSettingsInitialized ||
     !isDelegationInitialized ||
     isFlushRequired ||
-    !isTipsStoreInitialized ||
     (isFetchingUserTOS && !isRefetchingUserTOS) ||
     isFetchingAllProjects ||
     isFetchingPatronModeStatus ||

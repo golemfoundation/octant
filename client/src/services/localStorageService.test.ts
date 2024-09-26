@@ -8,11 +8,6 @@ import {
   IS_ONBOARDING_DONE,
   LAST_SEEN_STEP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
-  WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-  WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
-  WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
-  WAS_REWARDS_ALREADY_CLOSED_TIP,
-  WAS_WITHDRAW_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 
@@ -93,36 +88,6 @@ describe('LocalStorageService', () => {
       localStorage.setItem(IS_CRYPTO_MAIN_VALUE_DISPLAY, 'not-a-boolean');
       localStorageService.init(localStorageInitParams);
       expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).toBe('true');
-    });
-
-    it(`should validate ${WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP}`, () => {
-      localStorage.setItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
-    it(`should validate ${WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP}`, () => {
-      localStorage.setItem(WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
-    it(`should validate ${WAS_LOCK_GLM_ALREADY_CLOSED_TIP}`, () => {
-      localStorage.setItem(WAS_LOCK_GLM_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(WAS_LOCK_GLM_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
-    it(`should validate ${WAS_REWARDS_ALREADY_CLOSED_TIP}`, () => {
-      localStorage.setItem(WAS_REWARDS_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(WAS_REWARDS_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
-    it(`should validate ${WAS_WITHDRAW_ALREADY_CLOSED_TIP}`, () => {
-      localStorage.setItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP)).toBe('false');
     });
 
     it(`should validate ${ALLOCATION_REWARDS_FOR_PROJECTS}`, () => {
