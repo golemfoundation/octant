@@ -1,5 +1,3 @@
-// import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-// import useIsProjectAdminMode from './useIsProjectAdminMode';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -16,12 +14,6 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 import useIsProjectAdminMode from './useIsProjectAdminMode';
 
 const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
-  //   TODO: project admin mode support -> https://linear.app/golemfoundation/issue/OCT-1892/layout-project-admin-mode
-  //   const isProjectAdminMode = useIsProjectAdminMode();
-
-  //   TODO: patron mode support -> https://linear.app/golemfoundation/issue/OCT-1893/layout-patron-mode
-  //   const { data: isPatronMode } = useIsPatronMode();
-
   const { i18n, t } = useTranslation('translation', { keyPrefix: 'layout.navigationTabs' });
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
