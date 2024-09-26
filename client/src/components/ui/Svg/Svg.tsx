@@ -1,21 +1,24 @@
 import cx from 'classnames';
 import isArray from 'lodash/isArray';
-import React, { FC } from 'react';
+import React, { forwardRef } from 'react';
 
 import styles from './Svg.module.scss';
 import { SvgAttrs, SvgProps, SvgStyles } from './types';
 
-const Svg: FC<SvgProps> = ({
-  img,
-  color,
-  classNameWrapper,
-  classNameSvg,
-  onClick,
-  displayMode = 'raw',
-  size = 'auto',
-  sizeUnit = 'rem',
-  dataTest = 'Svg',
-}) => {
+const Svg = <T extends SvgProps>(
+  {
+    img,
+    color,
+    classNameWrapper,
+    classNameSvg,
+    onClick,
+    displayMode = 'raw',
+    size = 'auto',
+    sizeUnit = 'rem',
+    dataTest = 'Svg',
+  }: T,
+  ref,
+) => {
   const parsedSize = isArray(size) ? size : [size, size];
   const width = parsedSize[0] === 'auto' ? parsedSize[0] : `${parsedSize[0]}${sizeUnit}`;
   const height = parsedSize[1] === 'auto' ? parsedSize[1] : `${parsedSize[1]}${sizeUnit}`;
@@ -48,12 +51,16 @@ const Svg: FC<SvgProps> = ({
     svgAttrs.children = <path d={img.path} fill={appliedColor} />;
   }
 
-  const svg = <svg {...svgAttrs} />;
+  const svg = <svg ref={ref} {...svgAttrs} />;
 
   if (displayMode === 'raw') {
     return svg;
   }
-  return <i className={cx(styles.root, classNameWrapper)}>{svg}</i>;
+  return (
+    <i ref={ref} className={cx(styles.root, classNameWrapper)}>
+      {svg}
+    </i>
+  );
 };
 
-export default Svg;
+export default forwardRef(Svg);
