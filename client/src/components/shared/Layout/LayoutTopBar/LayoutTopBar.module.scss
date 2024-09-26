@@ -41,6 +41,7 @@
     margin-left: 2.4rem;
 
     .link {
+      position: relative;
       font-size: $font-size-14;
       font-weight: $font-weight-bold;
       color: $color-octant-grey2;
@@ -52,6 +53,22 @@
 
       &.isActive {
         color: $color-octant-dark;
+
+        &::before {
+          position: absolute;
+          bottom: -1.1rem;
+          border-radius: $border-radius-01;
+          left: 50%;
+          transform: translate(-50%, 0);
+          content: '';
+          width: 2.4rem;
+          height: 0.2rem;
+          background: $color-octant-green;
+        }
+      }
+
+      &:hover {
+        color: $color-octant-grey13;
       }
     }
   }
