@@ -17,6 +17,7 @@
     display: grid;
     padding: 0 2.4rem;
     max-height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
