@@ -20,6 +20,7 @@ import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationV
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
+import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 import useHistory from 'hooks/queries/useHistory';
@@ -98,7 +99,18 @@ const Allocation = (): ReactElement => {
     isFetching: isFetchingUserNonce,
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
-  const { data: uqScore } = useUqScore(currentEpoch!);
+  const {
+    mutateAsync: refreshAntisybilStatus,
+    isPending: isPendingRefreshAntisybilStatus,
+    isSuccess: isSuccessRefreshAntisybilStatus,
+    error: refreshAntisybilStatusError,
+  } = useRefreshAntisybilStatus();
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!, {
+    enabled:
+      isSuccessRefreshAntisybilStatus ||
+      (refreshAntisybilStatusError as null | { message: string })?.message ===
+        'Address is already used for delegation',
+  });
   const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
   const [showLowUQScoreModal, setShowLowUQScoreModal] = useState(false);
   const { refetch: refetchEpochAllocations } = useEpochAllocations(
@@ -320,6 +332,21 @@ const Allocation = (): ReactElement => {
   };
 
   useEffect(() => {
+    if (!walletAddress) {
+      return;
+    }
+    /**
+     * The initial value of UQ for every user is 0.2 / 0.01 (after https://linear.app/golemfoundation/issue/OCT-1928/change-the-uq-leverage-to-001-and-1)
+     * It does not update automatically after delegation nor after change in Gitcoin Passport itself.
+     *
+     * We need to refreshAntisybilStatus to force BE to refetch current values from Gitcoin Passport
+     * and return true value.
+     */
+    refreshAntisybilStatus(walletAddress!);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!userAllocations || isManualMode) {
       return;
     }
@@ -446,6 +473,8 @@ const Allocation = (): ReactElement => {
     allocationValues === undefined ||
     (isConnected && isFetchingUserNonce) ||
     (isConnected && isFetchingUserAllocation) ||
+    (isConnected && isPendingRefreshAntisybilStatus) ||
+    (isConnected && isFetchingUqScore) ||
     (isFetchingUpcomingBudget && !isRefetchingUpcomingBudget);
 
   const areAllocationsAvailableOrAlreadyDone =
