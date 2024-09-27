@@ -10,8 +10,8 @@ from tests.helpers.constants import UQ_THRESHOLD_MAINNET, LOW_UQ_SCORE, MAX_UQ_S
     "gp_score, expected_output",
     [
         (1, LOW_UQ_SCORE),
-        (19, LOW_UQ_SCORE),
-        (20, MAX_UQ_SCORE),
+        (14, LOW_UQ_SCORE),
+        (15, MAX_UQ_SCORE),
         (27, MAX_UQ_SCORE),
     ],
 )
