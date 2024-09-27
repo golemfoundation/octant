@@ -5,6 +5,7 @@ export const BUTTON_VARIANTS = [
   'secondary',
   'secondary2',
   'cta',
+  'cta2',
   'iconOnly',
   'iconOnly2',
   'iconOnlyTransparent',
