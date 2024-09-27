@@ -38,6 +38,9 @@ projects_details_model = api.model(
                         "address": fields.String(
                             required=True, description="Project address"
                         ),
+                        "epoch": fields.String(
+                            required=True, description="Project epoch"
+                        ),
                     },
                 )
             ),
@@ -69,33 +72,37 @@ class ProjectsMetadata(OctantResource):
         }
 
 
-@ns.route("/details/epoch/<int:epoch>")
+@ns.route("/details")
 @ns.doc(
     description="Returns projects details for a given epoch and searchPhrase.",
     params={
-        "epoch": "Epoch number",
-        "searchPhrase": "Search phrase (query parameter)",
+        "epochs": "Epochs numbers (query parameter)",
+        "searchPhrases": "Search phrase (query parameter)",
     },
 )
 class ProjectsDetails(OctantResource):
     @ns.marshal_with(projects_details_model)
     @ns.response(200, "Projects metadata is successfully retrieved")
-    def get(self, epoch: int):
-        search_phrase = request.args.get("searchPhrase", "")
+    def get(self):
+        search_phrases = request.args.get("searchPhrases", "").split(",")
+        epochs = list(map(int, request.args.get("epochs", "").split(",")))
 
         app.logger.debug(
-            f"Getting projects details for epoch {epoch} and search phrase {search_phrase}"
+            f"Getting projects details for epochs {epochs} and search phrase {search_phrases}"
         )
-        projects_details = projects_details_controller.get_projects_details(
-            epoch, search_phrase
+        projects_details = (
+            projects_details_controller.get_projects_details_for_multiple_params(
+                epochs, search_phrases
+            )
         )
-        app.logger.debug(f"Projects details for epoch: {epoch}: {projects_details}")
+        app.logger.debug(f"Projects details for epochs {epochs}: {projects_details}")
 
         return {
             "projects_details": [
                 {
                     "name": project["name"],
                     "address": project["address"],
+                    "epoch": project["epoch"],
                 }
                 for project in projects_details
             ]

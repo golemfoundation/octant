@@ -26,10 +26,7 @@ class StaticProjectsDetailsService(Model):
 
         return ProjectsDetailsDTO(
             projects_details=[
-                {
-                    "name": project.name,
-                    "address": project.address,
-                }
+                {"name": project.name, "address": project.address, "epoch": str(epoch)}
                 for project in filtered_projects_details
             ]
         )
