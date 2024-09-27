@@ -49,7 +49,7 @@ $paddingVertical: 1rem;
 }
 
 .variant-- {
-  &cta {
+  &cta, &cta2 {
     color: $color-white;
     border: 0.1rem solid $color-octant-dark;
     background: $color-octant-dark;
@@ -59,6 +59,10 @@ $paddingVertical: 1rem;
       background: $color-octant-grey2;
       border-color: $color-octant-grey2;
     }
+  }
+
+  &cta2 {
+    border-radius: $border-radius-10;
   }
 
   &secondary {

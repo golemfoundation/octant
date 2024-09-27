@@ -67,7 +67,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
               setCurrentView('edit');
               setIsAllocationDrawerOpen(!isAllocationDrawerOpen);
             }}
-            variant="cta"
+            variant="cta2"
           >
             {i18n.t('common.edit')}
           </Button>
