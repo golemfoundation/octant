@@ -123,6 +123,13 @@ def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
             "score": "22.0",
             "status": "DONE",
         }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            "score": str(4 + 0.5),
+            "status": "DONE",
+        }
     else:
         return {"status": "DONE", "score": "0.0"}
 
@@ -152,6 +159,13 @@ def mock_gitcoin_passport_fetch_score(*args, **kwargs):
         return {
             "address": "0xBc6d82D8d6632938394905Bb0217Ad9c673015d1",
             "score": "22.0",
+            "status": "DONE",
+        }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            "score": str(4 + 0.5),
             "status": "DONE",
         }
     else:
@@ -199,6 +213,24 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
                         "credentialSubject": {"provider": "AllowList#OctantEpochTwo"},
                     },
                 }
+            ]
+        }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "items": [
+                {
+                    "credential": {
+                        "expirationDate": "2099-09-22T15:04:05.073Z",
+                        "credentialSubject": {"provider": "Discord"},
+                    }
+                },
+                {
+                    "credential": {
+                        "expirationDate": "2099-09-22T15:04:05.073Z",
+                        "credentialSubject": {"provider": "TrustedCitizen"},
+                    },
+                },
             ]
         }
     else:

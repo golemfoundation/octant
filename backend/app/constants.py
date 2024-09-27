@@ -565,3 +565,12 @@ GUEST_LIST_STAMP_PROVIDERS = [
     "AllowList#OctantEpochOne",
     "AllowList#OctantEpochThree",
 ]
+
+GTC_STAKING_STAMP_PROVIDERS_AND_SCORES = {
+    "SelfStakingBronze": 1.0,
+    "SelfStakingSilver": 2.0,
+    "SelfStakingGold": 3.0,
+    "BeginnerCommunityStaker": 1.5,
+    "ExperiencedCommunityStaker": 2.5,
+    "TrustedCitizen": 4.0,
+}
