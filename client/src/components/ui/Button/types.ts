@@ -14,6 +14,7 @@ export const BUTTON_VARIANTS = [
   'link3',
   'link4',
   'link5',
+  'link6',
 ] as const;
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
@@ -29,6 +30,7 @@ export default interface ButtonProps {
   dataTest?: string;
   href?: string;
   isActive?: boolean;
+  isButtonScalingUpOnHover?: boolean;
   isDisabled?: boolean;
   isEventStopPropagation?: boolean;
   isHigh?: boolean;

@@ -241,12 +241,13 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
         className={className}
         title={t('yourUniquenessScore')}
         titleSuffix={
-          <div
+          <Button
             className={styles.titleSuffix}
+            isButtonScalingUpOnHover={false}
+            label={t('whatIsThis')}
             onClick={() => setIsCalculatingYourUniquenessModalOpen(true)}
-          >
-            {t('whatIsThis')}
-          </div>
+            variant="link3"
+          />
         }
       >
         <div className={styles.root}>
@@ -255,7 +256,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
             className={styles.visitDashboard}
             href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
             label={t('scoreTooLow')}
-            variant="link"
+            variant="link6"
           />
           <div className={styles.buttonsWrapper}>
             <Button
