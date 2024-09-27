@@ -1,5 +1,5 @@
 export type FormFields = {
-  isUqScoreOver20: boolean;
+  isUQScoreGivingMultiplier1: boolean;
   numberOfEpochs: number;
   valueCrypto?: string;
 };

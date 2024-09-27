@@ -7,14 +7,14 @@ import styles from './EarnRewardsCalculatorUqSelector.module.scss';
 import EarnRewardsCalculatorUqSelectorProps from './types';
 
 const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> = ({
-  isUqScoreOver20,
+  isUQScoreGivingMultiplier1,
   onChange,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsCalculator.uqSelector',
   });
 
-  const selectorOptions = [true, false]; // isUqScoreOver20
+  const selectorOptions = [true, false]; // isUQScoreGivingMultiplier1
 
   const dataTest = 'EarnRewardsCalculatorUqSelector';
 
@@ -30,14 +30,14 @@ const EarnRewardsCalculatorUqSelector: FC<EarnRewardsCalculatorUqSelectorProps> 
             <div
               // eslint-disable-next-line react/no-array-index-key
               key={index}
-              className={cx(styles.day, isUqScoreOver20 === option && styles.isSelected)}
+              className={cx(styles.day, isUQScoreGivingMultiplier1 === option && styles.isSelected)}
               data-test={`${dataTest}__option--${index}`}
               onClick={() => onChange(option)}
             >
               <span className={styles.dayLabel} data-test={`${dataTest}__optionLabel--${index}`}>
                 {option ? t('isUqScoreOver20_true') : t('isUqScoreOver20_false')}
               </span>
-              {isUqScoreOver20 === option ? (
+              {isUQScoreGivingMultiplier1 === option ? (
                 <motion.div
                   className={styles.selectedItemBackground}
                   data-test={`${dataTest}__optionBackground--${index}`}

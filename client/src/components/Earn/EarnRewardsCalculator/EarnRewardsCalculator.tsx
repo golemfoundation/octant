@@ -80,7 +80,7 @@ const EarnRewardsCalculator: FC = () => {
           showCryptoSuffix: true,
           valueCrypto:
             (parseUnitsBigInt(calculateRewards.matchedFunding, 'wei') *
-              (formik.values.isUqScoreOver20 ? 100n : 20n)) /
+              (formik.values.isUQScoreGivingMultiplier1 ? 100n : 20n)) /
             100n,
         })
       : undefined;
@@ -129,9 +129,9 @@ const EarnRewardsCalculator: FC = () => {
         }}
       />
       <EarnRewardsCalculatorUqSelector
-        isUqScoreOver20={formik.values.isUqScoreOver20}
-        onChange={isUqScoreOver20 => {
-          formik.setFieldValue('isUqScoreOver20', isUqScoreOver20);
+        isUQScoreGivingMultiplier1={formik.values.isUQScoreGivingMultiplier1}
+        onChange={isUQScoreGivingMultiplier1 => {
+          formik.setFieldValue('isUQScoreGivingMultiplier1', isUQScoreGivingMultiplier1);
         }}
       />
       <EarnRewardsCalculatorEstimates

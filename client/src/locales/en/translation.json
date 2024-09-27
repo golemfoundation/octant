@@ -92,7 +92,7 @@
         "lockForEpoch_other": "Lock for {{count}} epochs",
         "estimatedRewards": "Estimated rewards",
         "uqSelector": {
-          "header": "UQ Score 20+",
+          "header": "UQ Score 15+",
           "isUqScoreOver20_true": "Yes",
           "isUqScoreOver20_false": "No"
         },
