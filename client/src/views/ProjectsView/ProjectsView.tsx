@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
-import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
@@ -109,7 +108,6 @@ const ProjectsView = (): ReactElement => {
 
   return (
     <>
-      <ProjectsTimelineWidget />
       <div className={styles.searchAndFilter}>
         <InputText
           className={styles.inputSearch}

@@ -7,20 +7,19 @@ import { useAccount } from 'wagmi';
 
 import Allocation from 'components/Allocation';
 import Settings from 'components/Settings';
+import LayoutTopBarCalendar from 'components/shared/Layout/LayoutTopBarCalendar';
 import Button from 'components/ui/Button';
 import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import useLayoutStore from 'store/layout/store';
 import { octant } from 'svg/logo';
-import { calendar, chevronBottom } from 'svg/misc';
+import { chevronBottom } from 'svg/misc';
 import { allocate, settings } from 'svg/navigation';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -33,8 +32,6 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: currentEpoch } = useCurrentEpoch();
   const {
     isSettingsDrawerOpen,
     isAllocationDrawerOpen,
@@ -59,21 +56,6 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
 
   const tabs = useNavigationTabs(true);
   const [scope, animate] = useAnimate();
-
-  const allocationInfoText = useMemo(() => {
-    const epoch = currentEpoch! - 1;
-
-    if (isDecisionWindowOpen) {
-      return isMobile
-        ? t('epochAllocationWindowOpenShort', { epoch })
-        : t('epochAllocationWindowOpen', { epoch });
-    }
-
-    return isMobile
-      ? t('epochAllocationWindowClosedShort', { epoch })
-      : t('epochAllocationWindowClosed', { epoch });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDecisionWindowOpen, currentEpoch, isMobile]);
 
   const buttonWalletText = useMemo(() => {
     if (!isConnected) {
@@ -159,10 +141,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           ))}
         </div>
       )}
-      <div className={styles.allocationInfo}>
-        {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
-        {allocationInfoText}
-      </div>
+      <LayoutTopBarCalendar />
       <Button
         className={cx(
           styles.buttonWallet,

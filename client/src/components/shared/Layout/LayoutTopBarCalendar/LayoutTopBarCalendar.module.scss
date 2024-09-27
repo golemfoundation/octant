@@ -1,0 +1,30 @@
+.allocationInfo {
+  margin: 0 auto;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  line-height: 1.4rem;
+  padding: 1rem 1.4rem;
+  background: $color-octant-green9;
+  color: $color-octant-green;
+  border-radius: $border-radius-16;
+  cursor: pointer;
+
+  .calendarIcon {
+    margin-right: 1.2rem;
+  }
+}
+
+.desktopCalendarWrapper {
+  position: absolute;
+  width: 105.6rem;
+  z-index: $z-index-7;
+}
+
+.overflow {
+  @include overlay(0, 0);
+  width: 100%;
+  height: 100%;
+}
