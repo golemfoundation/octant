@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -17,7 +17,7 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 
 import styles from './HomeRewards.module.scss';
 
-const HomeRewards = (): ReactNode => {
+const HomeRewards = (): ReactElement => {
   const { i18n, t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
   const { address, isConnected } = useAccount();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();

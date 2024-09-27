@@ -43,6 +43,7 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchin
       return [delegationPrimaryAddress, delegationSecondaryAddress];
     }
 
+    // Can return [undefined].
     return [accountAddress];
   }, [delegationPrimaryAddress, delegationSecondaryAddress, isDelegationCompleted, accountAddress]);
 
@@ -89,8 +90,8 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchin
   return (
     <div className={cx(styles.root, !isConnected && styles.noWalletConnected)}>
       <div className={styles.avatarsGroup}>
-        {addresses.map(address => (
-          <div key={address} className={styles.addressAvatar}>
+        {addresses?.map((address, index) => (
+          <div key={address || index} className={styles.addressAvatar}>
             {!isConnected || address === '0x???' ? (
               <Svg classNameSvg={styles.octantLogo} img={octant} size={1.4} />
             ) : (
