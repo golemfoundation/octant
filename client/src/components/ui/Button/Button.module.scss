@@ -184,12 +184,14 @@ $paddingVertical: 1rem;
     min-height: initial;
   }
 
-  &link {
+  &link, &link6 {
     font-size: $font-size-12;
     border-radius: 0;
     min-height: initial;
     color: $color-octant-green;
+  }
 
+  &link {
     &:hover {
       color: $color-octant-dark;
 
@@ -198,6 +200,12 @@ $paddingVertical: 1rem;
       }
     }
   }
+
+  &link6:hover .icon {
+      position: relative;
+      bottom: 0.1rem;
+      left: 0.1rem;
+    }
 
   &link3 {
     position: relative;
