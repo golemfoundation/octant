@@ -73,7 +73,8 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !!isDecisionWindowOpen &&
     !isPendingRefreshAntisybilStatus &&
     !isFetchingUqScore &&
-    uqScore === 20n &&
+    !!uqScore &&
+    uqScore < 100n &&
     !wasUqTooLowAlreadyClosed;
 
   const isRewardsTipVisible =

@@ -80,7 +80,8 @@ const EarnRewardsCalculator: FC = () => {
           showCryptoSuffix: true,
           valueCrypto:
             (parseUnitsBigInt(calculateRewards.matchedFunding, 'wei') *
-              (formik.values.isUQScoreGivingMultiplier1 ? 100n : 20n)) /
+              // With QF, multiplier UQ multiplier 0.01 gives the real MR multiplier 0.1
+              (formik.values.isUQScoreGivingMultiplier1 ? 100n : 10n)) /
             100n,
         })
       : undefined;

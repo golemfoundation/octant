@@ -95,7 +95,7 @@ const AllocationView = (): ReactElement => {
     isFetching: isFetchingUserNonce,
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
-  const { data: uqScore } = useUqScore(currentEpoch!);
+  const { data: uqScore, isFetching: isFetchingUqScore } = useUqScore(currentEpoch!);
   const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
   const [showLowUQScoreModal, setShowLowUQScoreModal] = useState(false);
   const { refetch: refetchEpochAllocations } = useEpochAllocations(
@@ -283,7 +283,8 @@ const AllocationView = (): ReactElement => {
 
     if (
       !userAllocations?.hasUserAlreadyDoneAllocation &&
-      uqScore === 20n &&
+      uqScore &&
+      uqScore < 100n &&
       !isProceedingToAllocateWithLowUQScore
     ) {
       setShowLowUQScoreModal(true);
@@ -295,7 +296,7 @@ const AllocationView = (): ReactElement => {
     }
 
     // this condition must always be last due to ModalAllocationLowUqScore
-    // if uqScore == 20n, the signature request is triggered in ModalAllocationLowUqScore
+    // if uqScore == 1n, the signature request is triggered in ModalAllocationLowUqScore
     if (isContract) {
       setIsWaitingForFirstMultisigSignature(true);
       toastService.showToast({
@@ -429,6 +430,7 @@ const AllocationView = (): ReactElement => {
     allocationValues === undefined ||
     (isConnected && isFetchingUserNonce) ||
     (isConnected && isFetchingUserAllocation) ||
+    (isConnected && isFetchingUqScore) ||
     (isFetchingUpcomingBudget && !isRefetchingUpcomingBudget);
 
   const areAllocationsAvailableOrAlreadyDone =
