@@ -31,14 +31,14 @@ def test_delegation(client: Client, payload: ScoreDelegationPayload):
     assert code == 200
     assert delegator_score["status"] == "Known"
     assert float(delegator_score["score"]) > 0
-    assert int(delegator_score["expires_at"]) > 0
+    assert int(delegator_score["expiresAt"]) > 0
 
     # retrieve a delegatee's score
     delegatee_score, code = client.get_antisybil_score(USER1_ADDRESS)
     assert code == 200
     assert delegator_score["status"] == "Known"
     assert float(delegator_score["score"]) > 0
-    assert int(delegator_score["expires_at"]) > 0
+    assert int(delegator_score["expiresAt"]) > 0
 
     # check that scores are different before delegation
     assert float(delegator_score["score"]) != float(delegatee_score["score"])
