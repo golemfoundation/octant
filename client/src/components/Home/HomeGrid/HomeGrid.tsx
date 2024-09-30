@@ -23,8 +23,8 @@ const HomeGrid = (): ReactNode => {
   return (
     <Grid>
       {!isProjectAdminMode && <HomeGridCurrentGlmLock className={styles.gridTile} />}
-      {!isPatronMode && <HomeGridPersonalAllocation className={styles.gridTile} />}
       {!isProjectAdminMode && !isPatronMode && <HomeGridDonations className={styles.gridTile} />}
+      {!isPatronMode && <HomeGridPersonalAllocation className={styles.gridTile} />}
       {!isProjectAdminMode && <HomeGridUQScore className={styles.gridTile} />}
       {!isProjectAdminMode && !isPatronMode && isLargeDesktop && <HomeGridDivider />}
       <HomeGridTransactions className={styles.gridTile} />
