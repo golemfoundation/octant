@@ -16,7 +16,7 @@ import styles from './LayoutTopBarCalendar.module.scss';
 
 const LayoutTopBarCalendar = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
-  const { isDesktop, isLargeDesktop, isMobile } = useMediaQuery();
+  const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -45,7 +45,7 @@ const LayoutTopBarCalendar = (): ReactNode => {
       </div>
       {createPortal(
         <AnimatePresence>
-          {(isLargeDesktop || isDesktop) && isCalendarOpen && (
+          {!isMobile && isCalendarOpen && (
             <>
               <motion.div
                 key="overflow"
@@ -73,7 +73,7 @@ const LayoutTopBarCalendar = (): ReactNode => {
       )}
       <Modal
         header="Calendar"
-        isOpen={(!isLargeDesktop || !isDesktop) && isCalendarOpen}
+        isOpen={isMobile && isCalendarOpen}
         onClosePanel={() => setIsCalendarOpen(false)}
       >
         <Calendar />

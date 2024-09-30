@@ -19,8 +19,12 @@
 
 .desktopCalendarWrapper {
   position: absolute;
-  width: 105.6rem;
+  max-width: 105.6rem;
   z-index: $z-index-7;
+
+  @media #{$tablet-only} {
+    width: calc(100% - 4.8rem);
+  }
 }
 
 .overflow {

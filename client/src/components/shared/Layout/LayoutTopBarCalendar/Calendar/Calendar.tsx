@@ -13,7 +13,7 @@ let isInitialResizeDone = false;
 const Calendar = (): ReactElement => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const milestonesWrapperRef = useRef<HTMLDivElement>(null);
-  const { isTablet, isMobile } = useMediaQuery();
+  const { isMobile } = useMediaQuery();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -55,23 +55,21 @@ const Calendar = (): ReactElement => {
     } = constraintsRef.current!.getBoundingClientRect();
     const { height: milestonesWrapperHeight, width: milestonesWrapperWidth } =
       milestonesWrapperRef.current!.getBoundingClientRect();
-    const motionValue =
-      isMobile || isTablet
-        ? y.get() + (elTop > containerTop ? -elTop + containerTop : 0)
-        : x.get() + (elLeft > containerLeft ? -elLeft + containerLeft : 0);
-    const maxMotionValue =
-      isMobile || isTablet
-        ? milestonesWrapperHeight - containerHeight
-        : milestonesWrapperWidth - containerWidth;
+    const motionValue = isMobile
+      ? y.get() + (elTop > containerTop ? -elTop + containerTop : 0)
+      : x.get() + (elLeft > containerLeft ? -elLeft + containerLeft : 0);
+    const maxMotionValue = isMobile
+      ? milestonesWrapperHeight - containerHeight
+      : milestonesWrapperWidth - containerWidth;
 
     const motionValueToSet = motionValue < -maxMotionValue ? -maxMotionValue : motionValue;
-    if (isMobile || isTablet) {
+    if (isMobile) {
       y.set(motionValueToSet);
     } else {
       x.set(motionValueToSet);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile, isTablet]);
+  }, [isMobile]);
 
   useEffect(() => {
     if (!milestonesWrapperRef.current) {
@@ -99,9 +97,9 @@ const Calendar = (): ReactElement => {
         <motion.div
           ref={milestonesWrapperRef}
           className={styles.milestonesWrapper}
-          drag={isMobile || isTablet ? 'y' : 'x'}
+          drag={isMobile ? 'y' : 'x'}
           dragConstraints={constraintsRef}
-          style={isMobile || isTablet ? { y } : { x }}
+          style={isMobile ? { y } : { x }}
         >
           {milestonesWithIsActive.map(({ id, ...milestone }) => (
             <CalendarItem key={id} id={id} {...milestone} />
