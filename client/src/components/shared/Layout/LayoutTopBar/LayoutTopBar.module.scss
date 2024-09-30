@@ -53,22 +53,26 @@
 
       &.isActive {
         color: $color-octant-dark;
-
-        &::before {
-          position: absolute;
-          bottom: -1.1rem;
-          border-radius: $border-radius-01;
-          left: 50%;
-          transform: translate(-50%, 0);
-          content: '';
-          width: 2.4rem;
-          height: 0.2rem;
-          background: $color-octant-green;
-        }
       }
 
       &:hover {
         color: $color-octant-grey13;
+      }
+
+      .underlineWrapper {
+        position: absolute;
+        bottom: -1.1rem;
+        left: 50%;
+        transform: translate(-50%, 0);
+        content: '';
+
+        .underline {
+          width: 2.4rem;
+          height: 0.2rem;
+          background: $color-octant-green;
+          border-radius: $border-radius-01;
+          margin: auto;
+        }
       }
     }
   }

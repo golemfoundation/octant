@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useAnimate } from 'framer-motion';
+import { useAnimate , motion } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -148,13 +148,19 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
       {isDesktop && (
         <div className={styles.links}>
-          {tabs.map(tab => (
+          {tabs.map(({ label, to, isActive, isDisabled }, index) => (
             <div
-              key={tab.key}
-              className={cx(styles.link, tab.isActive && styles.isActive)}
-              onClick={() => navigate(tab.to)}
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className={cx(styles.link, isActive && styles.isActive)}
+              onClick={isDisabled && to ? () => {} : () => navigate(to)}
             >
-              {tab.label}
+              {label}
+              {isActive ? (
+                <div className={styles.underlineWrapper}>
+                  <motion.div className={styles.underline} layoutId="underline" />
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
