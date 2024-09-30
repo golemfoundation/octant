@@ -2,7 +2,10 @@
   height: 100%;
   min-width: 0.8rem;
   position: relative;
-  cursor: pointer;
+
+  &.hasValue {
+    cursor: pointer;
+  }
 
   &:not(:first-child) {
     margin-left: 1.4rem;
