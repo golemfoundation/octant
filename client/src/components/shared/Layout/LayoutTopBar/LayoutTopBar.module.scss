@@ -129,7 +129,7 @@
     position: relative;
     &:hover {
       .allocateButtonIcon path {
-        stroke: $color-octant-grey5;
+        stroke: $color-octant-grey13;
       }
     }
 
@@ -143,7 +143,7 @@
       margin-left: 0.3rem;
 
       path {
-        stroke: $color-octant-grey2;
+        stroke: $color-octant-dark;
       }
     }
 
@@ -167,7 +167,7 @@
   .settingsButton {
     &:hover {
       .settingsButtonIcon path {
-        stroke: $color-octant-grey5;
+        stroke: $color-octant-grey13;
       }
     }
 
@@ -179,7 +179,7 @@
 
     .settingsButtonIcon {
       path {
-        stroke: $color-octant-grey2;
+        stroke: $color-octant-dark;
       }
     }
   }
