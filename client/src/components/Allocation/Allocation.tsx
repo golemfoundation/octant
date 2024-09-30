@@ -477,13 +477,6 @@ const Allocation = (): ReactElement => {
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
   const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
-  const areButtonsDisabled =
-    isLoading ||
-    !isConnected ||
-    !isDecisionWindowOpen ||
-    (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
-    !individualReward ||
-    isWaitingForFirstMultisigSignature;
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -494,11 +487,14 @@ const Allocation = (): ReactElement => {
 
   const isEpoch1 = currentEpoch === 1;
 
-  const showAllocationBottomNavigation =
-    !isEpoch1 &&
-    (areAllocationsAvailableOrAlreadyDone || rewardsForProjects === 0n) &&
-    hasUserIndividualReward &&
-    isDecisionWindowOpen;
+  const areButtonsDisabled =
+    isEpoch1 ||
+    isLoading ||
+    !isConnected ||
+    !isDecisionWindowOpen ||
+    (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
+    !hasUserIndividualReward ||
+    isWaitingForFirstMultisigSignature;
 
   useEffect(() => {
     if (!walletAddress || !isContract || isWaitingForFirstMultisigSignature) {
@@ -540,10 +536,7 @@ const Allocation = (): ReactElement => {
       <div className={styles.title}>{t('allocateRewards')}</div>
       <div
         ref={boxesWrapperRef}
-        className={cx(
-          styles.boxesWrapper,
-          isDesktop && showAllocationBottomNavigation && styles.withMarginBottom,
-        )}
+        className={cx(styles.boxesWrapper, isDesktop && styles.withMarginBottom)}
       >
         {!isEpoch1 && (
           <AllocationRewardsBox
@@ -616,8 +609,7 @@ const Allocation = (): ReactElement => {
           onAllocate={() => onAllocate(true)}
         />
 
-        {showAllocationBottomNavigation &&
-          (isDesktop ? boxesWrapperRef.current : navRef.current) &&
+        {(isDesktop ? boxesWrapperRef.current : navRef.current) &&
           createPortal(
             <AllocationNavigation
               areButtonsDisabled={areButtonsDisabled}
@@ -627,10 +619,11 @@ const Allocation = (): ReactElement => {
                 isWaitingForFirstMultisigSignature
               }
               isLoading={
-                allocateEvent.isLoading ||
-                isWaitingForAllMultisigSignatures ||
-                isWaitingForFirstMultisigSignature ||
-                isLoading
+                !areButtonsDisabled &&
+                (allocateEvent.isLoading ||
+                  isWaitingForAllMultisigSignatures ||
+                  isWaitingForFirstMultisigSignature ||
+                  isLoading)
               }
               isWaitingForAllMultisigSignatures={
                 isWaitingForAllMultisigSignatures || isWaitingForFirstMultisigSignature
