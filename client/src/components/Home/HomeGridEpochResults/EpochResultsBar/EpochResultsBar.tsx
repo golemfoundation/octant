@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { animate, AnimatePresence, motion, useInView } from 'framer-motion';
 import React, { FC, useEffect, useRef, useState } from 'react';
 
@@ -49,11 +50,11 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
     <motion.div
       ref={ref}
       animate={{ opacity: isLowlighted ? 0.5 : 1 }}
-      className={styles.root}
+      className={cx(styles.root, topBarHeightPercentage && styles.hasValue)}
       id={EPOCH_RESULTS_BAR_ID}
-      onClick={() => onClick(address)}
-      onMouseLeave={() => setIsProjectLogoVisible(false)}
-      onMouseOver={() => setIsProjectLogoVisible(true)}
+      onClick={() => topBarHeightPercentage && onClick(address)}
+      onMouseLeave={() => topBarHeightPercentage && setIsProjectLogoVisible(false)}
+      onMouseOver={() => topBarHeightPercentage && setIsProjectLogoVisible(true)}
       whileHover={{ opacity: 1 }}
     >
       <AnimatePresence>
