@@ -61,20 +61,25 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   ]);
 
   useEffect(() => {
-    if (isLoading || areButtonsDisabled || !isInitialCurrentViewSet) {return;}
+    if (isLoading || areButtonsDisabled || !isInitialCurrentViewSet) {
+      return;
+    }
     if (prevCurrentViewRef.current === 'edit' && currentView === 'summary') {
       setShowCircleAnimation(true);
     }
     if (prevCurrentViewRef.current === 'summary' && currentView === 'edit') {
       prevCurrentViewRef.current = 'edit';
-      
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView, isLoading, areButtonsDisabled]);
 
   useEffect(() => {
-    if (!userAllocations?.hasUserAlreadyDoneAllocation) {return;}
+    if (!userAllocations?.hasUserAlreadyDoneAllocation) {
+      return;
+    }
     setCurrentView('summary');
     setIsInitialCurrentViewSet(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
