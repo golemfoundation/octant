@@ -182,7 +182,7 @@
           }
         },
         "transactionsList": {
-          "emptyHistory": "You haven’t made any transactions yet"
+          "empty": "No transaction history yet. <br/>Lock some GLM to get started"
         },
         "transactionsListItem": {
           "allocatedRewards": "Allocated rewards",

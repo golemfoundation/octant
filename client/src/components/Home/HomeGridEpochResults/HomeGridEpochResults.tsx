@@ -33,7 +33,9 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
 
   const projects = projectsIpfsWithRewards.reduce(
     (acc, curr) => {
-      if (!curr.totalValueOfAllocations) {return acc;}
+      if (!curr.totalValueOfAllocations) {
+        return acc;
+      }
       acc.unshift({
         ...curr,
         epoch,
