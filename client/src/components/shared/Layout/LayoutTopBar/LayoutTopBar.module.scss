@@ -32,6 +32,7 @@
     margin-left: 2.4rem;
 
     .link {
+      position: relative;
       font-size: $font-size-14;
       font-weight: $font-weight-bold;
       color: $color-octant-grey2;
@@ -43,6 +44,26 @@
 
       &.isActive {
         color: $color-octant-dark;
+      }
+
+      &:hover {
+        color: $color-octant-grey13;
+      }
+
+      .underlineWrapper {
+        position: absolute;
+        bottom: -1.1rem;
+        left: 50%;
+        transform: translate(-50%, 0);
+        content: '';
+
+        .underline {
+          width: 2.4rem;
+          height: 0.2rem;
+          background: $color-octant-green;
+          border-radius: $border-radius-01;
+          margin: auto;
+        }
       }
     }
   }

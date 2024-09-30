@@ -46,6 +46,23 @@ def test_antisybil_service(
     assert score == 2.572
 
 
+def test_gtc_staking_stamp_nullification(
+    patch_gitcoin_passport_issue_address_for_scoring,
+    patch_gitcoin_passport_fetch_score,
+    patch_gitcoin_passport_fetch_stamps,
+    mock_users_db,
+):
+    context = get_context(4)
+    service = GitcoinPassportAntisybil()
+    _, _, carol = mock_users_db
+    score, expires_at, stamps = service.fetch_antisybil_status(context, carol.address)
+    service.update_antisybil_status(context, carol.address, score, expires_at, stamps)
+
+    result = service.get_antisybil_status(context, carol.address)
+
+    assert result.score == 0.5
+
+
 def test_guest_stamp_score_bump_for_both_gp_and_octant_side_application(
     patch_gitcoin_passport_issue_address_for_scoring,
     patch_gitcoin_passport_fetch_score,

@@ -9,7 +9,9 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
+import useProjectsIpfsWithRewards, {
+  ProjectIpfsWithRewards,
+} from 'hooks/queries/useProjectsIpfsWithRewards';
 import { arrowRight } from 'svg/misc';
 
 import EpochResults from './EpochResults';
@@ -20,7 +22,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   const initalLoadingRef = useRef(true);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const [epoch, setEpoch] = useState<number>(currentEpoch! - 1);
+  const [epoch, setEpoch] = useState<number>(3);
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
@@ -29,11 +31,17 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
 
-  const projects =
-    projectsIpfsWithRewards.map(props => ({
-      epoch,
-      ...props,
-    })) || [];
+  const projects = projectsIpfsWithRewards.reduce(
+    (acc, curr) => {
+      if (!curr.totalValueOfAllocations) {return acc;}
+      acc.unshift({
+        ...curr,
+        epoch,
+      });
+      return acc;
+    },
+    [] as (ProjectIpfsWithRewards & { epoch: number })[],
+  );
 
   const isAnyProjectDonated = projects.some(({ donations }) => donations > 0n);
 
