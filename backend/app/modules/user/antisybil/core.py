@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Tuple
+from typing import Optional
 
 from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from app.constants import (
@@ -23,7 +23,7 @@ def determine_antisybil_score(
     if score is None:
         return None
 
-    (_, potential_score) = _apply_gtc_staking_stamp_nullification(score.score, score)
+    potential_score = _apply_gtc_staking_stamp_nullification(score.score, score)
 
     if user_address in TIMEOUT_LIST:
         return AntisybilStatusDTO(
@@ -55,9 +55,7 @@ def _has_guest_stamp_applied_by_gp(score: GPStamps) -> bool:
     return len(stamps) > 0
 
 
-def _apply_gtc_staking_stamp_nullification(
-    score: int, stamps: GPStamps
-) -> Tuple[bool, int]:
+def _apply_gtc_staking_stamp_nullification(score: int, stamps: GPStamps) -> int:
     "Take score and stamps as returned by Passport and remove score associated with GTC staking"
     delta = 0
     all_stamps = json.loads(stamps.stamps)
@@ -65,4 +63,4 @@ def _apply_gtc_staking_stamp_nullification(
     for provider in providers:
         if provider in GTC_STAKING_STAMP_PROVIDERS_AND_SCORES.keys():
             delta = delta + GTC_STAKING_STAMP_PROVIDERS_AND_SCORES[provider]
-    return (delta > 0, score - delta)
+    return score - delta
