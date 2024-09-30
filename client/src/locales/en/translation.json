@@ -52,7 +52,8 @@
     "lockedGLM": "Locked GLM",
     "unlockedGLM": "Unlocked GLM",
     "total": "Total",
-    "matching": "Matching"
+    "matching": "Matching",
+    "confirmed": "Confirmed"
   },
   "components": {
     "allocation": {
@@ -73,8 +74,7 @@
         "standard": "{{sum}} / {{threshold}}",
         "simulate": "Your impact {{value}}",
         "simulateLoading": "Calculating..."
-      },
-      "allocationSuccessful": "Allocation successful"
+      }
     },
     "shared": {
       "onboardingStepper": {
@@ -190,7 +190,6 @@
           "epochDonation": "Epoch {{epoch}} donation"
         },
         "transactionLabel": {
-          "confirmed": "Confirmed",
           "pendingMultisig": "Pending multisig"
         }
       },

@@ -15,7 +15,7 @@ const TransactionLabel: FC<TransactionLabelProps> = ({ isFinalized, isMultisig }
       return t('pendingMultisig');
     }
     if (isFinalized) {
-      return t('confirmed');
+      return i18n.t('common.confirmed');
     }
     return i18n.t('common.pending');
     // eslint-disable-next-line react-hooks/exhaustive-deps

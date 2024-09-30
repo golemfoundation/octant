@@ -31,9 +31,7 @@ const Settings = (): ReactElement => {
         <SettingsCryptoMainValueBox />
         <SettingsCurrencyBox />
         {isConnected && !isProjectAdminMode && <SettingsPatronModeBox />}
-        {!isProjectAdminMode && !isPatronMode && (
-          <SettingsShowOnboardingBox />
-        )}
+        {!isProjectAdminMode && !isPatronMode && <SettingsShowOnboardingBox />}
       </div>
     </div>
   );
