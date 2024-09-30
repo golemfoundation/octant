@@ -2,17 +2,20 @@ import { isAfter, isSameDay, isWithinInterval } from 'date-fns';
 import { motion, useMotionValue } from 'framer-motion';
 import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 
-import ProjectsTimelineWidgetItem from 'components/Projects/ProjectsTimelineWidgetItem';
+import CalendarItem from 'components/shared/Layout/LayoutTopBarCalendar/CalendarItem';
 import getMilestones, { Milestone } from 'constants/milestones';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
-import styles from './ProjectsTimelineWidget.module.scss';
+import styles from './Calendar.module.scss';
 
 let isInitialResizeDone = false;
 
-const ProjectsTimelineWidget = (): ReactElement => {
+const Calendar = (): ReactElement => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const milestonesWrapperRef = useRef<HTMLDivElement>(null);
+  const { isMobile } = useMediaQuery();
   const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
   const milestonesWithIsActive = getMilestones().reduce(
     (acc, curr) => {
@@ -35,7 +38,7 @@ const ProjectsTimelineWidget = (): ReactElement => {
     [] as (Milestone & { isActive: boolean })[],
   );
 
-  const setXValue = useCallback(() => {
+  const setMotionValue = useCallback(() => {
     const milestoneWithIsActive = milestonesWithIsActive.find(({ isActive }) => isActive);
 
     if (!milestoneWithIsActive || !constraintsRef.current || !milestonesWrapperRef.current) {
@@ -43,22 +46,37 @@ const ProjectsTimelineWidget = (): ReactElement => {
     }
 
     const el = document.getElementById(milestoneWithIsActive.id);
-    const { left: elLeft } = el!.getBoundingClientRect()!;
-    const { left: containerLeft, width: containerWidth } =
-      constraintsRef.current!.getBoundingClientRect();
-    const { width: milestonesWrapperWidth } = milestonesWrapperRef.current!.getBoundingClientRect();
-    const xMotionValue = x.get() + (elLeft > containerLeft ? -elLeft + containerLeft : 0);
-    const maxXValue = milestonesWrapperWidth - containerWidth;
+    const { top: elTop, left: elLeft } = el!.getBoundingClientRect()!;
+    const {
+      top: containerTop,
+      height: containerHeight,
+      left: containerLeft,
+      width: containerWidth,
+    } = constraintsRef.current!.getBoundingClientRect();
+    const { height: milestonesWrapperHeight, width: milestonesWrapperWidth } =
+      milestonesWrapperRef.current!.getBoundingClientRect();
+    const motionValue = isMobile
+      ? y.get() + (elTop > containerTop ? -elTop + containerTop : 0)
+      : x.get() + (elLeft > containerLeft ? -elLeft + containerLeft : 0);
+    const maxMotionValue = isMobile
+      ? milestonesWrapperHeight - containerHeight
+      : milestonesWrapperWidth - containerWidth;
 
-    x.set(xMotionValue < -maxXValue ? -maxXValue : xMotionValue);
+    const motionValueToSet = motionValue < -maxMotionValue ? -maxMotionValue : motionValue;
+    if (isMobile) {
+      y.set(motionValueToSet);
+    } else {
+      x.set(motionValueToSet);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     if (!milestonesWrapperRef.current) {
       return;
     }
-    setXValue();
+
+    setMotionValue();
 
     const resizeObserver = new ResizeObserver(() => {
       if (!isInitialResizeDone) {
@@ -66,7 +84,7 @@ const ProjectsTimelineWidget = (): ReactElement => {
         return;
       }
 
-      setXValue();
+      setMotionValue();
     });
     resizeObserver.observe(milestonesWrapperRef.current);
     return () => resizeObserver.disconnect();
@@ -74,17 +92,17 @@ const ProjectsTimelineWidget = (): ReactElement => {
   }, []);
 
   return (
-    <motion.div className={styles.root} data-test="ProjectsTimelineWidget">
+    <motion.div className={styles.root} data-test="Calendar">
       <div ref={constraintsRef} className={styles.constraintsWrapper}>
         <motion.div
           ref={milestonesWrapperRef}
           className={styles.milestonesWrapper}
-          drag="x"
+          drag={isMobile ? 'y' : 'x'}
           dragConstraints={constraintsRef}
-          style={{ x }}
+          style={isMobile ? { y } : { x }}
         >
           {milestonesWithIsActive.map(({ id, ...milestone }) => (
-            <ProjectsTimelineWidgetItem key={id} id={id} {...milestone} />
+            <CalendarItem key={id} id={id} {...milestone} />
           ))}
         </motion.div>
       </div>
@@ -92,4 +110,4 @@ const ProjectsTimelineWidget = (): ReactElement => {
   );
 };
 
-export default ProjectsTimelineWidget;
+export default Calendar;
