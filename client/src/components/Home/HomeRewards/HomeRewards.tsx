@@ -14,6 +14,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
+import useRewardsRate from 'hooks/queries/useRewardsRate';
 
 import styles from './HomeRewards.module.scss';
 
@@ -32,6 +33,8 @@ const HomeRewards = (): ReactElement => {
   const { data: isPatronMode } = useIsPatronMode();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: rewardsRate, isFetching: isFetchingRewardsRate } = useRewardsRate(currentEpoch!);
+
   const { isMobile } = useMediaQuery();
 
   const { data: matchedProjectRewards, isFetching: isFetchingMatchedProjectRewards } =
@@ -146,13 +149,14 @@ const HomeRewards = (): ReactElement => {
       value: isProjectAdminMode ? currentMatchFundingToDisplay : totalRewardsToDisplay,
     },
     {
-      // TODO: https://linear.app/golemfoundation/issue/OCT-1870/home-rewards-rate
-      isLoadingValue: isProjectAdminMode || isPatronMode ? isFetchingMatchedProjectRewards : false,
-
+      isLoadingValue:
+        isProjectAdminMode || isPatronMode
+          ? isFetchingMatchedProjectRewards
+          : isFetchingRewardsRate,
       key: 'rewardsRate',
       label: rewardsRateLabel,
-      // TODO: https://linear.app/golemfoundation/issue/OCT-1870/home-rewards-rate
-      value: isProjectAdminMode || isPatronMode ? epochTotalMatchFundingToDisplay : null,
+      value:
+        isProjectAdminMode || isPatronMode ? epochTotalMatchFundingToDisplay : `${rewardsRate} %`,
     },
   ];
 
