@@ -1128,12 +1128,6 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_timeout_list(mocker):
-    timeout_list = ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]
-    mocker.patch("app.modules.user.antisybil.core.TIMEOUT_LIST", timeout_list)
-
-
-@pytest.fixture(scope="function")
 def patch_etherscan_transactions_api(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_transactions",
@@ -1260,25 +1254,25 @@ def mock_allocations_db(mock_users_db, project_accounts, epoch=MOCKED_PENDING_EP
     user1, user2, _ = mock_users_db
 
     user1_allocations = [
-        AllocationItem(project_accounts[0].address, 10 * 10**18),
-        AllocationItem(project_accounts[1].address, 5 * 10**18),
-        AllocationItem(project_accounts[2].address, 300 * 10**18),
+        AllocationItem(project_accounts[0].address, 10 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 5 * 10 ** 18),
+        AllocationItem(project_accounts[2].address, 300 * 10 ** 18),
     ]
 
     user1_allocations_prev_epoch = [
-        AllocationItem(project_accounts[0].address, 101 * 10**18),
-        AllocationItem(project_accounts[1].address, 51 * 10**18),
-        AllocationItem(project_accounts[2].address, 3001 * 10**18),
+        AllocationItem(project_accounts[0].address, 101 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 51 * 10 ** 18),
+        AllocationItem(project_accounts[2].address, 3001 * 10 ** 18),
     ]
 
     user2_allocations = [
-        AllocationItem(project_accounts[1].address, 1050 * 10**18),
-        AllocationItem(project_accounts[3].address, 500 * 10**18),
+        AllocationItem(project_accounts[1].address, 1050 * 10 ** 18),
+        AllocationItem(project_accounts[3].address, 500 * 10 ** 18),
     ]
 
     user2_allocations_prev_epoch = [
-        AllocationItem(project_accounts[1].address, 10501 * 10**18),
-        AllocationItem(project_accounts[3].address, 5001 * 10**18),
+        AllocationItem(project_accounts[1].address, 10501 * 10 ** 18),
+        AllocationItem(project_accounts[3].address, 5001 * 10 ** 18),
     ]
 
     make_user_allocation(
