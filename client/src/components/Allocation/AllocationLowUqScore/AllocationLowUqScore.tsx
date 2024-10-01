@@ -19,6 +19,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
     keyPrefix: 'components.allocation.lowUQScoreModal',
   });
   const [isChecked, setIsChecked] = useState(false);
+  const [isRefetchRequired, setIsRefetchRequired] = useState(false);
 
   const { address } = useAccount();
 
@@ -37,11 +38,13 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
     }
     refreshAntisybilStatus(address).then(() => {
       refetchUqScore();
-      // And then what? Discussion in Linear.
+      setIsRefetchRequired(false);
     });
   };
 
-  const windowOnBlur = () => setInterval(() => {});
+  const windowOnBlur = () => {
+    setIsRefetchRequired(true);
+  };
 
   useEffect(() => {
     window.addEventListener('focus', windowOnFocus);
@@ -69,7 +72,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uqScore]);
 
-  const isFetching = isFetchingUqScore || isPendingRefreshAntisybilStatus;
+  const isFetching = isRefetchRequired || isFetchingUqScore || isPendingRefreshAntisybilStatus;
 
   return (
     <>

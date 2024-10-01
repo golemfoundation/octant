@@ -15,7 +15,7 @@ import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import ModalAllocationLowUqScore from 'components/Allocation/ModalAllocationLowUqScore';
 import { LAYOUT_NAVBAR_ID } from 'constants/domElementsIds';
-import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
+import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT } from 'constants/uq';
 import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
@@ -303,7 +303,7 @@ const Allocation = (): ReactElement => {
 
     if (
       !userAllocations?.hasUserAlreadyDoneAllocation &&
-      uqScore === UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 &&
+      uqScore === UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT &&
       !isProceedingToAllocateWithLowUQScore
     ) {
       setShowLowUQScoreModal(true);
