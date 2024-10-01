@@ -26,7 +26,7 @@ const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
       isOverflowOnClickDisabled
       {...modalProps}
     >
-      <AllocationLowUqScore onAllocate={onAllocate} />
+      <AllocationLowUqScore onAllocate={onAllocate} onCloseModal={modalProps.onClosePanel} />
     </Modal>
   );
 };

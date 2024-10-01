@@ -1,0 +1,1 @@
+export const UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 = 15;

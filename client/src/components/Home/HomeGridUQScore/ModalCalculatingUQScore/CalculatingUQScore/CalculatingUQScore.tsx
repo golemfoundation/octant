@@ -7,7 +7,7 @@ import AddressScore from 'components/Home/HomeGridUQScore/AddressScore';
 import ProgressPath from 'components/Home/HomeGridUQScore/ProgressPath';
 import BoxRounded from 'components/ui/BoxRounded';
 import Svg from 'components/ui/Svg';
-import { DELEGATION_MIN_SCORE } from 'constants/delegation';
+import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
 import useDelegate from 'hooks/mutations/useDelegate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -69,13 +69,13 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
   const showLowScoreInfo =
     isScoreHighlighted &&
     secondaryAddressAntisybilStatusScore !== undefined &&
-    secondaryAddressAntisybilStatusScore < DELEGATION_MIN_SCORE;
+    secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1;
 
   const scoreHighlight = useMemo(() => {
     if (!isScoreHighlighted || secondaryAddressAntisybilStatusScore === undefined) {
       return undefined;
     }
-    if (secondaryAddressAntisybilStatusScore < DELEGATION_MIN_SCORE) {
+    if (secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
       return 'red';
     }
     return 'black';
@@ -146,7 +146,7 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
       setLastDoneStep(1);
       setTimeout(() => {
         setLastDoneStep(2);
-        if (secondaryAddressAntisybilStatusScore < DELEGATION_MIN_SCORE) {
+        if (secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
           setShowCloseButton(true);
           setIsDelegationInProgress(false);
           return;
