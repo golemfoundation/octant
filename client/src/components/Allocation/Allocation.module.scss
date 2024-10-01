@@ -26,6 +26,7 @@
     line-height: 1.4rem;
 
     @media #{$tablet-up} {
+      font-family: 'Inter Tight', sans-serif;
       font-size: $font-size-32;
       min-height: 14.4rem;
     }
