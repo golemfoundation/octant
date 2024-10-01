@@ -7,6 +7,7 @@ import pytest
 from app.extensions import db
 from app.infrastructure import database
 from app.modules.uq import core
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from tests.helpers.allocations import mock_request
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, LOW_UQ_SCORE
 from tests.helpers.context import get_context
@@ -18,7 +19,9 @@ def before(app):
 
 
 def test_calculate_uq_above_threshold(context, mock_antisybil, service):
-    mock_antisybil.get_antisybil_status.return_value = (20.0, datetime.now())
+    mock_antisybil.get_antisybil_status.return_value = AntisybilStatusDTO(
+        score=20.0, expires_at=datetime.now(), is_on_timeout_list=False
+    )
     result = service.calculate(context, USER1_ADDRESS)
     assert result == 1.0
 
