@@ -45,8 +45,12 @@ from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET, TIMEOUT_LIST_NOT_MAINNET, \
-    TIMEOUT_LIST
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST_NOT_MAINNET,
+    TIMEOUT_LIST,
+)
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )

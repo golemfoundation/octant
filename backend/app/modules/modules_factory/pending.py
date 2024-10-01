@@ -49,8 +49,12 @@ from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET, TIMEOUT_LIST, \
-    TIMEOUT_LIST_NOT_MAINNET
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST,
+    TIMEOUT_LIST_NOT_MAINNET,
+)
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )

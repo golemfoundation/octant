@@ -1254,25 +1254,25 @@ def mock_allocations_db(mock_users_db, project_accounts, epoch=MOCKED_PENDING_EP
     user1, user2, _ = mock_users_db
 
     user1_allocations = [
-        AllocationItem(project_accounts[0].address, 10 * 10 ** 18),
-        AllocationItem(project_accounts[1].address, 5 * 10 ** 18),
-        AllocationItem(project_accounts[2].address, 300 * 10 ** 18),
+        AllocationItem(project_accounts[0].address, 10 * 10**18),
+        AllocationItem(project_accounts[1].address, 5 * 10**18),
+        AllocationItem(project_accounts[2].address, 300 * 10**18),
     ]
 
     user1_allocations_prev_epoch = [
-        AllocationItem(project_accounts[0].address, 101 * 10 ** 18),
-        AllocationItem(project_accounts[1].address, 51 * 10 ** 18),
-        AllocationItem(project_accounts[2].address, 3001 * 10 ** 18),
+        AllocationItem(project_accounts[0].address, 101 * 10**18),
+        AllocationItem(project_accounts[1].address, 51 * 10**18),
+        AllocationItem(project_accounts[2].address, 3001 * 10**18),
     ]
 
     user2_allocations = [
-        AllocationItem(project_accounts[1].address, 1050 * 10 ** 18),
-        AllocationItem(project_accounts[3].address, 500 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 1050 * 10**18),
+        AllocationItem(project_accounts[3].address, 500 * 10**18),
     ]
 
     user2_allocations_prev_epoch = [
-        AllocationItem(project_accounts[1].address, 10501 * 10 ** 18),
-        AllocationItem(project_accounts[3].address, 5001 * 10 ** 18),
+        AllocationItem(project_accounts[1].address, 10501 * 10**18),
+        AllocationItem(project_accounts[3].address, 5001 * 10**18),
     ]
 
     make_user_allocation(
