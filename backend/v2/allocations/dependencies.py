@@ -13,33 +13,42 @@ from v2.projects.depdendencies import (
 )
 from v2.uniqueness_quotients.dependencies import get_uq_score_getter
 from v2.uniqueness_quotients.services import UQScoreGetter
-from v2.core.dependencies import AsyncDbSession
+from v2.core.dependencies import GetSession, OctantSettings
 
 from .services import Allocations
 from .validators import SignatureVerifier
 
 
-class SignatureVerifierSettings(BaseSettings):
+class SignatureVerifierSettings(OctantSettings):
+    
     chain_id: int = Field(
         default=11155111,
         description="The chain id to use for the signature verification.",
     )
 
+def get_signature_verifier_settings() -> SignatureVerifierSettings:
+    return SignatureVerifierSettings()
+
 
 def get_signature_verifier(
-    session: AsyncDbSession,
+    session: GetSession,
     epochs_subgraph: Annotated[EpochsSubgraph, Depends(get_epochs_subgraph)],
     projects_contracts: Annotated[ProjectsContracts, Depends(get_projects_contracts)],
-    settings: Annotated[SignatureVerifierSettings, Depends(SignatureVerifierSettings)],
+    settings: Annotated[SignatureVerifierSettings, Depends(get_signature_verifier_settings)],
 ) -> SignatureVerifier:
     return SignatureVerifier(
         session, epochs_subgraph, projects_contracts, settings.chain_id
     )
 
+GetSignatureVerifier = Annotated[
+    SignatureVerifier,
+    Depends(get_signature_verifier)
+]
+
 
 def get_allocations(
-    session: AsyncDbSession,
-    signature_verifier: SignatureVerifier,
+    session: GetSession,
+    signature_verifier: GetSignatureVerifier,
     uq_score_getter: Annotated[UQScoreGetter, Depends(get_uq_score_getter)],
     projects: Annotated[ProjectsContracts, Depends(get_projects_contracts)],
     estimated_project_matched_rewards: Annotated[
@@ -53,3 +62,9 @@ def get_allocations(
         projects,
         estimated_project_matched_rewards,
     )
+
+
+GetAllocations = Annotated[
+    Allocations,
+    Depends(get_allocations)
+]

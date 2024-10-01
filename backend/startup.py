@@ -81,4 +81,5 @@ fastapi_app.add_middleware(PathCheckMiddleware)
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(fastapi_app, host="0.0.0.0", port=5000)
+    # uvicorn.run(fastapi_app, host="0.0.0.0", port=5000)
+    uvicorn.run(fastapi_app, port=5000)

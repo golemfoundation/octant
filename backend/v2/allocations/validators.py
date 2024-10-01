@@ -24,6 +24,9 @@ class SignatureVerifier:
     chain_id: int
 
     async def verify(self, epoch_number: int, request: UserAllocationRequest) -> None:
+        import time
+        start = time.time()
+        
         await verify_logic(
             session=self.session,
             epoch_subgraph=self.epochs_subgraph,
@@ -31,12 +34,17 @@ class SignatureVerifier:
             epoch_number=epoch_number,
             payload=request,
         )
+
+        print("verify_logic", time.time() - start)
+
         await verify_signature(
             w3=self.projects_contracts.w3,
             chain_id=self.chain_id,
             user_address=request.user_address,
             payload=request,
         )
+
+        print("verify_signature", time.time() - start)
 
 
 async def verify_logic(
@@ -53,15 +61,21 @@ async def verify_logic(
     # if epoch_details.state != "PENDING":
     #     raise exceptions.NotInDecision
 
+    import time
+
     # Check if the allocations are not empty
     if not payload.allocations:
         raise exceptions.EmptyAllocations()
 
+    start = time.time()    
     # Check if the nonce is as expected
     expected_nonce = await get_next_user_nonce(session, payload.user_address)
     if payload.nonce != expected_nonce:
         raise exceptions.WrongAllocationsNonce(payload.nonce, expected_nonce)
 
+    print("get_next_user_nonce", time.time() - start)   
+
+    start = time.time()
     # Check if the user is not a patron
     epoch_details = await epoch_subgraph.get_epoch_by_number(epoch_number)
     is_patron = await user_is_patron_with_budget(
@@ -73,12 +87,21 @@ async def verify_logic(
     if is_patron:
         raise exceptions.NotAllowedInPatronMode(payload.user_address)
 
+    print("user_is_patron_with_budget", time.time() - start)
+
+
+    start = time.time()
+
     # Check if the user is not a project
     all_projects = await projects_contracts.get_project_addresses(epoch_number)
     if payload.user_address in all_projects:
         raise exceptions.ProjectAllocationToSelf()
 
     project_addresses = [a.project_address for a in payload.allocations]
+
+    print("get_project_addresses", time.time() - start)
+
+    start = time.time()
 
     # Check if the projects are valid
     invalid_projects = set(project_addresses) - set(all_projects)
@@ -90,6 +113,10 @@ async def verify_logic(
     if duplicates:
         raise exceptions.DuplicatedProjects(duplicates)
 
+    print("invalid_projects", time.time() - start)
+
+
+    start = time.time()
     # Get the user's budget
     user_budget = await get_budget_by_user_address_and_epoch(
         session, payload.user_address, epoch_number
@@ -102,6 +129,7 @@ async def verify_logic(
     if sum(a.amount for a in payload.allocations) > user_budget:
         raise exceptions.RewardsBudgetExceeded()
 
+    print("get_budget_by_user_address_and_epoch", time.time() - start)
 
 async def get_next_user_nonce(
     # Component dependencies
@@ -117,6 +145,8 @@ async def get_next_user_nonce(
     last_allocation_request = await get_last_allocation_request_nonce(
         session, user_address
     )
+
+    print("last_allocation_request", last_allocation_request)
 
     # Calculate the next nonce
     if last_allocation_request is None:

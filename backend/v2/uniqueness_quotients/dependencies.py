@@ -5,11 +5,11 @@ from fastapi import Depends
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from v2.core.dependencies import AsyncDbSession
+from v2.core.dependencies import GetSession, OctantSettings
 from .services import UQScoreGetter
 
 
-class UQScoreSettings(BaseSettings):
+class UQScoreSettings(OctantSettings):
     uq_score_threshold: float = Field(
         default=21.0,
         description="The Gitcoin Passport score threshold above which the UQ score is set to the maximum UQ score.",
@@ -24,9 +24,13 @@ class UQScoreSettings(BaseSettings):
     )
 
 
+def get_uq_score_settings() -> UQScoreSettings:
+    return UQScoreSettings()
+
+
 def get_uq_score_getter(
-    session: AsyncDbSession,
-    settings: Annotated[UQScoreSettings, Depends(UQScoreSettings)],
+    session: GetSession,
+    settings: Annotated[UQScoreSettings, Depends(get_uq_score_settings)],
 ) -> UQScoreGetter:
     return UQScoreGetter(
         session=session,
@@ -34,3 +38,8 @@ def get_uq_score_getter(
         max_uq_score=settings.max_uq_score,
         low_uq_score=settings.low_uq_score,
     )
+
+GetUQScoreGetter = Annotated[
+    UQScoreGetter,
+    Depends(get_uq_score_getter)
+]

@@ -21,8 +21,10 @@ def get_by_epoch_num(epoch) -> PendingEpochSnapshot:
 
 
 def get_by_epoch(epoch: int) -> Optional[PendingEpochSnapshot]:
-    return PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
-
+    sp = PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
+    print("Engine url", db.engine.url)
+    print(">sp", sp)
+    return sp
 
 def get_last_snapshot() -> PendingEpochSnapshot:
     snapshot = (

@@ -76,6 +76,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
     async def handle_on_connect(
         self,
+        session: AsyncSession,
         epochs_contracts: EpochsContracts,
         projects_allocation_threshold_getter: ProjectsAllocationThresholdGetter,
         estimated_project_rewards: EstimatedProjectRewards,
@@ -109,6 +110,19 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
         await self.emit("project_rewards", rewards)
 
+        for project_address in project_rewards.amounts_by_project.keys():
+            donations = await get_donations_by_project(
+                session=session,
+                project_address=project_address,
+                epoch_number=pending_epoch_number,
+            )
+
+            await self.emit(
+                "project_donors",
+                {"project": project_address, "donors": donations},
+            )
+
+
     async def on_connect(self, sid: str, environ: dict):
         async with get_db_session(DatabaseSettings()) as session:
             (
@@ -118,6 +132,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
             ) = self.create_dependencies_on_connect(session)
 
             await self.handle_on_connect(
+                session,
                 epochs_contracts,
                 projects_allocation_threshold_getter,
                 estimated_project_rewards,

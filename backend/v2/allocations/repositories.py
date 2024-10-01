@@ -132,6 +132,15 @@ async def get_last_allocation_request_nonce(
 ) -> int | None:
     """Get the last nonce of the allocation requests for a user."""
 
+    result = await session.execute(
+        select(AllocationRequestDB.nonce).
+        join(User, AllocationRequestDB.user_id == User.id).
+        filter(User.address == user_address).
+        order_by(AllocationRequestDB.nonce.desc()).
+        limit(1)
+    )
+    return result.scalar()
+
     user = await get_user_by_address(session, user_address)
     if user is None:
         return None

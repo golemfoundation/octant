@@ -259,12 +259,19 @@ def get_allocation_request_by_user_and_epoch(
 
 
 def get_user_last_allocation_request(user_address: str) -> AllocationRequest | None:
-    return (
+    import time
+
+    start = time.time()
+    
+    result = (
         AllocationRequest.query.join(User, User.id == AllocationRequest.user_id)
         .filter(User.address == user_address)
         .order_by(AllocationRequest.nonce.desc())
         .first()
     )
+
+    print("?????????get_user_last_allocation_request", time.time() - start)
+    return result
 
 
 def get_user_allocation_epoch_count(user_address: str) -> int:
