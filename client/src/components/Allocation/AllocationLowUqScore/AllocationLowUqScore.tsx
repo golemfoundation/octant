@@ -87,7 +87,11 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
         <label className={styles.checkboxLabel}>{t('checkboxLabel')}</label>
       </BoxRounded>
       <div className={styles.buttonsContainer}>
-        <Button className={styles.button} to={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}>
+        <Button
+          className={styles.button}
+          href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+          target="_blank"
+        >
           {t('goToGitcoinPassportCustomOctantDashboard')}
         </Button>
         <Button
