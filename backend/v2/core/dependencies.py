@@ -4,19 +4,26 @@ from typing import Annotated, AsyncGenerator
 from fastapi import Depends
 from app.infrastructure.database.models import BaseModel
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
 
 
-class Web3ProviderSettings(BaseSettings):
+class OctantSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+
+
+class Web3ProviderSettings(OctantSettings):
     eth_rpc_provider_url: str
 
 
+def get_web3_provider_settings() -> Web3ProviderSettings:
+    return Web3ProviderSettings()
+
 def get_w3(
-    settings: Annotated[Web3ProviderSettings, Depends(Web3ProviderSettings)]
+    settings: Annotated[Web3ProviderSettings, Depends(get_web3_provider_settings)]
 ) -> AsyncWeb3:
     w3 = AsyncWeb3(provider=AsyncHTTPProvider(settings.eth_rpc_provider_url))
     if async_geth_poa_middleware not in w3.middleware_onion:
@@ -28,9 +35,17 @@ def get_w3(
 Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 
 
-class DatabaseSettings(BaseSettings):
-    sqlalchemy_database_uri: str = Field(validation_alias="db_uri")
+class DatabaseSettings(OctantSettings):
+    db_uri: str = Field(..., alias="db_uri")
     # TODO other settings of the database
+
+    @property
+    def sqlalchemy_database_uri(self) -> str:
+        return self.db_uri.replace("postgresql://", "postgresql+asyncpg://")
+
+
+def get_database_settings() -> DatabaseSettings:
+    return DatabaseSettings()
 
 
 async def create_tables():
@@ -40,15 +55,25 @@ async def create_tables():
         await conn.run_sync(BaseModel.metadata.create_all)
 
 
-@asynccontextmanager
+# @asynccontextmanager
 async def get_db_session(
-    settings: Annotated[DatabaseSettings, Depends(DatabaseSettings)]
+    settings: Annotated[DatabaseSettings, Depends(get_database_settings)]
 ) -> AsyncGenerator[AsyncSession, None]:
     # Create an async SQLAlchemy engine
 
     # logging.error("Creating database engine")
 
-    engine = create_async_engine(settings.sqlalchemy_database_uri)
+    engine = create_async_engine(
+        settings.sqlalchemy_database_uri,
+        echo=False,                    # Disable SQL query logging (for performance)
+        pool_size=20,                  # Initial pool size (default is 5)
+        max_overflow=10,               # Extra connections if pool is exhausted
+        pool_timeout=30,               # Timeout before giving up on a connection
+        pool_recycle=3600,             # Recycle connections after 1 hour (for long-lived connections)
+        pool_pre_ping=True,            # Check if the connection is alive before using it
+        future=True,                   # Use the future-facing SQLAlchemy 2.0 style
+        # connect_args={"options": "-c timezone=utc"}  # Ensures timezone is UTC
+    )
 
     # Create a sessionmaker with AsyncSession class
     async_session = async_sessionmaker(
@@ -69,4 +94,4 @@ async def get_db_session(
             await session.close()
 
 
-AsyncDbSession = Annotated[AsyncSession, Depends(get_db_session)]
+GetSession = Annotated[AsyncSession, Depends(get_db_session)]

@@ -79,9 +79,14 @@ async def get_budget_by_user_address_and_epoch(
     """
 
     user = await get_user_by_address(session, user_address)
+
+    print("user", user)
     if user is None:
         return None
 
+
+    print("epoch", epoch)
+    # epoch -= 1
     result = await session.execute(
         select(Budget.budget)
         .filter(Budget.user_id == user.id)
@@ -89,6 +94,8 @@ async def get_budget_by_user_address_and_epoch(
     )
 
     budget = result.scalar()
+
+    print("budget", budget)
 
     if budget is None:
         return None

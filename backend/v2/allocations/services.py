@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import time
 
 from app import exceptions
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -59,11 +60,20 @@ async def allocate(
     epoch_number: int,
     request: UserAllocationRequest,
 ) -> str:
+    
+    import time
+
+    allocation_time = time.time()
     # Verify the signature
     await signature_verifier.verify(
         epoch_number=epoch_number,
         request=request,
     )
+
+    print("signature verified in", time.time() - allocation_time)
+
+
+    uq_score_time = time.time()
 
     # Get or calculate UQ score of the user
     user_uq_score = await uq_score_getter.get_or_calculate(
@@ -71,6 +81,10 @@ async def allocate(
         user_address=request.user_address,
     )
 
+    print("uq score retrieved in", time.time() - uq_score_time)
+
+
+    new_allocations_time = time.time()
     # Calculate leverage by simulating the allocation
     new_allocations = [
         AllocationWithUserUQScore(
@@ -89,6 +103,16 @@ async def allocate(
         epoch_number=epoch_number,
         new_allocations=new_allocations,
     )
+
+    print("new allocations calculated in", time.time() - new_allocations_time)
+
+    print("leverage", leverage)
+    print("request.user_address", request.user_address)
+
+    # print("I'm here")
+    # return "I'm here"
+
+    soft_delete_time = time.time()
 
     await soft_delete_user_allocations_by_epoch(
         session,
@@ -114,6 +138,8 @@ async def allocate(
     # Commit the transaction
     await session.commit()
 
+    print("soft delete and store allocation request in", time.time() - soft_delete_time)
+
     return request.user_address
 
 
@@ -130,12 +156,16 @@ async def simulate_leverage(
     Calculate leverage of the allocation made by the user.
     """
 
+    start_time = time.time()
+
     all_projects = await projects.get_project_addresses(epoch_number)
 
     matched_rewards = await estimated_project_matched_rewards.get(epoch_number)
 
     # Get all allocations before user's allocation
     existing_allocations = await get_allocations_with_user_uqs(session, epoch_number)
+
+    print("existing allocations retrieved in", time.time() - start_time)
 
     return cqf_simulate_leverage(
         existing_allocations=existing_allocations,

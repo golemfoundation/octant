@@ -5,7 +5,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings
 from v2.epochs.dependencies import get_epochs_subgraph
 from v2.epochs.subgraphs import EpochsSubgraph
-from v2.core.dependencies import AsyncDbSession, Web3
+from v2.core.dependencies import GetSession, OctantSettings, Web3
 
 
 from .contracts import PROJECTS_ABI, ProjectsContracts
@@ -16,31 +16,44 @@ from .services import (
 )
 
 
-class ProjectsSettings(BaseSettings):
+class ProjectsSettings(OctantSettings):
     projects_contract_address: str = Field(
         validation_alias="proposals_contract_address"
     )
 
 
+def get_projects_settings() -> ProjectsSettings:
+    return ProjectsSettings()
+
+
 def get_projects_contracts(
-    w3: Web3, settings: Annotated[ProjectsSettings, Depends(ProjectsSettings)]
+    w3: Web3, settings: Annotated[ProjectsSettings, Depends(get_projects_settings)]
 ) -> ProjectsContracts:
     return ProjectsContracts(w3, PROJECTS_ABI, settings.projects_contract_address)
 
 
-class ProjectsAllocationThresholdSettings(BaseSettings):
+GetProjectsContracts = Annotated[
+    ProjectsContracts,
+    Depends(get_projects_contracts),
+]
+
+
+class ProjectsAllocationThresholdSettings(OctantSettings):
     project_count_multiplier: int = Field(
         default=1,
         description="The multiplier to the number of projects to calculate the allocation threshold.",
     )
 
 
+def get_projects_allocation_threshold_settings() -> ProjectsAllocationThresholdSettings:
+    return ProjectsAllocationThresholdSettings()
+
 def get_projects_allocation_threshold_getter(
-    session: AsyncDbSession,
+    session: GetSession,
     projects: Annotated[ProjectsContracts, Depends(get_projects_contracts)],
     settings: Annotated[
         ProjectsAllocationThresholdSettings,
-        Depends(ProjectsAllocationThresholdSettings),
+        Depends(get_projects_allocation_threshold_settings),
     ],
 ) -> ProjectsAllocationThresholdGetter:
     return ProjectsAllocationThresholdGetter(
@@ -48,7 +61,7 @@ def get_projects_allocation_threshold_getter(
     )
 
 
-class EstimatedProjectMatchedRewardsSettings(BaseSettings):
+class EstimatedProjectMatchedRewardsSettings(OctantSettings):
     TR_PERCENT: Decimal = Field(
         default=Decimal("0.7"), description="The percentage of the TR rewards."
     )
@@ -60,12 +73,16 @@ class EstimatedProjectMatchedRewardsSettings(BaseSettings):
     )
 
 
+def get_estimated_project_matched_rewards_settings() -> EstimatedProjectMatchedRewardsSettings:
+    return EstimatedProjectMatchedRewardsSettings()
+
+
 def get_estimated_project_matched_rewards(
-    session: AsyncDbSession,
+    session: GetSession,
     epochs_subgraph: Annotated[EpochsSubgraph, Depends(get_epochs_subgraph)],
     settings: Annotated[
         EstimatedProjectMatchedRewardsSettings,
-        Depends(EstimatedProjectMatchedRewardsSettings),
+        Depends(get_estimated_project_matched_rewards_settings),
     ],
 ) -> EstimatedProjectMatchedRewards:
     return EstimatedProjectMatchedRewards(
@@ -78,7 +95,7 @@ def get_estimated_project_matched_rewards(
 
 
 def get_estimated_project_rewards(
-    session: AsyncDbSession,
+    session: GetSession,
     projects: Annotated[ProjectsContracts, Depends(get_projects_contracts)],
     estimated_project_matched_rewards: Annotated[
         EstimatedProjectMatchedRewards, Depends(get_estimated_project_matched_rewards)
@@ -89,3 +106,9 @@ def get_estimated_project_rewards(
         projects=projects,
         estimated_matched_rewards=estimated_project_matched_rewards,
     )
+
+
+GetEstimatedProjectMatchedRewards = Annotated[
+    EstimatedProjectMatchedRewards,
+    Depends(get_estimated_project_matched_rewards),
+]
