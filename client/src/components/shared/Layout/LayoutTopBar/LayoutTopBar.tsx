@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useAnimate , motion } from 'framer-motion';
+import { useAnimate, motion } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';

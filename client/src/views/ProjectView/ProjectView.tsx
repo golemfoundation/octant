@@ -7,7 +7,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import ProjectBackToTopButton from 'components/Project/ProjectBackToTopButton';
 import ProjectList from 'components/Project/ProjectList';
-import Layout from 'components/shared/Layout';
 import Loader from 'components/ui/Loader';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -123,7 +122,7 @@ const ProjectView = (): ReactElement => {
   }, [loadedProjects.length, projectsIpfsWithRewards.length]);
 
   if (!initialElement || !areMatchedProjectsReady || projectsIpfsWithRewards.length === 0) {
-    return <Layout isLoading />;
+    return <Loader className={styles.initialLoader} dataTest="ProjectView__Loader--initial" />;
   }
 
   if (
