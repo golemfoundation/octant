@@ -99,7 +99,8 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
         </Button>
         <Button
           className={styles.button}
-          isDisabled={!isChecked || isFetching}
+          isDisabled={!isChecked}
+          isLoading={isFetching}
           onClick={onAllocate}
           variant="cta"
         >
