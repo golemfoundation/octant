@@ -466,6 +466,7 @@
       "share": "Share"
     },
     "projects": {
+      "viewTitle": "Browse Epoch {{epochNumber}} projects",
       "projectsTimelineWidget": {
         "applicationsOpen": "Applications open",
         "projectUpdatesClose": "Project updates close",

@@ -68,6 +68,7 @@ export const QUERY_KEYS: QueryKeys = {
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'],
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'],
   rewardsRate: epochNumber => [ROOTS.rewardsRate, epochNumber.toString()],
+  searchResults: ['searchResults'],
   syncStatus: ['syncStatus'],
   totalAddresses: ['totalAddresses'],
   totalWithdrawals: ['totalWithdrawals'],

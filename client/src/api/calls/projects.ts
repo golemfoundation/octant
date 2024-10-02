@@ -30,3 +30,20 @@ export type Projects = {
 export async function apiGetProjects(epoch: number): Promise<Projects> {
   return apiService.get(`${env.serverEndpoint}projects/epoch/${epoch}`).then(({ data }) => data);
 }
+
+export type ProjectsDetails = {
+  projectsDetails: {
+    address: string;
+    epoch: string;
+    name: string;
+  }[];
+};
+
+export async function apiGetProjectsDetails(
+  epochs: string,
+  searchPhrases: string,
+): Promise<ProjectsDetails> {
+  return apiService
+    .get(`${env.serverEndpoint}projects/details?epochs=${epochs}&searchPhrases=${searchPhrases}`)
+    .then(({ data }) => data);
+}

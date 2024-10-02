@@ -69,6 +69,7 @@ export type QueryKeys = {
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
   rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
+  searchResults: ['searchResults'];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];

@@ -1,9 +1,11 @@
-import React, { FC, ReactNode } from 'react';
+import cx from 'classnames';
+import React, { FC } from 'react';
 
+import ViewTitleProps from './types';
 import styles from './ViewTitle.module.scss';
 
-const ViewTitle: FC<{ children: ReactNode }> = ({ children }) => {
-  return <div className={styles.root}>{children}</div>;
+const ViewTitle: FC<ViewTitleProps> = ({ children, className }) => {
+  return <div className={cx(styles.root, className)}>{children}</div>;
 };
 
 export default ViewTitle;

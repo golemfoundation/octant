@@ -7,6 +7,7 @@ import {
   groupingNumbersUpTo3,
   numbersOnly,
   percentageOnly,
+  ethAddress,
 } from './regExp';
 
 const regExpTestCases = [
@@ -215,6 +216,22 @@ const regExpTestCases = [
       { expectedValue: true, test: '1000000' },
       { expectedValue: true, test: '1000000.0' },
       { expectedValue: true, test: '1000000,0' },
+    ],
+  },
+  {
+    name: 'ethAddress',
+    regExp: ethAddress,
+    testCases: [
+      { expectedValue: true, test: '0xb794f5ea0ba39494ce839613fffba74279579268' },
+      { expectedValue: false, test: '0' },
+      { expectedValue: false, test: '0,0' },
+      { expectedValue: false, test: 'abc' },
+      { expectedValue: false, test: 'Abc' },
+      { expectedValue: false, test: ' ' },
+      { expectedValue: false, test: '' },
+      { expectedValue: false, test: '.' },
+      { expectedValue: false, test: '-1' },
+      { expectedValue: false, test: '0aw0d98a0D(*W)C)(AK' },
     ],
   },
 ];
