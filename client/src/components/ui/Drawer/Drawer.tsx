@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
+import { DRAWER_TRANSITION_TIME } from 'constants/animations';
 import { cross } from 'svg/misc';
 
 import styles from './Drawer.module.scss';
@@ -20,7 +21,7 @@ const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose }) =>
           className={styles.root}
           exit={{ x: '100%' }}
           initial={{ x: '100%' }}
-          transition={{ ease: 'easeInOut' }}
+          transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
         >
           <Button
             className={styles.buttonClose}
