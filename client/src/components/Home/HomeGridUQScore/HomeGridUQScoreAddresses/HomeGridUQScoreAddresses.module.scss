@@ -72,8 +72,7 @@
   }
 
   .score {
-    font-family: 'Inter Tight', sans-serif;
-    font-size: $font-size-32;
+    @include fontBig();
     font-weight: $font-weight-bold;
     color: $color-octant-dark;
     margin-left: auto;

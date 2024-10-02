@@ -29,8 +29,7 @@
 
   &.variant-- {
     &extra-large {
-      font-family: 'Inter Tight', sans-serif;
-      font-size: $font-size-32;
+      @include fontBig();
     }
 
     &large {

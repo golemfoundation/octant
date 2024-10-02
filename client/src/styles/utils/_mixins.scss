@@ -77,3 +77,8 @@
    */
   font-variant-ligatures: no-contextual;
 }
+
+@mixin fontBig($font-size: $font-size-32) {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: $font-size;
+}
