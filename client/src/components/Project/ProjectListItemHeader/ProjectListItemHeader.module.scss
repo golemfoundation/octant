@@ -28,8 +28,7 @@
     height: 3.2rem;
 
     @media #{$tablet-up} {
-      font-family: 'Inter Tight', sans-serif;
-      font-size: $font-size-32;
+      @include fontBig();
       margin: 0.6rem 0 0.8rem;
       height: 4.8rem;
     }

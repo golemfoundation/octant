@@ -9,7 +9,7 @@
 
   @media #{$tablet-up} {
     height: 14.4rem;
-    font-size: $font-size-32;
+    @include fontBig();
   }
 
   @media #{$desktop-up} {

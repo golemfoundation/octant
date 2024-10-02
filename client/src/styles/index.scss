@@ -1,6 +1,8 @@
 @import './fonts.css';
 
-:root, input, button {
+:root,
+input,
+button {
   // Direct input to prevent useragent override.
   font-family: 'Inter', sans-serif;
   font-weight: 400;
