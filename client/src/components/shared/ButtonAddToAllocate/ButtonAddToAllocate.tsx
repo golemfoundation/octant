@@ -48,9 +48,14 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   }, [isAddedToAllocate, isTooltipClicked, isArchivedProject, isAllocatedTo]);
 
   const ctaButtonText = useMemo(() => {
-    if (isAllocatedTo) {return i18n.t('common.donated');}
-    if (isAddedToAllocate && !isArchivedProject) {return t('savedProject');}
+    if (isAllocatedTo) {
+      return i18n.t('common.donated');
+    }
+    if (isAddedToAllocate && !isArchivedProject) {
+      return t('savedProject');
+    }
     return t('saveProject');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAddedToAllocate, isAllocatedTo, isArchivedProject]);
 
   const handleTooltipVisibilityChange = (isVisible: boolean) => {

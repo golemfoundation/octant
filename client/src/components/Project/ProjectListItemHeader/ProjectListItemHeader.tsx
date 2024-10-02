@@ -9,7 +9,6 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
-import useIsAddToAllocateButtonVisible from 'hooks/helpers/useIsAddToAllocateButtonVisible';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -65,11 +64,6 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
     return false;
   }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
 
-  const isAddToAllocateButtonVisible = useIsAddToAllocateButtonVisible({
-    isAllocatedTo,
-    isArchivedProject,
-  });
-
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
     const url = `${origin}${ROOT_ROUTES.project.absolute}/${epochUrl}/${address}`;
@@ -110,7 +104,8 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
           <a
             className={cx(styles.element, styles.actionButton, styles.websiteLink)}
             href={website?.url}
-            rel="noreferrer" target="_blank"
+            rel="noreferrer"
+            target="_blank"
           >
             {website!.label || website!.url}
             <Svg classNameSvg={styles.arrowTopRightIcon} img={arrowTopRight} size={1} />
@@ -122,7 +117,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
             text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
             variant="small"
           >
-            <button className={styles.actionButton}>
+            <button className={styles.actionButton} type="button">
               <span>{t('share')}</span>
               <Svg
                 classNameSvg={cx(styles.shareIcon, isLinkCopied && styles.isCopied)}
@@ -132,7 +127,6 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
             </button>
           </Tooltip>
         </div>
-
         <ButtonAddToAllocate
           className={styles.buttonAddToAllocate}
           dataTest="ProjectListItemHeader__ButtonAddToAllocate"
