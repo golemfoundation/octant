@@ -5,4 +5,5 @@ export default interface ButtonAddToAllocateProps {
   isAllocatedTo: boolean;
   isArchivedProject?: boolean;
   onClick: () => void;
+  variant?: 'cta' | 'iconOnly';
 }

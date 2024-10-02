@@ -22,7 +22,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   const initalLoadingRef = useRef(true);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const [epoch, setEpoch] = useState<number>(3);
+  const [epoch, setEpoch] = useState<number>(currentEpoch! - 1);
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
@@ -33,7 +33,9 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
 
   const projects = projectsIpfsWithRewards.reduce(
     (acc, curr) => {
-      if (!curr.totalValueOfAllocations) {return acc;}
+      if (!curr.totalValueOfAllocations) {
+        return acc;
+      }
       acc.unshift({
         ...curr,
         epoch,

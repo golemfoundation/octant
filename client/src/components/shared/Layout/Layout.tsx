@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import LayoutFooter from 'components/shared/Layout/LayoutFooter';
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
@@ -11,6 +12,7 @@ import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useLayoutStore from 'store/layout/store';
 import SyncView from 'views/SyncView';
 
@@ -34,6 +36,9 @@ const Layout: FC<LayoutProps> = ({
   const topBarWrapperRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef(window.scrollY);
   const lastScrollYUpRef = useRef(0);
+  const { pathname } = useLocation();
+
+  const isProjectView = pathname.includes(`${ROOT_ROUTES.project.absolute}/`);
 
   const {
     setIsWalletModalOpen,
@@ -99,7 +104,11 @@ const Layout: FC<LayoutProps> = ({
 
   return (
     <Fragment>
-      <div ref={ref} className={styles.root} data-test={dataTest}>
+      <div
+        ref={ref}
+        className={cx(styles.root, isProjectView && styles.isProjectView)}
+        data-test={dataTest}
+      >
         <div
           ref={topBarWrapperRef}
           className={cx(
