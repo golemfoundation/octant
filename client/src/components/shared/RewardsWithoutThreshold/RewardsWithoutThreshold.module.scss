@@ -18,8 +18,63 @@
     display: flex;
     justify-content: space-between;
 
+    &.showVerticalDividers {
+      .section {
+        &:nth-child(2) {
+          &::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            content: '';
+            height: 100%;
+            width: 0.1rem;
+            background-color: $color-octant-grey8;
+          }
+
+          &::after {
+            position: absolute;
+            right: 0;
+            top: 0;
+            content: '';
+            height: 100%;
+            width: 0.1rem;
+            background-color: $color-octant-grey8;
+          }
+        }
+
+        &:nth-child(3) {
+          &::after {
+            position: absolute;
+            right: 0;
+            top: 0;
+            content: '';
+            height: 100%;
+            width: 0.1rem;
+            background-color: $color-octant-grey8;
+          }
+        }
+      }
+    }
+
     .section {
+      position: relative;
+      display: flex;
+      flex-direction: column;
       font-weight: $font-weight-bold;
+      flex: 1;
+      align-items: center;
+
+      &:first-child {
+        align-items: start;
+      }
+
+      &:last-child {
+        align-items: end;
+      }
+
+      .container {
+        text-align: left;
+      }
 
       .label {
         font-size: $font-size-12;

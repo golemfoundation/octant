@@ -93,6 +93,7 @@ const config: HardhatUserConfig = {
       accounts: [TESTNET_DEPLOYER_PRIVATE_KEY, TESTNET_MULTISIG_PRIVATE_KEY],
       chainId: 11155111,
       url: TESTNET_RPC_URL,
+      gasMultiplier: 2,
     },
   },
   solidity: {

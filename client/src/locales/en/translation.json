@@ -182,7 +182,7 @@
           }
         },
         "transactionsList": {
-          "emptyHistory": "You haven’t made any transactions yet"
+          "empty": "No transaction history yet. <br/>Lock some GLM to get started"
         },
         "transactionsListItem": {
           "allocatedRewards": "Allocated rewards",
@@ -230,7 +230,9 @@
         "saveToAllocate": "Save to allocate",
         "saved": "Saved",
         "removeFromAllocate": "Remove from allocate",
-        "removed": "Removed"
+        "removed": "Removed",
+        "saveProject": "Save project",
+        "savedProject": "Saved project"
       },
       "allocationNavigation": {
         "confirm": "Confirm",
@@ -454,7 +456,8 @@
     },
     "project": {
       "loadingProblem": "Loading of this project encountered a problem.",
-      "backToTop": "Back to Top"
+      "backToTop": "Back to Top",
+      "share": "Share"
     },
     "projects": {
       "projectsTimelineWidget": {

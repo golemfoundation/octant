@@ -1,10 +1,12 @@
-.emptyHistoryInfo {
-  height: 7.2rem;
-  padding: 0 $historyHorizontalPadding;
-  display: flex;
-  align-items: center;
+.image {
+  width: 16rem;
+  margin: 1.6rem 0 3rem;
+}
+
+.info {
   color: $color-octant-grey5;
   font-size: $font-size-14;
-  font-weight: $font-weight-semibold;
-  width: 100%;
+  font-weight: $font-weight-bold;
+  text-align: center;
+  line-height: 2rem;
 }

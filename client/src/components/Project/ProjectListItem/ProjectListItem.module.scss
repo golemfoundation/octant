@@ -1,32 +1,57 @@
 .root {
   display: flex;
   flex-direction: column;
-  padding-bottom: 4rem;
   background: $color-white;
-  padding-left: 5.6rem;
-  padding-right: 5.6rem;
+  padding: 4.8rem 5.6rem 4rem;
 
-  &:first-child {
-    padding-top: 10.4rem;
+  @media #{$tablet-up} {
+    padding: 9.6rem 13.2rem 4rem;
   }
 
   @media #{$desktop-up} {
-    &:first-child {
-      padding-top: 0;
-      border-radius: $border-radius-16 $border-radius-16 0 0;
+    padding: 9.6rem 17.8rem 4rem;
+  }
+
+  @media #{$large-desktop-up} {
+    padding: 9.6rem 24.6rem 4rem;
+  }
+
+  .projectRewards {
+    margin: 4.6rem 0 4.2rem;
+    border-bottom: 0.2rem solid $color-octant-grey3;
+    padding-bottom: 1.2rem;
+
+    @media #{$tablet-up} {
+      margin: 6.4rem 0 5.6rem;
     }
 
-    padding-left: 11rem;
-    padding-right: 11rem;
+    @media #{$desktop-up} {
+      margin: 8.8rem 0;
+    }
+
+    @media #{$large-desktop-up} {
+      margin: 8rem 0 8.8rem;
+    }
   }
-}
 
-.projectRewards {
-  margin: 6.4rem 0 5rem;
-  border-bottom: 0.2rem solid $color-octant-grey3;
-  padding-bottom: 1.2rem;
+  .description {
+    font-weight: $font-weight-medium;
+    font-size: $font-size-12;
+    line-height: 2rem;
 
-  @media #{$tablet-down} {
-    margin: 3.4rem 0 5rem;
+    @media #{$tablet-up} {
+      font-size: $font-size-16;
+      line-height: 2.6rem;
+    }
+
+    @media #{$desktop-up} {
+      font-size: $font-size-20;
+      line-height: 3.4rem;
+    }
+
+    @media #{$large-desktop-up} {
+      font-size: $font-size-22;
+      line-height: 4rem;
+    }
   }
 }

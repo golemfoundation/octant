@@ -11,6 +11,14 @@
     padding: 0 $layout-horizontal-padding-large;
   }
 
+  &.isProjectView {
+    padding: 0;
+
+    @media #{$desktop-up} {
+      padding: 0 $layout-horizontal-padding-large;
+    }
+  }
+
   .section {
     width: 100%;
 

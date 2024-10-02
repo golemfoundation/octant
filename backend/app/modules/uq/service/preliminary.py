@@ -59,4 +59,4 @@ class PreliminaryUQ(Model):
         antisybil_status = self.antisybil.get_antisybil_status(context, address)
         if antisybil_status is None:
             return 0.0
-        return antisybil_status[0]
+        return antisybil_status.score

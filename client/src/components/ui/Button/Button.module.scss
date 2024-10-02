@@ -49,7 +49,8 @@ $paddingVertical: 1rem;
 }
 
 .variant-- {
-  &cta, &cta2 {
+  &cta,
+  &cta2 {
     color: $color-white;
     border: 0.1rem solid $color-octant-dark;
     background: $color-octant-dark;
@@ -184,7 +185,8 @@ $paddingVertical: 1rem;
     min-height: initial;
   }
 
-  &link, &link6 {
+  &link,
+  &link6 {
     font-size: $font-size-12;
     border-radius: 0;
     min-height: initial;
@@ -202,10 +204,10 @@ $paddingVertical: 1rem;
   }
 
   &link6:hover .icon {
-      position: relative;
-      bottom: 0.1rem;
-      left: 0.1rem;
-    }
+    position: relative;
+    bottom: 0.1rem;
+    left: 0.1rem;
+  }
 
   &link3 {
     position: relative;
@@ -255,7 +257,7 @@ $paddingVertical: 1rem;
 
   &:not(.isIconVariant) {
     &.isOnLeft {
-      margin: 0 1.2rem 0 0;
+      margin: 0 1rem 0 0;
     }
 
     &.isOnRight {

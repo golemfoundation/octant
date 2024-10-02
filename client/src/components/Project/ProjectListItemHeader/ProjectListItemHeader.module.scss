@@ -3,73 +3,128 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding-top: 4.8rem;
-
-  .imageProfileWrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    align-self: stretch;
-    margin-bottom: 1.6rem;
-  }
-
-  .buttonAddToAllocate {
-    margin-left: 3.2rem;
-
-    @media #{$desktop-up} {
-      margin-left: 2.6rem;
-    }
-  }
 
   .imageProfile {
-    width: 6.4rem;
-    height: 6.4rem;
+    width: 4.8rem;
+    height: 4.8rem;
     border-radius: 50%;
 
-    @media #{$tablet-down} {
-      width: 4.8rem;
-      height: 4.8rem;
+    @media #{$desktop-up} {
+      width: 6.4rem;
+      height: 6.4rem;
+    }
+    @media #{$large-desktop-up} {
+      width: 8rem;
+      height: 8rem;
     }
   }
 
   .name {
-    font-size: $font-size-24;
+    display: flex;
+    align-items: center;
     font-weight: $font-weight-bold;
+    font-size: $font-size-24;
+    margin: 1.6rem 0 0.8rem;
+    height: 3.2rem;
 
-    @media #{$tablet-down} {
-      font-size: $font-size-20;
+    @media #{$tablet-up} {
+      font-family: 'Inter Tight', sans-serif;
+      font-size: $font-size-32;
+      margin: 0.6rem 0 0.8rem;
+      height: 4.8rem;
+    }
+
+    @media #{$desktop-up} {
+      font-size: $font-size-40;
+      margin: 1.2rem 0;
+    }
+
+    @media #{$large-desktop-up} {
+      font-size: $font-size-48;
+      margin: 2.4rem 0;
     }
   }
 
-  .actionsWrapper {
-    display: flex;
+  .wrapper {
+    display: block;
+    width: 100%;
+    align-items: center;
 
-    .shareIcon {
-      border-radius: $border-radius-10;
+    @media #{$tablet-up} {
+      display: flex;
+    }
 
-      @media #{$desktop-up} {
+    .actionButtonsWrapper {
+      display: flex;
+
+      .element,
+      .actionButton {
+        flex: 1;
+      }
+
+      .actionButton {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        height: 4rem;
+        outline: none;
+        padding: 0 1.4rem;
+        font-size: $font-size-12;
+        font-weight: $font-weight-bold;
+        background-color: $color-octant-grey8;
+        color: $color-octant-grey5;
+        border: none;
+        border-radius: $border-radius-16;
+        justify-content: center;
+
+        svg path {
+          stroke: $color-octant-grey5;
+          stroke-width: 1.5;
+        }
+
         &:hover {
-          cursor: pointer;
-          background: $color-octant-grey8;
+          color: $color-octant-dark;
 
-          path {
+          svg path {
             stroke: $color-octant-dark;
           }
         }
 
-        &.isCopied {
-          background: $color-octant-grey1;
+        &:active {
+          background-color: $color-octant-grey1;
+          color: $color-octant-dark;
 
-          path {
+          svg path {
             stroke: $color-octant-dark;
+          }
+        }
+
+        &.websiteLink {
+          margin-right: 1.6rem;
+
+          .arrowTopRightIcon {
+            margin-left: 0.8rem;
+            margin-right: 0.2rem;
           }
         }
       }
-    }
-  }
 
-  .buttonWebsite {
-    text-align: left;
-    justify-content: flex-start;
+      @media #{$tablet-up} {
+        .element,
+        .actionButton {
+          flex: 0;
+        }
+      }
+    }
+
+    .buttonAddToAllocate {
+      margin-top: 1.4rem;
+
+      @media #{$tablet-up} {
+        margin-top: 0;
+        margin-left: auto;
+      }
+    }
   }
 }
