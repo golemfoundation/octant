@@ -18,7 +18,7 @@ const HomeGridRewardsEstimatorUqSelector: FC<HomeGridRewardsEstimatorUqSelectorP
 
   return (
     <div className={styles.root} data-test={dataTest}>
-      <div className={styles.label}>{t('uq20+')}</div>
+      <div className={styles.label}>{t('minimalUqValueGivingMultiplier1')}</div>
       <InputToggle
         isChecked={isUqScoreOver20}
         onChange={({ target: { checked: isChecked } }) => onChange(isChecked)}

@@ -11,7 +11,7 @@ import ModalCalculatingYourUniqueness from 'components/Home/HomeGridUQScore/Moda
 import ModalRecalculatingScore from 'components/Home/HomeGridUQScore/ModalRecalculatingScore';
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
-import { DELEGATION_MIN_SCORE } from 'constants/delegation';
+import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
 import { GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD } from 'constants/urls';
 import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
@@ -191,8 +191,8 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
         setDelegationSecondaryAddress('0x???');
       }
       setPrimaryAddressScore(
-        antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n
-          ? DELEGATION_MIN_SCORE
+        antisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 && uqScore === 100n
+          ? UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1
           : antisybilStatusScore,
       );
     }
