@@ -8,6 +8,9 @@ from app.modules.projects.metadata.controller import (
     get_projects_metadata,
 )
 from app.modules.projects.details import controller as projects_details_controller
+from app.infrastructure.routes.validations.project_details_input import (
+    validate_project_details_input,
+)
 
 ns = Namespace("projects", description="Octant projects")
 api.add_namespace(ns)
@@ -24,26 +27,20 @@ projects_metadata_model = api.model(
     },
 )
 
+project_model = api.model(
+    "Project",
+    {
+        "name": fields.String(required=True, description="Project name"),
+        "address": fields.String(required=True, description="Project address"),
+        "epoch": fields.String(required=True, description="Project epoch"),
+    },
+)
+
 projects_details_model = api.model(
     "ProjectsDetails",
     {
-        "projects_details": fields.List(
-            fields.Nested(
-                api.model(
-                    "ProjectsDetails",
-                    {
-                        "name": fields.String(
-                            required=True, description="Project name"
-                        ),
-                        "address": fields.String(
-                            required=True, description="Project address"
-                        ),
-                        "epoch": fields.String(
-                            required=True, description="Project epoch"
-                        ),
-                    },
-                )
-            ),
+        "projectsDetails": fields.List(
+            fields.Nested(project_model),
             required=False,
             description="Projects details",
         ),
@@ -85,7 +82,7 @@ class ProjectsDetails(OctantResource):
     @ns.response(200, "Projects metadata is successfully retrieved")
     def get(self):
         search_phrases = request.args.get("searchPhrases", "").split(",")
-        epochs = list(map(int, request.args.get("epochs", "").split(",")))
+        epochs = validate_project_details_input(request.args.get("epochs", ""))
 
         app.logger.debug(
             f"Getting projects details for epochs {epochs} and search phrase {search_phrases}"
@@ -98,7 +95,7 @@ class ProjectsDetails(OctantResource):
         app.logger.debug(f"Projects details for epochs {epochs}: {projects_details}")
 
         return {
-            "projects_details": [
+            "projectsDetails": [
                 {
                     "name": project["name"],
                     "address": project["address"],
