@@ -440,7 +440,7 @@
         },
         "donateToProjects": {
           "header": "Donate to projects",
-          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate view where you can donate."
+          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate drawer where you can donate."
         },
         "slideIt": {
           "header": "Just slide it",
