@@ -94,6 +94,7 @@
         "totalRewards": "Total rewards",
         "currentMatchFunding": "Current match funding",
         "rewardsRate": "Rewards rate",
+        "rewardsRateTooltip": "Rewards rate is the percentage of your locked GLM you earn as rewards per epoch",
         "epochTotalMatchFunding": "Epoch total match funding",
         "epochMF": "Epoch MF"
       },
