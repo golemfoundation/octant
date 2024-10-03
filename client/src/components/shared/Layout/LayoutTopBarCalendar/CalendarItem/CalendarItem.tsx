@@ -10,7 +10,15 @@ import { arrowTopRight } from 'svg/misc';
 import styles from './CalendarItem.module.scss';
 import CalendarItemProps from './types';
 
-const CalendarItem: FC<CalendarItemProps> = ({ id, label, from, to, isActive, href }) => {
+const CalendarItem: FC<CalendarItemProps> = ({
+  id,
+  label,
+  from,
+  to,
+  isActive,
+  href,
+  shouldUseThirdPersonSingularVerb,
+}) => {
   const { i18n } = useTranslation();
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: 'all' });
@@ -63,7 +71,7 @@ const CalendarItem: FC<CalendarItemProps> = ({ id, label, from, to, isActive, hr
         </div>
         <div className={styles.date}>
           {to
-            ? `${i18n.t('common.close')} ${format(to, 'dd MMMM haaa')} CET`
+            ? `${i18n.t(shouldUseThirdPersonSingularVerb ? 'common.closes' : 'common.close')} ${format(to, 'dd MMMM haaa')} CET`
             : `${format(from, 'haaa')} CET`}
         </div>
       </div>
