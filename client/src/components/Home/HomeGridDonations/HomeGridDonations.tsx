@@ -10,6 +10,7 @@ import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpoc
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import useLayoutStore from 'store/layout/store';
 
@@ -60,7 +61,6 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
       }
       titleSuffix={
         isDecisionWindowOpen ? (
-          // TODO: open allocation drawer in edit mode -> https://linear.app/golemfoundation/issue/OCT-1907/allocate-drawer
           <Button
             className={styles.editButton}
             onClick={() => {
@@ -80,6 +80,13 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
             <Img className={styles.noDonationsYetImage} src="/images/headphones_girl.webp" />
             <div className={styles.noDonationsYetLabel}>
               <Trans
+                components={[
+                  <Button
+                    className={styles.projectsLink}
+                    to={ROOT_ROUTES.projects.absolute}
+                    variant="link3"
+                  />,
+                ]}
                 i18nKey={`components.home.homeGridDonations.${isDecisionWindowOpen ? 'noDonationsYetAWOpen' : 'noDonationsYet'}`}
               />
             </div>
