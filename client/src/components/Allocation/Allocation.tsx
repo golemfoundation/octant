@@ -14,6 +14,7 @@ import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import ModalAllocationLowUqScore from 'components/Allocation/ModalAllocationLowUqScore';
+import { DRAWER_TRANSITION_TIME } from 'constants/animations';
 import { LAYOUT_NAVBAR_ID } from 'constants/domElementsIds';
 import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT } from 'constants/uq';
 import useAllocate from 'hooks/events/useAllocate';
@@ -73,6 +74,7 @@ const Allocation = (): ReactElement => {
     useUpcomingBudget();
   const { data: isContract } = useIsContract();
   const { address: walletAddress } = useAccount();
+  const [showAllocationNav, setShowAllocationNav] = useState(false);
 
   const navRef = useRef(document.getElementById(LAYOUT_NAVBAR_ID));
   const boxesWrapperRef = useRef(null);
@@ -529,6 +531,20 @@ const Allocation = (): ReactElement => {
   ]);
 
   useEffect(() => {
+    if (isDesktop) {
+      setTimeout(() => {
+        setShowAllocationNav(true);
+      }, DRAWER_TRANSITION_TIME * 1000);
+    } else {
+      setShowAllocationNav(true);
+    }
+
+    return () => {
+      setShowAllocationNav(false);
+    };
+  }, [isDesktop]);
+
+  useEffect(() => {
     navRef.current = document.getElementById(LAYOUT_NAVBAR_ID);
   }, []);
 
@@ -610,7 +626,8 @@ const Allocation = (): ReactElement => {
           onAllocate={() => onAllocate(true)}
         />
 
-        {(isDesktop ? boxesWrapperRef.current : navRef.current) &&
+        {showAllocationNav &&
+          (isDesktop ? boxesWrapperRef.current : navRef.current) &&
           createPortal(
             <AllocationNavigation
               areButtonsDisabled={areButtonsDisabled}
