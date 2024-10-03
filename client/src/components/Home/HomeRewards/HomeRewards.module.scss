@@ -27,9 +27,14 @@
     }
 
     .label {
+      display: flex;
       font-size: $font-size-10;
       color: $color-octant-grey5;
       margin-bottom: 0.2rem;
+
+      .tooltip {
+        margin-left: 1rem;
+      }
     }
 
     .value {

@@ -3,6 +3,8 @@ import React, { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
+import Svg from 'components/ui/Svg';
+import Tooltip from 'components/ui/Tooltip';
 import useEpochPatronsAllEpochs from 'hooks/helpers/useEpochPatronsAllEpochs';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualRewardAllEpochs from 'hooks/helpers/useIndividualRewardAllEpochs';
@@ -15,6 +17,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useRewardsRate from 'hooks/queries/useRewardsRate';
+import { questionMark } from 'svg/misc';
 
 import styles from './HomeRewards.module.scss';
 
@@ -164,7 +167,18 @@ const HomeRewards = (): ReactElement => {
     <div className={styles.root}>
       {tiles.map(({ label, value, key, isLoadingValue }) => (
         <div key={key} className={styles.tile}>
-          <div className={styles.label}>{label}</div>
+          <div className={styles.label}>
+            {label}
+            {!isProjectAdminMode && !isPatronMode && (
+              <Tooltip
+                className={styles.tooltip}
+                position="bottom-right"
+                text={t('rewardsRateTooltip')}
+              >
+                <Svg displayMode="wrapperDefault" img={questionMark} size={1.6} />
+              </Tooltip>
+            )}
+          </div>
           <div className={cx(styles.value, isLoadingValue && styles.isLoadingValue)}>
             {isLoadingValue ? null : value}
           </div>
