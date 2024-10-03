@@ -204,7 +204,7 @@
       "homeGridDonations": {
         "donationHistory": "Donation history",
         "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
-        "noDonationsYetAWOpen": "No donations yet in this<br/>allocation window."
+        "noDonationsYetAWOpen": "Check out the <0>Projects view</0><br/>to find projects to fund"
       },
       "homeGridEpochResults": {
         "epochResults": "Epoch {{epoch}} results",
