@@ -135,7 +135,9 @@ const Layout: FC<LayoutProps> = ({
         {!isDesktop && isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} />
         )}
-        <LayoutFooter className={styles.section} />
+        <div className={styles.footerWrapper}>
+          <LayoutFooter className={styles.section} />
+        </div>
       </div>
       <ModalLayoutWallet
         modalProps={{

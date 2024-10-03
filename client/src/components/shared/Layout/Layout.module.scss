@@ -5,9 +5,9 @@
   min-height: 100%;
   padding: 0 $layout-horizontal-padding-small;
   align-items: center;
-  margin-top: 8rem;
+  margin: 8rem auto 0;
 
-  @media #{$desktop-up} {
+  @media #{$large-desktop-up} {
     padding: 0 $layout-horizontal-padding-large;
   }
 
@@ -35,6 +35,7 @@
     padding: 0 $layout-horizontal-padding-small;
     z-index: $z-index-5;
     backdrop-filter: blur(2.5rem);
+    border-bottom: 0.1rem solid $color-octant-grey1;
 
     &.isPatronMode {
       background: $color-octant-purple3-20;
@@ -48,7 +49,7 @@
       position: fixed;
     }
 
-    @media #{$desktop-up} {
+    @media #{$large-desktop-up} {
       padding: 0 $layout-horizontal-padding-large;
     }
 
@@ -58,24 +59,43 @@
       }
     }
   }
-}
 
-.body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  flex: 1;
+  .body {
+    @include layoutMaxWidth();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
 
-  &.isNavigationBottomSuffix {
-    padding-bottom: 20rem;
+    &.isNavigationBottomSuffix {
+      padding-bottom: 20rem;
 
-    @media #{$desktop-up} {
-      padding-bottom: 24.8rem;
+      @media #{$desktop-up} {
+        padding-bottom: 24.8rem;
+      }
+    }
+
+    &.isLoading {
+      justify-content: center;
     }
   }
 
-  &.isLoading {
+  .footerWrapper {
+    width: calc(100% + 2 * $layout-horizontal-padding-small);
+    border-top: 0.1rem solid $color-octant-grey1;
+    margin-top: 8rem;
+    padding: 0 $layout-horizontal-padding-small;
+    display: flex;
     justify-content: center;
+
+    @media #{$desktop-up} {
+      margin-top: 4rem;
+    }
+
+    @media #{$large-desktop-up} {
+      width: calc(100% + 2 * $layout-horizontal-padding-large);
+      padding: 0 $layout-horizontal-padding-large;
+    }
   }
 }
