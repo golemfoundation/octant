@@ -4,5 +4,6 @@ export default interface CalendarItemProps {
   id: string;
   isActive: boolean;
   label: string;
+  shouldUseThirdPersonSingularVerb?: boolean;
   to?: Date;
 }
