@@ -1,17 +1,14 @@
 import cx from 'classnames';
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
 import Grid from 'components/shared/Grid';
-import { PROJECTS_ADDRESSES_RANDOMIZED_ORDER } from 'constants/localStorageKeys';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
+import useSortedProjects from 'hooks/helpers/useIdsInAllocation/useSortedProjects';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
-import useProjectsIpfsWithRewards, {
-  ProjectIpfsWithRewards,
-} from 'hooks/queries/useProjectsIpfsWithRewards';
-import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './ProjectsList.module.scss';
 import ProjectsListProps from './types';
@@ -33,61 +30,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
 
   const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
 
-  const projectsIpfsWithRewardsSorted = useMemo((): ProjectIpfsWithRewards[] => {
-    switch (orderOption) {
-      case 'randomized': {
-        const projectsAddressesRandomizedOrder = JSON.parse(
-          localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER)!,
-        ) as ProjectsAddressesRandomizedOrder;
-
-        const { addressesRandomizedOrder } = projectsAddressesRandomizedOrder;
-
-        return projectsIpfsWithRewards.sort((a, b) => {
-          return (
-            addressesRandomizedOrder.indexOf(a.address) -
-            addressesRandomizedOrder.indexOf(b.address)
-          );
-        });
-      }
-      case 'alphabeticalAscending': {
-        const projectIpfsWithRewardsFiltered = projectsIpfsWithRewards.filter(
-          element => element.name !== undefined,
-        );
-        return projectIpfsWithRewardsFiltered.sort((a, b) => a.name!.localeCompare(b.name!));
-      }
-      case 'alphabeticalDescending': {
-        const projectIpfsWithRewardsFiltered = projectsIpfsWithRewards.filter(
-          element => element.name !== undefined,
-        );
-        return projectIpfsWithRewardsFiltered.sort((a, b) => b.name!.localeCompare(a.name!));
-      }
-      case 'donorsAscending': {
-        return projectsIpfsWithRewards.sort((a, b) => a.numberOfDonors - b.numberOfDonors);
-      }
-      case 'donorsDescending': {
-        return projectsIpfsWithRewards.sort((a, b) => b.numberOfDonors - a.numberOfDonors);
-      }
-      case 'totalsAscending': {
-        const projectIpfsWithRewardsFiltered = projectsIpfsWithRewards.filter(
-          element => element.totalValueOfAllocations !== undefined,
-        );
-        return projectIpfsWithRewardsFiltered.sort((a, b) =>
-          Number(a.totalValueOfAllocations! - b.totalValueOfAllocations!),
-        );
-      }
-      case 'totalsDescending': {
-        const projectIpfsWithRewardsFiltered = projectsIpfsWithRewards.filter(
-          element => element.totalValueOfAllocations !== undefined,
-        );
-        return projectIpfsWithRewardsFiltered.sort((a, b) =>
-          Number(b.totalValueOfAllocations! - a.totalValueOfAllocations!),
-        );
-      }
-      default: {
-        return projectsIpfsWithRewards;
-      }
-    }
-  }, [projectsIpfsWithRewards, orderOption]);
+  const projectsIpfsWithRewardsSorted = useSortedProjects(projectsIpfsWithRewards, orderOption);
 
   return (
     <div
