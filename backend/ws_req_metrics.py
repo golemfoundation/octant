@@ -127,7 +127,7 @@ def process_file(file_path):
         return None
 
 def main():
-    ws_logs_dir = 'wr_logs_flask_1'
+    ws_logs_dir = 'wr_logs'
     if not os.path.exists(ws_logs_dir):
         print(f"Directory {ws_logs_dir} does not exist.")
         return

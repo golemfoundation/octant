@@ -132,26 +132,56 @@ async def get_last_allocation_request_nonce(
 ) -> int | None:
     """Get the last nonce of the allocation requests for a user."""
 
-    result = await session.execute(
-        select(AllocationRequestDB.nonce).
-        join(User, AllocationRequestDB.user_id == User.id).
-        filter(User.address == user_address).
-        order_by(AllocationRequestDB.nonce.desc()).
-        limit(1)
-    )
-    return result.scalar()
+    import time
+
+
+
+    # return result.scalar()
+
+    start = time.time()
 
     user = await get_user_by_address(session, user_address)
     if user is None:
         return None
 
-    result = await session.execute(
+    # result = await session.execute(
+    #     select(func.max(AllocationRequestDB.nonce)).filter(
+    #         AllocationRequestDB.user_id == user.id
+    #     )
+    # )
+
+    print("get_last_allocation_request_nonce2", time.time() - start)
+
+    start = time.time()
+
+    result = await session.scalar(
         select(func.max(AllocationRequestDB.nonce)).filter(
             AllocationRequestDB.user_id == user.id
         )
     )
 
-    return result.scalar()
+    # result = await session.execute(
+    #     select(AllocationRequestDB.nonce).
+    #     join(User, AllocationRequestDB.user_id == User.id).
+    #     filter(User.address == user_address).
+    #     order_by(AllocationRequestDB.nonce.desc()).
+    #     limit(1)
+    # )
+
+    print("get_last_allocation_request_nonce", time.time() - start)
+
+    # start = time.time()
+    
+    # result = (
+    #     AllocationRequestDB.query.join(User, User.id == AllocationRequestDB.user_id)
+    #     .filter(User.address == user_address)
+    #     .order_by(AllocationRequestDB.nonce.desc())
+    #     .first()
+    # )
+
+    # print("?????????get_user_last_allocation_request", time.time() - start)
+
+    return result
 
 
 async def get_donations_by_project(
