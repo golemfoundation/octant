@@ -1,30 +1,30 @@
 from __future__ import annotations
 
 import datetime
-from http import HTTPStatus
 import json
-import logging
 import os
 import time
-import urllib.request
 import urllib.error
+import urllib.request
+from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 
 import gql
-from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
+from gql.transport.exceptions import TransportQueryError
 from requests import RequestException
 from web3 import Web3
 
+import logging
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
-from app.infrastructure import database
 from app.infrastructure import Client as GQLClient
+from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -123,6 +123,13 @@ def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
             "score": "22.0",
             "status": "DONE",
         }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            "score": str(4 + 0.5),
+            "status": "DONE",
+        }
     else:
         return {"status": "DONE", "score": "0.0"}
 
@@ -154,225 +161,42 @@ def mock_gitcoin_passport_fetch_score(*args, **kwargs):
             "score": "22.0",
             "status": "DONE",
         }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            "score": str(4 + 0.5),
+            "status": "DONE",
+        }
     else:
         return {"status": "DONE", "score": "0.0"}
 
 
 def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
+    "Returns structure resembling GP stamps, but only with relevant fields"
     if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
         return {
-            "next": None,
-            "prev": None,
             "items": [
                 {
-                    "version": "1.0.0",
                     "credential": {
-                        "type": ["VerifiableCredential"],
-                        "proof": {
-                            "type": "EthereumEip712Signature2021",
-                            "created": "2024-03-12T14:28:53.877Z",
-                            "@context": "https://w3id.org/security/suites/eip712sig-2021/v1",
-                            "proofValue": "0x5ef4c6d9ff1116c66d45c5bc65cf83ed1220b6faa4b6f78d8f057bb88470be8d4622f7bc8846accdd1057413c42408dbcce5cd4e55362fc6ac581b2f9536ec2c1b",
-                            "eip712Domain": {
-                                "types": {
-                                    "Proof": [
-                                        {"name": "@context", "type": "string"},
-                                        {"name": "created", "type": "string"},
-                                        {"name": "proofPurpose", "type": "string"},
-                                        {"name": "type", "type": "string"},
-                                        {
-                                            "name": "verificationMethod",
-                                            "type": "string",
-                                        },
-                                    ],
-                                    "@context": [
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                    "Document": [
-                                        {"name": "@context", "type": "string[]"},
-                                        {
-                                            "name": "credentialSubject",
-                                            "type": "CredentialSubject",
-                                        },
-                                        {"name": "expirationDate", "type": "string"},
-                                        {"name": "issuanceDate", "type": "string"},
-                                        {"name": "issuer", "type": "string"},
-                                        {"name": "proof", "type": "Proof"},
-                                        {"name": "type", "type": "string[]"},
-                                    ],
-                                    "EIP712Domain": [
-                                        {"name": "name", "type": "string"}
-                                    ],
-                                    "CredentialSubject": [
-                                        {"name": "@context", "type": "@context"},
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "id", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                },
-                                "domain": {"name": "VerifiableCredential"},
-                                "primaryType": "Document",
-                            },
-                            "proofPurpose": "assertionMethod",
-                            "verificationMethod": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb#controller",
-                        },
-                        "issuer": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb",
-                        "@context": [
-                            "https://www.w3.org/2018/credentials/v1",
-                            "https://w3id.org/vc/status-list/2021/v1",
-                        ],
-                        "issuanceDate": "2024-03-12T14:28:53.876Z",
                         "expirationDate": "2090-01-01T00:00:00.000Z",
                         "credentialSubject": {
-                            "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                            "hash": "v0.0.0:pQzBR3arZrlQXpJ6KRGxKEjhR03DyQ05ois9EmRNrAQ=",
-                            "@context": {
-                                "hash": "https://schema.org/Text",
-                                "provider": "https://schema.org/Text",
-                            },
                             "provider": "Linkedin",
                         },
                     },
                 },
                 {
-                    "version": "1.0.0",
                     "credential": {
-                        "type": ["VerifiableCredential"],
-                        "proof": {
-                            "type": "EthereumEip712Signature2021",
-                            "created": "2024-03-12T14:24:07.018Z",
-                            "@context": "https://w3id.org/security/suites/eip712sig-2021/v1",
-                            "proofValue": "0x2547250aca7112a8488eb45a62dfabc8f5f6e4ecc1bf24f8e28839ce1ff7e786496cf5eb5ffb9eaa27bbcf58ecd66bc966d20844b7b5a7666d4fbbc38f609b641c",
-                            "eip712Domain": {
-                                "types": {
-                                    "Proof": [
-                                        {"name": "@context", "type": "string"},
-                                        {"name": "created", "type": "string"},
-                                        {"name": "proofPurpose", "type": "string"},
-                                        {"name": "type", "type": "string"},
-                                        {
-                                            "name": "verificationMethod",
-                                            "type": "string",
-                                        },
-                                    ],
-                                    "@context": [
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                    "Document": [
-                                        {"name": "@context", "type": "string[]"},
-                                        {
-                                            "name": "credentialSubject",
-                                            "type": "CredentialSubject",
-                                        },
-                                        {"name": "expirationDate", "type": "string"},
-                                        {"name": "issuanceDate", "type": "string"},
-                                        {"name": "issuer", "type": "string"},
-                                        {"name": "proof", "type": "Proof"},
-                                        {"name": "type", "type": "string[]"},
-                                    ],
-                                    "EIP712Domain": [
-                                        {"name": "name", "type": "string"}
-                                    ],
-                                    "CredentialSubject": [
-                                        {"name": "@context", "type": "@context"},
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "id", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                },
-                                "domain": {"name": "VerifiableCredential"},
-                                "primaryType": "Document",
-                            },
-                            "proofPurpose": "assertionMethod",
-                            "verificationMethod": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb#controller",
-                        },
-                        "issuer": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb",
-                        "@context": [
-                            "https://www.w3.org/2018/credentials/v1",
-                            "https://w3id.org/vc/status-list/2021/v1",
-                        ],
-                        "issuanceDate": "2024-03-12T14:24:07.018Z",
                         "expirationDate": "2099-01-01T00:00:00.000Z",
                         "credentialSubject": {
-                            "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                            "hash": "v0.0.0:PM/AuRacZWQ3McP8Dr6Ux+yb8PcVjeS7rlVcc6ry/2Q=",
-                            "@context": {
-                                "hash": "https://schema.org/Text",
-                                "provider": "https://schema.org/Text",
-                            },
                             "provider": "Discord",
                         },
                     },
                 },
                 {
-                    "version": "1.0.0",
                     "credential": {
-                        "type": ["VerifiableCredential"],
-                        "proof": {
-                            "type": "EthereumEip712Signature2021",
-                            "created": "2024-03-12T14:24:07.018Z",
-                            "@context": "https://w3id.org/security/suites/eip712sig-2021/v1",
-                            "proofValue": "0x2547250aca7112a8488eb45a62dfabc8f5f6e4ecc1bf24f8e28839ce1ff7e786496cf5eb5ffb9eaa27bbcf58ecd66bc966d20844b7b5a7666d4fbbc38f609b641c",
-                            "eip712Domain": {
-                                "types": {
-                                    "Proof": [
-                                        {"name": "@context", "type": "string"},
-                                        {"name": "created", "type": "string"},
-                                        {"name": "proofPurpose", "type": "string"},
-                                        {"name": "type", "type": "string"},
-                                        {
-                                            "name": "verificationMethod",
-                                            "type": "string",
-                                        },
-                                    ],
-                                    "@context": [
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                    "Document": [
-                                        {"name": "@context", "type": "string[]"},
-                                        {
-                                            "name": "credentialSubject",
-                                            "type": "CredentialSubject",
-                                        },
-                                        {"name": "expirationDate", "type": "string"},
-                                        {"name": "issuanceDate", "type": "string"},
-                                        {"name": "issuer", "type": "string"},
-                                        {"name": "proof", "type": "Proof"},
-                                        {"name": "type", "type": "string[]"},
-                                    ],
-                                    "EIP712Domain": [
-                                        {"name": "name", "type": "string"}
-                                    ],
-                                    "CredentialSubject": [
-                                        {"name": "@context", "type": "@context"},
-                                        {"name": "hash", "type": "string"},
-                                        {"name": "id", "type": "string"},
-                                        {"name": "provider", "type": "string"},
-                                    ],
-                                },
-                                "domain": {"name": "VerifiableCredential"},
-                                "primaryType": "Document",
-                            },
-                            "proofPurpose": "assertionMethod",
-                            "verificationMethod": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb#controller",
-                        },
-                        "issuer": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb",
-                        "@context": [
-                            "https://www.w3.org/2018/credentials/v1",
-                            "https://w3id.org/vc/status-list/2021/v1",
-                        ],
-                        "issuanceDate": "2024-03-12T14:24:07.018Z",
                         "expirationDate": "2024-06-10T14:24:07.018Z",
                         "credentialSubject": {
-                            "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-                            "hash": "v0.0.0:PM/AuRacZWQ3McP8Dr6Ux+yb8PcVjeS7rlVcc6ry/2Q=",
-                            "@context": {
-                                "hash": "https://schema.org/Text",
-                                "provider": "https://schema.org/Text",
-                            },
                             "provider": "Discord",
                         },
                     },
@@ -384,12 +208,29 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
         return {
             "items": [
                 {
-                    "version": "1.0.0",
                     "credential": {
                         "expirationDate": "2099-09-22T15:04:05.073Z",
                         "credentialSubject": {"provider": "AllowList#OctantEpochTwo"},
                     },
                 }
+            ]
+        }
+    # GTC staker, Carol
+    elif args[0] == "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC":
+        return {
+            "items": [
+                {
+                    "credential": {
+                        "expirationDate": "2099-09-22T15:04:05.073Z",
+                        "credentialSubject": {"provider": "Discord"},
+                    }
+                },
+                {
+                    "credential": {
+                        "expirationDate": "2099-09-22T15:04:05.073Z",
+                        "credentialSubject": {"provider": "TrustedCitizen"},
+                    },
+                },
             ]
         }
     else:
@@ -704,7 +545,6 @@ class Client:
         timeout = datetime.timedelta(seconds=timeout_s)
         start = datetime.datetime.now()
         while True:
-            res = {}
             try:
                 res, status_code = self.sync_status()
                 current_app.logger.debug(f"sync_status returns {res}")
@@ -803,6 +643,64 @@ class Client:
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
+        return json.loads(rv.text)
+
+    def get_user_rewards_in_upcoming_epoch(self, address: str):
+        rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
+        current_app.logger.debug(
+            "get_user_rewards_in_upcoming_epoch :",
+            self._flask_client.get(f"/rewards/budget/{address}/upcoming").request,
+        )
+        return json.loads(rv.text)
+
+    def get_user_rewards_in_epoch(self, address: str, epoch: int):
+        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
+        current_app.logger.debug(
+            "get_rewards_budget :",
+            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
+        )
+        return json.loads(rv.text)
+
+    def get_total_users_rewards_in_epoch(self, epoch):
+        rv = self._flask_client.get(f"/rewards/budgets/epoch/{epoch}")
+        return json.loads(rv.text)
+
+    def get_estimated_budget_by_days(self, number_of_days, amount):
+        rv = self._flask_client.post(
+            "/rewards/estimated_budget/by_days",
+            json={"days": number_of_days, "glmAmount": amount},
+        )
+        return json.loads(rv.text)
+
+    def get_estimated_budget_by_epochs(self, number_of_epochs, amount):
+        rv = self._flask_client.post(
+            "/rewards/estimated_budget",
+            json={"numberOfEpochs": number_of_epochs, "glmAmount": amount},
+        )
+        return json.loads(rv.text)
+
+    def get_rewards_leverage(self, epoch):
+        rv = self._flask_client.get(f"/rewards/leverage/{epoch}")
+        return json.loads(rv.text)
+
+    def get_rewards_merkle_tree(self, epoch):
+        rv = self._flask_client.get(f"/rewards/merkle_tree/{epoch}")
+        return json.loads(rv.text)
+
+    def get_projects_with_matched_rewards_in_epoch(self, epoch):
+        rv = self._flask_client.get(f"/rewards/projects/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_estimated_projects_rewards(self):
+        rv = self._flask_client.get("/rewards/projects/estimated")
+        return json.loads(rv.text)
+
+    def get_proposals_treshold_in_epoch(self, epoch) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/rewards/threshold/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_unused_rewards(self, epoch):
+        rv = self._flask_client.get(f"/rewards/unused/{epoch}")
         return json.loads(rv.text)
 
     def get_withdrawals_for_address(self, address: str):
@@ -934,6 +832,11 @@ class Client:
         rv = self._flask_client.get("/info/healthcheck")
         return json.loads(rv.text), rv.status_code
 
+    def check_delegation(self, *addresses) -> tuple[dict, int]:
+        addresses = ",".join(addresses)
+        rv = self._flask_client.get(f"/delegation/check/{addresses}")
+        return json.loads(rv.text), rv.status_code
+
     def delegate(
         self,
         primary_address: str,
@@ -943,6 +846,24 @@ class Client:
     ) -> tuple[dict, int]:
         rv = self._flask_client.post(
             "/delegation/delegate",
+            json={
+                "primaryAddr": primary_address,
+                "secondaryAddr": secondary_address,
+                "primaryAddrSignature": primary_address_signature,
+                "secondaryAddrSignature": secondary_address_signature,
+            },
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def delegation_recalculate(
+        self,
+        primary_address: str,
+        secondary_address: str,
+        primary_address_signature: str,
+        secondary_address_signature: str,
+    ) -> tuple[dict, int]:
+        rv = self._flask_client.put(
+            "/delegation/recalculate",
             json={
                 "primaryAddr": primary_address,
                 "secondaryAddr": secondary_address,
@@ -1207,6 +1128,12 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
 
 
 @pytest.fixture(scope="function")
+def patch_timeout_list(mocker):
+    timeout_list = ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]
+    mocker.patch("app.modules.user.antisybil.core.TIMEOUT_LIST", timeout_list)
+
+
+@pytest.fixture(scope="function")
 def patch_etherscan_transactions_api(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_transactions",
@@ -1292,10 +1219,14 @@ def mock_users_db(app, user_accounts):
 
 @pytest.fixture(scope="function")
 def mock_pending_epoch_snapshot_db_since_epoch3(
-    app, mock_users_db, ppf=PPF, cf=COMMUNITY_FUND
+    app,
+    mock_users_db,
+    ppf=PPF,
+    cf=COMMUNITY_FUND,
+    epoch=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
 ):
     create_pending_snapshot(
-        epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        epoch_nr=epoch,
         mock_users_db=mock_users_db,
         optional_ppf=ppf,
         optional_cf=cf,
@@ -1323,22 +1254,9 @@ def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.save_snapshot(
-        MOCKED_FINALIZED_EPOCH_NO,
-        MATCHED_REWARDS,
-        NO_PATRONS_REWARDS,
-        LEFTOVER,
-        total_withdrawals=TOTAL_WITHDRAWALS,
-    )
-
-    db.session.commit()
-
-
-@pytest.fixture(scope="function")
-def mock_allocations_db(app, mock_users_db, project_accounts):
-    prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
-    pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
+def mock_allocations_db(mock_users_db, project_accounts, epoch=MOCKED_PENDING_EPOCH_NO):
+    prev_epoch_context = get_context(epoch - 1)
+    pending_epoch_context = get_context(epoch)
     user1, user2, _ = mock_users_db
 
     user1_allocations = [

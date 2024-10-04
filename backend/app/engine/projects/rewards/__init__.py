@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections import namedtuple
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from dataclass_wizard import JSONWizard
 
@@ -41,6 +42,11 @@ class ProjectRewardsResult:
     threshold: Optional[int] = None
 
 
+AllocationsBelowThreshold = namedtuple(
+    "AllocationsBelowThreshold", ["below_threshold", "total"]
+)
+
+
 @dataclass
 class ProjectRewards(ABC):
     projects_allocations: ProjectAllocations = field(init=False)
@@ -54,3 +60,12 @@ class ProjectRewards(ABC):
 
     def calculate_threshold(self, total_allocated: int, projects: List[str]) -> None:
         return None
+
+    def get_total_allocations_below_threshold(
+        self, allocations: Dict[str, List[AllocationItem]]
+    ) -> AllocationsBelowThreshold:
+        allocations_sum = sum(
+            sum(int(item.amount) for item in project_allocations)
+            for project_allocations in allocations.values()
+        )
+        return AllocationsBelowThreshold(0, allocations_sum)

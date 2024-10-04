@@ -11,7 +11,11 @@ from app.modules.user.allocations.service.pending import (
     PendingUserAllocationsVerifier,
 )
 from tests.helpers.allocations import make_user_allocation_with_uq_score
-from tests.helpers.constants import MATCHED_REWARDS, LOW_UQ_SCORE
+from tests.helpers.constants import (
+    MATCHED_REWARDS,
+    LOW_UQ_SCORE,
+    MR_FUNDING_CAP_PERCENT,
+)
 from tests.helpers.context import get_context
 
 
@@ -66,7 +70,9 @@ def test_simulate_allocation_with_user_uq_score(service, mock_users_db):
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
         ProjectRewardDTO(
-            sorted_projects[2], 200000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
+            sorted_projects[2],
+            200000000000,
+            int(MATCHED_REWARDS * MR_FUNDING_CAP_PERCENT),
         ),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
         ProjectRewardDTO(sorted_projects[4], 0, 0),
@@ -107,7 +113,9 @@ def test_simulate_allocation_user_uq_score_with_passed_param(service, mock_users
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
         ProjectRewardDTO(
-            sorted_projects[2], 200000000000, int(MATCHED_REWARDS * LOW_UQ_SCORE)
+            sorted_projects[2],
+            200000000000,
+            int(MATCHED_REWARDS * MR_FUNDING_CAP_PERCENT),
         ),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
         ProjectRewardDTO(sorted_projects[4], 0, 0),

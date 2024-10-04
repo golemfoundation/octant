@@ -354,3 +354,11 @@ class InvalidAddressFormat(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidProjectDetailsInput(OctantException):
+    code = 400
+    description = "Invalid input for projects details"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

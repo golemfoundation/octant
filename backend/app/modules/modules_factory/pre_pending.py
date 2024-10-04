@@ -9,6 +9,7 @@ from app.modules.modules_factory.protocols import (
     UserEffectiveDeposits,
     SavedProjectRewardsService,
     ProjectsMetadataService,
+    ProjectsDetailsService,
 )
 from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
@@ -24,6 +25,9 @@ from app.modules.projects.metadata.service.projects_metadata import (
 )
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 
 
 class PrePendingUserDeposits(UserEffectiveDeposits, AllUserEffectiveDeposits, Protocol):
@@ -36,6 +40,7 @@ class PrePendingServices(Model):
     pending_snapshots_service: PendingSnapshots
     project_rewards_service: SavedProjectRewardsService
     projects_metadata_service: ProjectsMetadataService
+    projects_details_service: ProjectsDetailsService
 
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
@@ -63,4 +68,5 @@ class PrePendingServices(Model):
             pending_snapshots_service=pending_snapshots_service,
             project_rewards_service=SavedProjectRewards(),
             projects_metadata_service=StaticProjectsMetadataService(),
+            projects_details_service=StaticProjectsDetailsService(),
         )

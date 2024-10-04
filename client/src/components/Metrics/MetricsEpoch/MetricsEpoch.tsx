@@ -127,7 +127,6 @@ const MetricsEpoch = (): ReactElement => {
         />
         <MetricsEpochGridFundsUsage
           className={styles.fundsUsage}
-          ethBelowThreshold={ethBelowThreshold}
           isLoading={isLoading}
           totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
           unusedRewards={unusedRewards}
