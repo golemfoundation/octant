@@ -69,8 +69,8 @@ export default function useSearchedProjectsDetails(
 
   return {
     data: queries.map(({ data }) => {
-      const rewards = data && data[1] ? data[1].rewards : [];
-      const address = data && data[4] ? data[4] : undefined;
+      const rewards = data?.[1]?.rewards ?? [];
+      const address = data?.[4];
       const rewardsOfProject = rewards.find(element => element.address === address);
       const rewardsOfProjectMatched = rewardsOfProject
         ? parseUnitsBigInt(rewardsOfProject.matched, 'wei')
@@ -80,13 +80,13 @@ export default function useSearchedProjectsDetails(
         : BigInt(0);
 
       return {
-        address: data && data[4] ? data[4] : undefined,
+        address,
         donations: rewardsOfProjectAllocated,
-        epoch: data && data[3] ? data[3] : undefined,
+        epoch: data?.[3],
         matchedRewards: rewardsOfProjectMatched,
-        numberOfDonors: data && data[2] ? data[2].length : 0,
+        numberOfDonors: data?.[2].length ?? 0,
         totalValueOfAllocations: rewardsOfProjectMatched + rewardsOfProjectAllocated,
-        ...(data && data[0] ? data[0] : {}),
+        ...(data?.[0] ?? {}),
       };
     }),
     isFetching: false,

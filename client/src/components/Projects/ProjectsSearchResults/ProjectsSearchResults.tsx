@@ -61,7 +61,8 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
               }
             />
           ))}
-        {isLoading &&
+        {projectsIpfsWithRewardsAndEpochs.length === 0 &&
+          isLoading &&
           [...Array(5).keys()].map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <ProjectsListSkeletonItem key={index} className={styles.element} />

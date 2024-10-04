@@ -43,6 +43,8 @@ const ProjectsView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
+  // Helper hook, because actual fetch is called after debounce. Until then, loading state.
+  const [isProjectsSearchInProgress, setIsProjectsSearchInProgress] = useState<boolean>(false);
   const [projectsSearchParameters, setProjectsSearchParameters] = useState<
     ProjectsSearchParameters | undefined
   >(undefined);
@@ -78,6 +80,13 @@ const ProjectsView = (): ReactElement => {
     refetch: refetchSearchedProjectsDetails,
     isFetching: isFetchingSearchedProjectsDetails,
   } = useSearchedProjectsDetails(searchedProjects);
+
+  useEffect(() => {
+    if (isFetchingSearchedProjects || isFetchingSearchedProjectsDetails) {
+      return;
+    }
+    setIsProjectsSearchInProgress(false);
+  }, [isFetchingSearchedProjects, isFetchingSearchedProjectsDetails]);
 
   useEffect(() => {
     // Refetch is not required when no data already fetched.
@@ -137,6 +146,10 @@ const ProjectsView = (): ReactElement => {
     const query = e.target.value;
     setSearchQuery(query);
     setProjectsDetailsSearchParametersWrapperDebounced(query);
+
+    if (query !== '') {
+      setIsProjectsSearchInProgress(true);
+    }
   };
 
   const lastArchivedEpochNumber = useMemo(() => {
@@ -188,7 +201,13 @@ const ProjectsView = (): ReactElement => {
   return (
     <>
       <ViewTitle className={styles.viewTitle}>
-        {t('viewTitle', { epochNumber: currentEpoch })}
+        {t('viewTitle', {
+          epochNumber:
+            isDecisionWindowOpen ||
+            (!isDecisionWindowOpen && areCurrentEpochsProjectsHiddenOutsideAllocationWindow)
+              ? currentEpoch! - 1
+              : currentEpoch,
+        })}
       </ViewTitle>
       <div className={styles.searchAndFilter}>
         <InputText
@@ -225,7 +244,7 @@ const ProjectsView = (): ReactElement => {
       )}
       {searchQuery !== '' && (
         <ProjectsSearchResults
-          isLoading={isFetchingSearchedProjects || isFetchingSearchedProjectsDetails}
+          isLoading={isProjectsSearchInProgress}
           orderOption={orderOption}
           projectsIpfsWithRewardsAndEpochs={searchedProjectsDetails}
         />
