@@ -131,8 +131,9 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     <div className={cx(styles.root, className)}>
       <div className={styles.logoWrapper}>
         <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
-        {networkConfig.isTestnet ||
-          (true && <TinyLabel className={styles.testnetIndicator} text={networkConfig.name} />)}
+        {networkConfig.isTestnet && (
+          <TinyLabel className={styles.testnetIndicator} text={networkConfig.name} />
+        )}
       </div>
       {isDesktop && (
         <div className={styles.links}>
