@@ -20,11 +20,3 @@ $elementMargin: 1.6rem;
   width: 100%;
   justify-content: space-between;
 }
-
-.element {
-  margin-bottom: $elementMargin;
-
-  @media #{$desktop-up} {
-    @include flexBasisGutter(2, $elementMargin);
-  }
-}

@@ -64,7 +64,6 @@ const ProjectsList: FC<ProjectsListProps> = ({
           ? projectsIpfsWithRewardsSorted.map((projectIpfsWithRewards, index) => (
               <ProjectsListItem
                 key={projectIpfsWithRewards.address}
-                className={styles.element}
                 dataTest={
                   epoch
                     ? `ProjectsView__ProjectsListItem--archive--${index}`

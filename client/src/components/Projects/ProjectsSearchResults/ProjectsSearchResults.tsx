@@ -47,7 +47,6 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
           projectsIpfsWithRewardsSorted.map((projectIpfsWithRewards, index) => (
             <ProjectsListItem
               key={`${projectIpfsWithRewards.address}--${projectIpfsWithRewards.epoch}`}
-              className={styles.element}
               dataTest={
                 projectIpfsWithRewards.epoch
                   ? `ProjectsView__ProjectsListItem--archive--${index}`
