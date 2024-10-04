@@ -95,7 +95,7 @@ async def allocate():
     try:
         # url = f"https://uat-backend.octant.wildland.dev/allocations/users/{me.address}/allocation_nonce"
         # url = f"https://master-backend.octant.wildland.dev/allocations/users/{me.address}/allocation_nonce"
-        url = f"http://127.0.0.1:5000/allocations/users/{me.address}/allocation_nonce"
+        url = f"http://127.0.0.1:5000/allocations/users/{me.address}/allocation_nonce"  # forward to flask
         # url = f"http://127.0.0.1:5000/flask/allocations/users/{me.address}/allocation_nonce"
         nonce = requests.get(url).json()['allocationNonce']
 
@@ -110,14 +110,15 @@ async def allocate():
     sig_time = time.time()
 
     random_mult = random.random()
-    amout = int(12223333 * random_mult)
+    amout = int(1222333312223333 * random_mult)
+    # amout = 827243882781739
     # print("Amount: ", amout)    
 
     payload = {
         "allocations": [
             {
                 "proposalAddress": address,
-                "amount": amout,
+                "amount": str(amout),
             }
             for address in project_addresses
         ],
@@ -149,7 +150,7 @@ async def allocate():
     resp = requests.post(
         # "https://uat-backend.octant.wildland.dev/allocations/allocate",
         # "https://master-backend.octant.wildland.dev/allocations/allocate",
-        "http://127.0.0.1:5000/allocations/allocate",
+        "http://127.0.0.1:5000/allocations/allocate", # async fapi
         # "http://127.0.0.1:5000/flask/allocations/allocate",
         json=request_data,
     )
@@ -168,7 +169,7 @@ from uuid import uuid4
 
 async def run_ws():
 
-    for i in range(10):
+    for i in range(5):
 
         global pre_allocate
         global donors_count

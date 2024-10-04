@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 from web3 import AsyncWeb3
 from app import exceptions
@@ -27,21 +28,20 @@ class SignatureVerifier:
         import time
         start = time.time()
         
-        await verify_logic(
-            session=self.session,
-            epoch_subgraph=self.epochs_subgraph,
-            projects_contracts=self.projects_contracts,
-            epoch_number=epoch_number,
-            payload=request,
-        )
-
-        print("verify_logic", time.time() - start)
-
-        await verify_signature(
-            w3=self.projects_contracts.w3,
-            chain_id=self.chain_id,
-            user_address=request.user_address,
-            payload=request,
+        await asyncio.gather(
+            verify_logic(
+                session=self.session,
+                epoch_subgraph=self.epochs_subgraph,
+                projects_contracts=self.projects_contracts,
+                epoch_number=epoch_number,
+                payload=request,
+            ),
+            verify_signature(
+                w3=self.projects_contracts.w3,
+                chain_id=self.chain_id,
+                user_address=request.user_address,
+                payload=request,
+            ),
         )
 
         print("verify_signature", time.time() - start)
@@ -61,75 +61,94 @@ async def verify_logic(
     # if epoch_details.state != "PENDING":
     #     raise exceptions.NotInDecision
 
-    import time
-
     # Check if the allocations are not empty
     if not payload.allocations:
         raise exceptions.EmptyAllocations()
 
-    start = time.time()    
+    print("already here")
+
+    async def _check_database():
+        await _provided_nonce_matches_expected(session, payload.user_address, payload.nonce)
+        await _user_is_not_patron(session, epoch_subgraph, payload.user_address, epoch_number)
+        await _user_has_budget(session, payload, epoch_number)
+    
+    await asyncio.gather(
+        _check_database(),
+        _provided_projects_are_correct(projects_contracts, epoch_number, payload)
+    )
+
+
+    # try:
+    #     async with asyncio.TaskGroup() as tg:
+            
+    #         tg.create_task(_provided_nonce_matches_expected(session, payload.user_address, payload.nonce))
+    #         tg.create_task(_user_is_not_patron(session, epoch_subgraph, payload.user_address, epoch_number))
+    #         tg.create_task(_provided_projects_are_correct(projects_contracts, epoch_number, payload))
+    #         tg.create_task(_user_has_budget(session, payload, epoch_number))
+    # except Exception as e:
+    #     print("e", e)
+    #     raise e
+
+
+    # summary = asyncio.gather(
+    #     _provided_nonce_matches_expected(session, payload.user_address, payload.nonce),
+    #     _user_is_not_patron(
+    #         session, epoch_subgraph, payload.user_address, epoch_number
+    #     ),
+    #     _provided_projects_are_correct(
+    #         projects_contracts, epoch_number, payload
+    #     ),
+    #     _user_has_budget(session, payload, epoch_number),
+    #     return_exceptions=True,
+    # )
+
+    # print("maybe here?")
+
+    # for i in await summary:
+    #     if isinstance(i, Exception):
+    #         raise i
+
+    print("hehehehehe")
+
+async def _provided_nonce_matches_expected(
+    # Component dependencies
+    session: AsyncSession,
+    # Arguments
+    user_address: str,
+    nonce: int,
+) -> None:
+    """
+    Check if the nonce is as expected.
+    """
+    # Get the next nonce
+    next_nonce = await get_next_user_nonce(session, user_address)
+
     # Check if the nonce is as expected
-    expected_nonce = await get_next_user_nonce(session, payload.user_address)
-    if payload.nonce != expected_nonce:
-        raise exceptions.WrongAllocationsNonce(payload.nonce, expected_nonce)
+    if nonce != next_nonce:
+        raise exceptions.WrongAllocationsNonce(nonce, next_nonce)
 
-    print("get_next_user_nonce", time.time() - start)   
 
-    start = time.time()
+async def _user_is_not_patron(
+    # Component dependencies
+    session: AsyncSession,
+    epoch_subgraph: EpochsSubgraph,
+    # Arguments
+    user_address: str,
+    epoch_number: int,
+) -> None:
+    """
+    Check if the user is not a patron.
+    """
     # Check if the user is not a patron
     epoch_details = await epoch_subgraph.get_epoch_by_number(epoch_number)
     is_patron = await user_is_patron_with_budget(
         session,
-        payload.user_address,
+        user_address,
         epoch_number,
         epoch_details.finalized_timestamp.datetime(),
     )
     if is_patron:
-        raise exceptions.NotAllowedInPatronMode(payload.user_address)
-
-    print("user_is_patron_with_budget", time.time() - start)
-
-
-    start = time.time()
-
-    # Check if the user is not a project
-    all_projects = await projects_contracts.get_project_addresses(epoch_number)
-    if payload.user_address in all_projects:
-        raise exceptions.ProjectAllocationToSelf()
-
-    project_addresses = [a.project_address for a in payload.allocations]
-
-    print("get_project_addresses", time.time() - start)
-
-    start = time.time()
-
-    # Check if the projects are valid
-    invalid_projects = set(project_addresses) - set(all_projects)
-    if invalid_projects:
-        raise exceptions.InvalidProjects(invalid_projects)
-
-    # Check if there are no duplicates
-    duplicates = [p for p in project_addresses if project_addresses.count(p) > 1]
-    if duplicates:
-        raise exceptions.DuplicatedProjects(duplicates)
-
-    print("invalid_projects", time.time() - start)
-
-
-    start = time.time()
-    # Get the user's budget
-    user_budget = await get_budget_by_user_address_and_epoch(
-        session, payload.user_address, epoch_number
-    )
-
-    if user_budget is None:
-        raise exceptions.BudgetNotFound(payload.user_address, epoch_number)
-
-    # Check if the allocations are within the budget
-    if sum(a.amount for a in payload.allocations) > user_budget:
-        raise exceptions.RewardsBudgetExceeded()
-
-    print("get_budget_by_user_address_and_epoch", time.time() - start)
+        raise exceptions.NotAllowedInPatronMode(user_address)
 
 async def get_next_user_nonce(
     # Component dependencies
@@ -154,6 +173,64 @@ async def get_next_user_nonce(
 
     # Increment the last nonce
     return last_allocation_request + 1
+
+
+async def _provided_projects_are_correct(
+    # Component dependencies
+    projects_contracts: ProjectsContracts,
+    # Arguments
+    epoch_number: int,
+    payload: UserAllocationRequest,
+) -> None:
+    """
+    Check if the projects in the allocation request are correct.
+    """
+
+    import time
+    start = time.time()
+    # Check if the user is not a project
+    all_projects = await projects_contracts.get_project_addresses(epoch_number)
+    if payload.user_address in all_projects:
+        raise exceptions.ProjectAllocationToSelf()
+
+    print("get_project_addresses", time.time() - start)
+
+    project_addresses = [a.project_address for a in payload.allocations]
+
+    # Check if the projects are valid
+    invalid_projects = set(project_addresses) - set(all_projects)
+    if invalid_projects:
+        raise exceptions.InvalidProjects(invalid_projects)
+
+    # Check if there are no duplicates
+    duplicates = [p for p in project_addresses if project_addresses.count(p) > 1]
+    if duplicates:
+        raise exceptions.DuplicatedProjects(duplicates)
+
+
+async def _user_has_budget(
+    # Component dependencies
+    session: AsyncSession,
+    # Arguments
+    payload: UserAllocationRequest,
+    epoch_number: int,
+) -> None:
+    """
+    Check if the user has enough budget for the allocation.
+    Check if the sum of the allocations is within the user's budget.
+    """
+
+    # Get the user's budget
+    user_budget = await get_budget_by_user_address_and_epoch(
+        session, payload.user_address, epoch_number
+    )
+
+    if user_budget is None:
+        raise exceptions.BudgetNotFound(payload.user_address, epoch_number)
+
+    # Check if the allocations are within the budget
+    if sum(a.amount for a in payload.allocations) > user_budget:
+        raise exceptions.RewardsBudgetExceeded()
 
 
 async def verify_signature(

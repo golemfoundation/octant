@@ -20,6 +20,10 @@ async def allocate(
     Make an allocation for the user.
     """
 
+    import time
+
+
+    start = time.time()
     request = UserAllocationRequest(
         user_address=allocation_request.user_address,
         allocations=allocation_request.payload.allocations,
@@ -36,4 +40,6 @@ async def allocate(
     print("pending_epoch", pending_epoch)
 
     await allocations.make(pending_epoch, request)
+
+    print("allocate took: ", time.time() - start)
     

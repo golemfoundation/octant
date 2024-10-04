@@ -50,12 +50,18 @@ async def get_gp_stamps_by_address(
 ) -> GPStamps | None:
     """Gets the latest GitcoinPassport Stamps record for a user."""
 
-    result = await session.execute(
-        select(GPStamps)
-        .join(User)
-        .filter(User.address == to_checksum_address(user_address))
-        .order_by(GPStamps.created_at.desc())
-        .limit(1)
+    user = await get_user_by_address(session, user_address)
+
+    result = await session.scalar(
+        select(GPStamps).filter(GPStamps.user_id == user.id).order_by(GPStamps.created_at.desc()).limit(1)
     )
 
-    return result.scalar_one_or_none()
+    # result = await session.execute(
+    #     select(GPStamps)
+    #     .join(User)
+    #     .filter(User.address == to_checksum_address(user_address))
+    #     .order_by(GPStamps.created_at.desc())
+    #     .limit(1)
+    # )
+
+    return result

@@ -33,8 +33,9 @@ fastapi = "^0.112.0"
 mypy = "^1.11.2"
 isort = "^5.13.2"
 pydantic-settings = "^2.4.0"
-uvicorn = "^0.30.6"
+uvicorn = {extras = ["standard"], version = "^0.31.0"}
 asyncpg = "^0.29.0"
+uvloop = "^0.20.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"

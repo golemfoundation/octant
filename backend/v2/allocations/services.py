@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 import time
 
@@ -158,12 +159,18 @@ async def simulate_leverage(
 
     start_time = time.time()
 
-    all_projects = await projects.get_project_addresses(epoch_number)
+    all_projects, matched_rewards, existing_allocations = await asyncio.gather(
+        projects.get_project_addresses(epoch_number),
+        estimated_project_matched_rewards.get(epoch_number),
+        get_allocations_with_user_uqs(session, epoch_number),
+    )
 
-    matched_rewards = await estimated_project_matched_rewards.get(epoch_number)
+    # all_projects = await projects.get_project_addresses(epoch_number)
 
-    # Get all allocations before user's allocation
-    existing_allocations = await get_allocations_with_user_uqs(session, epoch_number)
+    # matched_rewards = await estimated_project_matched_rewards.get(epoch_number)
+
+    # # Get all allocations before user's allocation
+    # existing_allocations = await get_allocations_with_user_uqs(session, epoch_number)
 
     print("existing allocations retrieved in", time.time() - start_time)
 
