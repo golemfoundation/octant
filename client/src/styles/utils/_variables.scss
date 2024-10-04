@@ -42,3 +42,5 @@ $layout-horizontal-padding-large: 11.2rem;
 $layout-section-width-large-desktop: calc(
   nth($large-desktop-range, 1) - 2 * $layout-horizontal-padding-large
 );
+$layout-top-bar-height: 8rem;
+$layout-navbar-bottom: 2.4rem;

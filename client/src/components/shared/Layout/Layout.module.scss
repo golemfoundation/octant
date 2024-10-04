@@ -66,7 +66,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    flex: 1;
+    flex-grow: 1;
+    flex-shrink: 0;
+    // 15.3 rem -> height of navbar with AllocationNavigation on mobile
+    min-height: calc(100% - $layout-top-bar-height - 15.3rem - $layout-navbar-bottom);
+
+    @media #{$tablet-up} {
+      // 20.1 rem -> height of navbar with AllocationNavigation on tablet
+      min-height: calc(100% - $layout-top-bar-height - 20.1rem - $layout-navbar-bottom);
+    }
 
     &.isNavigationBottomSuffix {
       padding-bottom: 20rem;

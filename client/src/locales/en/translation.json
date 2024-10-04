@@ -58,6 +58,10 @@
   },
   "components": {
     "allocation": {
+      "emptyState": "Lock some GLM to earn rewards, then add projects here from the<br/> Projects view to donate to them during Allocation window",
+      "emptyStateAwOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
+      "emptyStateMobile": "Lock some GLM to earn rewards,<br/> then add projects here from the Projects view<br/> to donate to them during Allocation window",
+      "emptyStateMobileAWOpen": "Visit the <0>Projects view</0> to add your favourite<br/> projects so you can donate rewards to them here",
       "allocateRewards": "Allocate rewards",
       "lowUQScoreModal": {
         "header": "Your UQ score is below 15",
