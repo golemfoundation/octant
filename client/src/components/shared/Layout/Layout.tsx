@@ -61,7 +61,7 @@ const Layout: FC<LayoutProps> = ({
     const topBarWrapperEl = topBarWrapperRef.current;
 
     const listener = e => {
-      if (e.target.body.className === 'bodyFixed') {
+      if (e.target.body.className === 'bodyFixed' || window.scrollY < 0) {
         return;
       }
       const { offsetTop, clientHeight } = topBarWrapperEl;
