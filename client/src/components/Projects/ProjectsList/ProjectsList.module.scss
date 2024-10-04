@@ -7,14 +7,6 @@ $elementMargin: 1.6rem;
   justify-content: space-between;
 }
 
-.element {
-  margin-bottom: $elementMargin;
-
-  @media #{$desktop-up} {
-    @include flexBasisGutter(2, $elementMargin);
-  }
-}
-
 .epochArchive {
   width: 100%;
   background: $color-white;
@@ -27,7 +19,7 @@ $elementMargin: 1.6rem;
   font-size: $font-size-16;
   font-weight: $font-weight-bold;
   border-radius: $border-radius-16;
-  margin:  0 0 1.6rem;
+  margin: 0 0 1.6rem;
 
   .epochDurationLabel {
     color: $color-octant-grey5;
@@ -47,5 +39,5 @@ $elementMargin: 1.6rem;
   width: 100%;
   height: 0.1rem;
   background-color: $color-octant-grey1;
-  margin:  0 0 1.6rem;
+  margin: 0 0 1.6rem;
 }

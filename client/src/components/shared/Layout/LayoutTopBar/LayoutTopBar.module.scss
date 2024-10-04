@@ -4,24 +4,8 @@
   width: 100%;
   align-items: center;
   position: relative;
-
-  &::after {
-    position: absolute;
-    bottom: 0;
-    left: -$layout-horizontal-padding-small;
-    content: '';
-    width: 100vw;
-    height: 0.1rem;
-    background-color: $color-octant-grey1;
-
-    @media #{$desktop-up} {
-      left: -$layout-horizontal-padding-large;
-    }
-
-    @media #{$large-desktop-up} {
-      left: calc(calc(-100vw + $layout-section-width-large-desktop) / 2);
-    }
-  }
+  margin: 0 auto;
+  @include layoutMaxWidth();
 
   .logoWrapper {
     position: relative;

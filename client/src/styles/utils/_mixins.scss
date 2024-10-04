@@ -28,14 +28,6 @@
   }
 }
 
-@mixin flexBasisGutter($elementsCount, $gutterSize) {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(
-    #{calc(100% / $elementsCount)} - #{calc($gutterSize * ($elementsCount - 1) / $elementsCount)}
-  );
-}
-
 @mixin layoutOverflowBlurCommonProperties() {
   backdrop-filter: blur(2rem);
   -webkit-backdrop-filter: blur(2rem);
@@ -81,4 +73,16 @@
 @mixin fontBig($font-size: $font-size-32) {
   font-family: 'Inter Tight', sans-serif;
   font-size: $font-size;
+}
+
+@mixin layoutMaxWidth() {
+  max-width: 45.6rem;
+
+  @media #{$tablet-up} {
+    max-width: 92.8rem;
+  }
+
+  @media #{$desktop-up} {
+    max-width: 141.5rem;
+  }
 }
