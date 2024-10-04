@@ -1,9 +1,6 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import {
-  apiGetProjectsSearch,
-  // ProjectsSearchResults as ApiProjectsSearchResults,
-} from 'api/calls/projects';
+import { apiGetProjectsSearch } from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { ProjectsSearchParameters } from 'views/ProjectsView/types';
 

@@ -29,7 +29,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useSearchedProjects from 'hooks/queries/useSearchedProjects';
 import useSearchedProjectsDetails from 'hooks/queries/useSearchedProjectsDetails';
 import { magnifyingGlass } from 'svg/misc';
-import { ethAddress as ethAddressRegExp, testRegexp } from 'utils/regExp';
+import { ethAddress as ethAddressRegExp, epochNumberGrabber } from 'utils/regExp';
 
 import styles from './ProjectsView.module.scss';
 import { OrderOption, ProjectsSearchParameters } from './types';
@@ -84,13 +84,14 @@ const ProjectsView = (): ReactElement => {
     if (statusSearchedProjects !== 'success') {
       return;
     }
-    refetchSearchedProjects();
-    refetchSearchedProjectsDetails();
+    refetchSearchedProjects().then(() => {
+      refetchSearchedProjectsDetails();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchedProjects, projectsSearchParameters?.epochs, projectsSearchParameters?.searchPhrases]);
 
   const setProjectsDetailsSearchParametersWrapper = (query: string) => {
-    const epochNumbersMatched = [...query.matchAll(testRegexp)];
+    const epochNumbersMatched = [...query.matchAll(epochNumberGrabber)];
 
     const epochNumbers = epochNumbersMatched
       .map(match => match[1])

@@ -313,6 +313,10 @@
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
       },
+      "projectsSearchResults": {
+        "searchResultsLabel": "Epoch {{epochNumber}}",
+        "noSearchResults": "No luck, please try again"
+      },
       "timeCounter": {
         "hours": "Hours",
         "minutes": "Minutes",

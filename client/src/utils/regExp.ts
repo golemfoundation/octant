@@ -16,4 +16,4 @@ export const groupingNumbersUpTo3 = /\B(?=(\d{3})+(?!\d))/g;
 
 export const ethAddress = /0x[a-fA-F0-9]{40}/g;
 
-export const testRegexp = /(?:^|\s)(?:epoch|Epoch|e|E)(?: ?)([0-9-]+)+/g;
+export const epochNumberGrabber = /(?:^|\s)(?:epoch|Epoch|e|E)(?: ?)([0-9-]+)+/g;
