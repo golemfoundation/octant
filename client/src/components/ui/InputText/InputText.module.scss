@@ -1,3 +1,5 @@
+$borderWidth: 0.1rem;
+
 .root {
   position: relative;
 
@@ -147,7 +149,7 @@
       .input {
         height: 4.8rem;
         padding: 1.6rem 0 1.6rem 1.6rem;
-        border: 0.1rem solid $color-octant-grey1;
+        border: $borderWidth solid $color-octant-grey1;
         border-radius: $border-radius-04;
         background: $color-white;
         font-size: $font-size-14;
@@ -203,6 +205,8 @@
     }
 
     &search {
+      $paddingLeftHasIcon: 4rem;
+
       width: 100%;
 
       .input {
@@ -214,7 +218,15 @@
         color: $color-octant-dark;
 
         &.hasIcon {
-          padding-left: 4rem;
+          padding-left: $paddingLeftHasIcon;
+        }
+
+        &:hover {
+          border: $borderWidth solid $color-octant-grey2;
+        }
+
+        &.hasIcon:hover {
+          padding-left: calc($paddingLeftHasIcon - $borderWidth);
         }
 
         &:focus-visible {

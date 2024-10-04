@@ -12,6 +12,9 @@
 }
 
 .selectedValue {
+  $borderWidth: 0.1rem;
+  $chevronMarginHorizontal: 1.2rem;
+
   display: flex;
   align-items: center;
   align-self: stretch;
@@ -20,7 +23,7 @@
   justify-content: space-between;
 
   .chevron {
-    margin: 0 1.2rem;
+    margin: 0 $chevronMarginHorizontal;
     width: 3.6rem;
 
     &.isMenuOpen {
@@ -38,13 +41,28 @@
       }
     }
     &underselect {
+      $labelPaddingVertical: 0.2rem;
+      $labelPaddingHorizontal: 1.6rem;
+
       font-size: $font-size-12;
       font-weight: $font-weight-semibold;
       background: $color-octant-grey8;
       border-radius: $border-radius-16;
 
       .label {
-        padding: 0.2rem 1.6rem;
+        padding: $labelPaddingVertical $labelPaddingHorizontal;
+      }
+
+      &:hover {
+        border: $borderWidth solid $color-octant-grey2;
+
+        .chevron {
+          margin: 0 ($chevronMarginHorizontal - $borderWidth);
+        }
+
+        .label {
+          padding: $labelPaddingVertical calc($labelPaddingHorizontal - $borderWidth);
+        }
       }
     }
   }
