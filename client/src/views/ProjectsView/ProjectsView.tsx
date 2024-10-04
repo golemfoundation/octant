@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce';
+import range from 'lodash/range';
 import React, {
   ReactElement,
   useState,
@@ -5,11 +7,14 @@ import React, {
   useLayoutEffect,
   useEffect,
   ChangeEvent,
+  useCallback,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
+import ProjectsSearchResults from 'components/Projects/ProjectsSearchResults';
+import ViewTitle from 'components/shared/ViewTitle/ViewTitle';
 import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
 import Loader from 'components/ui/Loader';
@@ -21,10 +26,13 @@ import {
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useSearchedProjects from 'hooks/queries/useSearchedProjects';
+import useSearchedProjectsDetails from 'hooks/queries/useSearchedProjectsDetails';
 import { magnifyingGlass } from 'svg/misc';
+import { ethAddress as ethAddressRegExp, epochNumberGrabber } from 'utils/regExp';
 
 import styles from './ProjectsView.module.scss';
-import { OrderOption } from './types';
+import { OrderOption, ProjectsSearchParameters } from './types';
 import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
@@ -35,6 +43,11 @@ const ProjectsView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
+  // Helper hook, because actual fetch is called after debounce. Until then, loading state.
+  const [isProjectsSearchInProgress, setIsProjectsSearchInProgress] = useState<boolean>(false);
+  const [projectsSearchParameters, setProjectsSearchParameters] = useState<
+    ProjectsSearchParameters | undefined
+  >(undefined);
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
@@ -56,8 +69,87 @@ const ProjectsView = (): ReactElement => {
     return projectsLoadedArchivedEpochsNumber ?? 0;
   });
 
+  const {
+    data: searchedProjects,
+    refetch: refetchSearchedProjects,
+    status: statusSearchedProjects,
+    isFetching: isFetchingSearchedProjects,
+  } = useSearchedProjects(projectsSearchParameters);
+  const {
+    data: searchedProjectsDetails,
+    refetch: refetchSearchedProjectsDetails,
+    isFetching: isFetchingSearchedProjectsDetails,
+  } = useSearchedProjectsDetails(searchedProjects);
+
+  useEffect(() => {
+    if (isFetchingSearchedProjects || isFetchingSearchedProjectsDetails) {
+      return;
+    }
+    setIsProjectsSearchInProgress(false);
+  }, [isFetchingSearchedProjects, isFetchingSearchedProjectsDetails]);
+
+  useEffect(() => {
+    // Refetch is not required when no data already fetched.
+    if (statusSearchedProjects !== 'success') {
+      return;
+    }
+    refetchSearchedProjects().then(() => {
+      refetchSearchedProjectsDetails();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchedProjects, projectsSearchParameters?.epochs, projectsSearchParameters?.searchPhrases]);
+
+  const setProjectsDetailsSearchParametersWrapper = (query: string) => {
+    const epochNumbersMatched = [...query.matchAll(epochNumberGrabber)];
+
+    const epochNumbers = epochNumbersMatched
+      .map(match => match[1])
+      .reduce((acc, curr) => {
+        if (curr.includes('-')) {
+          const borderNumbersInRange = curr
+            .split('-')
+            .map(Number)
+            .sort((a, b) => a - b);
+          const numbersInRange = range(borderNumbersInRange[0], borderNumbersInRange[1] + 1);
+          return [...acc, ...numbersInRange];
+        }
+        return [...acc, Number(curr)];
+      }, [] as number[]);
+
+    const ethAddresses = query.match(ethAddressRegExp);
+
+    let queryFiltered = query;
+    ethAddresses?.forEach(element => {
+      queryFiltered = queryFiltered.replace(element, '');
+    });
+    epochNumbersMatched?.forEach(element => {
+      queryFiltered = queryFiltered.replace(element[0], '');
+    });
+    queryFiltered = queryFiltered.trim();
+
+    setProjectsSearchParameters({
+      epochs:
+        epochNumbers.length > 0
+          ? epochNumbers
+          : Array.from({ length: currentEpoch! }, (_v, k) => k + 1),
+      searchPhrases: queryFiltered.split(' ').concat(ethAddresses || []) || [''],
+    });
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setProjectsDetailsSearchParametersWrapperDebounced = useCallback(
+    debounce(query => setProjectsDetailsSearchParametersWrapper(query), 1000, { trailing: true }),
+    [],
+  );
+
   const onChangeSearchQuery = (e: ChangeEvent<HTMLInputElement>): void => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    setProjectsDetailsSearchParametersWrapperDebounced(query);
+
+    if (query !== '') {
+      setIsProjectsSearchInProgress(true);
+    }
   };
 
   const lastArchivedEpochNumber = useMemo(() => {
@@ -108,6 +200,15 @@ const ProjectsView = (): ReactElement => {
 
   return (
     <>
+      <ViewTitle className={styles.viewTitle}>
+        {t('viewTitle', {
+          epochNumber:
+            isDecisionWindowOpen ||
+            (!isDecisionWindowOpen && areCurrentEpochsProjectsHiddenOutsideAllocationWindow)
+              ? currentEpoch! - 1
+              : currentEpoch,
+        })}
+      </ViewTitle>
       <div className={styles.searchAndFilter}>
         <InputText
           className={styles.inputSearch}
@@ -133,7 +234,7 @@ const ProjectsView = (): ReactElement => {
           variant="underselect"
         />
       </div>
-      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
+      {searchQuery === '' && !areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
             areCurrentEpochsProjectsHiddenOutsideAllocationWindow
@@ -141,7 +242,14 @@ const ProjectsView = (): ReactElement => {
           orderOption={orderOption}
         />
       )}
-      {archivedEpochs.length > 0 && (
+      {searchQuery !== '' && (
+        <ProjectsSearchResults
+          isLoading={isProjectsSearchInProgress}
+          orderOption={orderOption}
+          projectsIpfsWithRewardsAndEpochs={searchedProjectsDetails}
+        />
+      )}
+      {searchQuery === '' && archivedEpochs.length > 0 && (
         <InfiniteScroll
           className={styles.archives}
           hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}

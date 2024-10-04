@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(75%, 0);
+  background: $color-octant-grey3;
+  height: 1.6rem;
+  box-sizing: content-box;
+  border-radius: 1.2rem;
+  padding: 0.4rem 0.5rem;
+  font-size: $font-size-10;
+  font-weight: $font-weight-bold;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  color: $color-white;
+  background: $color-octant-orange;
+  border-radius: 0.8rem;
+  height: 1.6rem;
+  padding: 0 0.8rem;
+  user-select: none;
+}

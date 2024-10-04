@@ -5,4 +5,5 @@ export default interface ProjectsListItemProps {
   dataTest?: string;
   epoch?: number;
   projectIpfsWithRewards: ProjectIpfsWithRewards;
+  searchResultsLabel?: string;
 }

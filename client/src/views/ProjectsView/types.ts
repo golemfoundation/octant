@@ -6,3 +6,8 @@ export type OrderOption =
   | 'totalsAscending'
   | 'donorsDescending'
   | 'donorsAscending';
+
+export type ProjectsSearchParameters = {
+  epochs?: number[];
+  searchPhrases?: string[];
+};

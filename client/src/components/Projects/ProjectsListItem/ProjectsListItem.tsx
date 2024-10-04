@@ -8,6 +8,7 @@ import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
 import Img from 'components/ui/Img';
+import TinyLabel from 'components/ui/TinyLabel';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
@@ -26,6 +27,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
   dataTest,
   epoch,
   projectIpfsWithRewards,
+  searchResultsLabel,
 }) => {
   const { ipfsGateways } = env;
   const { address, isLoadingError, profileImageSmall, name, introDescription } =
@@ -99,13 +101,20 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
       ) : (
         <Fragment>
           <div className={styles.header}>
-            <Img
-              className={styles.imageProfile}
-              dataTest={
-                epoch ? 'ProjectsListItem__imageProfile--archive' : 'ProjectsListItem__imageProfile'
-              }
-              sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
-            />
+            <div className={styles.imageProfileWrapper}>
+              <Img
+                className={styles.imageProfile}
+                dataTest={
+                  epoch
+                    ? 'ProjectsListItem__imageProfile--archive'
+                    : 'ProjectsListItem__imageProfile'
+                }
+                sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
+              />
+              {searchResultsLabel && (
+                <TinyLabel className={styles.tinyLabel} text={searchResultsLabel} />
+              )}
+            </div>
             {isAddToAllocateButtonVisible && (
               <ButtonAddToAllocate
                 className={styles.button}
