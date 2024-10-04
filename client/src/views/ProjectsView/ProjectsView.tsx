@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProjectsList from 'components/Projects/ProjectsList';
+import ProjectsSearchResults from 'components/Projects/ProjectsSearchResults';
 import ViewTitle from 'components/shared/ViewTitle/ViewTitle';
 import InputSelect from 'components/ui/InputSelect';
 import InputText from 'components/ui/InputText';
@@ -26,11 +27,12 @@ import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/help
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useSearchedProjects from 'hooks/queries/useSearchedProjects';
+import useSearchedProjectsDetails from 'hooks/queries/useSearchedProjectsDetails';
 import { magnifyingGlass } from 'svg/misc';
 import { ethAddress as ethAddressRegExp, testRegexp } from 'utils/regExp';
 
 import styles from './ProjectsView.module.scss';
-import { OrderOption, ProjectsDetailsSearchParameters } from './types';
+import { OrderOption, ProjectsSearchParameters } from './types';
 import { ORDER_OPTIONS } from './utils';
 
 const ProjectsView = (): ReactElement => {
@@ -41,8 +43,8 @@ const ProjectsView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [projectsDetailsSearchParameters, setProjectsDetailsSearchParameters] = useState<
-    ProjectsDetailsSearchParameters | undefined
+  const [projectsSearchParameters, setProjectsSearchParameters] = useState<
+    ProjectsSearchParameters | undefined
   >(undefined);
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
@@ -65,22 +67,27 @@ const ProjectsView = (): ReactElement => {
     return projectsLoadedArchivedEpochsNumber ?? 0;
   });
 
-  const { data: searchedProjects, refetch: refetchSearchedProjects } = useSearchedProjects(
-    projectsDetailsSearchParameters,
-  );
+  const {
+    data: searchedProjects,
+    refetch: refetchSearchedProjects,
+    status: statusSearchedProjects,
+    isFetching: isFetchingSearchedProjects,
+  } = useSearchedProjects(projectsSearchParameters);
+  const {
+    data: searchedProjectsDetails,
+    refetch: refetchSearchedProjectsDetails,
+    isFetching: isFetchingSearchedProjectsDetails,
+  } = useSearchedProjectsDetails(searchedProjects);
 
   useEffect(() => {
     // Refetch is not required when no data already fetched.
-    if (!searchedProjects || searchedProjects.length === 0) {
+    if (statusSearchedProjects !== 'success') {
       return;
     }
     refetchSearchedProjects();
+    refetchSearchedProjectsDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    searchedProjects,
-    projectsDetailsSearchParameters?.epochs,
-    projectsDetailsSearchParameters?.searchPhrases,
-  ]);
+  }, [searchedProjects, projectsSearchParameters?.epochs, projectsSearchParameters?.searchPhrases]);
 
   const setProjectsDetailsSearchParametersWrapper = (query: string) => {
     const epochNumbersMatched = [...query.matchAll(testRegexp)];
@@ -110,7 +117,7 @@ const ProjectsView = (): ReactElement => {
     });
     queryFiltered = queryFiltered.trim();
 
-    setProjectsDetailsSearchParameters({
+    setProjectsSearchParameters({
       epochs:
         epochNumbers.length > 0
           ? epochNumbers
@@ -207,7 +214,7 @@ const ProjectsView = (): ReactElement => {
           variant="underselect"
         />
       </div>
-      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
+      {searchQuery === '' && !areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
             areCurrentEpochsProjectsHiddenOutsideAllocationWindow
@@ -215,7 +222,14 @@ const ProjectsView = (): ReactElement => {
           orderOption={orderOption}
         />
       )}
-      {archivedEpochs.length > 0 && (
+      {searchQuery !== '' && (
+        <ProjectsSearchResults
+          isLoading={isFetchingSearchedProjects || isFetchingSearchedProjectsDetails}
+          orderOption={orderOption}
+          projectsIpfsWithRewardsAndEpochs={searchedProjectsDetails}
+        />
+      )}
+      {searchQuery === '' && archivedEpochs.length > 0 && (
         <InfiniteScroll
           className={styles.archives}
           hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}

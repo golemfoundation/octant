@@ -7,7 +7,7 @@ export type OrderOption =
   | 'donorsDescending'
   | 'donorsAscending';
 
-export type ProjectsDetailsSearchParameters = {
+export type ProjectsSearchParameters = {
   epochs?: number[];
   searchPhrases?: string[];
 };

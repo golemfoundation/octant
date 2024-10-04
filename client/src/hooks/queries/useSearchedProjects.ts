@@ -1,28 +1,38 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { apiGetProjectsDetails, ProjectsDetails as ApiProjectsDetails } from 'api/calls/projects';
+import {
+  apiGetProjectsSearch,
+  // ProjectsSearchResults as ApiProjectsSearchResults,
+} from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
-import { ProjectsDetailsSearchParameters } from 'views/ProjectsView/types';
+import { ProjectsSearchParameters } from 'views/ProjectsView/types';
 
-type ProjectsDetails = ApiProjectsDetails['projectsDetails'];
+export type ProjectsSearchResults = {
+  address: string;
+  epoch: number;
+  name: string;
+}[];
 
 export default function useSearchedProjects(
-  projectsDetailsSearchParameters: ProjectsDetailsSearchParameters | undefined,
-): UseQueryResult<ProjectsDetails> {
+  projectsSearchParameters: ProjectsSearchParameters | undefined,
+): UseQueryResult<ProjectsSearchResults, unknown> {
   return useQuery({
     enabled:
-      !!projectsDetailsSearchParameters &&
-      ((projectsDetailsSearchParameters.epochs &&
-        projectsDetailsSearchParameters.epochs.length > 0) ||
-        (projectsDetailsSearchParameters.searchPhrases &&
-          projectsDetailsSearchParameters.searchPhrases?.length > 0)),
+      !!projectsSearchParameters &&
+      ((projectsSearchParameters.epochs && projectsSearchParameters.epochs.length > 0) ||
+        (projectsSearchParameters.searchPhrases &&
+          projectsSearchParameters.searchPhrases?.length > 0)),
     queryFn: () =>
-      apiGetProjectsDetails(
-        projectsDetailsSearchParameters!.epochs!.map(String).toString(),
-        projectsDetailsSearchParameters!.searchPhrases!.join(),
+      apiGetProjectsSearch(
+        projectsSearchParameters!.epochs!.map(String).toString(),
+        projectsSearchParameters!.searchPhrases!.join(),
       ),
     // No point in strigifying params, they will just flood the memory.
     queryKey: QUERY_KEYS.searchResults,
-    select: data => data.projectsDetails,
+    select: data =>
+      data.projectsDetails.map(element => ({
+        ...element,
+        epoch: Number(element.epoch),
+      })),
   });
 }

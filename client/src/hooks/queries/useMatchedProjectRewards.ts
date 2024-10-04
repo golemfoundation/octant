@@ -24,6 +24,7 @@ export type ProjectRewards = {
 };
 
 function parseResponse(response: Response): ProjectRewards[] {
+  // TODO unify with totalValueOfAllocations.
   const totalDonations = response?.rewards.reduce(
     (acc, { allocated, matched }) =>
       acc + parseUnitsBigInt(allocated, 'wei') + parseUnitsBigInt(matched, 'wei'),

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,7 @@ import { calendar } from 'svg/misc';
 
 import styles from './LayoutTopBarCalendar.module.scss';
 
-const LayoutTopBarCalendar = (): ReactNode => {
+const LayoutTopBarCalendar = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();

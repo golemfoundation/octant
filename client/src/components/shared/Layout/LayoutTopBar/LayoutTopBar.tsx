@@ -11,6 +11,8 @@ import LayoutTopBarCalendar from 'components/shared/Layout/LayoutTopBarCalendar'
 import Button from 'components/ui/Button';
 import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
+import TinyLabel from 'components/ui/TinyLabel';
+import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
@@ -127,7 +129,11 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
 
   return (
     <div className={cx(styles.root, className)}>
-      <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
+      <div className={styles.logoWrapper}>
+        <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
+        {networkConfig.isTestnet ||
+          (true && <TinyLabel className={styles.testnetIndicator} text={networkConfig.name} />)}
+      </div>
       {isDesktop && (
         <div className={styles.links}>
           {tabs.map(({ label, to, isActive, isDisabled }, index) => (

@@ -23,8 +23,20 @@
     }
   }
 
+  .logoWrapper {
+    position: relative;
+  }
+
   .octantLogo {
     cursor: pointer;
+  }
+
+  .testnetIndicator {
+    position: absolute;
+    top: -1rem;
+    right: -0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
   }
 
   .links {

@@ -1,0 +1,65 @@
+$elementMargin: 1.6rem;
+
+.noSearchResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  color: $color-octant-grey5;
+  margin-bottom: 1.6rem;
+
+  .image {
+    width: 28rem;
+    margin-bottom: 3.2rem;
+  }
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.element {
+  margin-bottom: $elementMargin;
+
+  @media #{$desktop-up} {
+    @include flexBasisGutter(2, $elementMargin);
+  }
+}
+
+.epochArchive {
+  width: 100%;
+  background: $color-white;
+  height: 6.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.4rem;
+  color: $color-octant-dark;
+  font-size: $font-size-16;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-16;
+  margin:  0 0 1.6rem;
+
+  .epochDurationLabel {
+    color: $color-octant-grey5;
+    font-size: $font-size-12;
+    font-weight: $font-weight-medium;
+
+    &.isFetching {
+      @include skeleton();
+      text-indent: 1000%; // moves text outside of view.
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+}
+
+.divider {
+  width: 100%;
+  height: 0.1rem;
+  background-color: $color-octant-grey1;
+  margin:  0 0 1.6rem;
+}
