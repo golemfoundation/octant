@@ -74,3 +74,15 @@
   font-family: 'Inter Tight', sans-serif;
   font-size: $font-size;
 }
+
+@mixin layoutMaxWidth() {
+  max-width: 45.6rem;
+
+  @media #{$tablet-up} {
+    max-width: 92.8rem;
+  }
+
+  @media #{$desktop-up} {
+    max-width: 141.5rem;
+  }
+}
