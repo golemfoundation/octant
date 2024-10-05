@@ -6,6 +6,12 @@ export interface DelegationData {
   isDelegationCompleted: boolean;
   isDelegationConnectModalOpen: boolean;
   isDelegationInProgress: boolean;
+  isTimeoutListPresenceModalOpen:
+    | {
+        address: string;
+        value: boolean;
+      }
+    | undefined;
   primaryAddressScore?: number;
   secondaryAddressScore?: number;
 }
@@ -23,6 +29,9 @@ export interface DelegationMethods {
     payload: DelegationData['isDelegationConnectModalOpen'],
   ) => void;
   setIsDelegationInProgress: (payload: DelegationData['isDelegationInProgress']) => void;
+  setIsTimeoutListPresenceModalOpen: (
+    payload: Exclude<DelegationData['isTimeoutListPresenceModalOpen'], undefined>,
+  ) => void;
   setPrimaryAddressScore: (payload: DelegationData['primaryAddressScore']) => void;
   setSecondaryAddressScore: (payload: DelegationData['secondaryAddressScore']) => void;
   setValuesFromLocalStorage: () => void;

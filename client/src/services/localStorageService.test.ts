@@ -8,6 +8,7 @@ import {
   IS_ONBOARDING_DONE,
   LAST_SEEN_STEP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
+  TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
 } from 'constants/localStorageKeys';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 
@@ -311,6 +312,81 @@ describe('LocalStorageService', () => {
         );
         localStorageService.init({ ...localStorageInitParams, isDecisionWindowOpen: false });
         expect(localStorage.getItem(PROJECTS_ADDRESSES_RANDOMIZED_ORDER)).toBe(null);
+      });
+    });
+
+    describe(`should validate ${TIMEOUT_LIST_PRESENCE_MODAL_OPEN}`, () => {
+      it('removes the key from localStorage when address is not defined', () => {
+        localStorage.setItem(
+          TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+          JSON.stringify({
+            value: true,
+          }),
+        );
+        localStorageService.init(localStorageInitParams);
+
+        expect(localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN)).toBe(null);
+      });
+
+      it('removes the key from localStorage when value is not defined', () => {
+        localStorage.setItem(
+          TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+          JSON.stringify({
+            address: '0xb794f5ea0ba39494ce839613fffba74279579268',
+          }),
+        );
+        localStorageService.init(localStorageInitParams);
+
+        expect(localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN)).toBe(null);
+      });
+
+      it('removes the key from localStorage when value string', () => {
+        localStorage.setItem(
+          TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+          JSON.stringify({
+            address: 'test',
+            value: 'test',
+          }),
+        );
+        localStorageService.init(localStorageInitParams);
+
+        expect(localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN)).toBe(null);
+      });
+
+      it('leaves the key from localStorage when address & value is true', () => {
+        localStorage.setItem(
+          TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+          JSON.stringify({
+            address: 'test',
+            value: true,
+          }),
+        );
+        localStorageService.init(localStorageInitParams);
+
+        expect(localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN)).toBe(
+          JSON.stringify({
+            address: 'test',
+            value: true,
+          }),
+        );
+      });
+
+      it('leaves the key from localStorage when address & value is false', () => {
+        localStorage.setItem(
+          TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+          JSON.stringify({
+            address: 'test',
+            value: false,
+          }),
+        );
+        localStorageService.init(localStorageInitParams);
+
+        expect(localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN)).toBe(
+          JSON.stringify({
+            address: 'test',
+            value: false,
+          }),
+        );
       });
     });
   });

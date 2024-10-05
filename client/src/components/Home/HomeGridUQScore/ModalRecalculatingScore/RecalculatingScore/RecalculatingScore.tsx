@@ -56,10 +56,14 @@ const RecalculatingScore: FC<RecalculatingScoreProps> = ({ onLastStepDone }) => 
     ) {
       return 0;
     }
-    if (!isDelegationCompleted && antisybilStatusScore < DELEGATION_MIN_SCORE && uqScore === 100n) {
+    if (
+      !isDelegationCompleted &&
+      antisybilStatusScore.score < DELEGATION_MIN_SCORE &&
+      uqScore === 100n
+    ) {
       return DELEGATION_MIN_SCORE;
     }
-    return antisybilStatusScore;
+    return antisybilStatusScore.score;
   }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted, isErrorUqScore]);
 
   const scoreHighlight = lastDoneStep && lastDoneStep >= 1 ? 'black' : undefined;

@@ -69,13 +69,13 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
   const showLowScoreInfo =
     isScoreHighlighted &&
     secondaryAddressAntisybilStatusScore !== undefined &&
-    secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1;
+    secondaryAddressAntisybilStatusScore.score < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1;
 
   const scoreHighlight = useMemo(() => {
     if (!isScoreHighlighted || secondaryAddressAntisybilStatusScore === undefined) {
       return undefined;
     }
-    if (secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
+    if (secondaryAddressAntisybilStatusScore.score < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
       return 'red';
     }
     return 'black';
@@ -146,12 +146,12 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
       setLastDoneStep(1);
       setTimeout(() => {
         setLastDoneStep(2);
-        if (secondaryAddressAntisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
+        if (secondaryAddressAntisybilStatusScore.score < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1) {
           setShowCloseButton(true);
           setIsDelegationInProgress(false);
           return;
         }
-        setSecondaryAddressScore(secondaryAddressAntisybilStatusScore);
+        setSecondaryAddressScore(secondaryAddressAntisybilStatusScore.score);
         setCalculatingUQScoreMode('sign');
       }, 2500);
     }, 2500);
@@ -185,7 +185,7 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
         }
         mode={calculatingUQScoreMode}
         onSignMessage={() => signMessageAndDelegate(true)}
-        score={secondaryAddressAntisybilStatusScore ?? 0}
+        score={secondaryAddressAntisybilStatusScore?.score ?? 0}
         scoreHighlight={scoreHighlight}
         showActiveDot={calculatingUQScoreMode === 'sign'}
       />

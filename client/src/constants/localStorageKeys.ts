@@ -64,7 +64,7 @@ export const SECONDARY_ADDRESS_SCORE = getLocalStorageKey(
   'secondaryAddressScore',
 );
 
-export const TIMEOUT_LIST_PRESENCE_MODAL_CLOSED = getLocalStorageKey(
+export const TIMEOUT_LIST_PRESENCE_MODAL_OPEN = getLocalStorageKey(
   delegationPrefix,
-  'timeoutListPresenceModalClosed',
+  'timeoutListPresenceModalOpen',
 );

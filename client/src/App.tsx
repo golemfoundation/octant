@@ -50,12 +50,7 @@ const App = (): ReactElement => {
         <RootRoutes />
       </Layout>
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
-      <ModalTimeoutListPresence
-        modalProps={{
-          isOpen: true,
-          onClosePanel: () => {},
-        }}
-      />
+      <ModalTimeoutListPresence />
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>

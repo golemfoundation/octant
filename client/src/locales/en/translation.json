@@ -422,7 +422,7 @@
       "projectCosts": "Project costs"
     },
     "onboarding": {
-      "suspectedSybilModal": {
+      "modalTimeoutListPresence": {
         "header": "This account looks like a sybil",
         "text": "We have flagged this account as a <0>sybil</0> which means your allocation will receive no match funding this epoch. If you would like to dispute this, please <1>fill out this form</1> & we’ll review it.",
         "checkboxLabel": "I understand that I will receive \u2028no match funding this epoch",

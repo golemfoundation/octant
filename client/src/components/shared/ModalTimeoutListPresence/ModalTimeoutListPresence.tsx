@@ -1,5 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button/Button';
@@ -7,27 +8,35 @@ import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { TIME_OUT_LIST_DISPUTE_FORM } from 'constants/urls';
+import useDelegationStore from 'store/delegation/store';
 
 import styles from './ModalTimeoutListPresence.module.scss';
-import ModalTimeoutListPresenceProps from './types';
 
-const ModalTimeoutListPresence: FC<ModalTimeoutListPresenceProps> = ({ modalProps }) => {
+const ModalTimeoutListPresence = (): ReactElement => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'views.onboarding.suspectedSybilModal',
+    keyPrefix: 'views.onboarding.modalTimeoutListPresence',
   });
+  const { address } = useAccount();
 
   const [isChecked, setIsChecked] = useState(false);
+
+  const { setIsTimeoutListPresenceModalOpen, isTimeoutListPresenceModalOpen } = useDelegationStore(
+    state => ({
+      isTimeoutListPresenceModalOpen: state.data.isTimeoutListPresenceModalOpen,
+      setIsTimeoutListPresenceModalOpen: state.setIsTimeoutListPresenceModalOpen,
+    }),
+  );
 
   return (
     <Modal
       bodyClassName={styles.modalBody}
-      dataTest="ModalSuspectedSybil"
+      dataTest="ModalTimeoutListPresence"
       header={t('header')}
       Image={<Img className={styles.image} src="/images/sybil.webp" />}
+      isOpen={!!isTimeoutListPresenceModalOpen && isTimeoutListPresenceModalOpen.value}
       isOverflowOnClickDisabled
+      onClosePanel={() => {}}
       showCloseButton={false}
-      {...modalProps}
-      isOpen
     >
       <div className={styles.text}>
         <Trans
@@ -35,7 +44,7 @@ const ModalTimeoutListPresence: FC<ModalTimeoutListPresenceProps> = ({ modalProp
             <Button variant="link3" />,
             <Button href={TIME_OUT_LIST_DISPUTE_FORM} variant="link3" />,
           ]}
-          i18nKey="views.onboarding.suspectedSybilModal.text"
+          i18nKey="views.onboarding.modalTimeoutListPresence.text"
         />
       </div>
       <BoxRounded className={styles.box} hasPadding={false} isGrey>
@@ -55,7 +64,7 @@ const ModalTimeoutListPresence: FC<ModalTimeoutListPresenceProps> = ({ modalProp
         <Button
           className={styles.button}
           isDisabled={!isChecked}
-          onClick={modalProps.onClosePanel}
+          onClick={() => setIsTimeoutListPresenceModalOpen({ address: address!, value: false })}
           variant="cta"
         >
           {t('close')}

@@ -4,6 +4,7 @@ import {
   IS_DELEGATION_COMPLETED,
   PRIMARY_ADDRESS_SCORE,
   SECONDARY_ADDRESS_SCORE,
+  TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
 } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
@@ -17,6 +18,7 @@ export const initialState: DelegationData = {
   isDelegationCompleted: false,
   isDelegationConnectModalOpen: false,
   isDelegationInProgress: false,
+  isTimeoutListPresenceModalOpen: undefined,
   primaryAddressScore: undefined,
   secondaryAddressScore: undefined,
 };
@@ -62,6 +64,11 @@ export default getStoreWithMeta<DelegationData, DelegationMethods>({
       set(state => ({ data: { ...state.data, isDelegationInProgress: payload } }));
     },
 
+    setIsTimeoutListPresenceModalOpen: payload => {
+      localStorage.setItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, isTimeoutListPresenceModalOpen: payload } }));
+    },
+
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setPrimaryAddressScore: payload => {
       localStorage.setItem(PRIMARY_ADDRESS_SCORE, JSON.stringify(payload));
@@ -86,6 +93,9 @@ export default getStoreWithMeta<DelegationData, DelegationMethods>({
           ),
           isDelegationCompleted: JSON.parse(
             localStorage.getItem(IS_DELEGATION_COMPLETED) || 'false',
+          ),
+          isTimeoutListPresenceModalOpen: JSON.parse(
+            localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN) || 'null',
           ),
           primaryAddressScore: JSON.parse(localStorage.getItem(PRIMARY_ADDRESS_SCORE) || 'null'),
           secondaryAddressScore: JSON.parse(

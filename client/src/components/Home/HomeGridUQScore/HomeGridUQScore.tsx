@@ -184,16 +184,16 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
       return;
     }
     if (isDelegationCompleted) {
-      setSecondaryAddressScore(antisybilStatusScore);
+      setSecondaryAddressScore(antisybilStatusScore?.score);
     } else {
       if (refreshAntisybilStatusError) {
         setDelegationPrimaryAddress(address);
         setDelegationSecondaryAddress('0x???');
       }
       setPrimaryAddressScore(
-        antisybilStatusScore < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 && uqScore === 100n
+        antisybilStatusScore?.score < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 && uqScore === 100n
           ? UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1
-          : antisybilStatusScore,
+          : antisybilStatusScore?.score,
       );
     }
     setIsFetchingScore(false);
