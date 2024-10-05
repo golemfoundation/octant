@@ -46,8 +46,6 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
     };
   }, [bottomBarHeightPercentage, isInView]);
 
-  console.log(topBarHeightPercentage);
-
   return (
     <motion.div
       ref={ref}
