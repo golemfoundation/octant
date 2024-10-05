@@ -41,10 +41,6 @@ export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
 
 // Delegation
 const delegationPrefix = 'delegation';
-export const IS_DELEGATION_IN_PROGRESS = getLocalStorageKey(
-  delegationPrefix,
-  'isDelegationInProgress',
-);
 
 export const IS_DELEGATION_COMPLETED = getLocalStorageKey(
   delegationPrefix,
@@ -66,4 +62,9 @@ export const PRIMARY_ADDRESS_SCORE = getLocalStorageKey(delegationPrefix, 'prima
 export const SECONDARY_ADDRESS_SCORE = getLocalStorageKey(
   delegationPrefix,
   'secondaryAddressScore',
+);
+
+export const TIMEOUT_LIST_PRESENCE_MODAL_CLOSED = getLocalStorageKey(
+  delegationPrefix,
+  'timeoutListPresenceModalClosed',
 );

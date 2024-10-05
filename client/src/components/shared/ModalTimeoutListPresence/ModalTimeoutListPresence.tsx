@@ -8,10 +8,10 @@ import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { TIME_OUT_LIST_DISPUTE_FORM } from 'constants/urls';
 
-import styles from './ModalSuspectedSybil.module.scss';
-import ModalAllocationLowUqScoreProps from './types';
+import styles from './ModalTimeoutListPresence.module.scss';
+import ModalTimeoutListPresenceProps from './types';
 
-const ModalSuspectedSybil: FC<ModalAllocationLowUqScoreProps> = ({ modalProps }) => {
+const ModalTimeoutListPresence: FC<ModalTimeoutListPresenceProps> = ({ modalProps }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.onboarding.suspectedSybilModal',
   });
@@ -21,7 +21,7 @@ const ModalSuspectedSybil: FC<ModalAllocationLowUqScoreProps> = ({ modalProps })
   return (
     <Modal
       bodyClassName={styles.modalBody}
-      dataTest="ModalSettingsCalculatingUQScore"
+      dataTest="ModalSuspectedSybil"
       header={t('header')}
       Image={<Img className={styles.image} src="/images/sybil.webp" />}
       isOverflowOnClickDisabled
@@ -65,4 +65,4 @@ const ModalSuspectedSybil: FC<ModalAllocationLowUqScoreProps> = ({ modalProps })
   );
 };
 
-export default ModalSuspectedSybil;
+export default ModalTimeoutListPresence;
