@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AllocationLowUqScore from 'components/Allocation/AllocationLowUqScore';
 import Img from 'components/ui/Img';
 import Modal from 'components/ui/Modal';
 
 import styles from './ModalAllocationLowUqScore.module.scss';
 import ModalAllocationLowUqScoreProps from './types';
-
-import AllocationLowUqScore from '../AllocationLowUqScore';
 
 const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
   modalProps,
