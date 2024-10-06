@@ -1,10 +1,8 @@
-
-
-
 from v2.core.contracts import SmartContract
 
 
 from typing import Protocol
+
 
 class AddressKey(Protocol):
     address: str
@@ -12,8 +10,6 @@ class AddressKey(Protocol):
 
 
 class GLMContracts(SmartContract):
-
-
     # def glm_fund(self, to_address, nonce):
     #     transaction = self.contract.functions.transfer(
     #         to_address, app.config["GLM_WITHDRAWAL_AMOUNT"]
@@ -26,12 +22,8 @@ class GLMContracts(SmartContract):
     # def transfer(self, sender, receiver: str, amount: int):
     # async def transfer(self, sender_address: str, receiver: str, amount: int):
     async def transfer(
-        self, 
-        sender: AddressKey, 
-        receiver_address: str, 
-        amount: int
+        self, sender: AddressKey, receiver_address: str, amount: int
     ) -> None:
-
         nonce = await self.w3.eth.get_transaction_count(sender)
         transaction = self.contract.functions.transfer(
             receiver_address, amount
@@ -44,8 +36,8 @@ class GLMContracts(SmartContract):
         print("owner address: ", owner.address)
         print("owner key: ", owner.key)
         print("benefactor of lock: ", benefactor_address)
-        nonce = self.w3.eth.get_transaction_count(owner.address)
-        transaction = self.contract.functions.approve(
+        nonce = await self.w3.eth.get_transaction_count(owner.address)
+        transaction = await self.contract.functions.approve(
             benefactor_address, wad
         ).build_transaction({"from": owner.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, owner.key)

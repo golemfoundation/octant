@@ -1,5 +1,4 @@
 from asyncio import current_task
-from contextlib import asynccontextmanager
 from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
@@ -8,13 +7,18 @@ from app.infrastructure.database.models import BaseModel
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine, async_scoped_session
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+    async_scoped_session,
+)
 from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
 
 
 class OctantSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='.env', extra='ignore', frozen=True)
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", frozen=True)
 
 
 class Web3ProviderSettings(OctantSettings):
@@ -22,7 +26,8 @@ class Web3ProviderSettings(OctantSettings):
 
 
 def get_web3_provider_settings() -> Web3ProviderSettings:
-    return Web3ProviderSettings()
+    return Web3ProviderSettings()  # type: ignore[call-arg]
+
 
 def get_w3(
     settings: Annotated[Web3ProviderSettings, Depends(get_web3_provider_settings)]
@@ -47,7 +52,7 @@ class DatabaseSettings(OctantSettings):
 
 
 def get_database_settings() -> DatabaseSettings:
-    return DatabaseSettings()
+    return DatabaseSettings()  # type: ignore[call-arg]
 
 
 async def create_tables():
@@ -63,13 +68,13 @@ def get_sessionmaker(
 ) -> async_sessionmaker[AsyncSession]:
     engine = create_async_engine(
         settings.sqlalchemy_database_uri,
-        echo=False,                    # Disable SQL query logging (for performance)
-        pool_size=100,                 # Initial pool size (default is 5)
-        max_overflow=10,               # Extra connections if pool is exhausted
-        pool_timeout=30,               # Timeout before giving up on a connection
-        pool_recycle=3600,             # Recycle connections after 1 hour (for long-lived connections)
-        pool_pre_ping=True,            # Check if the connection is alive before using it
-        future=True,                   # Use the future-facing SQLAlchemy 2.0 style
+        echo=False,  # Disable SQL query logging (for performance)
+        pool_size=100,  # Initial pool size (default is 5)
+        max_overflow=10,  # Extra connections if pool is exhausted
+        pool_timeout=30,  # Timeout before giving up on a connection
+        pool_recycle=3600,  # Recycle connections after 1 hour (for long-lived connections)
+        pool_pre_ping=True,  # Check if the connection is alive before using it
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
         # connect_args={"options": "-c timezone=utc"}  # Ensures timezone is UTC
     )
 
@@ -77,9 +82,8 @@ def get_sessionmaker(
         autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
     )
 
-    scoped_session = async_scoped_session(sessionmaker, scopefunc=current_task)
+    return sessionmaker
 
-    return scoped_session
 
 # @asynccontextmanager
 async def get_db_session(
@@ -108,8 +112,13 @@ async def get_db_session(
 
     # logging.error("Opening session", async_session)
 
+    # scoped_session = async_scoped_session(sessionmaker, scopefunc=current_task)
+
     # Create a new session
     async with sessionmaker() as session:
+        print("in gettersession id", id(session))
+        print("in gettersession identity", session)
+
         try:
             yield session
             await session.commit()
@@ -122,4 +131,4 @@ async def get_db_session(
             await session.close()
 
 
-GetSession = Annotated[AsyncSession, Depends(get_db_session)]
+GetSession = Annotated[AsyncSession, Depends(get_db_session, use_cache=False)]

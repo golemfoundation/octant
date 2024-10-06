@@ -5,11 +5,12 @@ from app.infrastructure.database.models import GPStamps, UniquenessQuotient, Use
 from eth_utils import to_checksum_address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
 
 async def get_uq_score_by_user_address(
-    session: AsyncSession, user_address: str, epoch_number: int
+    session: AsyncSession, user_address: Address, epoch_number: int
 ) -> Optional[Decimal]:
     """Returns saved UQ score for a user in a given epoch.
     None if the UQ score is not saved (allocation not made yet).
@@ -27,7 +28,7 @@ async def get_uq_score_by_user_address(
 
 
 async def save_uq_score_for_user_address(
-    session: AsyncSession, user_address: str, epoch_number: int, score: Decimal
+    session: AsyncSession, user_address: Address, epoch_number: int, score: Decimal
 ):
     """Saves UQ score for a user in a given epoch."""
 
@@ -46,14 +47,19 @@ async def save_uq_score_for_user_address(
 
 
 async def get_gp_stamps_by_address(
-    session: AsyncSession, user_address: str
+    session: AsyncSession, user_address: Address
 ) -> GPStamps | None:
     """Gets the latest GitcoinPassport Stamps record for a user."""
 
     user = await get_user_by_address(session, user_address)
+    if user is None:
+        return None
 
     result = await session.scalar(
-        select(GPStamps).filter(GPStamps.user_id == user.id).order_by(GPStamps.created_at.desc()).limit(1)
+        select(GPStamps)
+        .filter(GPStamps.user_id == user.id)
+        .order_by(GPStamps.created_at.desc())
+        .limit(1)
     )
 
     # result = await session.execute(

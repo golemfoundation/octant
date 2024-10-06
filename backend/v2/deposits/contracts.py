@@ -1,10 +1,8 @@
-
-
-
 from v2.core.contracts import SmartContract
 
 
 from typing import Protocol
+
 
 class AddressKey(Protocol):
     address: str
@@ -12,17 +10,16 @@ class AddressKey(Protocol):
 
 
 class DepositsContracts(SmartContract):
-
-    def lock(self, account: AddressKey, amount: int):
-        nonce = self.w3.eth.get_transaction_count(account.address)
-        transaction = self.contract.functions.lock(amount).build_transaction(
+    async def lock(self, account: AddressKey, amount: int):
+        nonce = await self.w3.eth.get_transaction_count(account.address)
+        transaction = await self.contract.functions.lock(amount).build_transaction(
             {"from": account.address, "nonce": nonce}
         )
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
-    def balance_of(self, owner_address: str) -> int:
-        return self.contract.functions.deposits(owner_address).call()
+    async def balance_of(self, owner_address: str) -> int:
+        return await self.contract.functions.deposits(owner_address).call()
 
 
 DEPOSITS_ABI = [

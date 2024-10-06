@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from web3 import AsyncWeb3
 from app import exceptions
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.core.types import Address
 from .schemas import UserAllocationRequest
 from .repositories import get_last_allocation_request_nonce
 from v2.crypto.signatures import verify_signed_message
@@ -26,8 +27,9 @@ class SignatureVerifier:
 
     async def verify(self, epoch_number: int, request: UserAllocationRequest) -> None:
         import time
+
         start = time.time()
-        
+
         await asyncio.gather(
             verify_logic(
                 session=self.session,
@@ -68,19 +70,22 @@ async def verify_logic(
     print("already here")
 
     async def _check_database():
-        await _provided_nonce_matches_expected(session, payload.user_address, payload.nonce)
-        await _user_is_not_patron(session, epoch_subgraph, payload.user_address, epoch_number)
+        await _provided_nonce_matches_expected(
+            session, payload.user_address, payload.nonce
+        )
+        await _user_is_not_patron(
+            session, epoch_subgraph, payload.user_address, epoch_number
+        )
         await _user_has_budget(session, payload, epoch_number)
-    
+
     await asyncio.gather(
         _check_database(),
-        _provided_projects_are_correct(projects_contracts, epoch_number, payload)
+        _provided_projects_are_correct(projects_contracts, epoch_number, payload),
     )
-
 
     # try:
     #     async with asyncio.TaskGroup() as tg:
-            
+
     #         tg.create_task(_provided_nonce_matches_expected(session, payload.user_address, payload.nonce))
     #         tg.create_task(_user_is_not_patron(session, epoch_subgraph, payload.user_address, epoch_number))
     #         tg.create_task(_provided_projects_are_correct(projects_contracts, epoch_number, payload))
@@ -88,7 +93,6 @@ async def verify_logic(
     # except Exception as e:
     #     print("e", e)
     #     raise e
-
 
     # summary = asyncio.gather(
     #     _provided_nonce_matches_expected(session, payload.user_address, payload.nonce),
@@ -110,11 +114,12 @@ async def verify_logic(
 
     print("hehehehehe")
 
+
 async def _provided_nonce_matches_expected(
     # Component dependencies
     session: AsyncSession,
     # Arguments
-    user_address: str,
+    user_address: Address,
     nonce: int,
 ) -> None:
     """
@@ -133,7 +138,7 @@ async def _user_is_not_patron(
     session: AsyncSession,
     epoch_subgraph: EpochsSubgraph,
     # Arguments
-    user_address: str,
+    user_address: Address,
     epoch_number: int,
 ) -> None:
     """
@@ -150,11 +155,12 @@ async def _user_is_not_patron(
     if is_patron:
         raise exceptions.NotAllowedInPatronMode(user_address)
 
+
 async def get_next_user_nonce(
     # Component dependencies
     session: AsyncSession,
     # Arguments
-    user_address: str,
+    user_address: Address,
 ) -> int:
     """
     Get the next expected nonce for the user.
@@ -187,6 +193,7 @@ async def _provided_projects_are_correct(
     """
 
     import time
+
     start = time.time()
     # Check if the user is not a project
     all_projects = await projects_contracts.get_project_addresses(epoch_number)
@@ -234,7 +241,7 @@ async def _user_has_budget(
 
 
 async def verify_signature(
-    w3: AsyncWeb3, chain_id: int, user_address: str, payload: UserAllocationRequest
+    w3: AsyncWeb3, chain_id: int, user_address: Address, payload: UserAllocationRequest
 ) -> None:
     eip712_encoded = build_allocations_eip712_structure(chain_id, payload)
     encoded_msg = encode_for_signing(EncodingStandardFor.DATA, eip712_encoded)

@@ -3,14 +3,14 @@ from decimal import Decimal
 from math import sqrt
 from typing import Dict, NamedTuple
 
+from v2.core.types import Address
 from v2.allocations.schemas import AllocationWithUserUQScore
+
+from .schemas import ProjectFundingSummary
 
 
 class CappedQuadriaticFunding(NamedTuple):
-    amounts_by_project: Dict[
-        str, Decimal
-    ]  # Sum of all allocation amounts for each project
-    matched_by_project: Dict[str, Decimal]  # Sum of matched rewards for each project
+    project_fundings: dict[Address, ProjectFundingSummary]
     amounts_total: Decimal  # Sum of all allocation amounts for all projects
     matched_total: Decimal  # Sum of all matched rewards for all projects
 
@@ -96,10 +96,18 @@ def capped_quadriatic_funding(
         matched_by_project[project_address] = matched_capped
         matched_total += matched_capped
 
+    project_fundings = {
+        project_address: ProjectFundingSummary(
+            address=project_address,
+            allocated=int(amount_by_project[project_address]),
+            matched=int(matched_by_project[project_address]),
+        )
+        for project_address in project_addresses
+    }
+
     return CappedQuadriaticFunding(
-        amounts_by_project=amount_by_project,
-        matched_by_project=matched_by_project,
-        amounts_total=total_qf,
+        project_fundings=project_fundings,
+        amounts_total=amounts_total,
         matched_total=matched_total,
     )
 
@@ -113,9 +121,9 @@ def cqf_calculate_total_leverage(matched_rewards: int, total_allocated: int) -> 
 
 def cqf_calculate_individual_leverage(
     new_allocations_amount: int,
-    project_addresses: list[str],
-    before_allocation_matched: Dict[str, Decimal],
-    after_allocation_matched: Dict[str, Decimal],
+    project_addresses: list[Address],
+    before_allocation: CappedQuadriaticFunding,
+    after_allocation: CappedQuadriaticFunding,
 ) -> float:
     """Calculate the leverage of a user's new allocations in capped quadratic funding.
 
@@ -127,8 +135,14 @@ def cqf_calculate_individual_leverage(
 
     total_difference = Decimal(0)
     for project_address in project_addresses:
-        before = before_allocation_matched.get(project_address, 0)
-        after = after_allocation_matched[project_address]
+        if project_address in before_allocation.project_fundings:
+            before = Decimal(before_allocation.project_fundings[project_address].matched)
+        else:
+            before = Decimal(0)
+
+        # before = before_allocation_matched.get(project_address, 0)
+        after = after_allocation.project_fundings[project_address].matched
+        # after = after_allocation_matched[project_address]
 
         difference = abs(before - after)
         total_difference += difference
@@ -176,8 +190,8 @@ def cqf_simulate_leverage(
     leverage = cqf_calculate_individual_leverage(
         new_allocations_amount=sum(a.amount for a in new_allocations),
         project_addresses=[a.project_address for a in new_allocations],
-        before_allocation_matched=before_allocation.matched_by_project,
-        after_allocation_matched=after_allocation.matched_by_project,
+        before_allocation=before_allocation,
+        after_allocation=after_allocation,
     )
 
     return leverage
