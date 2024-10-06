@@ -12,7 +12,10 @@ import ModalRecalculatingScore from 'components/Home/HomeGridUQScore/ModalRecalc
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
 import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
-import { GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD } from 'constants/urls';
+import {
+  GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD,
+  TIME_OUT_LIST_DISPUTE_FORM,
+} from 'constants/urls';
 import useCheckDelegation from 'hooks/mutations/useCheckDelegation';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -77,24 +80,6 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
       ? delegationSecondaryAddress === null
       : primaryAddressScore === null || primaryAddressScore !== address,
   );
-
-  const isRecalculateButtonDisabled =
-    !isConnected ||
-    isDelegationCompleted ||
-    isFetchingScore ||
-    isFetchingUqScore ||
-    delegationSecondaryAddress === '0x???';
-
-  const isDelegateButtonDisabled =
-    !isConnected ||
-    isDelegationCompleted ||
-    isFetchingScore ||
-    primaryAddressScore === null ||
-    primaryAddressScore === undefined ||
-    primaryAddressScore >= 20 ||
-    isFetchingUqScore ||
-    uqScore === 100n ||
-    delegationSecondaryAddress === '0x???';
 
   const { mutateAsync: checkDelegationMutation } = useCheckDelegation();
   const {
@@ -235,6 +220,26 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserTOSAccepted, address]);
 
+  const isRecalculateButtonDisabled =
+    !isConnected ||
+    isDelegationCompleted ||
+    isFetchingScore ||
+    isFetchingUqScore ||
+    delegationSecondaryAddress === '0x???' ||
+    antisybilStatusScore?.isOnTimeOutList;
+
+  const isDelegateButtonDisabled =
+    !isConnected ||
+    isDelegationCompleted ||
+    isFetchingScore ||
+    primaryAddressScore === null ||
+    primaryAddressScore === undefined ||
+    primaryAddressScore >= 20 ||
+    isFetchingUqScore ||
+    uqScore === 100n ||
+    delegationSecondaryAddress === '0x???' ||
+    antisybilStatusScore?.isOnTimeOutList;
+
   return (
     <>
       <GridTile
@@ -251,13 +256,25 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
         }
       >
         <div className={styles.root}>
-          <HomeGridUQScoreAddresses isFetchingScore={isFetchingScore} />
-          <Button
-            className={styles.visitDashboard}
-            href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
-            label={t('scoreTooLow')}
-            variant="link6"
+          <HomeGridUQScoreAddresses
+            isFetchingScore={isFetchingScore}
+            isOnTimeOutList={antisybilStatusScore?.isOnTimeOutList}
           />
+          {antisybilStatusScore?.isOnTimeOutList ? (
+            <Button
+              className={styles.furtherActions}
+              href={TIME_OUT_LIST_DISPUTE_FORM}
+              label={t('wantToDispute')}
+              variant="link6"
+            />
+          ) : (
+            <Button
+              className={styles.furtherActions}
+              href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+              label={t('scoreTooLow')}
+              variant="link6"
+            />
+          )}
           <div className={styles.buttonsWrapper}>
             <Button
               className={styles.button}

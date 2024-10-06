@@ -1,7 +1,7 @@
 .root {
   padding: 0 2.4rem 2.4rem;
 
-  .visitDashboard {
+  .furtherActions {
     height: 4.8rem;
     justify-content: left;
     font-size: 1rem;
@@ -16,7 +16,6 @@
     justify-content: space-between;
 
     .button {
-      cursor: pointer;
       flex: 1;
 
       &:first-child {

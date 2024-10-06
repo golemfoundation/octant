@@ -124,10 +124,12 @@
       },
       "homeGridUQScore": {
         "yourUniquenessScore": "Your uniqueness score",
+        "isOnTimeOutListLabel": "Sybil account",
         "recalculate": "Recalculate",
         "delegate": "Delegate",
         "whatIsThis": "What is this?",
         "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
+        "wantToDispute": "Want to dispute sybil status? Please use this form",
         "addresses": "addresses",
         "primary": "Primary",
         "noWalletConnected": "No wallet connected",

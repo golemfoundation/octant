@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 
 import Identicon from 'components/ui/Identicon';
 import Svg from 'components/ui/Svg';
+import TinyLabel from 'components/ui/TinyLabel';
 import useDelegationStore from 'store/delegation/store';
 import { octant } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
@@ -13,7 +14,10 @@ import truncateEthAddress from 'utils/truncateEthAddress';
 import styles from './HomeGridUQScoreAddresses.module.scss';
 import HomeGridUQScoreAddressesProps from './types';
 
-const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchingScore }) => {
+const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({
+  isFetchingScore,
+  isOnTimeOutList,
+}) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridUQScore',
   });
@@ -88,7 +92,21 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({ isFetchin
   ]);
 
   return (
-    <div className={cx(styles.root, !isConnected && styles.noWalletConnected)}>
+    <div
+      className={cx(
+        styles.root,
+        !isConnected && styles.noWalletConnected,
+        isOnTimeOutList && styles.isOnTimeOutList,
+      )}
+    >
+      {isOnTimeOutList && (
+        <TinyLabel
+          className={styles.isOnTimeOutListLabel}
+          isInTopRightCorner={false}
+          text={t('isOnTimeOutListLabel')}
+          variant="orange3"
+        />
+      )}
       <div className={styles.avatarsGroup}>
         {addresses?.map((address, index) => (
           <div key={address || index} className={styles.addressAvatar}>
