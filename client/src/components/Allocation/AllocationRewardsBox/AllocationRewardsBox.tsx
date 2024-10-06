@@ -10,7 +10,11 @@ import useUpcomingBudget from 'hooks/queries/useUpcomingBudget';
 import styles from './AllocationRewardsBox.module.scss';
 import AllocationRewardsBoxProps from './types';
 
-const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({ isDisabled, isLocked }) => {
+const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
+  isDisabled,
+  isLocked,
+  isManuallyEdited,
+}) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
@@ -54,18 +58,21 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({ isDisabled, isLoc
   }, [isDecisionWindowOpen, individualReward, upcomingBudget]);
 
   return (
-    <div className={styles.root}>
-      <div className={cx(styles.value, (isDisabled || isLocked) && styles.isGrey)}>
-        {
-          getValuesToDisplay({
-            cryptoCurrency: 'ethereum',
-            showCryptoSuffix: true,
-            showLessThanOneCentFiat: !isDisabled,
-            valueCrypto: budget,
-          }).primary
-        }
+    <div className={cx(styles.root, isManuallyEdited && styles.isManuallyEdited)}>
+      <div>
+        <div className={cx(styles.value, (isDisabled || isLocked) && styles.isGrey)}>
+          {
+            getValuesToDisplay({
+              cryptoCurrency: 'ethereum',
+              showCryptoSuffix: true,
+              showLessThanOneCentFiat: !isDisabled,
+              valueCrypto: budget,
+            }).primary
+          }
+        </div>
+        <div className={styles.label}>{subtitle}</div>
       </div>
-      <div className={styles.label}>{subtitle}</div>
+      {isManuallyEdited && <div className={styles.manuallyEditedLabel}>{t('manual')}</div>}
     </div>
   );
 };

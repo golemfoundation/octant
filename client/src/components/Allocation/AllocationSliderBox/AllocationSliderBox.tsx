@@ -17,7 +17,6 @@ import AllocationSliderBoxProps from './types';
 const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
   className,
   isDisabled,
-  isManuallyEdited,
   isLocked,
   isError,
   setRewardsForProjectsCallback,
@@ -106,13 +105,7 @@ const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
       hasPadding={false}
       isVertical
     >
-      {!isDisabled && isManuallyEdited && <div className={styles.isManualBadge}>{t('manual')}</div>}
-      <div
-        className={cx(
-          styles.sliderWrapper,
-          isDecisionWindowOpen && isManuallyEdited && styles.isManuallyEdited,
-        )}
-      >
+      <div className={styles.sliderWrapper}>
         <Slider
           className={styles.slider}
           dataTest="AllocationRewardsBox__Slider"

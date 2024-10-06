@@ -3,6 +3,5 @@ export default interface AllocationSliderBoxProps {
   isDisabled?: boolean;
   isError: boolean;
   isLocked?: boolean;
-  isManuallyEdited?: boolean;
   setRewardsForProjectsCallback: ({ rewardsForProjectsNew }) => void;
 }

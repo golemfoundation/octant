@@ -253,8 +253,8 @@
         "donateWithPercentage": "Donate {{percentage}}%",
         "personalWithPercentage": "Personal {{percentage}}%",
         "allocated": "Allocated",
-        "manual": "Manual",
-        "availableDuringAllocation": "Available during allocation"
+        "availableDuringAllocation": "Available during allocation",
+        "manual": "Manual"
       },
       "allocationSummary": {
         "totalImpact": "Total impact",
