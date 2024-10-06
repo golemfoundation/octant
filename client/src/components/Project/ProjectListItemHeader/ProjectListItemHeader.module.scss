@@ -102,6 +102,15 @@
         &.websiteLink {
           margin-right: 1.6rem;
 
+          .labelOrUrl {
+            max-width: 9rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: inline-block;
+            flex: auto;
+          }
+
           .arrowTopRightIcon {
             margin-left: 0.8rem;
             margin-right: 0.2rem;
