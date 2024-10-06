@@ -3,9 +3,16 @@ from decimal import Decimal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.constants import GUEST_LIST
-from app.modules.user.antisybil.service.initial import _has_guest_stamp_applied_by_gp
+from app.constants import GUEST_LIST, TIMEOUT_LIST
+from app.modules.user.antisybil.core import (
+    _apply_gtc_staking_stamp_nullification,
+    _has_guest_stamp_applied_by_gp,
+)
+
 from eth_utils import to_checksum_address
+
+from v2.core.types import Address
+
 
 from .repositories import (
     get_uq_score_by_user_address,
@@ -21,7 +28,9 @@ class UQScoreGetter:
     max_uq_score: Decimal
     low_uq_score: Decimal
 
-    async def get_or_calculate(self, epoch_number: int, user_address: str) -> Decimal:
+    async def get_or_calculate(
+        self, epoch_number: int, user_address: Address
+    ) -> Decimal:
         return await get_or_calculate_uq_score(
             session=self.session,
             user_address=user_address,
@@ -57,7 +66,7 @@ def calculate_uq_score(
 
 async def get_or_calculate_uq_score(
     session: AsyncSession,
-    user_address: str,
+    user_address: Address,
     epoch_number: int,
     uq_score_threshold: float,
     max_uq_score: Decimal,
@@ -85,7 +94,9 @@ async def get_or_calculate_uq_score(
     return uq_score
 
 
-async def get_gitcoin_passport_score(session: AsyncSession, user_address: str) -> float:
+async def get_gitcoin_passport_score(
+    session: AsyncSession, user_address: Address
+) -> float:
     """Gets saved Gitcoin Passport score for a user.
     Returns None if the score is not saved.
     If the user is in the GUEST_LIST, the score will be adjusted to include the guest stamp.
@@ -95,10 +106,19 @@ async def get_gitcoin_passport_score(session: AsyncSession, user_address: str) -
 
     stamps = await get_gp_stamps_by_address(session, user_address)
 
+    # We have no information about the user's score
     if stamps is None:
         return 0.0
 
-    if user_address in GUEST_LIST and not _has_guest_stamp_applied_by_gp(stamps):
-        return stamps.score + 21.0
+    # If the user is explicitly in the timeout list, return 0.0 Gitcoin Passport score
+    if user_address in TIMEOUT_LIST:
+        return 0.0
 
-    return stamps.score
+    # We remove score associated with GTC staking
+    potential_score = _apply_gtc_staking_stamp_nullification(stamps.score, stamps)
+
+    # If the user is in the guest list and has not been stamped by a guest list provider, increase the score by 21.0
+    if user_address in GUEST_LIST and not _has_guest_stamp_applied_by_gp(stamps):
+        return potential_score + 21.0
+
+    return potential_score

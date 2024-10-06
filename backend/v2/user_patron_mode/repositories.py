@@ -6,6 +6,7 @@ from sqlalchemy import Integer, cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import aliased
+from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
 
@@ -72,7 +73,7 @@ async def get_patrons_rewards(
 
 
 async def get_budget_by_user_address_and_epoch(
-    session: AsyncSession, user_address: str, epoch: int
+    session: AsyncSession, user_address: Address, epoch: int
 ) -> int | None:
     """
     Get the budget of a user for a given epoch.
@@ -83,7 +84,6 @@ async def get_budget_by_user_address_and_epoch(
     print("user", user)
     if user is None:
         return None
-
 
     print("epoch", epoch)
     # epoch -= 1
@@ -105,7 +105,7 @@ async def get_budget_by_user_address_and_epoch(
 
 async def user_is_patron_with_budget(
     session: AsyncSession,
-    user_address: str,
+    user_address: Address,
     epoch_number: int,
     finalized_timestamp: datetime,
 ) -> bool:

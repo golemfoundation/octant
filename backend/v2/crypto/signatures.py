@@ -2,6 +2,7 @@ from eth_account import Account
 from eth_account.messages import SignableMessage, _hash_eip191_message
 from eth_keys.exceptions import BadSignature
 from eth_utils import to_checksum_address
+from v2.core.types import Address
 from v2.crypto.contracts import GNOSIS_SAFE, GnosisSafeContracts
 from web3 import AsyncWeb3
 from web3.exceptions import ContractLogicError
@@ -9,7 +10,7 @@ from web3.exceptions import ContractLogicError
 
 async def verify_signed_message(
     w3: AsyncWeb3,
-    user_address: str,
+    user_address: Address,
     encoded_msg: SignableMessage,
     signature: str,
 ) -> bool:
@@ -43,18 +44,18 @@ def hash_signable_message(encoded_msg: SignableMessage) -> str:
 
 
 async def _verify_multisig(
-    w3: AsyncWeb3, user_address: str, encoded_msg: SignableMessage, signature: str
+    w3: AsyncWeb3, user_address: Address, encoded_msg: SignableMessage, signature: str
 ) -> bool:
     msg_hash = hash_signable_message(encoded_msg)
     try:
-        gnosis_safe = GnosisSafeContracts(w3=w3, abi=GNOSIS_SAFE, address=user_address)
+        gnosis_safe = GnosisSafeContracts(w3=w3, abi=GNOSIS_SAFE, address=user_address)  # type: ignore[arg-type]
         return await gnosis_safe.is_valid_signature(msg_hash, signature)
     except ContractLogicError:
         return False
 
 
 def _verify_eoa(
-    user_address: str, encoded_msg: SignableMessage, signature: str
+    user_address: Address, encoded_msg: SignableMessage, signature: str
 ) -> bool:
     try:
         recovered_address = Account.recover_message(encoded_msg, signature=signature)

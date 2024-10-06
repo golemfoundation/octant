@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import Depends
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
 
 from v2.core.dependencies import GetSession, OctantSettings
 from .services import UQScoreGetter
@@ -11,11 +10,11 @@ from .services import UQScoreGetter
 
 class UQScoreSettings(OctantSettings):
     uq_score_threshold: float = Field(
-        default=21.0,
+        default=15.0,
         description="The Gitcoin Passport score threshold above which the UQ score is set to the maximum UQ score.",
     )
     low_uq_score: Decimal = Field(
-        default=Decimal("0.2"),
+        default=Decimal("0.01"),
         description="The UQ score to be returned if the Gitcoin Passport score is below the threshold.",
     )
     max_uq_score: Decimal = Field(
@@ -39,7 +38,5 @@ def get_uq_score_getter(
         low_uq_score=settings.low_uq_score,
     )
 
-GetUQScoreGetter = Annotated[
-    UQScoreGetter,
-    Depends(get_uq_score_getter)
-]
+
+GetUQScoreGetter = Annotated[UQScoreGetter, Depends(get_uq_score_getter)]

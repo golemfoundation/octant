@@ -4,14 +4,12 @@ import time
 
 from app import exceptions
 from sqlalchemy.ext.asyncio import AsyncSession
+from v2.matched_rewards.services import MatchedRewardsEstimator
 from v2.uniqueness_quotients.dependencies import UQScoreGetter
 from v2.project_rewards.capped_quadriatic import (
     cqf_simulate_leverage,
 )
 from v2.projects.contracts import ProjectsContracts
-from v2.projects.services import (
-    EstimatedProjectMatchedRewards,
-)
 from v2.users.repositories import get_user_by_address
 
 from .validators import SignatureVerifier
@@ -24,16 +22,18 @@ from .repositories import (
 
 
 @dataclass
-class Allocations:
+class Allocator:
     session: AsyncSession
     signature_verifier: SignatureVerifier
     uq_score_getter: UQScoreGetter
-    projects: ProjectsContracts
-    estimated_project_matched_rewards: EstimatedProjectMatchedRewards
+    projects_contracts: ProjectsContracts
+    matched_rewards_estimator: MatchedRewardsEstimator
 
-    async def make(
+    epoch_number: int
+
+    async def handle(
         self,
-        epoch_number: int,
+        # epoch_number: int,
         request: UserAllocationRequest,
     ) -> str:
         """
@@ -43,9 +43,9 @@ class Allocations:
             session=self.session,
             signature_verifier=self.signature_verifier,
             uq_score_getter=self.uq_score_getter,
-            projects=self.projects,
-            estimated_project_matched_rewards=self.estimated_project_matched_rewards,
-            epoch_number=epoch_number,
+            projects_contracts=self.projects_contracts,
+            matched_rewards_estimator=self.matched_rewards_estimator,
+            epoch_number=self.epoch_number,
             request=request,
         )
 
@@ -55,13 +55,12 @@ async def allocate(
     session: AsyncSession,
     signature_verifier: SignatureVerifier,
     uq_score_getter: UQScoreGetter,
-    projects: ProjectsContracts,
-    estimated_project_matched_rewards: EstimatedProjectMatchedRewards,
-    # Arguments
+    projects_contracts: ProjectsContracts,
+    matched_rewards_estimator: MatchedRewardsEstimator,
     epoch_number: int,
+    # Arguments
     request: UserAllocationRequest,
 ) -> str:
-    
     import time
 
     allocation_time = time.time()
@@ -73,7 +72,6 @@ async def allocate(
 
     print("signature verified in", time.time() - allocation_time)
 
-
     uq_score_time = time.time()
 
     # Get or calculate UQ score of the user
@@ -83,7 +81,6 @@ async def allocate(
     )
 
     print("uq score retrieved in", time.time() - uq_score_time)
-
 
     new_allocations_time = time.time()
     # Calculate leverage by simulating the allocation
@@ -98,11 +95,11 @@ async def allocate(
     ]
 
     leverage = await simulate_leverage(
-        session=session,
-        projects=projects,
-        estimated_project_matched_rewards=estimated_project_matched_rewards,
-        epoch_number=epoch_number,
-        new_allocations=new_allocations,
+        session,
+        projects_contracts,
+        matched_rewards_estimator,
+        epoch_number,
+        new_allocations,
     )
 
     print("new allocations calculated in", time.time() - new_allocations_time)
@@ -116,9 +113,7 @@ async def allocate(
     soft_delete_time = time.time()
 
     await soft_delete_user_allocations_by_epoch(
-        session,
-        user_address=request.user_address,
-        epoch_number=epoch_number,
+        session, request.user_address, epoch_number
     )
 
     # Get user and update allocation nonce
@@ -133,7 +128,7 @@ async def allocate(
         request.user_address,
         epoch_number,
         request,
-        leverage=leverage,
+        leverage,
     )
 
     # Commit the transaction
@@ -147,8 +142,8 @@ async def allocate(
 async def simulate_leverage(
     # Component dependencies
     session: AsyncSession,
-    projects: ProjectsContracts,
-    estimated_project_matched_rewards: EstimatedProjectMatchedRewards,
+    projects_contracts: ProjectsContracts,
+    matched_rewards_estimator: MatchedRewardsEstimator,
     # Arguments
     epoch_number: int,
     new_allocations: list[AllocationWithUserUQScore],
@@ -160,17 +155,10 @@ async def simulate_leverage(
     start_time = time.time()
 
     all_projects, matched_rewards, existing_allocations = await asyncio.gather(
-        projects.get_project_addresses(epoch_number),
-        estimated_project_matched_rewards.get(epoch_number),
+        projects_contracts.get_project_addresses(epoch_number),
+        matched_rewards_estimator.get(),
         get_allocations_with_user_uqs(session, epoch_number),
     )
-
-    # all_projects = await projects.get_project_addresses(epoch_number)
-
-    # matched_rewards = await estimated_project_matched_rewards.get(epoch_number)
-
-    # # Get all allocations before user's allocation
-    # existing_allocations = await get_allocations_with_user_uqs(session, epoch_number)
 
     print("existing allocations retrieved in", time.time() - start_time)
 

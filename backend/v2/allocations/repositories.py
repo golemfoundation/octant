@@ -5,10 +5,11 @@ from app.infrastructure.database.models import Allocation
 from app.infrastructure.database.models import AllocationRequest as AllocationRequestDB
 from app.infrastructure.database.models import UniquenessQuotient, User
 from eth_utils import to_checksum_address
-from sqlalchemy import func, select, update
+from sqlalchemy import INTEGER, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
+from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
 from .schemas import AllocationWithUserUQScore, ProjectDonation, UserAllocationRequest
@@ -18,7 +19,7 @@ async def sum_allocations_by_epoch(session: AsyncSession, epoch_number: int) -> 
     """Get the sum of all allocations for a given epoch. We only consider the allocations that have not been deleted."""
 
     result = await session.execute(
-        select(coalesce(func.sum(Allocation.amount), 0))
+        select(coalesce(func.sum(cast(Allocation.amount, INTEGER)), 0))
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
     )
@@ -64,7 +65,7 @@ async def get_allocations_with_user_uqs(
 
 async def soft_delete_user_allocations_by_epoch(
     session: AsyncSession,
-    user_address: str,
+    user_address: Address,
     epoch_number: int,
 ) -> None:
     """Soft delete all user allocations for a given epoch."""
@@ -91,7 +92,7 @@ async def soft_delete_user_allocations_by_epoch(
 
 async def store_allocation_request(
     session: AsyncSession,
-    user_address: str,
+    user_address: Address,
     epoch_number: int,
     request: UserAllocationRequest,
     leverage: float,
@@ -128,60 +129,19 @@ async def store_allocation_request(
 
 async def get_last_allocation_request_nonce(
     session: AsyncSession,
-    user_address: str,
+    user_address: Address,
 ) -> int | None:
     """Get the last nonce of the allocation requests for a user."""
-
-    import time
-
-
-
-    # return result.scalar()
-
-    start = time.time()
 
     user = await get_user_by_address(session, user_address)
     if user is None:
         return None
 
-    # result = await session.execute(
-    #     select(func.max(AllocationRequestDB.nonce)).filter(
-    #         AllocationRequestDB.user_id == user.id
-    #     )
-    # )
-
-    print("get_last_allocation_request_nonce2", time.time() - start)
-
-    start = time.time()
-
-    result = await session.scalar(
+    return await session.scalar(
         select(func.max(AllocationRequestDB.nonce)).filter(
             AllocationRequestDB.user_id == user.id
         )
     )
-
-    # result = await session.execute(
-    #     select(AllocationRequestDB.nonce).
-    #     join(User, AllocationRequestDB.user_id == User.id).
-    #     filter(User.address == user_address).
-    #     order_by(AllocationRequestDB.nonce.desc()).
-    #     limit(1)
-    # )
-
-    print("get_last_allocation_request_nonce", time.time() - start)
-
-    # start = time.time()
-    
-    # result = (
-    #     AllocationRequestDB.query.join(User, User.id == AllocationRequestDB.user_id)
-    #     .filter(User.address == user_address)
-    #     .order_by(AllocationRequestDB.nonce.desc())
-    #     .first()
-    # )
-
-    # print("?????????get_user_last_allocation_request", time.time() - start)
-
-    return result
 
 
 async def get_donations_by_project(
