@@ -65,7 +65,10 @@ export default function getFormattedEthValue({
     }
   }
 
-  if (!isInGweiRange) {
+  if (
+    (!isInGweiRange && !maxNumberOfDigitsToShow) ||
+    (!isInGweiRange && maxNumberOfDigitsToShow && formattedValue.includes('.'))
+  ) {
     formattedValue = formattedValue.replace(dotAndZeroes, '');
   }
 
