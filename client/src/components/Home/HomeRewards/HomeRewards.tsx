@@ -158,6 +158,7 @@ const HomeRewards = (): ReactElement => {
           : isFetchingRewardsRate,
       key: 'rewardsRate',
       label: rewardsRateLabel,
+      tooltipText: t('rewardsRateTooltip'),
       value:
         isProjectAdminMode || isPatronMode ? epochTotalMatchFundingToDisplay : `${rewardsRate} %`,
     },
@@ -165,16 +166,12 @@ const HomeRewards = (): ReactElement => {
 
   return (
     <div className={styles.root}>
-      {tiles.map(({ label, value, key, isLoadingValue }) => (
+      {tiles.map(({ label, value, key, isLoadingValue, tooltipText }) => (
         <div key={key} className={styles.tile}>
           <div className={styles.label}>
             {label}
-            {!isProjectAdminMode && !isPatronMode && (
-              <Tooltip
-                className={styles.tooltip}
-                position="bottom-right"
-                text={t('rewardsRateTooltip')}
-              >
+            {!isProjectAdminMode && !isPatronMode && tooltipText && (
+              <Tooltip className={styles.tooltip} position="bottom-right" text={tooltipText}>
                 <Svg displayMode="wrapperDefault" img={questionMark} size={1.6} />
               </Tooltip>
             )}
