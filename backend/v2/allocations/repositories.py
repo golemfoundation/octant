@@ -5,7 +5,7 @@ from app.infrastructure.database.models import Allocation
 from app.infrastructure.database.models import AllocationRequest as AllocationRequestDB
 from app.infrastructure.database.models import UniquenessQuotient, User
 from eth_utils import to_checksum_address
-from sqlalchemy import INTEGER, cast, func, select, update
+from sqlalchemy import Numeric, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
@@ -19,7 +19,7 @@ async def sum_allocations_by_epoch(session: AsyncSession, epoch_number: int) -> 
     """Get the sum of all allocations for a given epoch. We only consider the allocations that have not been deleted."""
 
     result = await session.execute(
-        select(coalesce(func.sum(cast(Allocation.amount, INTEGER)), 0))
+        select(coalesce(func.sum(cast(Allocation.amount, Numeric)), 0))
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
     )
