@@ -599,6 +599,7 @@ const Allocation = (): ReactElement => {
           <AllocationRewardsBox
             isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
             isLocked={currentView === 'summary'}
+            isManuallyEdited={isManualMode}
           />
         )}
         {hasUserIndividualReward && isDecisionWindowOpen && !isEpoch1 && (
@@ -607,7 +608,6 @@ const Allocation = (): ReactElement => {
             isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
             isError={addressesWithError.length > 0}
             isLocked={currentView === 'summary'}
-            isManuallyEdited={isManualMode}
             setRewardsForProjectsCallback={onResetAllocationValues}
           />
         )}

@@ -8,19 +8,6 @@
   }
 }
 
-.isManualBadge {
-  position: absolute;
-  top: 2.4rem;
-  right: 2.4rem;
-  border: 0.1rem solid $color-octant-green;
-  padding: 0.2rem 0.5rem;
-  text-transform: uppercase;
-  border-radius: $border-radius-04;
-  color: $color-octant-green;
-  background: $color-octant-green5;
-  line-height: 1.4rem;
-}
-
 .sliderWrapper {
   display: flex;
   align-items: center;
@@ -30,10 +17,6 @@
   padding: 0 1.6rem;
   margin-bottom: 0.8rem;
   height: 7.2rem;
-
-  &.isManuallyEdited {
-    background-color: $color-octant-green5;
-  }
 
   @media #{$tablet-up} {
     margin-bottom: 1.6rem;
