@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 
 from app.infrastructure.database.models import Budget, PatronModeEvent, User
-from sqlalchemy import Integer, cast, func
+from sqlalchemy import Numeric, cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import aliased
@@ -47,7 +47,7 @@ async def get_budget_sum_by_users_addresses_and_epoch(
     Sum the budgets of given users for a given epoch.
     """
     result = await session.execute(
-        select(func.sum(cast(Budget.budget, Integer)))
+        select(func.sum(cast(Budget.budget, Numeric)))
         .join(User)
         .filter(User.address.in_(users_addresses), Budget.epoch == epoch_number)
     )
@@ -56,7 +56,7 @@ async def get_budget_sum_by_users_addresses_and_epoch(
     if total_budget is None:
         return 0
 
-    return total_budget
+    return int(total_budget)
 
 
 async def get_patrons_rewards(
