@@ -107,7 +107,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
             rel="noreferrer"
             target="_blank"
           >
-            {website!.label || website!.url}
+            <span className={styles.labelOrUrl}>{website!.label || website!.url}</span>
             <Svg classNameSvg={styles.arrowTopRightIcon} img={arrowTopRight} size={1} />
           </a>
           <Tooltip
