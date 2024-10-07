@@ -1,18 +1,18 @@
-from decimal import Decimal
-from pydantic import BaseModel, Field
-
-from v2.core.types import Address
+from pydantic import Field
+from v2.core.types import Address, BigInteger, OctantModel
 
 
-class ProjectFundingSummary(BaseModel):
+class ProjectFundingSummary(OctantModel):
     address: Address = Field(..., description="The address of the project")
-    allocated: int = Field(
+    allocated: BigInteger = Field(
         ..., description="Sum of all allocation amounts for the project"
     )
-    matched: int = Field(..., description="Sum of matched rewards for the project")
+    matched: BigInteger = Field(
+        ..., description="Sum of matched rewards for the project"
+    )
 
 
-class EstimatedProjectRewardsResponse(BaseModel):
+class EstimatedProjectRewardsResponse(OctantModel):
     rewards: list[ProjectFundingSummary] = Field(
         ..., description="List of project funding summaries"
     )

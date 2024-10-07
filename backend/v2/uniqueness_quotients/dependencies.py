@@ -1,10 +1,10 @@
 from decimal import Decimal
 from typing import Annotated
+
 from fastapi import Depends
-
 from pydantic import Field
-
 from v2.core.dependencies import GetSession, OctantSettings
+
 from .services import UQScoreGetter
 
 

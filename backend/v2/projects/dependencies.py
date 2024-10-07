@@ -1,9 +1,9 @@
 from typing import Annotated
+
 from fastapi import Depends
 from pydantic import Field
-from v2.epochs.dependencies import AssertAllocationWindowOpen
 from v2.core.dependencies import GetSession, OctantSettings, Web3
-
+from v2.epochs.dependencies import AssertAllocationWindowOpen
 
 from .contracts import PROJECTS_ABI, ProjectsContracts
 from .services import ProjectsAllocationThresholdGetter

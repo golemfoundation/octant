@@ -2,19 +2,11 @@ from typing import Annotated
 
 from fastapi import Depends
 from pydantic import Field
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
-from v2.project_rewards.services import ProjectRewardsEstimator
-from v2.core.exceptions import AllocationWindowClosed
-from v2.epochs.dependencies import (
-    AssertAllocationWindowOpen,
-    GetEpochsContracts,
-    GetEpochsSubgraph,
-)
-from v2.projects.dependencies import (
-    GetProjectsContracts,
-)
-from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 from v2.core.dependencies import GetSession, OctantSettings
+from v2.epochs.dependencies import AssertAllocationWindowOpen, GetEpochsSubgraph
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
+from v2.projects.dependencies import GetProjectsContracts
+from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 
 from .services import Allocator
 from .validators import SignatureVerifier

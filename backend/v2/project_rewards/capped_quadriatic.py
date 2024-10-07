@@ -3,8 +3,8 @@ from decimal import Decimal
 from math import sqrt
 from typing import Dict, NamedTuple
 
-from v2.core.types import Address
 from v2.allocations.schemas import AllocationWithUserUQScore
+from v2.core.types import Address
 
 from .schemas import ProjectFundingSummary
 
@@ -136,7 +136,9 @@ def cqf_calculate_individual_leverage(
     total_difference = Decimal(0)
     for project_address in project_addresses:
         if project_address in before_allocation.project_fundings:
-            before = Decimal(before_allocation.project_fundings[project_address].matched)
+            before = Decimal(
+                before_allocation.project_fundings[project_address].matched
+            )
         else:
             before = Decimal(0)
 

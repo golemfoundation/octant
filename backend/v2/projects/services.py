@@ -1,9 +1,8 @@
+import asyncio
 from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from v2.allocations.repositories import (
-    sum_allocations_by_epoch,
-)
+from v2.allocations.repositories import sum_allocations_by_epoch
 from v2.projects.contracts import ProjectsContracts
 
 
@@ -36,11 +35,10 @@ async def get_projects_allocation_threshold(
 ) -> int:
     # PROJECTS_COUNT_MULTIPLIER = 1  # TODO: from settings?
 
-    total_allocated = await sum_allocations_by_epoch(session, epoch_number)
-    project_addresses = await projects.get_project_addresses(epoch_number)
-
-    print("total_allocated", total_allocated)
-    print("project_addresses", project_addresses)
+    total_allocated, project_addresses = await asyncio.gather(
+        sum_allocations_by_epoch(session, epoch_number),
+        projects.get_project_addresses(epoch_number),
+    )
 
     return _calculate_threshold(
         total_allocated, len(project_addresses), project_count_multiplier

@@ -1,7 +1,6 @@
-from v2.core.contracts import SmartContract
-
-
 from typing import Protocol
+
+from v2.core.contracts import SmartContract
 
 
 class AddressKey(Protocol):

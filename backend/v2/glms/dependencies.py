@@ -1,10 +1,9 @@
 from typing import Annotated
-from fastapi import Depends
 
+from fastapi import Depends
 from v2.core.dependencies import OctantSettings, Web3
 
-
-from .contracts import GLMContracts, ERC20_ABI
+from .contracts import ERC20_ABI, GLMContracts
 
 
 class GLMSettings(OctantSettings):
