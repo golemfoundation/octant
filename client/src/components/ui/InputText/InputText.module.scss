@@ -217,6 +217,11 @@ $borderWidth: 0.1rem;
         font-size: $font-size-12;
         color: $color-octant-dark;
 
+        &::placeholder {
+          color: $color-octant-grey5;
+        }
+
+
         &.hasIcon {
           padding-left: $paddingLeftHasIcon;
         }
