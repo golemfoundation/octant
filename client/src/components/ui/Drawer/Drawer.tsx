@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 
 import Button from 'components/ui/Button';
@@ -12,27 +12,30 @@ import DrawerProps from './types';
 
 const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose }) =>
   createPortal(
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <motion.div
-          animate={{
-            x: '0',
-          }}
-          className={styles.root}
-          exit={{ x: '100%' }}
-          initial={{ x: '100%' }}
-          transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
-        >
-          <Button
-            className={styles.buttonClose}
-            Icon={<Svg img={cross} size={1} />}
-            onClick={onClose}
-            variant="iconOnly"
-          />
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>,
+    <Fragment>
+      {isOpen && <div className={styles.overlay} onClick={onClose} />}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            animate={{
+              x: '0',
+            }}
+            className={styles.root}
+            exit={{ x: '100%' }}
+            initial={{ x: '100%' }}
+            transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
+          >
+            <Button
+              className={styles.buttonClose}
+              Icon={<Svg img={cross} size={1} />}
+              onClick={onClose}
+              variant="iconOnly"
+            />
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Fragment>,
     document.body,
   );
 
