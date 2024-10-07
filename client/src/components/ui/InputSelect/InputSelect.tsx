@@ -74,6 +74,7 @@ const InputSelect: FC<InputSelectProps> = ({
     <div
       className={cx(styles.root, styles[`variant--${variant}`], className)}
       data-test={dataTest}
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       onClick={() => setIsMenuOpen(prev => !prev)}
     >
       <div ref={ref} className={cx(styles.selectedValue, styles[`variant--${variant}`])}>
