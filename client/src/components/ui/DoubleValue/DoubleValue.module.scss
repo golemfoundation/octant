@@ -30,7 +30,7 @@
 
   &.variant-- {
     &extra-large {
-      @include fontBig();
+      @include fontBig($font-size-32);
     }
 
     &large {

@@ -15,18 +15,17 @@
   }
 
   .title {
+    @include fontBig($font-size-24);
     padding: 0;
     display: flex;
     align-items: center;
     min-height: 8.8rem;
     width: 100%;
     color: $color-octant-dark;
-    font-size: $font-size-24;
-    font-weight: $font-weight-bold;
     line-height: 1.4rem;
 
     @media #{$tablet-up} {
-      @include fontBig();
+      @include fontBig($font-size-32);
       min-height: 14.4rem;
     }
 
