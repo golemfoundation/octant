@@ -1,11 +1,10 @@
 .root {
-  padding-bottom: 8.8rem;
   width: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1;
 
   @media #{$tablet-up} {
-    padding-bottom: 14.4rem;
   }
 
   @media #{$desktop-up} {
@@ -43,14 +42,54 @@
 
   .boxesWrapper {
     width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
     &.withMarginBottom {
       margin-bottom: 12.8rem;
     }
 
+    &.withPaddingBottom {
+      padding-bottom: 4rem;
+    }
+
     @media #{$desktop-up} {
-      padding: 0 4rem 4rem;
+      padding: 0 4rem;
       overflow: auto;
+    }
+  }
+
+  .emptyState {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+
+    .emptyStateImage {
+      width: 12rem;
+
+      @media #{$tablet-up} {
+        width: 15rem;
+      }
+    }
+
+    .emptyStateText {
+      display: flex;
+      align-items: center;
+      height: 7.2rem;
+      margin-top: 1.8rem;
+      color: $color-octant-grey5;
+      font-size: $font-size-14;
+      font-weight: $font-weight-semibold;
+      line-height: 2.2rem;
+
+      @media #{$tablet-up} {
+        font-size: $font-size-16;
+        line-height: 2.4rem;
+      }
     }
   }
 }

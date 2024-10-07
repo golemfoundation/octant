@@ -2,9 +2,9 @@ import cx from 'classnames';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import { SignatureOpType, apiGetPendingMultisigSignatures } from 'api/calls/multisigSignatures';
@@ -14,6 +14,8 @@ import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import ModalAllocationLowUqScore from 'components/Allocation/ModalAllocationLowUqScore';
+import Button from 'components/ui/Button';
+import Img from 'components/ui/Img';
 import { DRAWER_TRANSITION_TIME } from 'constants/animations';
 import { LAYOUT_NAVBAR_ID } from 'constants/domElementsIds';
 import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT } from 'constants/uq';
@@ -37,6 +39,7 @@ import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -53,7 +56,8 @@ import {
 
 const Allocation = (): ReactElement => {
   const { isConnected } = useAccount();
-  const { t } = useTranslation('translation', { keyPrefix: 'components.allocation' });
+  const keyPrefix = 'components.allocation';
+  const { t } = useTranslation('translation', { keyPrefix });
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
@@ -75,9 +79,11 @@ const Allocation = (): ReactElement => {
   const { data: isContract } = useIsContract();
   const { address: walletAddress } = useAccount();
   const [showAllocationNav, setShowAllocationNav] = useState(false);
+  const [isEmptyStateImageVisible, setIsEmptyStateImageVisible] = useState(true);
 
   const navRef = useRef(document.getElementById(LAYOUT_NAVBAR_ID));
   const boxesWrapperRef = useRef(null);
+  const allocationEmptyStateRef = useRef<HTMLDivElement>(null);
   const { data: currentEpoch } = useCurrentEpoch();
   const { refetch: refetchHistory } = useHistory();
   const {
@@ -122,7 +128,7 @@ const Allocation = (): ReactElement => {
       enabled: isDecisionWindowOpen === true,
     },
   );
-  const { isDesktop } = useMediaQuery();
+  const { isMobile, isTablet, isDesktop } = useMediaQuery();
 
   const {
     currentView,
@@ -481,6 +487,21 @@ const Allocation = (): ReactElement => {
     (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
   const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
 
+  const emptyStateI18nKey = useMemo(() => {
+    if (hasUserIndividualReward && isDecisionWindowOpen) {
+      if (isMobile) {
+        return `${keyPrefix}.emptyStateMobileAWOpen`;
+      }
+      return `${keyPrefix}.emptyStateAWOpen`;
+    }
+
+    if (isMobile) {
+      return `${keyPrefix}.emptyStateMobile`;
+    }
+
+    return `${keyPrefix}.emptyState`;
+  }, [hasUserIndividualReward, isDecisionWindowOpen, isMobile]);
+
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
     areAllocationsAvailableOrAlreadyDone,
@@ -548,12 +569,31 @@ const Allocation = (): ReactElement => {
     navRef.current = document.getElementById(LAYOUT_NAVBAR_ID);
   }, []);
 
+  useEffect(() => {
+    if (!allocationEmptyStateRef.current || allocations.length) {
+      return;
+    }
+    const { height } = allocationEmptyStateRef.current.getBoundingClientRect();
+
+    // 200 px (mobile) / 226px (tablet, desktop, large desktop) -> min height of emptyState box to show image + text
+    if (height < (isMobile ? 200 : 226)) {
+      setIsEmptyStateImageVisible(false);
+      return;
+    }
+
+    setIsEmptyStateImageVisible(true);
+  }, [allocations.length, isMobile, isTablet]);
+
   return (
     <div className={styles.root}>
       <div className={styles.title}>{t('allocateRewards')}</div>
       <div
         ref={boxesWrapperRef}
-        className={cx(styles.boxesWrapper, isDesktop && styles.withMarginBottom)}
+        className={cx(
+          styles.boxesWrapper,
+          isDesktop && styles.withMarginBottom,
+          isDesktop && allocations.length && styles.withPaddingBottom,
+        )}
       >
         {!isEpoch1 && (
           <AllocationRewardsBox
@@ -561,7 +601,7 @@ const Allocation = (): ReactElement => {
             isLocked={currentView === 'summary'}
           />
         )}
-        {!isEpoch1 && (
+        {hasUserIndividualReward && isDecisionWindowOpen && !isEpoch1 && (
           <AllocationSliderBox
             className={styles.box}
             isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
@@ -571,6 +611,26 @@ const Allocation = (): ReactElement => {
             setRewardsForProjectsCallback={onResetAllocationValues}
           />
         )}
+        {!allocations.length && (
+          <div ref={allocationEmptyStateRef} className={styles.emptyState}>
+            {isEmptyStateImageVisible && (
+              <Img className={styles.emptyStateImage} src="/images/window-with-dog.webp" />
+            )}
+            <div className={styles.emptyStateText}>
+              <Trans
+                components={[
+                  <Button
+                    className={styles.projectsLink}
+                    to={ROOT_ROUTES.projects.absolute}
+                    variant="link3"
+                  />,
+                ]}
+                i18nKey={emptyStateI18nKey}
+              />
+            </div>
+          </div>
+        )}
+
         {currentView === 'edit' ? (
           areAllocationsAvailableOrAlreadyDone && (
             <AnimatePresence initial={false}>
@@ -625,7 +685,6 @@ const Allocation = (): ReactElement => {
           }}
           onAllocate={() => onAllocate(true)}
         />
-
         {showAllocationNav &&
           (isDesktop ? boxesWrapperRef.current : navRef.current) &&
           createPortal(
