@@ -71,12 +71,12 @@ const InputSelect: FC<InputSelectProps> = ({
   }, [isMenuOpen, isDesktop]);
 
   return (
-    <div className={cx(styles.root, styles[`variant--${variant}`], className)} data-test={dataTest}>
-      <div
-        ref={ref}
-        className={cx(styles.selectedValue, styles[`variant--${variant}`])}
-        onClick={() => setIsMenuOpen(true)}
-      >
+    <div
+      className={cx(styles.root, styles[`variant--${variant}`], className)}
+      data-test={dataTest}
+      onClick={() => setIsMenuOpen(prev => !prev)}
+    >
+      <div ref={ref} className={cx(styles.selectedValue, styles[`variant--${variant}`])}>
         <span className={styles.label} data-test={`${dataTest}__SingleValue`}>
           {_selectedOption?.label}
         </span>
