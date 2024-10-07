@@ -51,7 +51,7 @@
     height: 3.2rem;
     width: 3.2rem;
     border-radius: 100%;
-    background-color: $color-white;
+    background-color: $color-octant-grey2;
     box-shadow: 0 0 2.5rem 0 $color-black-10;
     z-index: $z-index-3;
 
@@ -64,7 +64,7 @@
     .triangle {
       position: absolute;
       bottom: -0.7rem;
-      border-top: 0.8rem solid $color-white;
+      border-top: 0.8rem solid $color-octant-grey2;
       border-left: 0.4rem solid transparent;
       border-right: 0.4rem solid transparent;
     }

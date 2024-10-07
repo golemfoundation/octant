@@ -70,7 +70,7 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
               scale: 0.5,
             }}
             initial={{
-              bottom: `calc(${topBarHeightPercentage > bottomBarHeightPercentage ? topBarHeightPercentage : bottomBarHeightPercentage}% - 1rem)`,
+              bottom: `calc(${topBarHeightPercentage > bottomBarHeightPercentage ? topBarHeightPercentage : bottomBarHeightPercentage}% + 1rem)`,
               opacity: 0,
               scale: 0.5,
               x: '50%',
