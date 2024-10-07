@@ -50,6 +50,10 @@
       font-size: $font-size-14;
       font-weight: $font-weight-semibold;
       color: $color-octant-grey5;
+
+      &:hover {
+        color: $color-octant-grey13;
+      }
     }
   }
 
