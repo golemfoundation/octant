@@ -49,7 +49,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
       <GridTile className={className} title={i18n.t('common.personalAllocation')}>
         <div className={styles.root}>
           <DoubleValue
-            cryptoCurrency="golem"
+            cryptoCurrency="ethereum"
             isFetching={
               isFetchingWithdrawals ||
               (isAppWaitingForTransactionToBeIndexed &&
