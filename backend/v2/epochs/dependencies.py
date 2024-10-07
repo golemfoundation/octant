@@ -1,8 +1,8 @@
 from typing import Annotated
 
 from fastapi import Depends
-from v2.core.exceptions import AllocationWindowClosed
 from v2.core.dependencies import OctantSettings, Web3
+from v2.core.exceptions import AllocationWindowClosed
 
 from .contracts import EPOCHS_ABI, EpochsContracts
 from .subgraphs import EpochsSubgraph
@@ -31,15 +31,9 @@ GetEpochsContracts = Annotated[
 async def assert_allocation_window_open(
     epochs_contracts: GetEpochsContracts,
 ) -> int:
-    import time
-
-    # print("assert_allocation_window_open called")
-
-    start = time.time()
+    """Asserts that the allocation window is open and returns the current epoch number."""
 
     epoch_number = await epochs_contracts.get_pending_epoch()
-
-    print("assert_allocation_window_open took", time.time() - start, "seconds")
     if epoch_number is None:
         raise AllocationWindowClosed()
 

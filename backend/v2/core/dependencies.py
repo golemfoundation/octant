@@ -1,18 +1,11 @@
-from asyncio import current_task
 from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
-from fastapi import Depends
 from app.infrastructure.database.models import BaseModel
+from fastapi import Depends
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-    async_scoped_session,
-)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
 
@@ -116,18 +109,13 @@ async def get_db_session(
 
     # Create a new session
     async with sessionmaker() as session:
-        print("in gettersession id", id(session))
-        print("in gettersession identity", session)
-
         try:
             yield session
             await session.commit()
-        except Exception as e:
-            print("----Rolling back session, error:", e)
+        except Exception:
             await session.rollback()
             raise
         finally:
-            print("----Closing session")
             await session.close()
 
 

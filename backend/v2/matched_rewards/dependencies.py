@@ -1,15 +1,11 @@
 from decimal import Decimal
 from typing import Annotated
+
 from fastapi import Depends
 from pydantic import Field
-from v2.core.exceptions import AllocationWindowClosed
-from v2.epochs.dependencies import (
-    AssertAllocationWindowOpen,
-    GetEpochsContracts,
-    get_epochs_subgraph,
-)
-from v2.epochs.subgraphs import EpochsSubgraph
 from v2.core.dependencies import GetSession, OctantSettings
+from v2.epochs.dependencies import AssertAllocationWindowOpen, get_epochs_subgraph
+from v2.epochs.subgraphs import EpochsSubgraph
 
 from .services import MatchedRewardsEstimator
 
@@ -39,9 +35,6 @@ async def get_matched_rewards_estimator(
         Depends(get_matched_rewards_estimator_settings),
     ],
 ) -> MatchedRewardsEstimator:
-    print("session id", id(session))
-    print("session identity", session)
-
     return MatchedRewardsEstimator(
         session=session,
         epochs_subgraph=epochs_subgraph,

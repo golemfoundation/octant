@@ -28,7 +28,7 @@ async def sum_allocations_by_epoch(session: AsyncSession, epoch_number: int) -> 
     if count is None:
         return 0
 
-    return count
+    return int(count)
 
 
 async def get_allocations_with_user_uqs(
@@ -54,10 +54,10 @@ async def get_allocations_with_user_uqs(
 
     return [
         AllocationWithUserUQScore(
-            project_address=project_address,
+            projectAddress=project_address,
             amount=amount,
-            user_address=user_address,
-            user_uq_score=Decimal(uq_score),
+            userAddress=user_address,
+            userUqScore=Decimal(uq_score),
         )
         for project_address, amount, user_address, uq_score in rows
     ]
@@ -163,9 +163,9 @@ async def get_donations_by_project(
 
     return [
         ProjectDonation(
-            amount=int(a.amount),
-            donor_address=a.user.address,
-            project_address=a.project_address,
+            amount=a.amount,
+            donorAddress=a.user.address,
+            projectAddress=a.project_address,
         )
         for a in allocations
     ]

@@ -1,50 +1,38 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_camel
-
-from v2.core.types import Address
+from pydantic import Field
+from v2.core.types import Address, BigInteger, OctantModel
 
 
-class AllocationWithUserUQScore(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
+class AllocationWithUserUQScore(OctantModel):
     project_address: Address
-    amount: int
+    amount: BigInteger
     user_address: Address
     user_uq_score: Decimal
 
 
-class AllocationRequest(BaseModel):
-    model_config = ConfigDict(frozen=True, alias_generator=to_camel)
-
+class AllocationRequest(OctantModel):
     project_address: Address = Field(..., alias="proposalAddress")
-    amount: int
+    amount: BigInteger
 
     # first_name: str = Field(..., alias='firstName')
     # last_name: str = Field(..., alias='lastName')
     # age: int = Field(..., alias='age')
 
 
-class UserAllocationRequestPayloadV1(BaseModel):
-    model_config = ConfigDict(frozen=True, alias_generator=to_camel)
-
+class UserAllocationRequestPayloadV1(OctantModel):
     allocations: list[AllocationRequest]
     nonce: int
 
 
-class UserAllocationRequestV1(BaseModel):
-    model_config = ConfigDict(frozen=True, alias_generator=to_camel)
-
+class UserAllocationRequestV1(OctantModel):
     user_address: Address
     payload: UserAllocationRequestPayloadV1
     signature: str
     is_manually_edited: bool
 
 
-class UserAllocationRequest(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
+class UserAllocationRequest(OctantModel):
     user_address: Address
     allocations: list[AllocationRequest]
     nonce: int
@@ -53,9 +41,7 @@ class UserAllocationRequest(BaseModel):
     is_manually_edited: bool
 
 
-class ProjectDonation(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    amount: int
+class ProjectDonation(OctantModel):
+    amount: BigInteger
     donor_address: Address  # user address
     project_address: Address

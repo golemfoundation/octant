@@ -67,9 +67,6 @@ class EpochsSubgraph:
 
     async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:
         """Get EpochDetails from the subgraph for a given epoch number."""
-        import time
-
-        start = time.time()
 
         logging.debug(
             f"[Subgraph] Getting epoch properties for epoch number: {epoch_number}"
@@ -106,8 +103,6 @@ class EpochsSubgraph:
         logging.debug(f"[Subgraph] Received epoch properties: {data[0]}")
 
         epoch_details = data[0]
-
-        print(f"Time taken to get epoch details: {time.time() - start}")
 
         return EpochDetails(
             epoch_num=epoch_details["epoch"],

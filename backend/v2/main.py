@@ -1,13 +1,13 @@
 # Create FastAPI app
 import logging
-from fastapi.responses import JSONResponse
-import socketio
-from fastapi import FastAPI
-from app.exceptions import OctantException
-from v2.allocations.socket import AllocateNamespace
-from sqlalchemy.exc import SQLAlchemyError
 
+import socketio
+from app.exceptions import OctantException
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
 from v2.allocations.router import api as allocations_api
+from v2.allocations.socket import AllocateNamespace
 from v2.project_rewards.router import api as project_rewards_api
 
 fastapi_app = FastAPI()

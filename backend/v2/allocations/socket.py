@@ -1,62 +1,47 @@
 import asyncio
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Tuple
 
 import socketio
-
-from eth_utils import to_checksum_address
-from v2.core.exceptions import AllocationWindowClosed
-from v2.matched_rewards.dependencies import (
-    get_matched_rewards_estimator,
-    get_matched_rewards_estimator_settings,
-)
-from v2.project_rewards.dependencies import get_project_rewards_estimator
-from v2.project_rewards.services import ProjectRewardsEstimator
+from sqlalchemy.ext.asyncio import AsyncSession
 from v2.allocations.dependencies import (
-    SignatureVerifierSettings,
     get_allocator,
     get_signature_verifier,
     get_signature_verifier_settings,
 )
-from v2.epochs.contracts import EpochsContracts
-from v2.projects.services import (
-    ProjectsAllocationThresholdGetter,
-)
-from v2.uniqueness_quotients.dependencies import UQScoreSettings, get_uq_score_getter, get_uq_score_settings
 from v2.allocations.repositories import get_donations_by_project
 from v2.allocations.services import Allocator
 from v2.core.dependencies import (
-    DatabaseSettings,
-    Web3ProviderSettings,
     get_database_settings,
-    get_db_session,
     get_sessionmaker,
     get_w3,
     get_web3_provider_settings,
 )
+from v2.core.exceptions import AllocationWindowClosed
 from v2.epochs.dependencies import (
-    EpochsSettings,
-    EpochsSubgraphSettings,
     assert_allocation_window_open,
     get_epochs_contracts,
     get_epochs_settings,
     get_epochs_subgraph,
     get_epochs_subgraph_settings,
 )
+from v2.matched_rewards.dependencies import (
+    get_matched_rewards_estimator,
+    get_matched_rewards_estimator_settings,
+)
+from v2.project_rewards.dependencies import get_project_rewards_estimator
+from v2.project_rewards.services import ProjectRewardsEstimator
 from v2.projects.dependencies import (
-    ProjectsAllocationThresholdSettings,
-    ProjectsSettings,
+    get_projects_allocation_threshold_getter,
     get_projects_allocation_threshold_settings,
     get_projects_contracts,
-    get_projects_allocation_threshold_getter,
     get_projects_settings,
 )
+from v2.projects.services import ProjectsAllocationThresholdGetter
+from v2.uniqueness_quotients.dependencies import get_uq_score_getter, get_uq_score_settings
 
-from .schemas import AllocationRequest, UserAllocationRequest, UserAllocationRequestV1
-
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from .schemas import UserAllocationRequest, UserAllocationRequestV1
 
 
 @asynccontextmanager
@@ -72,8 +57,7 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
 
     # We do not handle requests outside of pending epoch state (Allocation Window)
     # This will raise an exception if the allocation window is closed and connection does not happen
-    # epoch_number = await assert_allocation_window_open(epochs_contracts)
-    epoch_number = 128
+    epoch_number = await assert_allocation_window_open(epochs_contracts)
 
     projects_contracts = get_projects_contracts(w3, get_projects_settings())
     epochs_subgraph = get_epochs_subgraph(get_epochs_subgraph_settings())
@@ -112,7 +96,7 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
             # Yield the dependencies to the on_connect handler
             yield (s4, threshold_getter, estimated_project_rewards)
 
-        except Exception as e:
+        except Exception:
             await asyncio.gather(
                 s1.rollback(),
                 s2.rollback(),
@@ -134,7 +118,6 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
     Tuple[
         AsyncSession,
         Allocator,
-        EpochsContracts,
         ProjectsAllocationThresholdGetter,
         ProjectRewardsEstimator,
     ],
@@ -164,46 +147,76 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
         sessionmaker() as s3,
         sessionmaker() as s4,
         sessionmaker() as s5,
+        sessionmaker() as s6,
+        sessionmaker() as s7,
     ):
-        threshold_getter = get_projects_allocation_threshold_getter(
-            epoch_number,
-            s1,
-            projects_contracts,
-            get_projects_allocation_threshold_settings(),
-        )
-        estimated_matched_rewards = await get_matched_rewards_estimator(
-            epoch_number, s2, epochs_subgraph, get_matched_rewards_estimator_settings()
-        )
-        estimated_project_rewards = await get_project_rewards_estimator(
-            epoch_number,
-            s3,
-            projects_contracts,
-            estimated_matched_rewards,
-        )
+        try:
+            threshold_getter = get_projects_allocation_threshold_getter(
+                epoch_number,
+                s1,
+                projects_contracts,
+                get_projects_allocation_threshold_settings(),
+            )
+            estimated_matched_rewards = await get_matched_rewards_estimator(
+                epoch_number,
+                s2,
+                epochs_subgraph,
+                get_matched_rewards_estimator_settings(),
+            )
+            estimated_project_rewards = await get_project_rewards_estimator(
+                epoch_number,
+                s3,
+                projects_contracts,
+                estimated_matched_rewards,
+            )
 
-        signature_verifier = get_signature_verifier(
-            s4, epochs_subgraph, projects_contracts, get_signature_verifier_settings()
-        )
+            signature_verifier = get_signature_verifier(
+                s4,
+                epochs_subgraph,
+                projects_contracts,
+                get_signature_verifier_settings(),
+            )
 
-        uq_score_getter = get_uq_score_getter(s5, get_uq_score_settings())
+            uq_score_getter = get_uq_score_getter(s5, get_uq_score_settings())
 
-        allocations = await get_allocator(
-            epoch_number,
-            s5,
-            signature_verifier,
-            uq_score_getter,
-            projects_contracts,
-            estimated_matched_rewards,
-        )
+            allocations = await get_allocator(
+                epoch_number,
+                s6,
+                signature_verifier,
+                uq_score_getter,
+                projects_contracts,
+                estimated_matched_rewards,
+            )
 
-        # Yield the dependencies to the on_allocate handler
-        yield (
-            s5,
-            allocations,
-            epochs_contracts,
-            threshold_getter,
-            estimated_project_rewards,
-        )
+            # Yield the dependencies to the on_allocate handler
+            yield (
+                s7,
+                allocations,
+                threshold_getter,
+                estimated_project_rewards,
+            )
+
+        except Exception:
+            await asyncio.gather(
+                s1.rollback(),
+                s2.rollback(),
+                s3.rollback(),
+                s4.rollback(),
+                s5.rollback(),
+                s6.rollback(),
+                s7.rollback(),
+            )
+            raise
+        finally:
+            await asyncio.gather(
+                s1.close(),
+                s2.close(),
+                s3.close(),
+                s4.close(),
+                s5.close(),
+                s6.close(),
+                s7.close(),
+            )
 
 
 class AllocateNamespace(socketio.AsyncNamespace):
@@ -224,18 +237,13 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
             # Get the estimated project rewards and send them to the client
             project_rewards = await estimated_project_rewards.get()
-            # rewards = [
-            #     {
-            #         "address": project_address,
-            #         "allocated": str(project_rewards.amounts_by_project[project_address]),
-            #         "matched": str(project_rewards.matched_by_project[project_address]),
-            #     }
-            #     for project_address in project_rewards.amounts_by_project.keys()
-            # ]
 
             await self.emit(
                 "project_rewards",
-                [p.model_dump() for p in project_rewards.project_fundings.values()],
+                [
+                    p.model_dump(by_alias=True)
+                    for p in project_rewards.project_fundings.values()
+                ],
                 to=sid,
             )
 
@@ -248,7 +256,16 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
                 await self.emit(
                     "project_donors",
-                    {"project": project_address, "donors": donations},
+                    {
+                        "project": project_address,
+                        "donors": [
+                            {
+                                "address": d.donor_address,
+                                "amount": str(d.amount),
+                            }
+                            for d in donations
+                        ],
+                    },
                 )
 
     async def on_connect(self, sid: str, environ: dict):
@@ -262,11 +279,10 @@ class AllocateNamespace(socketio.AsyncNamespace):
     async def on_disconnect(self, sid):
         logging.debug("Client disconnected")
 
-    async def handle_on_allocate(self, sid: str, data: dict):
+    async def handle_on_allocate(self, sid: str, data: str):
         async with create_dependencies_on_allocate() as (
             session,
             allocations,
-            epochs_contracts,
             threshold_getter,
             estimated_project_rewards,
         ):
@@ -285,18 +301,12 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
             # Get the estimated project rewards and send them to the client
             project_rewards = await estimated_project_rewards.get()
-            # rewards = [
-            #     {
-            #         "address": project_address,
-            #         "allocated": str(project_rewards.amounts_by_project[project_address]),
-            #         "matched": str(project_rewards.matched_by_project[project_address]),
-            #     }
-            #     for project_address in project_rewards.amounts_by_project.keys()
-            # ]
-
             await self.emit(
                 "project_rewards",
-                [p.model_dump() for p in project_rewards.project_fundings.values()],
+                [
+                    p.model_dump(by_alias=True)
+                    for p in project_rewards.project_fundings.values()
+                ],
                 to=sid,
             )
 
@@ -309,10 +319,19 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
                 await self.emit(
                     "project_donors",
-                    {"project": project_address, "donors": donations},
+                    {
+                        "project": project_address,
+                        "donors": [
+                            {
+                                "address": d.donor_address,
+                                "amount": str(d.amount),
+                            }
+                            for d in donations
+                        ],
+                    },
                 )
 
-    async def on_allocate(self, sid: str, data: dict):
+    async def on_allocate(self, sid: str, data: str):
         try:
             await self.handle_on_allocate(sid, data)
 
@@ -323,7 +342,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
             logging.error(f"Error handling on_allocate: {e}")
 
 
-def from_dict(data: dict) -> UserAllocationRequest:
+def from_dict(data: str) -> UserAllocationRequest:
     """
     Example of data:
     {
@@ -346,34 +365,14 @@ def from_dict(data: dict) -> UserAllocationRequest:
     }
     """
 
+    # TODO: maybe we can switcht to UserAllocationRequest from V1 ?
     # parse the incoming data as UserAllocationRequestV1
-    requestV1 = UserAllocationRequestV1.model_validate(data)
+    requestV1 = UserAllocationRequestV1.model_validate_json(data)
     request = UserAllocationRequest(
-        user_address=requestV1.user_address,
+        userAddress=requestV1.user_address,
         allocations=requestV1.payload.allocations,
         nonce=requestV1.payload.nonce,
         signature=requestV1.signature,
-        is_manually_edited=requestV1.is_manually_edited,
+        isManuallyEdited=requestV1.is_manually_edited,
     )
     return request
-
-    user_address = to_checksum_address(data["userAddress"])
-    payload = data["payload"]
-    allocations = [
-        AllocationRequest(
-            project_address=to_checksum_address(allocation_data["proposalAddress"]),
-            amount=allocation_data["amount"],
-        )
-        for allocation_data in payload["allocations"]
-    ]
-    nonce = int(payload["nonce"])
-    signature = payload.get("signature")
-    is_manually_edited = data.get("isManuallyEdited", False)
-
-    return UserAllocationRequest(
-        user_address=user_address,
-        allocations=allocations,
-        nonce=nonce,
-        signature=signature,
-        is_manually_edited=is_manually_edited,
-    )

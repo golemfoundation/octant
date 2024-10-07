@@ -1,10 +1,9 @@
 from typing import Annotated
-from fastapi import Depends
 
+from fastapi import Depends
 from v2.core.dependencies import OctantSettings, Web3
 
-
-from .contracts import DepositsContracts, DEPOSITS_ABI
+from .contracts import DEPOSITS_ABI, DepositsContracts
 
 
 class DepositsSettings(OctantSettings):

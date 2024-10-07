@@ -1,23 +1,19 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.constants import GUEST_LIST, TIMEOUT_LIST
 from app.modules.user.antisybil.core import (
     _apply_gtc_staking_stamp_nullification,
     _has_guest_stamp_applied_by_gp,
 )
-
 from eth_utils import to_checksum_address
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from v2.core.types import Address
 
-
 from .repositories import (
+    get_gp_stamps_by_address,
     get_uq_score_by_user_address,
     save_uq_score_for_user_address,
-    get_gp_stamps_by_address,
 )
 
 

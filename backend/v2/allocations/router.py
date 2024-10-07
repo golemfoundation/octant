@@ -18,19 +18,13 @@ async def allocate(
     Only available during the allocation window.
     """
 
-    import time
-
-    start = time.time()
-
     # TODO: We should ideally move to the newer version of the schema as it's simpler
     request = UserAllocationRequest(
-        user_address=allocation_request.user_address,
+        userAddress=allocation_request.user_address,
         allocations=allocation_request.payload.allocations,
         nonce=allocation_request.payload.nonce,
         signature=allocation_request.signature,
-        is_manually_edited=allocation_request.is_manually_edited,
+        isManuallyEdited=allocation_request.is_manually_edited,
     )
 
     await allocator.handle(request)
-
-    print("Allocation took: ", time.time() - start)

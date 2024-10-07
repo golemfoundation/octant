@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from .schemas import EstimatedProjectRewardsResponse
 from .dependencies import GetProjectRewardsEstimator
+from .schemas import EstimatedProjectRewardsResponse
 
 api = APIRouter(prefix="/rewards", tags=["Allocations"])
 
