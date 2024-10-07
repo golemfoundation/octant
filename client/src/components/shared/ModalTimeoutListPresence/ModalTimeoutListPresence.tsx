@@ -7,7 +7,7 @@ import Button from 'components/ui/Button/Button';
 import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
-import { TIME_OUT_LIST_DISPUTE_FORM } from 'constants/urls';
+import { SYBIL_ATTACK_EXPLANATION, TIME_OUT_LIST_DISPUTE_FORM } from 'constants/urls';
 import useDelegationStore from 'store/delegation/store';
 
 import styles from './ModalTimeoutListPresence.module.scss';
@@ -41,7 +41,7 @@ const ModalTimeoutListPresence = (): ReactElement => {
       <div className={styles.text}>
         <Trans
           components={[
-            <Button variant="link3" />,
+            <Button href={SYBIL_ATTACK_EXPLANATION} variant="link3" />,
             <Button href={TIME_OUT_LIST_DISPUTE_FORM} variant="link3" />,
           ]}
           i18nKey="views.onboarding.modalTimeoutListPresence.text"

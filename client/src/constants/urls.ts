@@ -13,3 +13,4 @@ export const GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD = 'https://passport.gitcoi
 export const SCORING_20_FOR_HUMANS_GUIDE =
   'https://support.passport.xyz/passport-knowledge-base/stamps/scoring-20-for-humans';
 export const TIME_OUT_LIST_DISPUTE_FORM = 'https://octant.fillout.com/t/wLNsbSGJKWus';
+export const SYBIL_ATTACK_EXPLANATION = 'https://chain.link/education-hub/sybil-attack';
