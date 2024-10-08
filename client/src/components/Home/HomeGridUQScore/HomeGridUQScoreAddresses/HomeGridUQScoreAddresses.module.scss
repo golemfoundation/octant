@@ -84,8 +84,7 @@
   }
 
   .score {
-    @include fontBig();
-    font-weight: $font-weight-bold;
+    @include fontBig($font-size-32);
     color: $color-octant-dark;
     margin-left: auto;
 

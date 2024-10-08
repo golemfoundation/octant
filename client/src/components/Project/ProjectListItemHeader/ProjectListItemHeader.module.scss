@@ -20,26 +20,25 @@
   }
 
   .name {
+    @include fontBig($font-size-24);
     display: flex;
     align-items: center;
-    font-weight: $font-weight-bold;
-    font-size: $font-size-24;
     margin: 1.6rem 0 0.8rem;
     height: 3.2rem;
 
     @media #{$tablet-up} {
-      @include fontBig();
+      @include fontBig($font-size-32);
       margin: 0.6rem 0 0.8rem;
       height: 4.8rem;
     }
 
     @media #{$desktop-up} {
-      font-size: $font-size-40;
+      @include fontBig($font-size-40);
       margin: 1.2rem 0;
     }
 
     @media #{$large-desktop-up} {
-      font-size: $font-size-48;
+      @include fontBig($font-size-48);
       margin: 2.4rem 0;
     }
   }

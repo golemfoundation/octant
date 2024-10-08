@@ -26,14 +26,15 @@
 
 .primary {
   font-size: $font-size-24;
+  font-weight: $font-weight-bold;
 
   &.variant-- {
     &extra-large {
-      @include fontBig();
+      @include fontBig($font-size-32);
     }
 
     &large {
-      font-size: $font-size-24;
+      @include fontBig($font-size-24);
     }
 
     &standard {
@@ -56,14 +57,9 @@
 }
 
 .secondary {
-  font-size: $font-size-12;
+  font-size: $font-size-16;
   color: $color-octant-grey5;
-
-  &.variant-- {
-    &extra-large {
-      font-size: $font-size-16;
-    }
-  }
+  font-weight: $font-weight-bold;
 
   &.isError {
     color: $color-octant-orange;
