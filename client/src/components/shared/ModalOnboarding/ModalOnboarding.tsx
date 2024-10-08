@@ -99,12 +99,22 @@ const ModalOnboarding = (): ReactElement => {
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
+    if (!isOnboardingDone || !antisybilStatusScore) {
+      return;
+    }
+    // When user is on the list - open the modal.
     if (
-      isOnboardingDone &&
-      antisybilStatusScore?.isOnTimeOutList &&
+      antisybilStatusScore.isOnTimeOutList &&
       isTimeoutListPresenceModalOpen?.address !== address
     ) {
       setIsTimeoutListPresenceModalOpen({ address: address!, value: true });
+    }
+    // When user was on the list, but no longer is -- hide the modal.
+    if (
+      !antisybilStatusScore.isOnTimeOutList &&
+      isTimeoutListPresenceModalOpen?.address === address
+    ) {
+      setIsTimeoutListPresenceModalOpen({ address: address!, value: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, isOnboardingDone, antisybilStatusScore?.isOnTimeOutList]);
