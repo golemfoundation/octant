@@ -15,6 +15,11 @@
   .projectName {
     color: $color-octant-dark;
     font-weight: $font-weight-bold;
+    width: 9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
   }
 
   .donations {
@@ -32,6 +37,7 @@
   .donations,
   .matching,
   .total {
+    white-space: nowrap;
     font-weight: $font-weight-semibold;
     margin-left: 0.8rem;
 
@@ -41,10 +47,11 @@
   }
 
   .link {
+    white-space: nowrap;
     color: $color-octant-grey5;
     margin-left: auto;
     font-weight: $font-weight-semibold;
-    padding: 0 1.6rem 0 0;
+    padding: 0 1.6rem;
 
     &:hover {
       color: $color-octant-dark;

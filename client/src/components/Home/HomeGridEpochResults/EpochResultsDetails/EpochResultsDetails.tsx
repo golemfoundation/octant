@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import Button from 'components/ui/Button';
-import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
+import useGetValuesToDisplay, {
+  GetValuesToDisplayProps,
+} from 'hooks/helpers/useGetValuesToDisplay';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
@@ -19,38 +21,34 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
   const getValuesToDisplay = useGetValuesToDisplay();
   const [dots, setDots] = useState(0);
 
+  const getValuesToDisplayCommonProps: GetValuesToDisplayProps = {
+    cryptoCurrency: 'ethereum',
+    getFormattedEthValueProps: {
+      maxNumberOfDigitsToShow: 5,
+      shouldIgnoreGwei: true,
+      shouldIgnoreWei: true,
+      showShortFormat: isMobile,
+    },
+    showCryptoSuffix: true,
+  };
+
   const donationsToDisplay = details
     ? getValuesToDisplay({
-        cryptoCurrency: 'ethereum',
-        getFormattedEthValueProps: {
-          shouldIgnoreGwei: true,
-          shouldIgnoreWei: true,
-        },
-        showCryptoSuffix: true,
+        ...getValuesToDisplayCommonProps,
         valueCrypto: details.donations,
       }).primary
     : null;
 
   const matchingToDisplay = details
     ? getValuesToDisplay({
-        cryptoCurrency: 'ethereum',
-        getFormattedEthValueProps: {
-          shouldIgnoreGwei: true,
-          shouldIgnoreWei: true,
-        },
-        showCryptoSuffix: true,
+        ...getValuesToDisplayCommonProps,
         valueCrypto: details.matchedRewards,
       }).primary
     : null;
 
   const totalToDisplay = details
     ? getValuesToDisplay({
-        cryptoCurrency: 'ethereum',
-        getFormattedEthValueProps: {
-          shouldIgnoreGwei: true,
-          shouldIgnoreWei: true,
-        },
-        showCryptoSuffix: true,
+        ...getValuesToDisplayCommonProps,
         valueCrypto: details.totalValueOfAllocations,
       }).primary
     : null;
@@ -89,13 +87,19 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
         <>
           <div className={styles.projectName}>{details.name}</div>
           <div className={styles.donations}>
-            {isMobile ? t('donationsShort') : i18n.t('common.donations')} {donationsToDisplay}
+            {isMobile ? t('donationsShort') : i18n.t('common.donations')}
+            {isMobile ? '' : ' '}
+            {donationsToDisplay}
           </div>
           <div className={styles.matching}>
-            {isMobile ? t('matchingShort') : i18n.t('common.matching')} {matchingToDisplay}
+            {isMobile ? t('matchingShort') : i18n.t('common.matching')}
+            {isMobile ? '' : ' '}
+            {matchingToDisplay}
           </div>
           <div className={styles.total}>
-            {isMobile ? t('totalShort') : i18n.t('common.total')} {totalToDisplay}
+            {isMobile ? t('totalShort') : i18n.t('common.total')}
+            {isMobile ? '' : ' '}
+            {totalToDisplay}
           </div>
           {!isMobile && (
             <Button
