@@ -3762,10 +3762,10 @@
     "@sentry/bundler-plugin-core" "2.17.0"
     unplugin "1.0.1"
 
-"@show-karma/karma-gap-sdk@^0.3.41":
-  version "0.3.41"
-  resolved "https://registry.yarnpkg.com/@show-karma/karma-gap-sdk/-/karma-gap-sdk-0.3.41.tgz#24a04c431ec14c0ae1077c592f827689de7d9a9c"
-  integrity sha512-pzZeGbZAK7e+69qQWYM8kpaOaklF5KpA8oDYIn3ShVNJqbRjNjazZ6mIS366Q1KY4WoYOT6LhtBoML5hfrXgYg==
+"@show-karma/karma-gap-sdk@^0.3.45":
+  version "0.3.45"
+  resolved "https://registry.yarnpkg.com/@show-karma/karma-gap-sdk/-/karma-gap-sdk-0.3.45.tgz#d42d452803985f69ac29e20fdfda6c01308d0950"
+  integrity sha512-II+u6k9H7vUlPxbCHCVLUP9oaRZq/t4UPzA2F85mfQ+GtM93d3xOYrQBBOkAR+zJFcOymXLlbwkF7owBxVao2A==
   dependencies:
     "@allo-team/allo-v2-sdk" "^1.0.63"
     "@ethereum-attestation-service/eas-sdk" "1.4.2"

@@ -21,8 +21,9 @@ import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
+  // 0xbc9c96a7f436da0088e59432595818061842e13f8d013e3dc584692881414863
   useEffect(() => {
-    gap.fetch.communityBySlug('Octant').then(res => {
+    gap.fetch.communityById('0xcb67cd16cbdf4e9c3b6ed4c8f9424411a48be796d690750afc84f9288e7c7996').then(res => {
       // eslint-disable-next-line no-console
       console.log({ res });
     });
