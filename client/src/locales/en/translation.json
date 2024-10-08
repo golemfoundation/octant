@@ -156,10 +156,22 @@
           "switchAccount": "Switch account",
           "calculatingScore": "Calculating score",
           "delegationFailedText": "Delegation failed — your score needs to be 15 or higher. Please try another address",
-          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}"
+          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
+          "toasts": {
+            "unableToDelegateToAddressWithPositiveGLMLock": {
+              "title": "Address with GLM locked",
+              "message": "Please delegate to an address without GLM locked"
+            }
+          }
         },
         "modalRecalculatingScore": {
           "recalculatingScore": "Recalculating score"
+        },
+        "toasts": {
+          "delegationTooManyUniqueAddresses": {
+            "title": "Too many accounts",
+            "message": "Please connect up to 10 accounts to check your delegation status"
+          }
         }
       },
       "homeGridRewardsEstimator": {
