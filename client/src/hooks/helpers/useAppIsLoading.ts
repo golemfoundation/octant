@@ -1,3 +1,6 @@
+import { useAccount } from 'wagmi';
+
+import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsContract from 'hooks/queries/useIsContract';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -10,9 +13,13 @@ import useSettingsStore from 'store/settings/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 export default function useAppIsLoading(isFlushRequired: boolean): boolean {
+  const { address } = useAccount();
+
   const { isFetching: isFetchingAllProjects } = useAllProjects();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const { isFetching: isFetchingUserTOS, isRefetching: isRefetchingUserTOS } = useUserTOS();
+  // isLoading, not isFetching, as we care only for the initial load and isOnTimeOutList value.
+  const { isLoading: isLoadingAntisybilStatusScore } = useAntisybilStatusScore(address);
   const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
 
@@ -47,6 +54,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     (isFetchingUserTOS && !isRefetchingUserTOS) ||
     isFetchingAllProjects ||
     isFetchingPatronModeStatus ||
-    isFetchingIsContract
+    isFetchingIsContract ||
+    isLoadingAntisybilStatusScore
   );
 }

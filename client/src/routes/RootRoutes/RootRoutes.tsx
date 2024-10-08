@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import env from 'env';
@@ -17,7 +17,7 @@ import SettingsView from 'views/SettingsView';
 
 import { ROOT_ROUTES } from './routes';
 
-const RootRoutes = (): ReactNode => {
+const RootRoutes = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);

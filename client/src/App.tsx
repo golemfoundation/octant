@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import AppLoader from 'components/shared/AppLoader';
 import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
+import ModalTimeoutListPresence from 'components/shared/ModalTimeoutListPresence';
 import OnboardingStepper from 'components/shared/OnboardingStepper';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
 import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
@@ -49,6 +50,7 @@ const App = (): ReactElement => {
         <RootRoutes />
       </Layout>
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
+      <ModalTimeoutListPresence />
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>

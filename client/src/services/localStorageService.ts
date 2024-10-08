@@ -12,6 +12,7 @@ import {
   HAS_ONBOARDING_BEEN_CLOSED,
   LAST_SEEN_STEP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
+  TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
@@ -179,6 +180,23 @@ const LocalStorageService = () => {
 
   const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
+  const validateTimeoutListPresenceModalClosed = (): void => {
+    const timeoutListPresenceModalOpen = JSON.parse(
+      localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN) || 'null',
+    );
+
+    if (!timeoutListPresenceModalOpen) {
+      return;
+    }
+
+    if (
+      !timeoutListPresenceModalOpen.address ||
+      ![true, false].includes(timeoutListPresenceModalOpen.value)
+    ) {
+      localStorage.removeItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN);
+    }
+  };
+
   const init = (params: LocalStorageInitParams): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
@@ -190,6 +208,7 @@ const LocalStorageService = () => {
     validateHasOnboardingBeenClosed();
     validateLastSeenStep();
     validateProjectsAddressesRandomizedOrder(params);
+    validateTimeoutListPresenceModalClosed();
   };
 
   return {

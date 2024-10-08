@@ -128,10 +128,12 @@
       },
       "homeGridUQScore": {
         "yourUniquenessScore": "Your uniqueness score",
+        "isOnTimeOutListLabel": "Sybil account",
         "recalculate": "Recalculate",
         "delegate": "Delegate",
         "whatIsThis": "What is this?",
         "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
+        "wantToDispute": "Want to dispute sybil status? Please use this form",
         "addresses": "addresses",
         "primary": "Primary",
         "noWalletConnected": "No wallet connected",
@@ -426,6 +428,13 @@
       "projectCosts": "Project costs"
     },
     "onboarding": {
+      "modalTimeoutListPresence": {
+        "header": "This account looks like a sybil",
+        "text": "We have flagged this account as a <0>sybil</0> which means your allocation will receive no match funding this epoch. If you would like to dispute this, please <1>fill out this form</1> & we’ll review it.",
+        "checkboxLabel": "I understand that I will receive \u2028no match funding this epoch",
+        "goToDisputeForm": "Go to dispute form",
+        "close": "Close"
+      },
       "stepsCommon": {
         "usingTheApp": {
           "header": "Using the app",
