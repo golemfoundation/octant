@@ -18,6 +18,7 @@ const Button = <T extends ButtonProps>(
     dataTest = 'Button',
     href,
     isActive,
+    isButtonScalingUpOnHover = true,
     isDisabled,
     isEventStopPropagation = true,
     isHigh,
@@ -35,7 +36,7 @@ const Button = <T extends ButtonProps>(
 ) => {
   const filteredProps = {};
   const isActionDisabled = isDisabled || isLoading;
-  const hasHoverState = !to && !href && !isDisabled;
+  const hasHoverState = isButtonScalingUpOnHover && !to && !href && !isDisabled;
 
   let Component;
   if (to) {
@@ -112,7 +113,7 @@ const Button = <T extends ButtonProps>(
         )}
         {children}
         {label}
-        {['link', 'link5'].includes(variant) && (
+        {['link', 'link5', 'link6'].includes(variant) && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrowTopRight}

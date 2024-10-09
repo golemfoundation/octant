@@ -5,6 +5,7 @@ import { AllocationsMethods, AllocationsData } from './types';
 
 export const initialState: AllocationsData = {
   allocations: [],
+  currentView: 'edit',
   rewardsForProjects: BigInt(0),
 };
 
@@ -34,6 +35,14 @@ export default getStoreWithMeta<AllocationsData, AllocationsMethods>({
       set(state => ({
         data: { ...state.data, allocations: payload },
         meta: { isInitialized: true },
+      }));
+    },
+    setCurrentView: payload => {
+      set(state => ({
+        data: {
+          ...state.data,
+          currentView: payload,
+        },
       }));
     },
     setRewardsForProjects: payload => {

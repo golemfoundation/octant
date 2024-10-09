@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-octant-grey3;
+  box-sizing: content-box;
+  border-radius: 1.2rem;
+  font-size: $font-size-10;
+  font-weight: $font-weight-bold;
+
+  &.isInTopRightCorner {
+    height: 1.6rem;
+    transform: translate(75%, 0);
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  color: $color-white;
+  border-radius: 0.8rem;
+  height: 1.6rem;
+  padding: 0 0.8rem;
+  user-select: none;
+
+  &.variant-- {
+    &orange2 {
+      background: $color-octant-orange;
+    }
+    &orange3 {
+      background: $color-octant-orange3;
+    }
+  }
+}

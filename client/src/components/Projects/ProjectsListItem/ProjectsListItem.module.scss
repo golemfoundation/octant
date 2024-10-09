@@ -34,11 +34,25 @@
     right: 0.8rem;
   }
 
-  .imageProfile {
-    border-radius: 50%;
-    width: 4rem;
-    height: 4rem;
+  .imageProfileWrapper {
+    position: relative;
+
+    .imageProfile {
+      border-radius: 50%;
+      width: 4rem;
+      height: 4rem;
+    }
+
+    .tinyLabel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      white-space: nowrap;
+      background: $color-white;
+      text-transform: none;
+    }
   }
+
 
   .body {
     padding: 0 $projectItemPadding;

@@ -17,7 +17,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   textAlignment = 'left',
   valueCrypto,
   valueString,
-  variant = 'big',
+  variant = 'large',
   isFetching = false,
   getFormattedEthValueProps,
   getFormattedGlmValueProps,
@@ -46,7 +46,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
       data-test={dataTest}
     >
       {isFetching ? (
-        <DoubleValueSkeleton dataTest={`${dataTest}__DoubleValueSkeleton`} />
+        <DoubleValueSkeleton dataTest={`${dataTest}__DoubleValueSkeleton`} variant={variant} />
       ) : (
         <Fragment>
           <div
@@ -57,7 +57,11 @@ const DoubleValue: FC<DoubleValueProps> = ({
           </div>
           {values.secondary && (
             <div
-              className={cx(styles.secondary, isError && styles.isError)}
+              className={cx(
+                styles.secondary,
+                isError && styles.isError,
+                styles[`variant--${variant}`],
+              )}
               data-test={`${dataTest}__secondary`}
             >
               {values.secondary}

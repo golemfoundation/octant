@@ -5,6 +5,7 @@ export type Milestone = {
   href?: string;
   id: string;
   label: string;
+  shouldUseThirdPersonSingularVerb?: boolean;
   to?: Date;
 };
 
@@ -91,12 +92,14 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-01-01T00:00:00+0100'),
       id: 'e2-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-01-05T00:00:00+0100'),
     },
     {
       from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e2-allocation-window',
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-01-31T17:00:00+0100'),
     },
     {
@@ -120,6 +123,7 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-03-18T00:00:00+0100'),
       id: 'e3-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-03-22T00:00:00+0100'),
     },
     {
@@ -127,6 +131,7 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e3-allocation-window',
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-04-30T18:00:00+0200'),
     },
     {
@@ -150,12 +155,14 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-06-17T00:00:00+0200'),
       id: 'e4-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-06-21T00:00:00+0200'),
     },
     {
       from: new Date('2024-07-15T18:00:00+0200'),
       id: 'e4-allocation-window',
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-07-29T18:00:00+0200'),
     },
     {
@@ -179,12 +186,14 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-08-19T18:00:00+0200'),
       id: 'e5-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-08-25T18:00:00+0200'),
     },
     {
       from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e5-allocation-window',
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-10-27T17:00:00+0100'),
     },
     {

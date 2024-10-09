@@ -7,9 +7,11 @@ import { dotAndZeroes } from './regExp';
 
 export type GetFormattedEthValueProps = {
   isUsingHairSpace?: boolean;
+  maxNumberOfDigitsToShow?: number;
   numberOfDecimalPlaces?: number;
   shouldIgnoreGwei?: boolean;
   shouldIgnoreWei?: boolean;
+  showShortFormat?: boolean;
   value: bigint;
 };
 
@@ -19,32 +21,54 @@ export default function getFormattedEthValue({
   shouldIgnoreGwei = false,
   shouldIgnoreWei = false,
   numberOfDecimalPlaces = 4,
+  showShortFormat = false,
+  maxNumberOfDigitsToShow,
 }: GetFormattedEthValueProps): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
   const isInGweiRange = value < GWEI_5;
 
+  const ethSuffix = showShortFormat ? 'Ξ' : 'ETH';
+  const valueUnderTheRange = `<0.0001`;
+
+  const ignoreLowValueReturnObject: FormattedCryptoValue = {
+    fullString: `${valueUnderTheRange}${showShortFormat ? '' : ' '}${ethSuffix}`,
+    suffix: ethSuffix,
+    value: valueUnderTheRange,
+  };
+
   if (value === 0n) {
-    returnObject = { suffix: 'ETH', value: formatUnitsBigInt(value) };
+    returnObject = { suffix: ethSuffix, value: formatUnitsBigInt(value) };
   } else if (value < WEI_5) {
     if (shouldIgnoreWei) {
-      return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
+      return ignoreLowValueReturnObject;
     }
     returnObject = { suffix: 'WEI', value: formatUnitsBigInt(value, 'wei') };
   } else if (isInGweiRange) {
     if (shouldIgnoreGwei) {
-      return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
+      return ignoreLowValueReturnObject;
     }
     returnObject = { suffix: 'GWEI', value: formatUnitsBigInt(value, 'gwei') };
   } else {
-    returnObject = { suffix: 'ETH', value: formatUnitsBigInt(value) };
+    returnObject = { suffix: ethSuffix, value: formatUnitsBigInt(value) };
   }
 
   let formattedValue = parseFloat(returnObject.value).toFixed(
     isInGweiRange ? 0 : numberOfDecimalPlaces,
   );
 
-  if (!isInGweiRange) {
+  if (maxNumberOfDigitsToShow) {
+    if (formattedValue.at(0) === '0' && formattedValue.at(1) === '.') {
+      formattedValue = parseFloat(formattedValue).toFixed(maxNumberOfDigitsToShow - 1);
+    } else {
+      formattedValue = parseFloat(formattedValue).toPrecision(maxNumberOfDigitsToShow);
+    }
+  }
+
+  if (
+    (!isInGweiRange && !maxNumberOfDigitsToShow) ||
+    (!isInGweiRange && maxNumberOfDigitsToShow && formattedValue.includes('.'))
+  ) {
     formattedValue = formattedValue.replace(dotAndZeroes, '');
   }
 
@@ -53,7 +77,7 @@ export default function getFormattedEthValue({
   returnObject.value = formattedValue;
 
   return {
-    fullString: `${formattedValue} ${returnObject.suffix}`,
+    fullString: `${formattedValue}${showShortFormat ? '' : ' '}${returnObject.suffix}`,
     ...returnObject,
   };
 }

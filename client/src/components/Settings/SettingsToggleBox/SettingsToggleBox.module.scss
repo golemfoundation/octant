@@ -5,10 +5,6 @@
   &:not(:first-child) {
     margin: 1.6rem auto 0;
   }
-
-  @media #{$desktop-up} {
-    font-size: $font-size-14;
-  }
 }
 
 .inputToggle {

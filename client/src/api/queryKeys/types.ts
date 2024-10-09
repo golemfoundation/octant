@@ -21,6 +21,8 @@ export type Root = {
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  rewardsRate: 'rewardsRate';
+  searchResultsDetails: 'searchResultsDetails';
   upcomingBudget: 'upcomingBudget';
   uqScore: 'uqScore';
   userAllocationNonce: 'userAllocationNonce';
@@ -67,6 +69,12 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
+  rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
+  searchResults: ['searchResults'];
+  searchResultsDetails: (
+    address: string,
+    epoch: number,
+  ) => [Root['searchResultsDetails'], string, string];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];

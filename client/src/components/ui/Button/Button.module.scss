@@ -11,6 +11,7 @@ $paddingVertical: 1rem;
   border: 0;
   min-height: 4rem;
   font-size: $font-size-14;
+  cursor: pointer;
 
   &.isSmallFont {
     font-size: $font-size-12;
@@ -48,7 +49,8 @@ $paddingVertical: 1rem;
 }
 
 .variant-- {
-  &cta {
+  &cta,
+  &cta2 {
     color: $color-white;
     border: 0.1rem solid $color-octant-dark;
     background: $color-octant-dark;
@@ -58,6 +60,10 @@ $paddingVertical: 1rem;
       background: $color-octant-grey2;
       border-color: $color-octant-grey2;
     }
+  }
+
+  &cta2 {
+    border-radius: $border-radius-10;
   }
 
   &secondary {
@@ -179,12 +185,15 @@ $paddingVertical: 1rem;
     min-height: initial;
   }
 
-  &link {
+  &link,
+  &link6 {
     font-size: $font-size-12;
     border-radius: 0;
     min-height: initial;
     color: $color-octant-green;
+  }
 
+  &link {
     &:hover {
       color: $color-octant-dark;
 
@@ -192,6 +201,12 @@ $paddingVertical: 1rem;
         stroke: $color-octant-dark;
       }
     }
+  }
+
+  &link6:hover .icon {
+    position: relative;
+    bottom: 0.1rem;
+    left: 0.1rem;
   }
 
   &link3 {
@@ -242,7 +257,7 @@ $paddingVertical: 1rem;
 
   &:not(.isIconVariant) {
     &.isOnLeft {
-      margin: 0 1.2rem 0 0;
+      margin: 0 1rem 0 0;
     }
 
     &.isOnRight {

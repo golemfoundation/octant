@@ -15,15 +15,18 @@ const durationOfTransitionDesktop = 0;
 const durationOfTransitionMobile = 0.3;
 
 const InputSelect: FC<InputSelectProps> = ({
+  className,
   dataTest = 'InputSelect',
   options,
   onChange,
   selectedOption,
+  variant = 'overselect',
 }) => {
   const { isDesktop } = useMediaQuery();
   const durationOfTransition = isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile;
 
   const ref = useRef<HTMLDivElement>(null);
+  const refChevron = useRef<HTMLDivElement>(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [_selectedOption, _setSelectedOption] = useState<Option>(selectedOption || options[0]);
@@ -50,7 +53,12 @@ const InputSelect: FC<InputSelectProps> = ({
     }
 
     const listener = e => {
-      if (ref.current && ref.current.contains(e.target)) {
+      if (
+        ref.current &&
+        refChevron.current &&
+        ref.current.contains(e.target) &&
+        !refChevron.current.contains(e.target)
+      ) {
         return;
       }
 
@@ -63,12 +71,18 @@ const InputSelect: FC<InputSelectProps> = ({
   }, [isMenuOpen, isDesktop]);
 
   return (
-    <div className={styles.root} data-test={dataTest}>
-      <div ref={ref} className={styles.selectedValue} onClick={() => setIsMenuOpen(true)}>
+    <div
+      className={cx(styles.root, styles[`variant--${variant}`], className)}
+      data-test={dataTest}
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      onClick={() => setIsMenuOpen(prev => !prev)}
+    >
+      <div ref={ref} className={cx(styles.selectedValue, styles[`variant--${variant}`])}>
         <span className={styles.label} data-test={`${dataTest}__SingleValue`}>
           {_selectedOption?.label}
         </span>
         <Svg
+          ref={refChevron}
           classNameSvg={cx(styles.chevron, isMenuOpen && styles.isMenuOpen)}
           img={chevronBottom}
           size={1.2}
@@ -90,7 +104,7 @@ const InputSelect: FC<InputSelectProps> = ({
               <motion.div
                 key="menu"
                 animate={{ y: '0%' }}
-                className={styles.menu}
+                className={cx(styles.menu, styles[`variant--${variant}`])}
                 exit={{ opacity: isDesktop ? 0 : 1, y: '100%' }}
                 initial={{ y: '100%' }}
                 onAnimationComplete={definition => {
@@ -119,7 +133,7 @@ const InputSelect: FC<InputSelectProps> = ({
                 {options.map(option => (
                   <div
                     key={option.value}
-                    className={styles.option}
+                    className={cx(styles.option, styles[`variant--${variant}`])}
                     data-test={`${dataTest}__Option--${option.label}`}
                     onClick={e => {
                       e.stopPropagation();

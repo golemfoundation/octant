@@ -7,7 +7,7 @@ import MetricsGeneralGridTotalGlmLockedAndTotalSupply from 'components/Metrics/M
 import MetricsGeneralGridTotalProjects from 'components/Metrics/MetricsGeneral/MetricsGeneralGridTotalProjects';
 import MetricsGeneralGridWalletsWithGlmLocked from 'components/Metrics/MetricsGeneral/MetricsGeneralGridWalletsWithGlmLocked';
 import MetricsGrid from 'components/Metrics/MetricsGrid';
-import MetricsHeader from 'components/Metrics/MetricsHeader';
+import MetricsSectionHeader from 'components/Metrics/MetricsSectionHeader';
 import { METRICS_GENERAL_ID } from 'constants/domElementsIds';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
@@ -44,14 +44,13 @@ const MetricsGeneral = (): ReactElement => {
 
   return (
     <div className={styles.root} id={METRICS_GENERAL_ID}>
-      <div className={styles.divider} />
-      <MetricsHeader title={t('generalMetrics')} />
-      <MetricsGrid dataTest="MetricsGeneral__MetricsGrid">
+      <MetricsSectionHeader title={t('generalMetrics')} />
+      <MetricsGrid className={styles.grid} dataTest="MetricsGeneral__MetricsGrid">
+        <MetricsGeneralGridCumulativeGlmLocked />
+        <MetricsGeneralGridWalletsWithGlmLocked />
         <MetricsGeneralGridTotalGlmLockedAndTotalSupply isLoading={isLoading} />
         <MetricsGeneralGridTotalProjects isLoading={isLoading} />
         <MetricsGeneralGridTotalEthStaked isLoading={isLoading} />
-        <MetricsGeneralGridCumulativeGlmLocked />
-        <MetricsGeneralGridWalletsWithGlmLocked />
       </MetricsGrid>
     </div>
   );

@@ -18,6 +18,7 @@ export default function useCurrentEpoch(
       }),
     queryKey: QUERY_KEYS.currentEpoch,
     select: res => Number(res),
+    staleTime: Infinity,
     ...options,
   });
 }

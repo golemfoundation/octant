@@ -5,6 +5,7 @@ import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
@@ -21,11 +22,14 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
   index,
   epoch,
 }) => {
+  const { isMobile } = useMediaQuery();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
   const projectIpfsWithRewards = projectsIpfsWithRewards.find(p => p.address === address);
   // loadedProjects (ProjectView) aren't updated during changes in open AW
   // to provide live updates, the following values are taken directly from projectsIpfsWithRewards
   const numberOfDonors = projectIpfsWithRewards?.numberOfDonors || 0;
+  const matchedRewards = projectIpfsWithRewards?.matchedRewards || 0n;
+  const donations = projectIpfsWithRewards?.donations || 0n;
   const totalValueOfAllocations = projectIpfsWithRewards?.totalValueOfAllocations || 0n;
   const { data: currentEpoch } = useCurrentEpoch();
   const isEpoch1 = currentEpoch === 1;
@@ -55,12 +59,16 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         {!isEpoch1 && (!epoch || epoch >= 4) && (
           <RewardsWithoutThreshold
             className={styles.projectRewards}
+            donations={donations}
             epoch={epoch}
+            matchedRewards={matchedRewards}
             numberOfDonors={numberOfDonors}
+            showMoreInfo={!isMobile}
             totalValueOfAllocations={totalValueOfAllocations}
           />
         )}
         <Description
+          className={styles.description}
           dataTest="ProjectListItem__Description"
           innerHtml={decodedDescription}
           variant="big"

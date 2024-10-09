@@ -1,10 +1,9 @@
 import cx from 'classnames';
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
-import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
 import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
@@ -15,7 +14,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
-import { share } from 'svg/misc';
+import { arrowTopRight, share } from 'svg/misc';
 
 import styles from './ProjectListItemHeader.module.scss';
 import ProjectListItemHeaderProps from './types';
@@ -28,7 +27,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   epoch,
 }) => {
   const { ipfsGateways } = env;
-  const { i18n } = useTranslation('translation', { keyPrefix: 'views.project' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.project' });
   const [isLinkCopied, setIsLinkCopied] = useState(false);
   const { epoch: epochUrl } = useParams();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -50,9 +49,20 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   const epochUrlInt = parseInt(epochUrl!, 10);
   const isArchivedProject =
     epochUrlInt < (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
-  const isAllocatedTo = !!userAllocations?.elements.find(
-    ({ address: userAllocationAddress }) => userAllocationAddress === address,
-  );
+
+  const isAllocatedTo = useMemo(() => {
+    const isInUserAllocations = !!userAllocations?.elements.find(
+      ({ address: userAllocationAddress }) => userAllocationAddress === address,
+    );
+    const isInAllocations = allocations.includes(address);
+    if (epoch !== undefined) {
+      return isInUserAllocations;
+    }
+    if (isDecisionWindowOpen) {
+      return isInUserAllocations && isInAllocations;
+    }
+    return false;
+  }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
@@ -81,49 +91,52 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
 
   return (
     <div className={styles.root}>
-      <div className={styles.imageProfileWrapper}>
-        <Img
-          className={styles.imageProfile}
-          dataTest="ProjectListItemHeader__Img"
-          sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
-        />
-        <div className={styles.actionsWrapper}>
+      <Img
+        className={styles.imageProfile}
+        dataTest="ProjectListItemHeader__Img"
+        sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
+      />
+      <div className={styles.name} data-test="ProjectListItemHeader__name">
+        {name}
+      </div>
+      <div className={styles.wrapper}>
+        <div className={styles.actionButtonsWrapper}>
+          <a
+            className={cx(styles.element, styles.actionButton, styles.websiteLink)}
+            href={website?.url}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <span className={styles.labelOrUrl}>{website!.label || website!.url}</span>
+            <Svg classNameSvg={styles.arrowTopRightIcon} img={arrowTopRight} size={1} />
+          </a>
           <Tooltip
-            className={styles.tooltip}
+            className={styles.element}
             hideAfterClick
             onClickCallback={onShareClick}
             text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
             variant="small"
           >
-            <Svg
-              classNameSvg={cx(styles.shareIcon, isLinkCopied && styles.isCopied)}
-              img={share}
-              size={3.2}
-            />
+            <button className={styles.actionButton} type="button">
+              <span>{t('share')}</span>
+              <Svg
+                classNameSvg={cx(styles.shareIcon, isLinkCopied && styles.isCopied)}
+                img={share}
+                size={3.2}
+              />
+            </button>
           </Tooltip>
-          {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
-            <ButtonAddToAllocate
-              className={styles.buttonAddToAllocate}
-              dataTest="ProjectListItemHeader__ButtonAddToAllocate"
-              isAddedToAllocate={allocations.includes(address)}
-              isAllocatedTo={isAllocatedTo}
-              isArchivedProject={isArchivedProject}
-              onClick={() => onAddRemoveFromAllocate(address)}
-            />
-          )}
         </div>
+        <ButtonAddToAllocate
+          className={styles.buttonAddToAllocate}
+          dataTest="ProjectListItemHeader__ButtonAddToAllocate"
+          isAddedToAllocate={allocations.includes(address)}
+          isAllocatedTo={isAllocatedTo}
+          isArchivedProject={isArchivedProject}
+          onClick={() => onAddRemoveFromAllocate(address)}
+          variant="cta"
+        />
       </div>
-      <span className={styles.name} data-test="ProjectListItemHeader__name">
-        {name}
-      </span>
-      <Button
-        className={styles.buttonWebsite}
-        dataTest="ProjectListItemHeader__Button"
-        href={website!.url}
-        variant="link5"
-      >
-        {website!.label || website!.url}
-      </Button>
     </div>
   );
 };

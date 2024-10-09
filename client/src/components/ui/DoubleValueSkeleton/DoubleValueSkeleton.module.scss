@@ -1,16 +1,29 @@
 .root {
   width: 12.8rem;
-}
 
-.row {
-  @include skeleton();
-  width: 100%;
+  .row {
+    @include skeleton();
+    width: 100%;
 
-  &:first-child {
-    height: 2.4rem;
-    margin: 0 0 0.4rem 0;
+    &:first-child {
+      height: 2.4rem;
+      margin: 0 0 0.4rem 0;
+    }
+    &:last-child {
+      height: 1.6rem;
+    }
   }
-  &:last-child {
-    height: 1.6rem;
+
+  &.variant--extra-large {
+    width: 16rem;
+    .row {
+      &:first-child {
+        height: 3.7rem;
+        margin: 0 0 0.4.0;
+      }
+      &:last-child {
+        height: 1.8rem;
+      }
+    }
   }
 }

@@ -1,0 +1,19 @@
+.root {
+  height: 0.1rem;
+  background: $color-octant-grey1;
+  width: 100%;
+  margin: 4rem 0;
+  grid-column: span 1;
+
+  @media #{$tablet-up} {
+    grid-column: span 2;
+  }
+
+  @media #{$desktop-up} {
+    grid-column: span 3;
+  }
+
+  @media #{$large-desktop-up} {
+    grid-column: span 4;
+  }
+}

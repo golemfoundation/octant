@@ -25,26 +25,19 @@
   },
   "common": {
     "availableNow": "Available now",
-    "calculateRewards": "Calculate rewards",
-    "estimateRewards": "Estimate rewards",
     "close": "Close",
+    "closes": "Closes",
     "copied": "Copied",
     "copy": "Copy link",
     "days": "Days",
     "donations": "Donations",
     "done": "Done",
     "gettingStarted": "Getting started",
-    "history": "History",
     "lockGlm": "Lock GLM",
-    "octantTips": "Octant tips",
     "personal": "Personal",
     "personalAllocation": "Personal allocation",
     "projectForbiddenOperation": "As a project you are not able to proceed with this operation",
     "rewards": "Rewards {{rewards}}",
-    "thresholdDataUnavailable": {
-      "desktop": "Threshold data unavailable",
-      "mobile": "No threshold data"
-    },
     "matchFunding": "Match funding",
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
@@ -52,15 +45,197 @@
     "projects": "Projects",
     "available": "Available",
     "totalDonated": "Total donated",
-    "waitingForConfirmation": "Waiting for confirmation"
+    "waitingForConfirmation": "Waiting for confirmation",
+    "pending": "Pending",
+    "amount": "Amount",
+    "edit": "Edit",
+    "donated": "Donated",
+    "lockedGLM": "Locked GLM",
+    "unlockedGLM": "Unlocked GLM",
+    "total": "Total",
+    "matching": "Matching",
+    "confirmed": "Confirmed"
   },
   "components": {
+    "allocation": {
+      "emptyState": "Lock some GLM to earn rewards, then add projects here from the<br/> Projects view to donate to them during Allocation window",
+      "emptyStateAwOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
+      "emptyStateMobile": "Lock some GLM to earn rewards,<br/> then add projects here from the Projects view<br/> to donate to them during Allocation window",
+      "emptyStateMobileAWOpen": "Visit the <0>Projects view</0> to add your favourite<br/> projects so you can donate rewards to them here",
+      "allocateRewards": "Allocate rewards",
+      "lowUQScoreModal": {
+        "header": "Your UQ score is below 15",
+        "text": "A Gitcoin Passport score of 15 or over will boost your match funding by 10x. To increase your score, visit the custom GP dashboard below to add more stamps before you allocate.",
+        "checkboxLabel": "I understand I will only receive 10% of the max. match funding",
+        "goToGitcoinPassportCustomOctantDashboard": "Go to GP dashboard",
+        "proceedToAllocate": "Allocate anyway",
+        "toasts": {
+          "success": {
+            "title": "You successfully increased your UQ score",
+            "message": "Full matching leverage is now available to you"
+          }
+        }
+      },
+      "multisigSignatureToast": {
+        "title": "Multi-sig: signature needed",
+        "message": "At least one signature is required to start allocation. Please do not close Octant."
+      },
+      "allocationItem": {
+        "epoch1": "No funding threshold in Epoch 1",
+        "standard": "{{sum}} / {{threshold}}",
+        "simulate": "Your impact {{value}}",
+        "simulateLoading": "Calculating..."
+      }
+    },
     "shared": {
       "onboardingStepper": {
         "reopenOnboarding": "Reopen onboarding"
       }
     },
+    "home": {
+      "homeRewards": {
+        "currentRewards": "Current rewards",
+        "currentDonations": "Current donations",
+        "totalRewards": "Total rewards",
+        "currentMatchFunding": "Current match funding",
+        "rewardsRate": "Rewards rate",
+        "rewardsRateTooltip": "Rewards rate is the percentage of your locked GLM you earn as rewards per epoch",
+        "epochTotalMatchFunding": "Epoch total match funding",
+        "epochMF": "Epoch MF"
+      },
+      "homeGridCurrentGlmLock": {
+        "currentGlmLock": "Current GLM lock",
+        "yourFunds": "Your funds",
+        "editLockedGLM": "Edit Locked GLM",
+        "effective": "Effective",
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch.",
+        "modalLockGlm": {
+          "unlockGLM": "Unlock GLM",
+          "lockGlmBudgetBox": {
+            "currentlyLocked": "Currently Locked",
+            "walletBalance": "Wallet balance"
+          }
+        }
+      },
+      "homeGridPersonalAllocation": {
+        "withdrawToWallet": "Withdraw to wallet",
+        "pendingFundsAvailableAfter": "Pending funds available after",
+        "modalWithdrawEth": {
+          "withdrawETH": "Withdraw ETH",
+          "estimatedGasPrice": "Est. gas price",
+          "withdrawAll": "Withdraw all"
+        }
+      },
+      "homeGridUQScore": {
+        "yourUniquenessScore": "Your uniqueness score",
+        "isOnTimeOutListLabel": "Sybil account",
+        "recalculate": "Recalculate",
+        "delegate": "Delegate",
+        "whatIsThis": "What is this?",
+        "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
+        "wantToDispute": "Want to dispute sybil status? Please use this form",
+        "addresses": "addresses",
+        "primary": "Primary",
+        "noWalletConnected": "No wallet connected",
+        "addressScore": {
+          "signMessage": "Sign message"
+        },
+        "progressPath": {
+          "checkingPassportScore": "Checking Passport score",
+          "finished": "Finished",
+          "checkingAllowlist": "Checking allowlist"
+        },
+        "modalCalculatingYourUniqueness": {
+          "calculatingYourUniqueness": "Calculating your uniqueness",
+          "calculatingYourUniquenessStep1": "To prove your uniqueness your need a <0>Gitcoin\u00a0Passport</0> score of 15 or higher.<br/><br/>If you have this your donations will attract the maximum amount of match funding. If not, maximum match funding will be set to 10%.<br/><br/>You can increase your score in a couple of different ways.",
+          "calculatingYourUniquenessStep2": "You can go to our <0>Passport dashboard</0> and add stamps to the score for your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 15+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
+          "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy <0>guide on improving your score.</0>"
+        },
+        "modalCalculatingUQScore": {
+          "signMessages": "Sign messages",
+          "switchAccount": "Switch account",
+          "calculatingScore": "Calculating score",
+          "delegationFailedText": "Delegation failed — your score needs to be 15 or higher. Please try another address",
+          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
+          "toasts": {
+            "unableToDelegateToAddressWithPositiveGLMLock": {
+              "title": "Address with GLM locked",
+              "message": "Please delegate to an address without GLM locked"
+            }
+          }
+        },
+        "modalRecalculatingScore": {
+          "recalculatingScore": "Recalculating score"
+        },
+        "toasts": {
+          "delegationTooManyUniqueAddresses": {
+            "title": "Too many accounts",
+            "message": "Please connect up to 10 accounts to check your delegation status"
+          }
+        }
+      },
+      "homeGridRewardsEstimator": {
+        "rewardsEstimator": "Rewards estimator",
+        "enterGLMAmount": "Enter a GLM amount",
+        "lockForEpoch_one": "Lock for {{count}} epoch",
+        "lockForEpoch_other": "Lock for {{count}} epochs",
+        "minimalUqValueGivingMultiplier1": "UQ 15+",
+        "errors": {
+          "valueCryptoTooBig": "That isn’t a valid amount"
+        }
+      },
+      "homeGridTransactions": {
+        "transactions": "Transactions",
+        "modalTransactionDetails": {
+          "header": {
+            "allocation": "Epoch {{epoch}} Allocations",
+            "withdrawal": "Withdrew ETH"
+          },
+          "sections": {
+            "allocationProjects": "Projects ({{projectsNumber}})",
+            "gasPrice": "Gas price",
+            "viewOnEtherscan": "View on Etherscan",
+            "estimatedLeverage": "Est. leverage",
+            "finalMatchFunding": "Final match funding",
+            "when": "When",
+            "matchingFundDonation": "Matching fund donation",
+            "leverageUnknown": "Unknown",
+            "allocationTooltips": {
+              "leverageUnknown": "We do not know the leverage for this past allocation.",
+              "finalMatchFunding": "Once allocation period has finished we know the exact amount of your matched funding your donation attracted, so we show that rather than just your estimated leverage amount.",
+              "leverage": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
+            }
+          }
+        },
+        "transactionsList": {
+          "empty": "No transaction history yet. <br/>Lock some GLM to get started"
+        },
+        "transactionsListItem": {
+          "allocatedRewards": "Allocated rewards",
+          "withdrawnFunds": "Withdrawn funds",
+          "epochDonation": "Epoch {{epoch}} donation"
+        },
+        "transactionLabel": {
+          "pendingMultisig": "Pending multisig"
+        }
+      },
+      "homeGridDonations": {
+        "donationHistory": "Donation history",
+        "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
+        "noDonationsYetAWOpen": "Check out the <0>Projects view</0><br/>to find projects to fund"
+      },
+      "homeGridEpochResults": {
+        "epochResults": "Epoch {{epoch}} results",
+        "epochLive": "Epoch {{epoch}} live",
+        "donationsShort": "D",
+        "matchingShort": "M",
+        "totalShort": "T",
+        "clickToVisitProject": "Click to visit project",
+        "loadingChartData": "Loading chart data "
+      }
+    },
     "settings": {
+      "title": "Settings",
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
@@ -82,40 +257,17 @@
         "saved": "Saved",
         "removeFromAllocate": "Remove from allocate",
         "removed": "Removed",
-        "donated": "Donated"
-      },
-      "rewardsCalculator": {
-        "modalHeaderTooltip": "Calculator assumes GLM is locked before allocation window and remains locked until the next window. Estimated match funding is based on 100% of rewards being allocated to projects.",
-        "estimates": "Estimates",
-        "enterGLMAmount": "Enter a GLM amount",
-        "lockForEpoch_one": "Lock for {{count}} epoch",
-        "lockForEpoch_other": "Lock for {{count}} epochs",
-        "estimatedRewards": "Estimated rewards",
-        "uqSelector": {
-          "header": "UQ Score 20+",
-          "isUqScoreOver20_true": "Yes",
-          "isUqScoreOver20_false": "No"
-        },
-        "errors": {
-          "valueCryptoTooBig": "That isn’t a valid amount"
-        }
-      },
-      "allocationInfoBoxes": {
-        "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
-        "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
+        "saveProject": "Save project",
+        "savedProject": "Saved project"
       },
       "allocationNavigation": {
         "confirm": "Confirm",
-        "edit": "Edit",
         "reset": "Reset",
         "waiting": "Waiting"
       },
       "allocationRewardsBox": {
-        "title": "Allocate rewards",
-        "subtitle": "{{individualReward}} available",
         "subtitleNoRewards": "No rewards yet",
         "donate": "Donate",
-        "donated": "Donated",
         "donateWithPercentage": "Donate {{percentage}}%",
         "personalWithPercentage": "Personal {{percentage}}%",
         "allocated": "Allocated",
@@ -125,52 +277,13 @@
       "allocationSummary": {
         "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
-        "confirmYourAllocations": "Confirm your allocations",
-        "confirmAllocations": "Confirm allocations",
-        "allocationProjects": "Projects ({{projectsNumber}})",
-        "tooltip": "<0>Leverage</0> shows the multiplier effect of your donation to the projects you chose. Note that leverage will fluctuate significantly and might be very different at the end of the allocation window."
-      },
-      "allocationInputsRewardsAvailable": {
-        "resetAllocations": "Reset allocations to manually edit this project",
-        "valueExceeded": "You can't allocate more than",
-        "rewardsAvailable": "Rewards available"
-      },
-      "boxGlmLock": {
-        "current": "Current",
-        "editLockedGLM": "Edit Locked GLM",
-        "effective": "Effective",
-        "lockedBalance": "Locked balance",
-        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch."
-      },
-      "boxPersonalAllocation": {
-        "patronEarnings": "Patron earnings",
-        "pending": "Pending",
-        "withdrawToWallet": "Withdraw to wallet",
-        "pendingFundsAvailableAfter": "Pending funds available after",
-        "allTime": "All time",
-        "currentEpoch": "Current epoch"
-      },
-      "budgetBox": {
-        "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
-        "currentlyLocked": "Currently Locked",
-        "stakeWillUpdate": "Your stake will update when the transaction is confirmed",
-        "waitingForTransactionHash": "Waiting for transaction hash from Etherscan...",
-        "walletBalance": "Wallet balance",
-        "viewOnEtherscan": "View on Etherscan"
+        "allocationProjects": "Projects ({{projectsNumber}})"
       },
       "connectWallet": {
         "browserWallet": "Browser wallet",
         "connecting": "Connecting ...",
         "walletConnect": "WalletConnect",
         "ledgerConnect": "Ledger"
-      },
-      "donationEstimateBox": {
-        "donationEstimate": "Donation estimate",
-        "showDetails": "Show details",
-        "hideDetails": "Hide details",
-        "totalDonationEstimate": "Total donation estimate",
-        "yourTotal": "Your total",
-        "matchFundingEstimate": "Match Funding estimate"
       },
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
@@ -205,63 +318,8 @@
           }
         }
       },
-      "historyList": {
-        "emptyHistory": "You haven’t made any transactions yet"
-      },
-      "historyItem": {
-        "allocatedRewards": "Allocated rewards",
-        "lockedGLM": "Locked GLM",
-        "unlockedGLM": "Unlocked GLM",
-        "projects": "Projects",
-        "withdrawnFunds": "Withdrawn funds",
-        "epochDonation": "Epoch {{epoch}} donation"
-      },
-      "historyItemModal": {
-        "header": {
-          "allocation": "Epoch {{epoch}} Allocations",
-          "lock": "Locked GLM",
-          "unlock": "Unlocked GLM",
-          "withdrawal": "Withdrew ETH"
-        },
-        "sections": {
-          "allocationPersonal": "Personal",
-          "allocationProjects": "Projects ({{projectsNumber}})",
-          "amount": "Amount",
-          "gasPrice": "Gas price",
-          "viewOnEtherscan": "View on Etherscan",
-          "estimatedLeverage": "Est. leverage",
-          "finalMatchFunding": "Final match funding",
-          "when": "When",
-          "withdrawal": "Withdrew ETH",
-          "matchingFundDonation": "Matching fund donation",
-          "leverageUnknown": "Unknown",
-          "allocationTooltips": {
-            "leverageUnknown": "We do not know the leverage for this past allocation.",
-            "finalMatchFunding": "Once allocation period has finished we know the exact amount of your matched funding your donation attracted, so we show that rather than just your estimated leverage amount.",
-            "leverage": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
-          }
-        }
-      },
-      "historyTransactionLabel": {
-        "confirmed": "Confirmed",
-        "pending": "Pending",
-        "pendingMultisig": "Pending multisig"
-      },
-      "metricsTimeSection": {
-        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
-        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
-      },
-      "modalAllocationEditSelection": {
-        "uncheckToRemove": "Uncheck to remove"
-      },
       "modalConnectWallet": {
         "connectVia": "Connect via"
-      },
-      "modalGlmLock": {
-        "unlockGLM": "Unlock GLM"
-      },
-      "modalWithdrawEth": {
-        "withdrawETH": "Withdraw ETH"
       },
       "projectRewards": {
         "epoch": "Epoch {{epoch}}",
@@ -273,8 +331,10 @@
         "didNotReachThreshold": "Did not reach threshold"
       },
       "projectsList": {
-        "epochArchive": "Epoch {{epoch}} Archive",
-        "searchInputPlaceholder": "Search for projects",
+        "epochArchive": "Epoch {{epoch}} Archive"
+      },
+      "projectsSearchResults": {
+        "searchResultsLabel": "Epoch {{epochNumber}}",
         "noSearchResults": "No luck, please try again"
       },
       "timeCounter": {
@@ -289,25 +349,38 @@
         "balances": "Balances",
         "wallet": "Wallet",
         "disconnectWallet": "Disconnect Wallet"
-      },
-      "withdrawEth": {
-        "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
-        "rewardsBudget": "Rewards Budget",
-        "amount": "Amount",
-        "estimatedGasPrice": "Est. gas price",
-        "withdrawAll": "Withdraw all"
       }
     }
   },
-  "layouts": {
-    "main": {
-      "buttonConnect": "Connect",
-      "noRewardsYet": "No rewards yet",
-      "loadingRewardBudget": "Loading reward budget...",
-      "allocationStartsIn": "Allocation starts in <0>{{currentPeriod}}</0>",
-      "allocationEndsIn": "Allocation ends in <0>{{currentPeriod}}</0>",
+  "layout": {
+    "navigationTabs": {
+      "home": "Home",
+      "metrics": "Metrics",
+      "settings": "Settings",
+      "allocate": "Allocate"
+    },
+    "topBar": {
+      "epochAllocationWindowOpen": "Epoch {{epoch}} allocation window now open",
+      "epochAllocationWindowOpenShort": "E{{epoch}} allocation open",
+      "epochAllocationWindowClosed": "Epoch {{epoch}} allocation window is closed",
+      "epochAllocationWindowClosedShort": "E{{epoch}} allocation is closed",
+      "connectWallet": "Connect wallet",
+      "connect": "Connect",
       "admin": "Admin",
       "patron": "Patron"
+    },
+    "footer": {
+      "octantText": "Octant is a <0>Golem Foundation</0> project,<br/> launched in 2023.",
+      "links": {
+        "website": "Website",
+        "discord": "Discord",
+        "blog": "Blog",
+        "docs": "Docs",
+        "brandAssets": "Brand assets",
+        "termsOfUse": "Terms of use",
+        "farcaster": "Farcaster",
+        "twitterX": "Twitter/X"
+      }
     }
   },
   "meta": {
@@ -324,121 +397,32 @@
     }
   },
   "views": {
-    "allocation": {
-      "lowUQScoreModal": {
-        "header": "Your UQ score is too low!",
-        "text": "If you allocate with this UQ score, you will receive <0>80% less match funding</0> than if you are verified. You cannot change this after allocation. Are you sure you want to proceed?",
-        "checkboxLabel": "I understand I will receive 20% of the maximum match funding",
-        "goToUQSettings": "Go to UQ Settings",
-        "proceedToAllocate": "Proceed to allocate"
-      },
-      "multisigSignatureToast": {
-        "title": "Multi-sig: signature needed",
-        "message": "At least one signature is required to start allocation. Please do not close Octant."
-      },
-      "allocationItem": {
-        "epoch1": "No funding threshold in Epoch 1",
-        "standard": "{{sum}} / {{threshold}}",
-        "simulate": "Your impact {{value}}",
-        "simulateLoading": "Calculating..."
-      },
-      "allocationSuccessful": "Allocation successful",
-      "tip": {
-        "rewards": {
-          "title": "Time to allocate",
-          "text": {
-            "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
-            "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
-          }
-        },
-        "uqTooLow": {
-          "title": {
-            "desktop": "Your uniqueness score is too low",
-            "mobile": "Your UQ score is too low"
-          },
-          "text": {
-            "desktop": "You will receive only 20% of the maximum match funding. Visit <0>Settings</0> to recalculate it before you allocate and improve your match funding",
-            "mobile": "You will receive only 20% of the max. match funding. Visit <0>Settings</0> to recalculate before you allocate"
-          }
-        }
-      },
-      "modalAllocationValuesEdit": {
-        "header": "Edit {{allocation}}"
-      }
-    },
-    "earn": {
-      "tips": {
-        "withdrawEth": {
-          "title": "Withdraw ETH",
-          "text": {
-            "desktop": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view once the allocation window has closed",
-            "mobile": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
-          }
-        },
-        "connectWallet": {
-          "title": {
-            "desktop": "Connect your wallet",
-            "mobile": "Connect wallet"
-          },
-          "text": {
-            "desktop": "Please connect your wallet to get started. You will need it to lock GLM, receive rewards and to prove your uniqueness",
-            "mobile": "Please connect your wallet to Octant in order to participate in this and future epochs"
-          }
-        },
-        "lockGlm": {
-          "title": "Lock GLM to earn",
-          "text": {
-            "desktop": "Lock GLM for at least one complete epoch to earn ETH rewards you can donate (and get match funding) or allocate to yourself",
-            "mobile": "Lock GLM for at least 1 complete epoch to earn ETH rewards you can donate or withdraw"
-          }
-        },
-        "allocateYourRewards": {
-          "title": "Allocate your rewards",
-          "text": {
-            "desktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
-            "mobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
-          }
-        }
-      },
-      "preLaunch": {
-        "timerTitle": "Octant launches in"
-      }
+    "home": {
+      "title": "Welcome to Epoch {{epoch}}"
     },
     "metrics": {
+      "epoch1Info": "It's Epoch 1, so there are no metrics for the past. It's just a placeholder, please come back in Epoch 2.",
+      "exploreTheData": "Explore the data",
+      "fundingLeaderboard": "Funding leaderboard",
       "donatedToProjects": "Donated to projects",
       "claimedByUsers": "Claimed by users",
       "open": "Open",
-      "overview": "Overview",
       "epoch": "Epoch",
       "epochAllocationWindow": "Epoch {{epoch}} Allocation Window",
       "epochAllocation": "E{{epoch}} Allocation",
-      "yourMetrics": "Your metrics",
-      "totalRewards": "Total rewards",
-      "allocationsInEth": "Allocations in ETH",
       "generalMetrics": "General metrics",
-      "totalWithdrawals": "Total withdrawals",
-      "donationsVsPersonalAllocationValue": "Donations vs personal allocation value",
-      "patronModeActive": "Patron mode active",
-      "patronModeActiveLabel": "{{numberOfEpochs}} epochs",
-      "donatedAsPatron": "Donated as patron",
-      "noAllocationsYet": "No allocations yet",
+      "donationsVsPersonal": "Donations vs personal",
+      "donationsVsMatchFunding": "Donations vs match funding",
+      "totalMatching": "Total matching",
       "totalProjects": "Total projects",
       "totalEthStaked": "Total ETH Staked",
       "totalGlmLocked": "Total GLM Locked",
       "of1BTotalSupply": "of 1B total supply",
-      "totalAddresses": "Total addresses",
       "cumulativeGlmLocked": "Cumulative GLM Locked",
       "walletsWithGlmLocked": "Wallets with GLM locked",
-      "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
-      "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
-      "connectWalletTip": {
-        "title": "Connect your wallet",
-        "text": "To see your own personal stats here, <0/>you will need to connect your wallet"
-      },
       "belowThreshold": "Below threshold",
       "ethBelowThreshold": "ETH Below threshold",
-      "totalPersonal": "Total personal",
       "totalDonations": "Total donations",
       "averageLeverage": "Average leverage",
       "currentDonors": "Current donors",
@@ -446,7 +430,6 @@
       "rewardsUnused": "Rewards unused",
       "unallocatedValue": "Unallocated value",
       "users": "Users",
-      "topProjectsByEthRaised": "Top {{numberOfProjects}} projects by ETH raised",
       "totalUsers": "Total users",
       "fundsUsage": "Epoch {{epoch}} funds usage ",
       "epochTotal": "Epoch {{epoch}} Total",
@@ -457,6 +440,13 @@
       "projectCosts": "Project costs"
     },
     "onboarding": {
+      "modalTimeoutListPresence": {
+        "header": "This account looks like a sybil",
+        "text": "We have flagged this account as a <0>sybil</0> which means your allocation will receive no match funding this epoch. If you would like to dispute this, please <1>fill out this form</1> & we’ll review it.",
+        "checkboxLabel": "I understand that I will receive \u2028no match funding this epoch",
+        "goToDisputeForm": "Go to dispute form",
+        "close": "Close"
+      },
       "stepsCommon": {
         "usingTheApp": {
           "header": "Using the app",
@@ -471,41 +461,43 @@
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Epoch {{epoch}} Allocation",
-          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all about."
+          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Home view, and explore the projects for this epoch to get an idea of what Octant is all about."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Earn view to estimate potential rewards."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
         },
         "donateToProjects": {
           "header": "Donate to projects",
-          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate view where you can donate."
+          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate drawer where you can donate."
         },
         "slideIt": {
           "header": "Just slide it",
-          "text": "If you have rewards, use the slider in the Allocate view to easily divide them between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
+          "text": "If you have rewards, use the slider in the Allocate drawer to easily divide them between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
       "stepsDecisionWindowClosed": {
         "welcomeToOctant": {
           "header": "Welcome to Octant Epoch {{epoch}}",
-          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all"
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Home view, and explore the projects for this epoch to get an idea of what Octant is all about."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Earn view to estimate potential rewards."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
         },
         "getReady": {
           "header": "Get ready for allocation",
-          "text": "Lock your GLM, check out the projects to support and get ready for the next allocation window which opens on {{date}}.<br/><br/>Visit <0>Octant.build</0>, join the <1>Discord</1> or get project updates on <2>Twitter</2>."
+          "text": "Lock your GLM, check out the projects to support and get ready for the next allocation window which opens on {{date}}.<br/><br/>Visit <0>Octant.build</0>, join the <1>Discord</1> or get project updates on <2>Twitter</2> or <3>Farcaster</3>."
         }
       }
     },
     "project": {
       "loadingProblem": "Loading of this project encountered a problem.",
-      "backToTop": "Back to Top"
+      "backToTop": "Back to Top",
+      "share": "Share"
     },
     "projects": {
+      "viewTitle": "Browse Epoch {{epochNumber}} projects",
       "projectsTimelineWidget": {
         "applicationsOpen": "Applications open",
         "projectUpdatesClose": "Project updates close",
@@ -513,67 +505,27 @@
         "allocationWindow": "Allocation window",
         "epochStarts": "Epoch {{epoch}} starts"
       },
-      "tip": {
-        "title": "Add your favourites",
-        "text": {
-          "desktop": "Save projects to the Allocate view with the heart icon so you can donate rewards to them. You can also slide any allocate tile to remove them",
-          "mobile": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
-        }
+      "searchInputPlaceholder": "Search for projects and epochs eg Tor E1,E2",
+      "sortOptions": {
+        "randomized": "Randomised",
+        "alphabeticalAscending": "A -> Z",
+        "alphabeticalDescending": "Z -> A",
+        "totalsDescending": "Totals high to low",
+        "totalsAscending": "Total low to high",
+        "donorsDescending": "Donors most to least",
+        "donorsAscending": "Donors least to most"
       }
     },
     "settings": {
       "epoch": "Epoch {{epoch}}",
       "golemFoundationProject": "A Golem Foundation Project",
       "poweredByCoinGeckoApi": "Powered by CoinGecko API",
-      "termsAndConditions": "Terms & Conditions",
       "chooseDisplayCurrency": "Choose a display currency",
-      "cryptoMainValueDisplay": "Use crypto as main value display",
+      "cryptoMainValueDisplay": "Use ETH as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
-      "alwaysShowOctantTips": "Always show tips",
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
-      "octantBuild": "Octant.build",
-      "userDocs": "User Docs",
-      "discordCommunity": "Discord Community",
-      "website": "Website",
-      "visitWebsite": "Visit the website",
-      "discord": "Discord",
-      "joinOurDiscord": "Join our Discord",
-      "docs": "Docs",
-      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
-      "recalculatingScore": "Recalculating score",
-      "calculatingScore": "Calculating score",
-      "checkingPassportScore":"Checking Passport score",
-      "finished": "Finished",
-      "checkingAllowlist": "Checking allowlist",
-      "checkOutDocs": "Check out the docs",
-      "yourUniquenessScore": "Your uniqueness score",
-      "recalculate": "Recalculate",
-      "delegate": "Delegate",
-      "whatIsThis": "What is this?",
-      "scoreTooLow": "Score too low? Visit the Octant Passport dashboard",
-      "addresses": "addresses",
-      "calculatingYourUniqueness": "Calculating your uniqueness",
-      "switchAccounts": "Switch accounts",
-      "calculatingYourUniquenessStep1": "To prove your uniqueness your need a <0>Gitcoin\u00a0Passport</0> score of 20 or higher.<br/><br/>If you have this your donations will attract the maximum amount of match funding. If not, maximum match funding will be set to 20%.<br/><br/>You can increase your score in a couple of different ways.",
-      "calculatingYourUniquenessStep2": "You can go to our <0>Passport dashboard</0> and add stamps to the score for your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 20+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
-      "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy guide to <0>scoring 20, for humans.</0>",
-      "primary": "Primary",
-      "delegationFailedText": "Delegation failed — your score needs to be 20 or higher. Please try another address",
-      "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
-      "signMessage": "Sign message",
-      "signMessages": "Sign messages",
-      "switchAccount": "Switch account",
-      "toasts": {
-        "delegationTooManyUniqueAddresses": {
-          "title": "Too many accounts",
-          "message": "Please connect up to 10 accounts to check your delegation status"
-        },
-        "unableToDelegateToAddressWithPositiveGLMLock": {
-          "title": "Address with GLM locked",
-          "message": "Please delegate to an address without GLM locked"
-        }
-      }
+      "docs": "Docs"
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

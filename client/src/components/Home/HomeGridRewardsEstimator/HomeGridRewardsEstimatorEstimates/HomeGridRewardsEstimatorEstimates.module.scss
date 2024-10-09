@@ -1,0 +1,46 @@
+.root {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: 1.4rem;
+
+  .column {
+    flex: 1;
+
+    &:first-child {
+      margin-right: 0.8rem;
+    }
+
+    .label {
+      text-align: left;
+      font-size: $font-size-10;
+      font-weight: $font-weight-bold;
+      color: $color-octant-grey5;
+      margin-bottom: 0.6rem;
+    }
+
+    .valueBox {
+      display: flex;
+      align-items: center;
+      background-color: $color-octant-grey8;
+      border-radius: $border-radius-04;
+      height: 4.8rem;
+      border: 0.1rem solid $color-octant-grey1;
+      padding-left: 1.6rem;
+
+      .value {
+        color: $color-octant-dark;
+        font-size: $font-size-14;
+        font-weight: $font-weight-bold;
+      }
+
+      .value {
+        &.showSkeleton {
+          @include skeleton($color-octant-grey1, $color-octant-grey12);
+          width: 10.4rem;
+          height: 1.7rem;
+        }
+      }
+    }
+  }
+}

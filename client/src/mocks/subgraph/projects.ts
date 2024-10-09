@@ -2,7 +2,9 @@ import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards
 
 export const mockedProjectATotalValueOfAllocations1: ProjectIpfsWithRewards = {
   address: 'address',
+  donations: BigInt(1),
   isLoadingError: false,
+  matchedRewards: BigInt(1),
   name: 'A',
   numberOfDonors: 10,
   percentage: 1,

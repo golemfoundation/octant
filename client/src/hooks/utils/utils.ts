@@ -1,6 +1,6 @@
+import { AllocationValues } from 'components/Allocation/types';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
-import { AllocationValues } from 'views/AllocationView/types';
 
 export function getAllocationsMapped(
   allocationValues: AllocationValues,

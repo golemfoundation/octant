@@ -1,0 +1,22 @@
+$elementMargin: 1.6rem;
+
+.noSearchResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  color: $color-octant-grey5;
+  margin: 1.6rem 0;
+
+  .image {
+    width: 28rem;
+    margin-bottom: 3.2rem;
+  }
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-between;
+}

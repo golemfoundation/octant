@@ -1,8 +1,8 @@
-import { ResponseItem } from 'hooks/helpers/useUserAllocationsAllEpochs';
+import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 
 export default interface MetricsProjectsListProps {
   dataTest?: string;
   isLoading: boolean;
   numberOfSkeletons: number;
-  projects: ResponseItem['elements'];
+  projects: (ProjectIpfsWithRewards & { epoch: number })[];
 }

@@ -57,11 +57,12 @@ const MetricsGeneralGridCumulativeGlmLocked: FC = () => {
               />
             </div>
           ),
+          hasTitleLargeBottomPadding: true,
           title: t('cumulativeGlmLocked'),
           titleSuffix: <MetricsGridTileTimeSlicer onValueChange={setDateToFilter} />,
         },
       ]}
-      size="L"
+      size="custom"
     />
   );
 };

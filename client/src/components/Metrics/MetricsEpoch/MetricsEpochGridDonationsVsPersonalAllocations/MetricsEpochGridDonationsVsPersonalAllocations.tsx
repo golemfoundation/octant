@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
+import MetricsEpochDonationsProgressBar from 'components/Metrics/MetricsEpoch/MetricsEpochDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
@@ -9,19 +9,15 @@ import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
 
 const MetricsEpochGridDonationsVsPersonalAllocations: FC<
   MetricsEpochGridDonationsVsPersonalAllocationsProps
-> = ({ totalUserDonationsWithPatronRewards, isLoading, totalPersonal, className }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+> = ({ totalUserDonations, isLoading, totalPersonal, className }) => {
+  const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const totalUserDonationWithPatronRewardsNumber = parseFloat(
-    formatUnitsBigInt(totalUserDonationsWithPatronRewards),
-  );
+  const totalUserDonationsNumber = parseFloat(formatUnitsBigInt(totalUserDonations));
   const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
 
   const donationsValue =
-    totalUserDonationWithPatronRewardsNumber > 0
-      ? (totalUserDonationWithPatronRewardsNumber /
-          (totalPersonalNumber + totalUserDonationWithPatronRewardsNumber)) *
-        100
+    totalUserDonationsNumber > 0
+      ? (totalUserDonationsNumber / (totalPersonalNumber + totalUserDonationsNumber)) * 100
       : 0;
 
   return (
@@ -31,9 +27,13 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
       groups={[
         {
           children: (
-            <MetricsDonationsProgressBar donationsValue={donationsValue} isLoading={isLoading} />
+            <MetricsEpochDonationsProgressBar
+              compareValueLabel={i18n.t('common.personal')}
+              donationsValue={donationsValue}
+              isLoading={isLoading}
+            />
           ),
-          title: t('donationsVsPersonalAllocationValue'),
+          title: t('donationsVsPersonal'),
         },
       ]}
     />
