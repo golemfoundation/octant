@@ -23,9 +23,6 @@ def get_unlocks(address: str, from_ts: int):
 
     unlockeds = cast_to_int(unlockeds, "depositBefore", "amount")
 
-    # for lock in unlockeds:
-    #     lock["depositBefore"] = int(lock["depositBefore"])
-    #     lock["amount"] = int(lock["amount"])
     return unlockeds
 
 
@@ -45,8 +42,5 @@ def get_locks(address: str, from_ts: int, latest_ts: int):
     lockeds = result["lockeds"]
 
     lockeds = cast_to_int(lockeds, "depositBefore", "amount")
-    # for lock in lockeds:
-    #     lock["depositBefore"] = int(lock["depositBefore"])
-    #     lock["amount"] = int(lock["amount"])
 
     return lockeds
