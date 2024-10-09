@@ -25,7 +25,7 @@ class CheckOriginalListStage:
                 raise Exception(
                     f"Address that is present on the "
                     f"original list but we didn't "
-                    f"find it in our list {address.strip}"
+                    f"find it in our list {address.strip()}"
                 )
 
         context.not_present_original_list = not_present_original_list
