@@ -1,4 +1,5 @@
 import time
+from http import HTTPStatus
 from typing import Callable, Dict
 
 from app.exceptions import ExternalApiException
@@ -6,7 +7,7 @@ from app.exceptions import ExternalApiException
 
 def retry_request(
     req_func: Callable,
-    status_code: int,
+    status_code: HTTPStatus,
     no_retries: int = 3,
     sleep_time: int = 1,
     **kwargs,

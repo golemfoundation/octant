@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 6.4rem;
+  margin: 1.6rem 0;
+
+  .title {
+    font-size: $font-size-16;
+    color: $color-octant-dark;
+    font-weight: $font-weight-bold;
+  }
+}

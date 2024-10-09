@@ -1,19 +1,20 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AllocationLowUqScore from 'components/Allocation/AllocationLowUqScore';
 import Img from 'components/ui/Img';
 import Modal from 'components/ui/Modal';
 
 import styles from './ModalAllocationLowUqScore.module.scss';
 import ModalAllocationLowUqScoreProps from './types';
 
-import AllocationLowUqScore from '../AllocationLowUqScore';
-
 const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
   modalProps,
   onAllocate,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.lowUQScoreModal' });
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.allocation.lowUQScoreModal',
+  });
 
   return (
     <Modal
@@ -24,7 +25,7 @@ const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
       isOverflowOnClickDisabled
       {...modalProps}
     >
-      <AllocationLowUqScore onAllocate={onAllocate} />
+      <AllocationLowUqScore onAllocate={onAllocate} onCloseModal={modalProps.onClosePanel} />
     </Modal>
   );
 };

@@ -1,41 +1,33 @@
 .root {
   z-index: $z-index-4;
+  padding: 0;
 
-  &.isAllocatedTo {
-    svg path {
-      stroke: $color-white;
-      // fill: $color-white; -- no fill here, it makes the stroke bigger.
-    }
-  }
+  &.variant--cta {
+    min-width: 15rem;
+    font-size: $font-size-12;
+    padding: 0 1rem 0 1.6rem;
+    justify-content: right;
+    background-color: $color-octant-dark;
+    cursor: pointer;
 
-  &:not(.isAllocatedTo) {
-    &.isAddedToAllocate {
-      svg path {
-        stroke: $color-octant-orange;
-        fill: $color-octant-orange;
-      }
-    }
-  }
-
-  .svgWrapper {
-    display: flex;
-  }
-
-  &.isArchivedProject {
     &:hover {
-      background: transparent;
+      background-color: $color-octant-grey10;
+    }
+
+    &:active {
+      background-color: $color-octant-dark;
+    }
+
+    &.isDisabled {
       cursor: default;
+      color: $color-octant-grey1;
+      background-color: $color-octant-grey2;
     }
 
-    svg path {
-      stroke: $color-octant-grey1;
-    }
-
-    &.isAllocatedTo {
-      svg circle {
-        stroke: $color-octant-grey5;
-        fill: $color-octant-grey5;
-      }
+    .wrapper {
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
     }
   }
 }

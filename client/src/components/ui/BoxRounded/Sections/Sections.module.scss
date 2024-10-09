@@ -2,12 +2,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 7.2rem;
+  height: 6.4rem;
   width: 100%;
   border-bottom: 0.1rem solid $color-octant-grey3;
 
   &.hasBottomDivider:not(:last-child) {
-    border-bottom: 0.1rem  solid $color-octant-grey1;
+    border-bottom: 0.1rem solid $color-octant-grey1;
   }
 
   &.isDisabled {
@@ -29,8 +29,9 @@
   align-items: center;
   color: $color-octant-dark;
   margin-right: 1.6rem;
+  font-weight: $font-weight-bold;
 
-  &.variant--{
+  &.variant-- {
     &small {
       font-size: $font-size-14;
 

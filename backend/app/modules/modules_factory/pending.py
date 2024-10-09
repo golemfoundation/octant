@@ -20,6 +20,7 @@ from app.modules.modules_factory.protocols import (
     MultisigSignatures,
     ProjectsMetadataService,
     UniquenessQuotients,
+    ProjectsDetailsService,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
@@ -48,7 +49,15 @@ from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST,
+    TIMEOUT_LIST_NOT_MAINNET,
+)
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
@@ -87,6 +96,7 @@ class PendingServices(Model):
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    projects_details_service: ProjectsDetailsService
     uniqueness_quotients: UniquenessQuotients
 
     @staticmethod
@@ -98,8 +108,9 @@ class PendingServices(Model):
 
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
+        timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
+            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
             budgets=saved_user_budgets,
             uq_threshold=uq_threshold,
         )
@@ -159,5 +170,6 @@ class PendingServices(Model):
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
             projects_metadata_service=StaticProjectsMetadataService(),
+            projects_details_service=StaticProjectsDetailsService(),
             uniqueness_quotients=uniqueness_quotients,
         )

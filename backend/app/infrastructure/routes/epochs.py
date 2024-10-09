@@ -3,7 +3,10 @@ from flask_restx import fields, Namespace
 
 from app.extensions import api, epochs
 from app.infrastructure import OctantResource, graphql
-from app.modules.octant_rewards.controller import get_octant_rewards
+from app.modules.octant_rewards.controller import (
+    get_octant_rewards,
+    get_epoch_rewards_rate,
+)
 
 ns = Namespace("epochs", description="Octant epochs")
 api.add_namespace(ns)
@@ -106,6 +109,19 @@ epoch_stats_model = api.model(
             required=False,
             description="Community fund for the given epoch. It's calculated from staking proceeds directly.",
         ),
+        "donatedToProjects": fields.String(
+            required=False,
+            description="The amount of funds donated to projects. Includes MR and allocations.",
+        ),
+    },
+)
+
+epoch_rewards_rate_model = api.model(
+    "EpochRewardsRate",
+    {
+        "rewardsRate": fields.Float(
+            required=True, description="Rewards rate for the given epoch."
+        )
     },
 )
 
@@ -127,3 +143,18 @@ class EpochStats(OctantResource):
         app.logger.debug(f"Got: {stats}")
 
         return stats.to_dict()
+
+
+@ns.route("/rewards-rate/<int:epoch>")
+@ns.doc(
+    description="Returns a rewards rate for given epoch. Returns data for all states of epochs.",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochRewardsRate(OctantResource):
+    @ns.marshal_with(epoch_rewards_rate_model)
+    @ns.response(200, "Epoch's rewards rate successfully retrieved.")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting rewards rate for epoch {epoch}")
+        return {"rewardsRate": get_epoch_rewards_rate(epoch)}

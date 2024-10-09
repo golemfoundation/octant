@@ -12,6 +12,8 @@ import {
   UserBudget,
   AllocationRecord,
   ApiRewardsBudgets, ApiAllocations, ApiRewards,
+  ApiEpochUqs, EpochUqsImpl,
+  FinalizedSimulationImpl
 } from "./models";
 
 const REQUEST_TIMEOUT = 150_000;
@@ -19,16 +21,16 @@ const REQUEST_TIMEOUT = 150_000;
 export class HttpFetcher {
   readonly axios: Axios
 
-  constructor(baseUrl: string){
-    this.axios = new Axios({baseURL: baseUrl, timeout: REQUEST_TIMEOUT})
+  constructor(baseUrl: string) {
+    this.axios = new Axios({ baseURL: baseUrl, timeout: REQUEST_TIMEOUT })
   }
 
-  async _get <T>(url: string, resource: string, Factory: {new(): Deserializable<T>}): Promise<T | null>{
+  async _get<T>(url: string, resource: string, Factory: { new(): Deserializable<T> }): Promise<T | null> {
     const mapper = (data: any): T => new Factory().from(JSON.parse(data))
     return this._do_get(url, resource, mapper)
   }
 
-  async _get_array <T>(url: string, resource: string, Factory: {new(): Deserializable<T>}, unwrapper?: (data: any) => any): Promise<Array<T> | null>{
+  async _get_array<T>(url: string, resource: string, Factory: { new(): Deserializable<T> }, unwrapper?: (data: any) => any): Promise<Array<T> | null> {
 
     const dataUnwrapper = unwrapper ?? ((data: any) => data)
 
@@ -36,10 +38,10 @@ export class HttpFetcher {
     return this._do_get(url, resource, mapper)
   }
 
-  async _do_get<T>(url: string, resource: string, mapper: (data: any) => T): Promise<T | null>{
+  async _do_get<T>(url: string, resource: string, mapper: (data: any) => T): Promise<T | null> {
 
     return this.axios.get(url).then(response => {
-      if (response.status !== 200){
+      if (response.status !== 200) {
         throw new Error(response.data)
       }
       console.log(`✅ Fetched ${resource}`)
@@ -51,8 +53,7 @@ export class HttpFetcher {
     })
   }
 
-
-  async apiGetUserBudgets(epoch: number): Promise<UserBudget[] | null>{
+  async apiGetUserBudgets(epoch: number): Promise<UserBudget[] | null> {
     return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl, (data: ApiRewardsBudgets) => data.budgets)
   }
 
@@ -60,11 +61,19 @@ export class HttpFetcher {
     return this._get_array(`/allocations/epoch/${epoch}?includeZeroAllocations=true`, "users' allocations", AllocationImpl, (data: ApiAllocations) => data.allocations)
   }
 
-  async apiGetRewards(epoch: number): Promise<Reward[] | null>{
-      return this._get_array(`/rewards/proposals/epoch/${epoch}`, "proposals rewards", RewardImpl, (data: ApiRewards) => data.rewards)
-  }
-
   async apiGetEpochInfo(epoch: number): Promise<EpochInfo | null> {
     return this._get(`/epochs/info/${epoch}`, "epoch info", EpochInfoImpl)
   }
- }
+
+  async apiGetEpochUqs(epoch: number): Promise<EpochUqs | null> {
+    return this._get_array(`/user/uq/${epoch}/all`, "epoch uqs", EpochUqsImpl, (data: ApiEpochUqs) => data.uqsInfo);
+  }
+
+  async apiGetRewards(epoch: number): Promise<Reward[] | null> {
+    return this._get_array(`/rewards/projects/epoch/${epoch}`, "projects rewards", RewardImpl, (data: ApiRewards) => data.rewards)
+  }
+
+  async apiGetFinalizedSimulated() {
+    return this._get('/snapshots/finalized/simulate', 'finalized simulated snapshot', FinalizedSimulationImpl);
+  }
+}

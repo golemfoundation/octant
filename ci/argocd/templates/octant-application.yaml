@@ -34,7 +34,7 @@ spec:
           - name: 'webClient.hideCurrentProjectsOutsideAW'
             value: 'false'
           - name: 'webClient.ipfsGateways'
-            value: 'https://ipfs.octant.wildland.dev/ipfs/'
+            value: '$IPFS_GATEWAYS'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'

@@ -14,7 +14,6 @@ def before(app, patch_projects):
     MOCK_PROJECTS.get_project_cid.return_value = (
         "QmXbFKrMGJUbXupmTQsQhoy9zkzXDBHZkPAzKC4yiaLt5n"
     )
-    pass
 
 
 def test_get_projects_metadata_epoch_1():

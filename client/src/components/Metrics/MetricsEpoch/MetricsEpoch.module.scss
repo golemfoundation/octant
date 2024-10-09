@@ -1,67 +1,78 @@
 .root {
   width: 100%;
+  border-top: 0.1rem solid $color-octant-grey1;
+  border-bottom: 0.1rem solid $color-octant-grey1;
+  padding-bottom: 6.4rem;
 }
 
 .grid {
-  grid-template-rows: 16rem 16rem minmax(14.4rem, auto);
+  grid-template-rows: repeat(10, 15.6rem);
+
+  @media #{$tablet-up} {
+    grid-template-rows: repeat(6, 15.6rem);
+  }
 
   @media #{$desktop-up} {
-    grid-template-rows: 14.4rem 14.4rem minmax(14.4rem, auto);
+    grid-template-rows: repeat(4, 15.6rem);
   }
 }
 
-.topProjects {
+.topProjects,
+.fundsUsage {
+  @media #{$tablet-down} {
+    order: 0;
+  }
+}
+
+.totalDonations,
+.totalMatching {
   @media #{$tablet-down} {
     order: 1;
   }
 }
-.totalDonationsAndPersonal {
+
+.donationsVsMatching {
   @media #{$tablet-down} {
     order: 2;
-  }
-}
-.donationsVsPersonal {
-  @media #{$tablet-down} {
-    order: 3;
-  }
-}
-.currentDonors {
-  @media #{$tablet-down} {
-    order: 4;
-  }
-}
-
-.averageLeverage {
-  @media #{$tablet-down} {
-    order: 5;
   }
 }
 
 .totalUsers {
   @media #{$tablet-down} {
-    order: 6;
+    order: 3;
   }
 }
 .patrons {
   @media #{$tablet-down} {
-    order: 7;
+    order: 4;
   }
 }
 
-.fundsUsage {
+.currentDonors {
+  @media #{$tablet-down} {
+    order: 5;
+  }
+}
+
+.averageLeverage {
+  @media #{$tablet-down} {
+    order: 6;
+  }
+}
+
+.rewardsUnused {
+  @media #{$tablet-down} {
+    order: 7;
+  }
+}
+.unallocatedValue {
   @media #{$tablet-down} {
     order: 8;
   }
 }
 
-.unusedAndUnallocatedValue {
+.donationsVsPersonal {
   @media #{$tablet-down} {
     order: 9;
-  }
-}
-
-.belowThreshold {
-  @media #{$tablet-down} {
-    order: 10;
   }
 }

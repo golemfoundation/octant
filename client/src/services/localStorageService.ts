@@ -8,19 +8,13 @@ import {
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
-  WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-  WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
-  WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
-  WAS_REWARDS_ALREADY_CLOSED_TIP,
-  WAS_WITHDRAW_ALREADY_CLOSED_TIP,
   ALLOCATION_REWARDS_FOR_PROJECTS,
   HAS_ONBOARDING_BEEN_CLOSED,
   LAST_SEEN_STEP,
-  WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
+  TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
-import { initialState as tipsStoreInitialState } from 'store/tips/store';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 import isStringValidJson from 'utils/isStringValidJson';
 
@@ -125,36 +119,6 @@ const LocalStorageService = () => {
     );
   };
 
-  const validateWasAddFavouritesAlreadyClosed = (): void =>
-    validateBoolean(
-      WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-      tipsStoreInitialState.wasAddFavouritesAlreadyClosed,
-    );
-
-  const validateWasConnectWalletAlreadyClosed = (): void =>
-    validateBoolean(
-      WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
-      tipsStoreInitialState.wasConnectWalletAlreadyClosed,
-    );
-
-  const validateWasLockGLMAlreadyClosed = (): void =>
-    validateBoolean(WAS_LOCK_GLM_ALREADY_CLOSED_TIP, tipsStoreInitialState.wasLockGLMAlreadyClosed);
-
-  const validateWasRewardsAlreadyClosed = (): void =>
-    validateBoolean(WAS_REWARDS_ALREADY_CLOSED_TIP, tipsStoreInitialState.wasRewardsAlreadyClosed);
-
-  const validateWasWithdrawAlreadyClosed = (): void =>
-    validateBoolean(
-      WAS_WITHDRAW_ALREADY_CLOSED_TIP,
-      tipsStoreInitialState.wasWithdrawAlreadyClosed,
-    );
-
-  const validateWasUqTooLowAlreadyClosed = (): void =>
-    validateBoolean(
-      WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP,
-      tipsStoreInitialState.wasUqTooLowAlreadyClosed,
-    );
-
   const validateProjectsAddressesRandomizedOrder = ({
     currentEpoch,
     projectsEpoch,
@@ -216,6 +180,23 @@ const LocalStorageService = () => {
 
   const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
+  const validateTimeoutListPresenceModalClosed = (): void => {
+    const timeoutListPresenceModalOpen = JSON.parse(
+      localStorage.getItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN) || 'null',
+    );
+
+    if (!timeoutListPresenceModalOpen) {
+      return;
+    }
+
+    if (
+      !timeoutListPresenceModalOpen.address ||
+      ![true, false].includes(timeoutListPresenceModalOpen.value)
+    ) {
+      localStorage.removeItem(TIMEOUT_LIST_PRESENCE_MODAL_OPEN);
+    }
+  };
+
   const init = (params: LocalStorageInitParams): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
@@ -223,16 +204,11 @@ const LocalStorageService = () => {
     validateIsOnboardingDone();
     validateDisplayCurrency();
     validateIsCryptoMainValueDisplay();
-    validateWasAddFavouritesAlreadyClosed();
-    validateWasConnectWalletAlreadyClosed();
-    validateWasLockGLMAlreadyClosed();
-    validateWasRewardsAlreadyClosed();
-    validateWasWithdrawAlreadyClosed();
-    validateWasUqTooLowAlreadyClosed();
     validateRewardsForProjects();
     validateHasOnboardingBeenClosed();
     validateLastSeenStep();
     validateProjectsAddressesRandomizedOrder(params);
+    validateTimeoutListPresenceModalClosed();
   };
 
   return {

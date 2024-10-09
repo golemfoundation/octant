@@ -4,7 +4,7 @@ import { Trans } from 'react-i18next';
 import styles from 'components/shared/ModalOnboarding/ModalOnboarding.module.scss';
 import { Step } from 'components/shared/ModalOnboarding/types';
 import Button from 'components/ui/Button';
-import { DISCORD_LINK, OCTANT_BUILD_LINK, TWITTER_LINK } from 'constants/urls';
+import { DISCORD_LINK, FARCASTER_LINK, OCTANT_BUILD_LINK, TWITTER_LINK } from 'constants/urls';
 import i18n from 'i18n';
 
 export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string): Step[] => [
@@ -91,6 +91,7 @@ export const getStepsDecisionWindowClosed = (epoch: string, changeAWDate: string
           <Button className={styles.link} href={OCTANT_BUILD_LINK} variant="link3" />,
           <Button className={styles.link} href={DISCORD_LINK} variant="link3" />,
           <Button className={styles.link} href={TWITTER_LINK} variant="link3" />,
+          <Button className={styles.link} href={FARCASTER_LINK} variant="link3" />,
         ]}
         i18nKey="views.onboarding.stepsDecisionWindowClosed.getReady.text"
         values={{ date: changeAWDate }}

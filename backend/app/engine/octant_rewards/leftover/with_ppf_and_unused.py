@@ -15,3 +15,14 @@ class LeftoverWithPPFAndUnusedMR(Leftover):
             - payload.total_withdrawals
             + unused_matched_rewards
         )
+
+    def extract_unused_matched_rewards(self, leftover, payload) -> int:
+        extra_individual_rewards = int(payload.ppf / 2)
+        return (
+            leftover
+            - payload.staking_proceeds
+            + payload.operational_cost
+            + payload.community_fund
+            + extra_individual_rewards
+            + payload.total_withdrawals
+        )

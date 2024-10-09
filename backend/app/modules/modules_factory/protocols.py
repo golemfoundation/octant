@@ -19,6 +19,7 @@ from app.modules.dto import (
 )
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
+from app.modules.projects.details.service.projects_details import ProjectsDetailsDTO
 
 
 @runtime_checkable
@@ -223,6 +224,14 @@ class UserTos(Protocol):
 @runtime_checkable
 class ProjectsMetadataService(Protocol):
     def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
+        ...
+
+
+@runtime_checkable
+class ProjectsDetailsService(Protocol):
+    def get_projects_details_by_search_phrase(
+        self, context: Context, search_phrase: str
+    ) -> ProjectsDetailsDTO:
         ...
 
 

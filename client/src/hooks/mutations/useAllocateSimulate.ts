@@ -3,8 +3,8 @@ import { useRef } from 'react';
 import { useAccount } from 'wagmi';
 
 import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
+import { AllocationValues } from 'components/Allocation/types';
 import { getAllocationsMapped } from 'hooks/utils/utils';
-import { AllocationValues } from 'views/AllocationView/types';
 
 export type AllocateSimulate = Omit<ApiPostAllocateLeverageResponse, 'threshold'> & {
   threshold: bigint;

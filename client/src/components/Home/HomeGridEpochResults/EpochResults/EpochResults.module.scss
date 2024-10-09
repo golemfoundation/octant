@@ -1,0 +1,33 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  .image {
+    height: 11.1rem;
+    margin: 0 auto 0;
+    opacity: 0.5;
+  }
+
+  .graphContainer {
+    margin-bottom: 0.8rem;
+    flex: 1;
+    display: flex;
+    padding: 4.8rem 1.6rem 0;
+    margin-top: -3.2rem;
+    overflow-y: hidden;
+    overflow-x: auto;
+
+    &.isLoading {
+      margin: 0;
+      padding-top: 2.4rem;
+    }
+  }
+
+  .details {
+    width: 100%;
+    height: 3.2rem;
+    border-radius: $border-radius-08;
+    background-color: $color-octant-grey6;
+  }
+}

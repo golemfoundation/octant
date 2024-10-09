@@ -25,9 +25,11 @@ const SettingsPatronModeBox = (): ReactElement => {
         <div className={styles.patronModeBox}>
           {t('enablePatronMode')}
           <Tooltip
+            className={styles.tooltipBox}
             dataTest="SettingsPatronModeBox__Tooltip"
             position="bottom-right"
             text={t('patronModeTooltip')}
+            tooltipClassName={styles.tooltip}
           >
             <Svg
               classNameWrapper={styles.patronModeBoxQuestionMarkWrapper}

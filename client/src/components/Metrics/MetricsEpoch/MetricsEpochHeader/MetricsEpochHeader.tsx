@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import MetricsHeader from 'components/Metrics/MetricsHeader';
+import MetricsSectionHeader from 'components/Metrics/MetricsSectionHeader';
 import Svg from 'components/ui/Svg';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
@@ -25,7 +25,9 @@ const MetricsEpochHeader = (): ReactElement => {
   const isLeftArrowDisabled = epoch < 2;
 
   return (
-    <MetricsHeader title={t(isDesktop ? 'epochAllocationWindow' : 'epochAllocation', { epoch })}>
+    <MetricsSectionHeader
+      title={t(isDesktop ? 'epochAllocationWindow' : 'epochAllocation', { epoch })}
+    >
       <div className={styles.epochInfo}>
         {isCurrentOpenEpoch ? (
           <div className={styles.badge}>{t('open')}</div>
@@ -57,7 +59,7 @@ const MetricsEpochHeader = (): ReactElement => {
           <Svg img={arrowRight} size={1.4} />
         </div>
       </div>
-    </MetricsHeader>
+    </MetricsSectionHeader>
   );
 };
 

@@ -1,6 +1,5 @@
-from datetime import datetime
 from decimal import Decimal
-from typing import Protocol, Optional, Tuple, runtime_checkable
+from typing import Protocol, Optional, runtime_checkable, Tuple
 
 from app.context.manager import Context
 from app.infrastructure.database.uniqueness_quotient import (
@@ -8,6 +7,7 @@ from app.infrastructure.database.uniqueness_quotient import (
     save_uq_from_address,
 )
 from app.modules.uq.core import calculate_uq
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from app.pydantic import Model
 
 
@@ -15,7 +15,7 @@ from app.pydantic import Model
 class Antisybil(Protocol):
     def get_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Optional[Tuple[float, datetime]]:
+    ) -> Optional[AntisybilStatusDTO]:
         ...
 
 
@@ -51,12 +51,14 @@ class PreliminaryUQ(Model):
         return uq_score
 
     def calculate(self, context: Context, user_address: str) -> Decimal:
-        gp_score = self._get_gp_score(context, user_address)
+        gp_score, is_on_timeout_list = self._get_gp_score(context, user_address)
 
-        return calculate_uq(gp_score, self.uq_threshold)
+        return calculate_uq(
+            gp_score, self.uq_threshold, is_on_timeout_list=is_on_timeout_list
+        )
 
-    def _get_gp_score(self, context: Context, address: str) -> float:
+    def _get_gp_score(self, context: Context, address: str) -> Tuple[float, bool]:
         antisybil_status = self.antisybil.get_antisybil_status(context, address)
         if antisybil_status is None:
-            return 0.0
-        return antisybil_status[0]
+            return 0.0, False
+        return antisybil_status.score, antisybil_status.is_on_timeout_list

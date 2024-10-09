@@ -5,7 +5,7 @@ import styles from './style.module.scss';
 export const allocate: SvgImageConfig = {
   className: styles.allocate,
   markup:
-    '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.688 13.268h2.28M19.053 13.268h2.28M17.734 9.751h3.6M8.688 9.751h3.6"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9.752a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" clip-rule="evenodd"/><path stroke="#CDD1CD" stroke-width="1.5" d="M4.5 6.75a2 2 0 0 1 2-2h17a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2h-17a2 2 0 0 1-2-2v-8.5ZM4.5 22.117c0-1.031.895-1.867 2-1.867h17c1.105 0 2 .836 2 1.867v3.266c0 1.031-.895 1.867-2 1.867h-17c-1.105 0-2-.836-2-1.867v-3.266Z"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.543 23.516h1.593M7.938 23.516l5.761-.016"/>',
+    '<path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m13.6 15.131-4.426-4.623A2.623 2.623 0 0 1 12.883 6.8l.723.725.724-.725a2.622 2.622 0 1 1 3.708 3.71L13.6 15.13ZM10 27.133a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 27.133a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m4 10.333 2.485 8.413a1.6 1.6 0 0 0 1.546 1.187h11.54a1.6 1.6 0 0 0 1.549-1.187L24.574 5.78A2.4 2.4 0 0 1 26.893 4H28"/>',
   viewBox: '0 0 32 32',
 };
 
@@ -23,14 +23,8 @@ export const project: SvgImageConfig = {
 
 export const settings: SvgImageConfig = {
   markup:
-    '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M22.376 14.5H9.626a4.888 4.888 0 0 1-4.875-4.875v0A4.889 4.889 0 0 1 9.626 4.75h12.75a4.89 4.89 0 0 1 4.875 4.875v0a4.889 4.889 0 0 1-4.875 4.875v0ZM22.376 27.25H9.626a4.888 4.888 0 0 1-4.875-4.875v0A4.89 4.89 0 0 1 9.626 17.5h12.75a4.89 4.89 0 0 1 4.875 4.875v0a4.889 4.889 0 0 1-4.875 4.875v0Z" clip-rule="evenodd"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.626 11.5a1.875 1.875 0 1 0 0-3.75 1.875 1.875 0 0 0 0 3.75ZM22.376 24.25a1.875 1.875 0 1 0 0-3.75 1.875 1.875 0 0 0 0 3.75Z"/>',
-  viewBox: '0 0 32 32',
-};
-
-export const earn: SvgImageConfig = {
-  markup:
-    '<g clip-path="url(#earn)"><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 21.5v2.75a1.375 1.375 0 0 1-1.375 1.375H8.25a2.062 2.062 0 0 1-2.063-2.063V8.438A2.063 2.063 0 0 1 8.25 6.376h14.438a1.375 1.375 0 0 1 1.375 1.375v2.063"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 21.5a1.375 1.375 0 0 0 1.375-1.375V16a1.375 1.375 0 0 0-1.375-1.375H22a3.438 3.438 0 0 0 0 6.875h3.438Z"/><circle cx="21.945" cy="18.063" r="1" fill="#CDD1CD"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M25.438 14.625v-3.438a1.375 1.375 0 0 0-1.375-1.375H10.655a1.61 1.61 0 0 1-1.48-.82"/></g><defs><clipPath id="earn"><path fill="#fff" d="M5.5 5h22v22h-22z"/></clipPath></defs>',
-  viewBox: '0 0 32 32',
+    '<path d="M9.79 3.032a1.63 1.63 0 0 0 2.423 0L13 2.167a1.632 1.632 0 0 1 2.842 1.177l-.06 1.167a1.633 1.633 0 0 0 1.71 1.712l1.166-.06a1.632 1.632 0 0 1 1.175 2.842l-.868.784a1.633 1.633 0 0 0 0 2.424l.868.783a1.632 1.632 0 0 1-1.177 2.842l-1.167-.06a1.633 1.633 0 0 0-1.713 1.714l.059 1.167A1.632 1.632 0 0 1 13 19.834l-.784-.868a1.632 1.632 0 0 0-2.424 0l-.787.868a1.633 1.633 0 0 1-2.838-1.174l.06-1.166a1.632 1.632 0 0 0-1.714-1.714l-1.166.06A1.632 1.632 0 0 1 2.168 13l.867-.783a1.633 1.633 0 0 0 0-2.424l-.867-.788a1.632 1.632 0 0 1 1.174-2.838l1.166.06a1.632 1.632 0 0 0 1.715-1.718l-.055-1.167a1.632 1.632 0 0 1 2.838-1.175l.783.865Z" stroke="#171717" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 14.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" stroke="#171717" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  viewBox: '0 0 22 22',
 };
 
 export const chevronLeft: SvgImageConfig = {

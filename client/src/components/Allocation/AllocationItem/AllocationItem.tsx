@@ -72,7 +72,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { data: currentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingRewardsThreshold } = useProjectRewardsThreshold();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { isDesktop } = useMediaQuery();
+  const { isMobile } = useMediaQuery();
   const [ref, animate] = useAnimate();
   const removeButtonRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -202,7 +202,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     const itemHeight = ref.current.getBoundingClientRect().height;
 
     setConstraints([(itemHeight + removeButtonLeftPadding) * -1, 0]);
-  }, [ref, removeButtonRef, isDesktop, isLoading]);
+  }, [ref, removeButtonRef, isMobile, isLoading]);
 
   useEffect(() => {
     if (isError) {
@@ -248,7 +248,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
           onClick={onRemoveAllocationElement}
           style={{ scale: removeButtonScaleTransform }}
         >
-          <Svg img={bin} size={isDesktop ? [2.4, 2.2] : [2, 1.8]} />
+          <Svg img={bin} size={!isMobile ? [2.4, 2.2] : [2, 1.8]} />
         </motion.div>
       )}
       <motion.div
