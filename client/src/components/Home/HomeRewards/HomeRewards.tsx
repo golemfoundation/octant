@@ -171,8 +171,19 @@ const HomeRewards = (): ReactElement => {
           <div className={styles.label}>
             {label}
             {!isProjectAdminMode && !isPatronMode && tooltipText && (
-              <Tooltip className={styles.tooltip} position="bottom-right" text={tooltipText}>
-                <Svg displayMode="wrapperDefault" img={questionMark} size={1.6} />
+              <Tooltip
+                className={styles.tooltipBox}
+                position="custom"
+                text={tooltipText}
+                tooltipClassName={styles.tooltip}
+                tooltipWrapperClassName={styles.tooltipWrapper}
+              >
+                <Svg
+                  classNameWrapper={styles.svgWrapper}
+                  displayMode="wrapperDefault"
+                  img={questionMark}
+                  size={isMobile ? 1.2 : 1.6}
+                />
               </Tooltip>
             )}
           </div>
