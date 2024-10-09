@@ -75,6 +75,10 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
               scale: 0.5,
               x: '50%',
             }}
+            onClick={e => {
+              e.stopPropagation();
+              onClick(address);
+            }}
           >
             <Img className={styles.projectLogoImg} sources={imageSources} />
             <div className={styles.triangle} />

@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,14 +13,23 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import styles from './EpochResultsDetails.module.scss';
 import EpochResultsDetailsProps from './types';
 
-const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading }) => {
+const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
+  details,
+  isLoading,
+  isScrollable,
+  scrollDirection,
+  epoch,
+  isDragging,
+}) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
+  const ref = useRef<HTMLDivElement>(null);
   const { isMobile } = useMediaQuery();
   const navigate = useNavigate();
   const getValuesToDisplay = useGetValuesToDisplay();
   const [dots, setDots] = useState(0);
+  const [showScrollInfo, setShowScrollInfo] = useState(false);
 
   const getValuesToDisplayCommonProps: GetValuesToDisplayProps = {
     cryptoCurrency: 'ethereum',
@@ -53,6 +63,10 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
       }).primary
     : null;
 
+  const isScrollInfoVisible =
+    (isMobile && isDragging) ||
+    (showScrollInfo && (isMobile || (!isMobile && scrollDirection === 'right')));
+
   useEffect(() => {
     if (!isLoading) {
       return;
@@ -73,8 +87,40 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
     };
   }, [isLoading]);
 
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+
+    const listener = e => {
+      if (ref.current && ref.current.contains(e.target)) {
+        return;
+      }
+      setShowScrollInfo(false);
+    };
+
+    document.addEventListener('click', listener);
+
+    return () => document.removeEventListener('click', listener);
+  }, [isMobile]);
+
   return (
-    <div className={styles.root}>
+    <div
+      ref={ref}
+      className={styles.root}
+      onMouseLeave={() => {
+        if (!isScrollable) {
+          return;
+        }
+        setShowScrollInfo(false);
+      }}
+      onMouseOver={() => {
+        if (!isScrollable) {
+          return;
+        }
+        setShowScrollInfo(true);
+      }}
+    >
       {isLoading && (
         <div className={styles.loading}>
           {t('loadingChartData')}
@@ -83,7 +129,16 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
           ))}
         </div>
       )}
-      {details && (
+      {isScrollInfoVisible && (
+        <div className={styles.scrollInfo}>
+          {scrollDirection === 'left' && '←'}
+          <span className={styles.scrollInfoText}>
+            {isMobile ? t('scrollInfoMobile') : t('scrollInfo')}
+          </span>
+          {scrollDirection === 'right' && '→'}
+        </div>
+      )}
+      {!isScrollInfoVisible && details && (
         <>
           <div className={styles.projectName}>{details.name}</div>
           <div className={styles.donations}>
@@ -105,8 +160,9 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({ details, isLoading 
             <Button
               className={styles.link}
               onClick={() =>
-                navigate(`${ROOT_ROUTES.project.absolute}/${details.epoch}/${details.address}`)
+                navigate(`${ROOT_ROUTES.project.absolute}/${epoch}/${details.address}`)
               }
+              onMouseOver={e => e.stopPropagation()}
               variant="link"
             >
               {t('clickToVisitProject')}
