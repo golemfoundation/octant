@@ -120,3 +120,17 @@ async def get_db_session(
 
 
 GetSession = Annotated[AsyncSession, Depends(get_db_session, use_cache=False)]
+
+
+class ChainSettings(OctantSettings):
+    chain_id: int = Field(
+        default=11155111,
+        description="The chain id to use for the signature verification.",
+    )
+
+
+def get_chain_settings() -> ChainSettings:
+    return ChainSettings()
+
+
+GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]

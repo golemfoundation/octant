@@ -5,14 +5,11 @@ from typing import AsyncGenerator, Tuple
 
 import socketio
 from sqlalchemy.ext.asyncio import AsyncSession
-from v2.allocations.dependencies import (
-    get_allocator,
-    get_signature_verifier,
-    get_signature_verifier_settings,
-)
+from v2.allocations.dependencies import get_allocator, get_signature_verifier
 from v2.allocations.repositories import get_donations_by_project
 from v2.allocations.services import Allocator
 from v2.core.dependencies import (
+    get_chain_settings,
     get_database_settings,
     get_sessionmaker,
     get_w3,
@@ -174,7 +171,7 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 s4,
                 epochs_subgraph,
                 projects_contracts,
-                get_signature_verifier_settings(),
+                get_chain_settings(),
             )
 
             uq_score_getter = get_uq_score_getter(s5, get_uq_score_settings())
