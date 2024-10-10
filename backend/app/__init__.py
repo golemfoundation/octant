@@ -7,7 +7,6 @@ from app.extensions import (
     db,
     migrate,
     cors,
-    socketio,
     cache,
     init_web3,
     api,
@@ -47,7 +46,7 @@ def register_extensions(app):
     cors.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
-    socketio.init_app(app)
+    # socketio.init_app(app)
     cache.init_app(app)
     init_scheduler(app)
     init_logger(app)

@@ -104,12 +104,13 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
-    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "DEBUG")
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     DB_NAME = "dev.db"
     CHAIN_ID = int(os.getenv("CHAIN_ID", 1337))
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+    # SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+    SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
     SUBGRAPH_RETRY_TIMEOUT_SEC = 2
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
     CACHE_TYPE = "SimpleCache"
