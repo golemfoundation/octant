@@ -144,11 +144,25 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
   }, [isLoading, isMobile, highlightedBarAddress, isScrollable]);
 
   useEffect(() => {
-    if (isLoading && projects.length) {
+    if (isLoading || !projects.length || !graphContainerRef.current) {
       return;
     }
+
+    const { width } = graphContainerRef.current.getBoundingClientRect();
+
+    const barWidth = isDesktop ? 16 : 8;
+    const barWidthWithMarginLeft = barWidth + (isDesktop ? 18 : 14);
+    const numberOfVisibleBars = Math.floor((width - barWidth) / barWidthWithMarginLeft);
+
+    const idxOfActiveBarToHighlight = Math.round(numberOfVisibleBars / 2) - 1;
+
     const projectAddressToHighlight =
-      projects[Math.ceil(Math.random() * (projects.length > 10 ? 10 : projects.length))]?.address;
+      projects[
+        idxOfActiveBarToHighlight > projects.length - 1
+          ? projects.length - 1
+          : idxOfActiveBarToHighlight
+      ]?.address;
+
     setHighlightedBarAddress(projectAddressToHighlight);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
