@@ -24,6 +24,7 @@ export type ProjectRewards = {
 };
 
 function parseResponse(response: Response): ProjectRewards[] {
+  // TODO OCT-2023 unify with totalValueOfAllocations (same thing).
   const totalDonations = response?.rewards.reduce(
     (acc, { allocated, matched }) =>
       acc + parseUnitsBigInt(allocated, 'wei') + parseUnitsBigInt(matched, 'wei'),
@@ -48,7 +49,7 @@ function parseResponse(response: Response): ProjectRewards[] {
 
 export default function useMatchedProjectRewards(
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, ProjectRewards[], any>,
+  options?: Omit<UseQueryOptions<Response, unknown, ProjectRewards[], any>, 'queryKey'>,
 ): UseQueryResult<ProjectRewards[], unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();

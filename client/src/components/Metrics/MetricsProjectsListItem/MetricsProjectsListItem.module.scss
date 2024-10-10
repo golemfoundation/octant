@@ -1,11 +1,22 @@
 .root {
-  display: flex;
+  display: grid;
   align-items: center;
   justify-content: space-between;
   height: 5.6rem;
+  grid-template-columns: auto auto;
+
+  @media #{$large-desktop-up} {
+    grid-template-columns: 21.2rem 8rem 11.8rem 11.8rem 11.8rem;
+  }
 
   &:not(:last-child) {
     border-bottom: 0.1rem solid $color-octant-grey3;
+  }
+
+  .logoNameGroup {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
   }
 
   .image {
@@ -19,19 +30,31 @@
   .value {
     font-size: $font-size-12;
     font-weight: $font-weight-bold;
-    color: $color-octant-dark;
   }
 
   .name {
     width: 100%;
-    text-align: left;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: $color-octant-dark;
+    margin-right: 0.8rem;
+    text-align: left;
   }
 
   .value {
-    margin-left: 1rem;
+    margin-left: 0.2rem;
     flex-shrink: 0;
+    color: $color-octant-grey5;
+    text-align: right;
+    white-space: nowrap;
+
+    @media #{$large-desktop-up} {
+      text-align: left;
+    }
+
+    &.total {
+      color: $color-octant-dark;
+    }
   }
 }

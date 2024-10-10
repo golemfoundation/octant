@@ -8,3 +8,15 @@
   background-color: $color-octant-grey1;
   margin: 3.2rem 0;
 }
+
+.grid {
+  grid-template-rows: repeat(6, 15.6rem);
+
+  @media #{$tablet-up} {
+    grid-template-rows: repeat(3, 15.6rem);
+  }
+
+  @media #{$desktop-up} {
+    grid-template-rows: repeat(2, 15.6rem);
+  }
+}

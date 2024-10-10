@@ -1,0 +1,9 @@
+.root {
+  position: relative;
+
+  .donationsList {
+    max-height: 100%;
+    overflow: auto;
+    margin-right: 0.8rem;
+  }
+}

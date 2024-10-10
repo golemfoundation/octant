@@ -1,0 +1,203 @@
+.root {
+  display: flex;
+  min-height: 8rem;
+  width: 100%;
+  align-items: center;
+  position: relative;
+  margin: 0 auto;
+  @include layoutMaxWidth();
+
+  .logoWrapper {
+    position: relative;
+  }
+
+  .octantLogo {
+    cursor: pointer;
+  }
+
+  .testnetIndicator {
+    position: absolute;
+    top: -1rem;
+    right: -0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+  }
+
+  .links {
+    display: flex;
+    margin-left: 2.4rem;
+
+    .link {
+      position: relative;
+      font-size: $font-size-14;
+      font-weight: $font-weight-bold;
+      color: $color-octant-grey2;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 2.4rem;
+      }
+
+      &.isActive {
+        color: $color-octant-dark;
+      }
+
+      &:hover {
+        color: $color-octant-grey13;
+      }
+
+      .underlineWrapper {
+        position: absolute;
+        bottom: -1.1rem;
+        left: 50%;
+        transform: translate(-50%, 0);
+        content: '';
+
+        .underline {
+          width: 2.4rem;
+          height: 0.2rem;
+          background: $color-octant-green;
+          border-radius: $border-radius-01;
+          margin: auto;
+        }
+      }
+    }
+  }
+
+  .allocationInfo {
+    margin: 0 auto;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    font-size: $font-size-14;
+    font-weight: $font-weight-bold;
+    line-height: 1.4rem;
+    padding: 1rem 1.4rem;
+    background: $color-octant-green9;
+    color: $color-octant-green;
+    border-radius: $border-radius-16;
+
+    .calendarIcon {
+      margin-right: 1.2rem;
+    }
+  }
+
+  .buttonWallet {
+    cursor: pointer;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-12;
+    padding: 0 0.2rem 0 1.2rem;
+    justify-content: left;
+    min-width: 8.5rem;
+
+    &.isProjectAdminMode {
+      background-color: $color-octant-green;
+      border: none;
+
+      &:active {
+        background-color: $color-octant-green2;
+      }
+    }
+
+    &.isPatronMode {
+      background-color: $color-octant-purple;
+      border: none;
+
+      &:active {
+        background-color: $color-octant-green2;
+      }
+    }
+
+    @media #{$tablet-up} {
+      font-size: $font-size-14;
+      padding-left: 1.5rem;
+      min-width: 14.6rem;
+    }
+
+    .buttonWalletArrow {
+      margin: 1.1rem;
+      path {
+        stroke: $color-white;
+      }
+    }
+
+    &.isConnectButton {
+      justify-content: center;
+      padding: 0;
+    }
+  }
+
+  .settingsButton,
+  .allocateButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 4rem;
+    min-height: 4rem;
+    max-width: 4rem;
+    max-height: 4rem;
+    background-color: $color-white;
+    border-radius: $border-radius-16;
+    margin-left: 1.6rem;
+  }
+
+  .allocateButton {
+    position: relative;
+    &:hover {
+      .allocateButtonIcon path {
+        stroke: $color-octant-grey13;
+      }
+    }
+
+    &:active {
+      .allocateButtonIcon path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    .allocateButtonIcon {
+      margin-left: 0.3rem;
+
+      path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    .numberOfAllocations {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2rem;
+      width: 2rem;
+      position: absolute;
+      top: -0.6rem;
+      right: -0.6rem;
+      color: $color-white;
+      font-size: $font-size-08;
+      background: $color-octant-dark;
+      border-radius: 50%;
+      transform: translateZ(0); // On webkit solves the flickering of text during the scale.
+    }
+  }
+
+  .settingsButton {
+    &:hover {
+      .settingsButtonIcon path {
+        stroke: $color-octant-grey13;
+      }
+    }
+
+    &:active {
+      .settingsButtonIcon path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    .settingsButtonIcon {
+      path {
+        stroke: $color-octant-dark;
+      }
+    }
+  }
+}

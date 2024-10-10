@@ -47,11 +47,12 @@ const MetricsGeneralGridWalletsWithGlmLocked: FC = () => {
               />
             </div>
           ),
+          hasTitleLargeBottomPadding: true,
           title: t('walletsWithGlmLocked'),
           titleSuffix: <MetricsGridTileTimeSlicer onValueChange={setDateToFilter} />,
         },
       ]}
-      size="L"
+      size="custom"
     />
   );
 };

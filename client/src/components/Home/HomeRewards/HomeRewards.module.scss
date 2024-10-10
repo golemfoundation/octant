@@ -1,0 +1,96 @@
+.root {
+  display: flex;
+  width: 100%;
+  margin-bottom: 1.6rem;
+
+  @media #{$tablet-up} {
+    gap: 1.6rem;
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    height: 7.2rem;
+    padding: 0 1.6rem;
+    background: $color-octant-grey8;
+    text-align: left;
+    font-weight: $font-weight-bold;
+
+    &:first-child {
+      border-radius: $border-radius-16 0 0 $border-radius-16;
+    }
+
+    &:last-child {
+      border-radius: 0 $border-radius-16 $border-radius-16 0;
+    }
+
+    .label {
+      display: flex;
+      font-size: $font-size-10;
+      color: $color-octant-grey5;
+      margin-bottom: 0.2rem;
+
+      .tooltipBox {
+        margin-left: 0.6rem;
+
+        @media #{$tablet-up} {
+          margin-left: 1rem;
+        }
+      }
+    }
+
+    .value {
+      font-size: $font-size-16;
+      color: $color-octant-dark;
+
+      &.isLoadingValue {
+        @include skeleton($color-octant-grey1, $color-octant-grey12);
+        min-height: 1.95rem;
+        width: 8rem;
+
+        @media #{$tablet-up} {
+          min-height: 2.2rem;
+        }
+      }
+    }
+
+    @media #{$tablet-up} {
+      &,
+      &:first-child,
+      &:last-child {
+        border-radius: $border-radius-16;
+      }
+
+      .label {
+        font-size: $font-size-14;
+      }
+
+      .value {
+        font-size: $font-size-18;
+      }
+    }
+  }
+}
+
+.svgWrapper {
+  width: 1.2rem;
+  height: 1.2rem;
+
+  @media #{$tablet-up} {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+
+.tooltipWrapper {
+  right: 0;
+  left: auto;
+  width: 34.2rem;
+  top: auto;
+
+  .tooltip {
+    position: initial;
+  }
+}

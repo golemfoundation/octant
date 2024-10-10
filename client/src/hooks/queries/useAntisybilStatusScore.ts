@@ -5,10 +5,12 @@ import { QUERY_KEYS } from 'api/queryKeys';
 
 import useUserTOS from './useUserTOS';
 
+type AntisybilStatusScore = { isOnTimeOutList: boolean; score: number };
+
 export default function useAntisybilStatusScore(
-  address: string,
-  options?: Omit<UseQueryOptions<Response, unknown, number, any>, 'queryKey'>,
-): UseQueryResult<number, unknown> {
+  address: string | undefined,
+  options?: Omit<UseQueryOptions<Response, unknown, AntisybilStatusScore, any>, 'queryKey'>,
+): UseQueryResult<AntisybilStatusScore, unknown> {
   const { data: isUserTOSAccepted } = useUserTOS();
 
   return useQuery({
@@ -16,7 +18,10 @@ export default function useAntisybilStatusScore(
     queryFn: () => apiGetAntisybilStatus(address!),
     queryKey: QUERY_KEYS.antisybilStatus(address!),
     refetchOnMount: true,
-    select: response => Math.round(parseFloat(response.score)),
+    select: ({ score, isOnTimeOutList }) => ({
+      isOnTimeOutList,
+      score: Math.round(parseFloat(score)),
+    }),
     ...options,
   });
 }

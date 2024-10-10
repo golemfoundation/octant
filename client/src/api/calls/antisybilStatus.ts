@@ -3,6 +3,7 @@ import apiService from 'services/apiService';
 
 export type Response = {
   expires_at: string;
+  isOnTimeOutList: boolean;
   score: string;
   status: string;
 };

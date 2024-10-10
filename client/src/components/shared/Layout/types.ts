@@ -8,6 +8,7 @@ export default interface LayoutProps {
   isHeaderVisible?: boolean;
   isLoading?: boolean;
   isNavigationVisible?: boolean;
+  isSyncingInProgress?: boolean;
   navigationBottomSuffix?: ReactNode;
   showHeaderBlur?: boolean;
 }

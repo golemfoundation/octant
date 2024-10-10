@@ -7,6 +7,8 @@ import {
   groupingNumbersUpTo3,
   numbersOnly,
   percentageOnly,
+  ethAddress,
+  epochNumberGrabber,
 } from './regExp';
 
 const regExpTestCases = [
@@ -217,6 +219,24 @@ const regExpTestCases = [
       { expectedValue: true, test: '1000000,0' },
     ],
   },
+  {
+    name: 'ethAddress',
+    regExp: ethAddress,
+    testCases: [
+      { expectedValue: true, test: '0xb794f5ea0ba39494ce839613fffba74279579268' },
+      { expectedValue: false, test: 'xb794f5ea0ba39494ce839613fffba74279579268' },
+      { expectedValue: false, test: '0xb794f5ea0ba39494ce839613fffba7427957926' },
+      { expectedValue: false, test: '0' },
+      { expectedValue: false, test: '0,0' },
+      { expectedValue: false, test: 'abc' },
+      { expectedValue: false, test: 'Abc' },
+      { expectedValue: false, test: ' ' },
+      { expectedValue: false, test: '' },
+      { expectedValue: false, test: '.' },
+      { expectedValue: false, test: '-1' },
+      { expectedValue: false, test: '0aw0d98a0D(*W)C)(AK' },
+    ],
+  },
 ];
 
 describe('regExp', () => {
@@ -230,4 +250,57 @@ describe('regExp', () => {
       }
     });
   }
+
+  describe('special test cases for epochNumberGrabber', () => {
+    it('', () => {
+      expect(JSON.stringify([...'e1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['e1', '1']]),
+      );
+      expect(JSON.stringify([...'e 1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['e 1', '1']]),
+      );
+      expect(JSON.stringify([...'e1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['e1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'e 1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['e 1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'E1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['E1', '1']]),
+      );
+      expect(JSON.stringify([...'E 1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['E 1', '1']]),
+      );
+      expect(JSON.stringify([...'E1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['E1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'E 1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['E 1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'Epoch1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['Epoch1', '1']]),
+      );
+      expect(JSON.stringify([...'Epoch 1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['Epoch 1', '1']]),
+      );
+      expect(JSON.stringify([...'Epoch1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['Epoch1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'Epoch 1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['Epoch 1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'epoch1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['epoch1', '1']]),
+      );
+      expect(JSON.stringify([...'epoch 1'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['epoch 1', '1']]),
+      );
+      expect(JSON.stringify([...'epoch1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['epoch1-2', '1-2']]),
+      );
+      expect(JSON.stringify([...'epoch 1-2'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([['epoch 1-2', '1-2']]),
+      );
+    });
+  });
 });

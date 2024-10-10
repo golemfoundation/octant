@@ -5,7 +5,7 @@ export type MetricsGridTileSizes = (typeof METRICS_GRID_TILE_SZIES)[number];
 
 type MetricsGridTileGroup = {
   children: ReactNode;
-  hasTitileBottomPadding?: boolean;
+  hasTitleLargeBottomPadding?: boolean;
   title: string;
   titleSuffix?: string | ReactNode;
 };

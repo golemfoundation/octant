@@ -3,11 +3,15 @@
 }
 
 .pieChartWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
   margin: 0 auto 0;
 }
 
 .epochTotal {
-  height: 4rem;
+  height: 3.2rem;
   border-radius: $border-radius-08;
   background-color: $color-octant-grey6;
   color: $color-octant-grey5;
@@ -16,13 +20,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.6rem;
-  margin: auto 2.4rem;
+  padding: 0 0.8rem;
+  margin: auto 2.4rem 2.4rem;
 
   .label,
   .value {
     min-width: 10rem;
     min-height: 1.6rem;
+  }
+
+  .label {
+    text-align: left;
   }
 
   .value {
