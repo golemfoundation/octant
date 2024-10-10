@@ -8,9 +8,9 @@ import Loader from 'components/ui/Loader';
 import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
+import useDelegationCheck from 'hooks/helpers/useDelegationCheck';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
-import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useIsContract from 'hooks/queries/useIsContract';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useDelegationStore from 'store/delegation/store';
@@ -63,7 +63,7 @@ const ModalOnboarding = (): ReactElement => {
   }));
   const { data: isContract } = useIsContract();
 
-  const { data: antisybilStatusScore } = useAntisybilStatusScore(address);
+  const { antisybilStatusScore } = useDelegationCheck();
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
