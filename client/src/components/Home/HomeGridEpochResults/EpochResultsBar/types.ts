@@ -1,9 +1,11 @@
 export default interface EpochResultsBarProps {
   address: string;
   bottomBarHeightPercentage: number;
+  epoch: number;
   imageSources: string[];
+  isDragging: boolean;
   isHighlighted: boolean;
   isLowlighted: boolean;
-  onClick: (address: string) => void;
+  setHighlightedBarAddress: (address: string | null) => void;
   topBarHeightPercentage: number;
 }

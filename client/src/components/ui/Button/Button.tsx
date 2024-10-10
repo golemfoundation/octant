@@ -31,6 +31,7 @@ const Button = <T extends ButtonProps>(
     to,
     type = 'button',
     variant = 'secondary',
+    onMouseOver,
   }: T,
   ref,
 ) => {
@@ -51,6 +52,7 @@ const Button = <T extends ButtonProps>(
     Component = 'button';
     Object.assign(filteredProps, {
       disabled: isActionDisabled,
+      onMouseOver,
       type,
     });
   }

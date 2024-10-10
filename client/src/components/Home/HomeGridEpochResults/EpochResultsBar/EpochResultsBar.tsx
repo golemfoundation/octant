@@ -1,9 +1,11 @@
 import cx from 'classnames';
 import { animate, AnimatePresence, motion, useInView } from 'framer-motion';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 
 import Img from 'components/ui/Img';
 import { EPOCH_RESULTS_BAR_ID } from 'constants/domElementsIds';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
 import styles from './EpochResultsBar.module.scss';
 import EpochResultsBarProps from './types';
@@ -12,18 +14,19 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
   address,
   topBarHeightPercentage,
   bottomBarHeightPercentage,
-  onClick,
+  setHighlightedBarAddress,
   isHighlighted,
   isLowlighted,
   imageSources,
+  epoch,
+  isDragging,
 }) => {
   const topBarRef = useRef(null);
   const bottomBarRef = useRef(null);
   const ref = useRef(null);
+  const { isMobile } = useMediaQuery();
 
   const isInView = useInView(ref);
-
-  const [isProjectLogoVisible, setIsProjectLogoVisible] = useState(false);
 
   useEffect(() => {
     if (!isInView) {
@@ -52,13 +55,33 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
       animate={{ opacity: isLowlighted ? 0.5 : 1 }}
       className={cx(styles.root, topBarHeightPercentage && styles.hasValue)}
       id={EPOCH_RESULTS_BAR_ID}
-      onClick={() => topBarHeightPercentage && onClick(address)}
-      onMouseLeave={() => topBarHeightPercentage && setIsProjectLogoVisible(false)}
-      onMouseOver={() => topBarHeightPercentage && setIsProjectLogoVisible(true)}
+      onClick={e => {
+        e.stopPropagation();
+        if (isDragging) {
+          return;
+        }
+        if (isMobile) {
+          setHighlightedBarAddress(address);
+          return;
+        }
+        window.open(`${ROOT_ROUTES.project.absolute}/${epoch}/${address}`);
+      }}
+      onMouseLeave={() => {
+        if (isMobile) {
+          return;
+        }
+        setHighlightedBarAddress(null);
+      }}
+      onMouseOver={() => {
+        if (isDragging || isMobile) {
+          return;
+        }
+        setHighlightedBarAddress(address);
+      }}
       whileHover={{ opacity: 1 }}
     >
       <AnimatePresence>
-        {(isProjectLogoVisible || isHighlighted) && (
+        {isHighlighted && (
           <motion.div
             animate={{
               opacity: 1,
