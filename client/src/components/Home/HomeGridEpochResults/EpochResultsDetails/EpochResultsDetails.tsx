@@ -1,14 +1,11 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
-import Button from 'components/ui/Button';
 import useGetValuesToDisplay, {
   GetValuesToDisplayProps,
 } from 'hooks/helpers/useGetValuesToDisplay';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
 import styles from './EpochResultsDetails.module.scss';
 import EpochResultsDetailsProps from './types';
@@ -18,15 +15,15 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
   isLoading,
   isScrollable,
   scrollDirection,
-  epoch,
   isDragging,
+  onMouseMove,
+  onMouseDown,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const ref = useRef<HTMLDivElement>(null);
   const { isMobile } = useMediaQuery();
-  const navigate = useNavigate();
   const getValuesToDisplay = useGetValuesToDisplay();
   const [dots, setDots] = useState(0);
   const [showScrollInfo, setShowScrollInfo] = useState(false);
@@ -63,9 +60,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
       }).primary
     : null;
 
-  const isScrollInfoVisible =
-    (isMobile && isDragging) ||
-    (showScrollInfo && (isMobile || (!isMobile && scrollDirection === 'right')));
+  const isScrollInfoVisible = isDragging || showScrollInfo;
 
   useEffect(() => {
     if (!isLoading) {
@@ -108,17 +103,51 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
     <div
       ref={ref}
       className={styles.root}
-      onMouseLeave={() => {
+      onMouseDown={e => {
+        if (!isScrollable) {
+          return;
+        }
+        onMouseDown(e.pageX);
+      }}
+      onMouseLeave={e => {
+        e.stopPropagation();
         if (!isScrollable) {
           return;
         }
         setShowScrollInfo(false);
       }}
-      onMouseOver={() => {
+      onMouseMove={e => {
+        if (!isScrollable) {
+          return;
+        }
+        onMouseMove(e.pageX);
+      }}
+      onMouseOver={e => {
+        e.stopPropagation();
         if (!isScrollable) {
           return;
         }
         setShowScrollInfo(true);
+      }}
+      onTouchEnd={() => {
+        if (!isScrollable) {
+          return;
+        }
+        setShowScrollInfo(false);
+      }}
+      onTouchMove={e => {
+        if (!isScrollable) {
+          return;
+        }
+        e.stopPropagation();
+        onMouseMove(e.changedTouches[0].pageX);
+      }}
+      onTouchStart={e => {
+        if (!isScrollable) {
+          return;
+        }
+        setShowScrollInfo(true);
+        onMouseDown(e.changedTouches[0].pageX);
       }}
     >
       {isLoading && (
@@ -156,18 +185,6 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
             {isMobile ? '' : ' '}
             {totalToDisplay}
           </div>
-          {!isMobile && (
-            <Button
-              className={styles.link}
-              onClick={() =>
-                navigate(`${ROOT_ROUTES.project.absolute}/${epoch}/${details.address}`)
-              }
-              onMouseOver={e => e.stopPropagation()}
-              variant="link"
-            >
-              {t('clickToVisitProject')}
-            </Button>
-          )}
         </>
       )}
     </div>

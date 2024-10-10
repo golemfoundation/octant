@@ -6,5 +6,7 @@ export default interface EpochResultsDetailsProps {
   isDragging: boolean;
   isLoading?: boolean;
   isScrollable: boolean;
+  onMouseDown: (pageX: number) => void;
+  onMouseMove: (pageX: number) => void;
   scrollDirection: 'right' | 'left';
 }

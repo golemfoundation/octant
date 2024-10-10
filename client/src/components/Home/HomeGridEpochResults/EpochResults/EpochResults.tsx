@@ -44,7 +44,14 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
     return (Number(value) / Number(maxValue)) * 100;
   };
 
-  const onMouseMove: React.MouseEventHandler<HTMLDivElement> = e => {
+  const onMouseDown = (pageX: number) => {
+    if (!isScrollable) {
+      return;
+    }
+    setStartDraggingPageX(pageX);
+  };
+
+  const onMouseMove = (pageX: number) => {
     if (!isScrollable || startDraggingPageX === null || !graphContainerRef.current) {
       return;
     }
@@ -52,7 +59,7 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
     const el = graphContainerRef.current;
     const maxScrollLeft = el.scrollWidth - el.clientWidth;
 
-    const difference = e.pageX + lastScrollLeft - startDraggingPageX;
+    const difference = pageX + lastScrollLeft - startDraggingPageX;
 
     if (difference > 0 && lastScrollLeft <= maxScrollLeft) {
       el.scroll({ left: difference });
@@ -72,16 +79,18 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
     if (!isScrollableNext) {
       return;
     }
-    const mouseUpListener = () => {
+    const mouseUpTouchEndListener = () => {
       setIsDragging(false);
       setStartDraggingPageX(null);
       setLastScrollLeft(graphContainerRef.current?.scrollLeft || 0);
     };
 
-    document.addEventListener('mouseup', mouseUpListener);
+    document.addEventListener('mouseup', mouseUpTouchEndListener);
+    document.addEventListener('touchend', mouseUpTouchEndListener);
 
     return () => {
-      document.addEventListener('mouseup', mouseUpListener);
+      document.addEventListener('mouseup', mouseUpTouchEndListener);
+      document.removeEventListener('touchend', mouseUpTouchEndListener);
     };
   }, [isLoading, isMobile, isTablet, isDesktop]);
 
@@ -89,16 +98,37 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
     if (isLoading && projects.length) {
       return;
     }
-    const projectAddressToHighlight =
-      projects[Math.ceil(Math.random() * (projects.length > 10 ? 10 : projects.length))]?.address;
-
-    setHighlightedBarAddress(projectAddressToHighlight);
 
     const clickListener = e => {
       if (
-        e.target.id === EPOCH_RESULTS_BAR_ID ||
-        e.target.parentElement.id === EPOCH_RESULTS_BAR_ID
+        e.target?.id === EPOCH_RESULTS_BAR_ID ||
+        e.target.parentElement?.id === EPOCH_RESULTS_BAR_ID ||
+        !graphContainerRef.current ||
+        highlightedBarAddress === null ||
+        !isScrollable
       ) {
+        return;
+      }
+
+      if (isMobile) {
+        if (e.detail === 2) {
+          setHighlightedBarAddress(null);
+          return;
+        }
+
+        const { left, right } = graphContainerRef.current.getBoundingClientRect();
+        const highlightedProjectIdx = projects.findIndex(
+          project => project.address === highlightedBarAddress,
+        );
+
+        if (e.pageX < left && highlightedProjectIdx > 0) {
+          setHighlightedBarAddress(projects[highlightedProjectIdx - 1].address);
+          return;
+        }
+
+        if (e.pageX > right && highlightedProjectIdx < projects.length - 1) {
+          setHighlightedBarAddress(projects[highlightedProjectIdx + 1].address);
+        }
         return;
       }
 
@@ -111,6 +141,16 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
       document.removeEventListener('click', clickListener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isMobile, highlightedBarAddress, isScrollable]);
+
+  useEffect(() => {
+    if (isLoading && projects.length) {
+      return;
+    }
+    const projectAddressToHighlight =
+      projects[Math.ceil(Math.random() * (projects.length > 10 ? 10 : projects.length))]?.address;
+    setHighlightedBarAddress(projectAddressToHighlight);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   return (
@@ -118,21 +158,24 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
       <div
         ref={graphContainerRef}
         className={cx(styles.graphContainer, isLoading && styles.isLoading)}
-        onMouseDown={e => {
-          if (!isScrollable) {
-            return;
-          }
-          setStartDraggingPageX(e.pageX);
-        }}
-        onMouseMove={onMouseMove}
+        onDoubleClick={() => setHighlightedBarAddress(null)}
+        onMouseDown={e => onMouseDown(e.pageX)}
+        onMouseMove={e => onMouseMove(e.pageX)}
         onScroll={() => {
-          if (!isScrollable || isDragging || !graphContainerRef.current) {
+          if (!isScrollable || !graphContainerRef.current || isDragging || isMobile) {
             return;
           }
           const el = graphContainerRef.current;
           const maxScrollLeft = el.scrollWidth - el.clientWidth;
           setLastScrollLeft(el.scrollLeft);
           setScrollDirection(el.scrollLeft === maxScrollLeft ? 'left' : 'right');
+        }}
+        onTouchMove={e => {
+          if (!isScrollable) {
+            return;
+          }
+          e.stopPropagation();
+          setIsDragging(true);
         }}
       >
         {isLoading ? (
@@ -144,12 +187,14 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
                 key={`${address}__${epoch}`}
                 address={address}
                 bottomBarHeightPercentage={getBarHeightPercentage(donations)}
+                epoch={epoch}
                 imageSources={ipfsGateways
                   .split(',')
                   .map(element => `${element}${profileImageSmall}`)}
+                isDragging={isDragging}
                 isHighlighted={!!(highlightedBarAddress && highlightedBarAddress === address)}
                 isLowlighted={!!(highlightedBarAddress && highlightedBarAddress !== address)}
-                onClick={setHighlightedBarAddress}
+                setHighlightedBarAddress={setHighlightedBarAddress}
                 topBarHeightPercentage={getBarHeightPercentage(matchedRewards)}
               />
             ))}
@@ -162,6 +207,8 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
         isDragging={isDragging}
         isLoading={isLoading}
         isScrollable={isScrollable}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
         scrollDirection={scrollDirection}
       />
     </div>
