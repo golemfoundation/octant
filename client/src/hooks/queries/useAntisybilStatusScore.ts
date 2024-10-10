@@ -5,7 +5,7 @@ import { QUERY_KEYS } from 'api/queryKeys';
 
 import useUserTOS from './useUserTOS';
 
-type AntisybilStatusScore = { isOnTimeOutList: boolean; score: number };
+export type AntisybilStatusScore = { isOnTimeOutList: boolean; score: number };
 
 export default function useAntisybilStatusScore(
   address: string | undefined,
