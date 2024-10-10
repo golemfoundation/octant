@@ -8,7 +8,7 @@ class Config:
     EPOCH = 5  # change corresponding to the epoch
     JSON_FILEPATH = f"files/{build_filename(FILENAME_PREFIX, EPOCH)}"
     CID = [
-        "Qmegv9yhwoRqe7yLmEm7qQrrBGUmAyYeeKGS9pwwtzUAw7"
+        "QmdtFLK3sB7EwQTNaqtmBnZqnN2pYZcu6GmUSTrpvb9wcq"
     ]  # change corresponding to the epoch
     GATEWAY_URL = "https://octant.infura-ipfs.io/ipfs/"
 

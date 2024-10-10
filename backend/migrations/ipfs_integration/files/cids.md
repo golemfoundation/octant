@@ -3,4 +3,4 @@
 - Epoch2: Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe
 - Epoch3: QmSXcT18anMXKACTueom8GXw8zrxTBbHGB71atitf6gZ9V
 - Epoch4: QmXomSdCCwt4FtBp3pidqSz3PtaiV2EyQikU6zRGWeCAsf
-- Epoch5: Qmegv9yhwoRqe7yLmEm7qQrrBGUmAyYeeKGS9pwwtzUAw7
+- Epoch5: QmdtFLK3sB7EwQTNaqtmBnZqnN2pYZcu6GmUSTrpvb9wcq
