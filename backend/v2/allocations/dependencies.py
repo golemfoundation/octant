@@ -1,8 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
-from pydantic import Field
-from v2.core.dependencies import GetSession, OctantSettings
+from v2.core.dependencies import GetChainSettings, GetSession
 from v2.epochs.dependencies import AssertAllocationWindowOpen, GetEpochsSubgraph
 from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
 from v2.projects.dependencies import GetProjectsContracts
@@ -12,24 +11,11 @@ from .services import Allocator
 from .validators import SignatureVerifier
 
 
-class SignatureVerifierSettings(OctantSettings):
-    chain_id: int = Field(
-        default=11155111,
-        description="The chain id to use for the signature verification.",
-    )
-
-
-def get_signature_verifier_settings() -> SignatureVerifierSettings:
-    return SignatureVerifierSettings()
-
-
 def get_signature_verifier(
     session: GetSession,
     epochs_subgraph: GetEpochsSubgraph,
     projects_contracts: GetProjectsContracts,
-    settings: Annotated[
-        SignatureVerifierSettings, Depends(get_signature_verifier_settings)
-    ],
+    settings: GetChainSettings,
 ) -> SignatureVerifier:
     return SignatureVerifier(
         session, epochs_subgraph, projects_contracts, settings.chain_id
