@@ -76,7 +76,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         />
       </div>
       <ProjectDonors dataTest="ProjectListItem__Donors" projectAddress={address} />
-      <ProjectMilestones epoch={epoch} />
+      <ProjectMilestones projectAddress={address} />
     </Fragment>
   );
 };

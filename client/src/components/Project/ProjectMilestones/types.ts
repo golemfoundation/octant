@@ -1,3 +1,3 @@
 export default interface ProjectMilestonesProps {
-  epoch: number;
+  projectAddress: string;
 }
