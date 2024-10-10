@@ -2,6 +2,7 @@ import React, { FC, Fragment, useMemo } from 'react';
 
 import ProjectDonors from 'components/Project/ProjectDonors';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
+import ProjectMilestones from 'components/Project/ProjectMilestones';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
@@ -75,6 +76,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         />
       </div>
       <ProjectDonors dataTest="ProjectListItem__Donors" projectAddress={address} />
+      <ProjectMilestones epoch={epoch} />
     </Fragment>
   );
 };

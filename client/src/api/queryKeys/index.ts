@@ -15,6 +15,7 @@ export const ROOTS: Root = {
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   individualReward: 'individualReward',
+  karmaGapGrantsPerProgram: 'karmaGapGrantsPerProgram',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
   projectRewardsThreshold: 'projectRewardsThreshold',
@@ -53,6 +54,10 @@ export const QUERY_KEYS: QueryKeys = {
   individualProjectRewards: ['individualProjectRewards'],
   individualReward: epochNumber => [ROOTS.individualReward, epochNumber.toString()],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
+  karmaGapGrantsPerProgram: selectedProgramIds => [
+    ROOTS.karmaGapGrantsPerProgram,
+    selectedProgramIds,
+  ],
   largestLockedAmount: ['largestLockedAmount'],
   lockedSummaryLatest: ['lockedSummaryLatest'],
   lockedSummarySnapshots: ['lockedSummarySnapshots'],

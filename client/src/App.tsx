@@ -1,8 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useState, Fragment, useEffect } from 'react';
+import React, { ReactElement, useState, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
-import gap from 'api/clients/client-gap';
 import AppLoader from 'components/shared/AppLoader';
 import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
@@ -22,15 +21,6 @@ import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
-  useEffect(() => {
-    gap.fetch
-      .communityById('0xcb67cd16cbdf4e9c3b6ed4c8f9424411a48be796d690750afc84f9288e7c7996')
-      .then(res => {
-        // eslint-disable-next-line no-console
-        console.log({ res });
-      });
-  }, []);
-
   useManageTransactionsPending();
   useAppPopulateState();
 
