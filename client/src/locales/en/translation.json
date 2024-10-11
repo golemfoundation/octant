@@ -231,7 +231,9 @@
         "matchingShort": "M",
         "totalShort": "T",
         "clickToVisitProject": "Click to visit project",
-        "loadingChartData": "Loading chart data "
+        "loadingChartData": "Loading chart data ",
+        "scrollInfo": "Click and drag or scroll to see more projects",
+        "scrollInfoMobile": "Tap and drag to see more projects"
       }
     },
     "settings": {
