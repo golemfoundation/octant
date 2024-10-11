@@ -76,8 +76,6 @@
     }
 
     .emptyStateText {
-      display: flex;
-      align-items: center;
       height: 7.2rem;
       margin-top: 1.8rem;
       color: $color-octant-grey5;
@@ -85,9 +83,17 @@
       font-weight: $font-weight-semibold;
       line-height: 2.2rem;
 
+      .projectsLink {
+        font-size: $font-size-14;
+      }
+
       @media #{$tablet-up} {
         font-size: $font-size-16;
         line-height: 2.4rem;
+
+        .projectsLink {
+          font-size: $font-size-16;
+        }
       }
     }
   }

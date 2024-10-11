@@ -611,7 +611,7 @@ const Allocation = (): ReactElement => {
             setRewardsForProjectsCallback={onResetAllocationValues}
           />
         )}
-        {!allocations.length && (
+        {!allocations.length && currentView === 'edit' && (
           <div ref={allocationEmptyStateRef} className={styles.emptyState}>
             {isEmptyStateImageVisible && (
               <Img className={styles.emptyStateImage} src="/images/window-with-dog.webp" />
