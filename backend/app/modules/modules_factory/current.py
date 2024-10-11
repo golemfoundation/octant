@@ -126,6 +126,7 @@ class CurrentServices(Model):
             verifier=score_delegation_verifier,
             antisybil=user_antisybil_service,
             user_deposits_service=user_deposits,
+            timeout_list=timeout_list,
         )
 
         multisig_signatures = OffchainMultisigSignatures(
