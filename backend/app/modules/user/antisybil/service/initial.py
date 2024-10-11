@@ -60,6 +60,10 @@ class GitcoinPassportAntisybil(Model):
             expires_at = _parse_expiration_date(
                 min([stamp["credential"]["expirationDate"] for stamp in valid_stamps])
             )
+
+        if user_address in self.timeout_list:
+            score["score"] = 0.0
+
         return float(score["score"]), expires_at, all_stamps
 
     def update_antisybil_status(

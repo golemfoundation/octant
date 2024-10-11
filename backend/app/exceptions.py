@@ -348,6 +348,14 @@ class InvalidDelegationForLockingAddress(OctantException):
         super().__init__(self.description, self.code)
 
 
+class InvalidDelegationRequest(OctantException):
+    code = 400
+    description = "Invalid delegation request"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class InvalidAddressFormat(OctantException):
     code = 400
     description = "Invalid address format"

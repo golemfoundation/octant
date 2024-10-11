@@ -14,7 +14,12 @@ from app.modules.score_delegation.service.simple_obfuscation import (
     SimpleObfuscationDelegationVerifier,
 )
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
+from tests.helpers.constants import (
+    USER1_ADDRESS,
+    USER2_ADDRESS,
+    USER3_ADDRESS,
+    TIMEOUT_LIST,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -44,7 +49,10 @@ def test_delegation(
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
-        verifier=verifier, antisybil=antisybil, user_deposits_service=user_deposits
+        verifier=verifier,
+        antisybil=antisybil,
+        user_deposits_service=user_deposits,
+        timeout_list=TIMEOUT_LIST,
     )
     service.delegate(context, payload)
 
@@ -70,7 +78,10 @@ def test_delegation_disabled_when_secondary_is_locking(
         secondary_addr_signature="0x5e7e86d5acea5cc431b8d148842e21584a7afe16b7de3b5586d20f5de97179f549726baa021dcaf6220ee5116c579df9d40375fa58d3480390289df6a088b9ec1b",
     )
     service = SimpleObfuscationDelegation(
-        verifier=verifier, antisybil=antisybil, user_deposits_service=user_deposits
+        verifier=verifier,
+        antisybil=antisybil,
+        user_deposits_service=user_deposits,
+        timeout_list=TIMEOUT_LIST,
     )
     with pytest.raises(InvalidDelegationForLockingAddress):
         service.delegate(context, payload)
@@ -88,7 +99,10 @@ def test_disable_recalculation_when_secondary_address_is_used(
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
-        verifier=verifier, antisybil=antisybil, user_deposits_service=user_deposits
+        verifier=verifier,
+        antisybil=antisybil,
+        user_deposits_service=user_deposits,
+        timeout_list=TIMEOUT_LIST,
     )
     service.delegate(context, payload)
 
@@ -120,7 +134,10 @@ def test_recalculation_when_delegation_is_not_done(
         ["stamp"],
     )
     service = SimpleObfuscationDelegation(
-        verifier=verifier, antisybil=antisybil, user_deposits_service=user_deposits
+        verifier=verifier,
+        antisybil=antisybil,
+        user_deposits_service=user_deposits,
+        timeout_list=TIMEOUT_LIST,
     )
     service.delegate(context, payload)
 
