@@ -14,10 +14,16 @@ export default function useAntisybilStatusScore(
   const { data: isUserTOSAccepted } = useUserTOS();
 
   return useQuery({
-    enabled: !!address && isUserTOSAccepted,
+    /**
+     * !! required, as address: string & isUserTOSAccepted: undefined gives undefined,
+     * so query is done when it shouldn't be.
+     */
+    //
+    enabled: !!(!!address && isUserTOSAccepted),
     queryFn: () => apiGetAntisybilStatus(address!),
     queryKey: QUERY_KEYS.antisybilStatus(address!),
     refetchOnMount: true,
+    retry: false,
     select: ({ score, isOnTimeOutList }) => ({
       isOnTimeOutList,
       score: Math.round(parseFloat(score)),

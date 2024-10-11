@@ -1128,12 +1128,6 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_timeout_list(mocker):
-    timeout_list = ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]
-    mocker.patch("app.modules.user.antisybil.core.TIMEOUT_LIST", timeout_list)
-
-
-@pytest.fixture(scope="function")
 def patch_etherscan_transactions_api(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_transactions",

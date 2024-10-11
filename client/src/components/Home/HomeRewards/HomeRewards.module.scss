@@ -32,8 +32,12 @@
       color: $color-octant-grey5;
       margin-bottom: 0.2rem;
 
-      .tooltip {
-        margin-left: 1rem;
+      .tooltipBox {
+        margin-left: 0.6rem;
+
+        @media #{$tablet-up} {
+          margin-left: 1rem;
+        }
       }
     }
 
@@ -67,5 +71,26 @@
         font-size: $font-size-18;
       }
     }
+  }
+}
+
+.svgWrapper {
+  width: 1.2rem;
+  height: 1.2rem;
+
+  @media #{$tablet-up} {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+
+.tooltipWrapper {
+  right: 0;
+  left: auto;
+  width: 34.2rem;
+  top: auto;
+
+  .tooltip {
+    position: initial;
   }
 }

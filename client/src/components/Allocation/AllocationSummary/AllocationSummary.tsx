@@ -7,7 +7,10 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -24,6 +27,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   });
   const { data: individualReward } = useIndividualReward();
   const { data: userAllocations } = useUserAllocations();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: epochLeverage } = useEpochLeverage(currentEpoch! - 1);
   const { rewardsForProjects } = useAllocationsStore(state => ({
     rewardsForProjects: state.data.rewardsForProjects,
   }));
@@ -48,19 +54,21 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     valueCrypto: rewardsForProjects,
   });
 
+  const leverage = isDecisionWindowOpen ? allocationSimulated?.leverage : epochLeverage?.toString();
+
   const matchingFundSumToDisplay =
-    rewardsForProjects && allocationSimulated?.leverage
+    rewardsForProjects && leverage
       ? getValuesToDisplay({
           cryptoCurrency: 'ethereum',
-          valueCrypto: rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
+          valueCrypto: rewardsForProjects * BigInt(parseInt(leverage, 10)),
         }).primary
       : undefined;
   const totalImpactToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
     valueCrypto:
-      rewardsForProjects && allocationSimulated
-        ? rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
+      rewardsForProjects && leverage
+        ? rewardsForProjects * BigInt(parseInt(leverage, 10) + 1)
         : rewardsForProjects,
   }).primary;
   const personalToDisplay = individualReward
@@ -84,7 +92,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
                 isLoadingAllocateSimulate && styles.isLoading,
               )}
             >
-              {allocationSimulated ? `${parseInt(allocationSimulated.leverage, 10)}x` : undefined}
+              {leverage ? `${parseInt(leverage, 10)}x` : undefined}
             </span>
           </div>
         </div>
