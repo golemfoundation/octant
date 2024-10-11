@@ -66,9 +66,6 @@ class SimpleObfuscationDelegationVerifier(Verifier, Model):
         payload, action_type = kwargs["payload"], kwargs["action_type"]
         core.verify_signatures(payload, action_type)
 
-    def verify_timeout_list(self):
-        pass
-
 
 class SimpleObfuscationDelegation(Model):
     verifier: Verifier

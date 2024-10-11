@@ -41,7 +41,7 @@ class GitcoinPassportAntisybil(Model):
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> Tuple[float, datetime | None, any]:
+    ) -> Tuple[float, datetime, any]:
         score = issue_address_for_scoring(user_address)
 
         def _retry_fetch():
