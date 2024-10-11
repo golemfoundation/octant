@@ -40,7 +40,7 @@ export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
 );
 
 // Delegation
-const delegationPrefix = 'delegation';
+const delegationPrefix = 'delegation_5';
 
 export const IS_DELEGATION_COMPLETED = getLocalStorageKey(
   delegationPrefix,
@@ -57,7 +57,7 @@ export const DELEGATION_SECONDARY_ADDRESS = getLocalStorageKey(
   'delegationSecondaryAddress',
 );
 
-export const PRIMARY_ADDRESS_SCORE = getLocalStorageKey(delegationPrefix, 'primaryAddressScore');
+export const PRIMARY_ADDRESS_SCORE = getLocalStorageKey(delegationPrefix, 'primaryAddressScore_5');
 
 export const SECONDARY_ADDRESS_SCORE = getLocalStorageKey(
   delegationPrefix,
