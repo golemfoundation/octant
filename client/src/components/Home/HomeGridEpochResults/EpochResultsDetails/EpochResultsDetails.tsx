@@ -2,6 +2,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import Button from 'components/ui/Button';
 import useGetValuesToDisplay, {
   GetValuesToDisplayProps,
 } from 'hooks/helpers/useGetValuesToDisplay';
@@ -185,6 +186,16 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
             {isMobile ? '' : ' '}
             {totalToDisplay}
           </div>
+          {!isMobile && (
+            <Button
+              className={styles.link}
+              isDisabled
+              onMouseOver={e => e.stopPropagation()}
+              variant="link"
+            >
+              {t('clickToVisitProject')}
+            </Button>
+          )}
         </>
       )}
     </div>
