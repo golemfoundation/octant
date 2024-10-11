@@ -86,6 +86,10 @@
 .personalRewardBox {
   height: 6.4rem;
 
+  @media #{$desktop-up} {
+    margin-bottom: 1.6rem;
+  }
+
   &.areAllocationValuesPositive {
     margin-top: 1.6rem;
   }
