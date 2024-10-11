@@ -7,8 +7,13 @@ import pytest
 from app import exceptions
 from app.modules.common.delegation import hash_addresses
 from app.modules.score_delegation import core
-from app.exceptions import InvalidDelegationForLockingAddress
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, USER3_ADDRESS
+from app.exceptions import InvalidDelegationForLockingAddress, InvalidDelegationRequest
+from tests.helpers.constants import (
+    USER1_ADDRESS,
+    USER2_ADDRESS,
+    USER3_ADDRESS,
+    TIMEOUT_LIST,
+)
 
 
 def test_score_delegation_passes():
@@ -18,7 +23,13 @@ def test_score_delegation_passes():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, {hashed_carol}, 20, 0, core.ActionType.DELEGATION
+        hashed_addresses,
+        {hashed_carol},
+        20,
+        0,
+        core.ActionType.DELEGATION,
+        USER1_ADDRESS,
+        TIMEOUT_LIST,
     )
 
 
@@ -27,7 +38,13 @@ def test_score_delegation_passes_when_there_are_no_other_delegations():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, set(), 20, 0, core.ActionType.DELEGATION
+        hashed_addresses,
+        set(),
+        20,
+        0,
+        core.ActionType.DELEGATION,
+        USER1_ADDRESS,
+        TIMEOUT_LIST,
     )
 
 
@@ -43,6 +60,25 @@ def test_score_delegation_fails_when_secondary_is_locking():
             20,
             BUDGET_GREATER_THAN_ZERO,
             core.ActionType.DELEGATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
+        )
+
+
+def test_score_delegation_fails_when_primary_is_timeouted():
+    hashed_addresses = hash_addresses(
+        USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
+    )
+    TIMEOUT_LIST = {USER1_ADDRESS}
+    with pytest.raises(InvalidDelegationRequest):
+        core.verify_score_delegation(
+            hashed_addresses,
+            set(),
+            20,
+            100,
+            core.ActionType.DELEGATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
 
@@ -58,6 +94,8 @@ def test_score_delegation_fails():
             20,
             0,
             core.ActionType.DELEGATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
     with pytest.raises(exceptions.DelegationAlreadyExists):
@@ -67,6 +105,8 @@ def test_score_delegation_fails():
             20,
             0,
             core.ActionType.DELEGATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
 
@@ -80,6 +120,8 @@ def test_score_recalculation_passes():
         20,
         0,
         core.ActionType.RECALCULATION,
+        USER1_ADDRESS,
+        TIMEOUT_LIST,
     )
 
 
@@ -89,7 +131,13 @@ def test_score_recalculation_fails_when_there_are_no_other_delegations():
     )
     with pytest.raises(exceptions.DelegationDoesNotExist):
         core.verify_score_delegation(
-            hashed_addresses, set(), 20, 0, core.ActionType.RECALCULATION
+            hashed_addresses,
+            set(),
+            20,
+            0,
+            core.ActionType.RECALCULATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
 
@@ -110,6 +158,8 @@ def test_score_recalculation_fails():
             20,
             0,
             core.ActionType.RECALCULATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
 
@@ -120,7 +170,13 @@ def test_score_is_too_low():
 
     with pytest.raises(exceptions.AntisybilScoreTooLow):
         core.verify_score_delegation(
-            hashed_addresses, set(), 19.9, 0, core.ActionType.DELEGATION
+            hashed_addresses,
+            set(),
+            19.9,
+            0,
+            core.ActionType.DELEGATION,
+            USER1_ADDRESS,
+            TIMEOUT_LIST,
         )
 
 
@@ -129,7 +185,13 @@ def test_score_is_sufficient():
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
     core.verify_score_delegation(
-        hashed_addresses, set(), 20, 0, core.ActionType.DELEGATION
+        hashed_addresses,
+        set(),
+        20,
+        0,
+        core.ActionType.DELEGATION,
+        USER1_ADDRESS,
+        TIMEOUT_LIST,
     )
 
 
@@ -163,16 +225,16 @@ def test_delegation_check():
     assert set() == check([ALICE, ALICE])
     assert set() == check([CAROL, BOB])
     assert set() == check([CAROL, ALICE])
-    assert set([(BOB, ALICE)]) == check([ALICE, BOB])
-    assert set([(BOB, ALICE)]) == check([BOB, ALICE])
-    assert set([(BOB, ALICE)]) == check([BOB, ALICE, EVE])
-    assert set([(BOB, ALICE), (EVE, CAROL)]) == check([BOB, EVE, ALICE, CAROL])
+    assert {(BOB, ALICE)} == check([ALICE, BOB])
+    assert {(BOB, ALICE)} == check([BOB, ALICE])
+    assert {(BOB, ALICE)} == check([BOB, ALICE, EVE])
+    assert {(BOB, ALICE), (EVE, CAROL)} == check([BOB, EVE, ALICE, CAROL])
     start = datetime.now()
-    assert set([(BOB, ALICE), (EVE, CAROL), (ALICE, FRANK)]) == check(
+    assert {(BOB, ALICE), (EVE, CAROL), (ALICE, FRANK)} == check(
         [ALICE, BOB, CAROL, EVE, FRANK, HEIDI, IVAN, JUDY, MALLORY, NICK]
     )
     finish = datetime.now()
     assert finish - start < timedelta(seconds=2)
 
     # check if address checksumming works as expected
-    assert set([(BOB, ALICE.lower())]) == check([ALICE.lower(), BOB])
+    assert {(BOB, ALICE.lower())} == check([ALICE.lower(), BOB])

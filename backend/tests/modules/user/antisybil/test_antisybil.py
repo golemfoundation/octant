@@ -142,3 +142,21 @@ def test_antisybil_score_is_nullified_when_address_on_timeout_list(
 
     assert result.score == 0.0
     assert result.is_on_timeout_list is True
+
+
+def test_fetch_antisybil_return_0_when_address_on_timeout_list(
+    patch_gitcoin_passport_issue_address_for_scoring,
+    patch_gitcoin_passport_fetch_score,
+    patch_gitcoin_passport_fetch_stamps,
+    mock_users_db,
+):
+    context = get_context(4)
+
+    service = GitcoinPassportAntisybil(
+        timeout_list={"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}
+    )
+    alice, _, _ = mock_users_db
+    timeout_address = alice.address
+    score, expires_at, stamps = service.fetch_antisybil_status(context, timeout_address)
+
+    assert score == 0.0
