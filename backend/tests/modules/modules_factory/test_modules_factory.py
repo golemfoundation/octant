@@ -52,7 +52,7 @@ from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.shared.blockchain_types import ChainTypes
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
-from tests.helpers.constants import UQ_THRESHOLD_MAINNET, TIMEOUT_LIST
+from app.constants import UQ_THRESHOLD_MAINNET, TIMEOUT_LIST
 
 
 def test_future_services_factory():
