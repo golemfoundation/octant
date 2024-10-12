@@ -18,7 +18,7 @@ import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
 import { DRAWER_TRANSITION_TIME } from 'constants/animations';
 import { LAYOUT_NAVBAR_ID } from 'constants/domElementsIds';
-import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT } from 'constants/uq';
+import { UQ_MULTIPLIER_FOR_USERS_BELOW_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
 import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
@@ -311,7 +311,7 @@ const Allocation = (): ReactElement => {
 
     if (
       !userAllocations?.hasUserAlreadyDoneAllocation &&
-      uqScore === UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1_BIG_INT &&
+      uqScore === UQ_MULTIPLIER_FOR_USERS_BELOW_THRESHOLD_FOR_LEVERAGE_1 &&
       !isProceedingToAllocateWithLowUQScore
     ) {
       setShowLowUQScoreModal(true);
@@ -323,7 +323,7 @@ const Allocation = (): ReactElement => {
     }
 
     // this condition must always be last due to ModalAllocationLowUqScore
-    // if uqScore == 20n, the signature request is triggered in ModalAllocationLowUqScore
+    // if uqScore == 1n, the signature request is triggered in ModalAllocationLowUqScore
     if (isContract) {
       setIsWaitingForFirstMultisigSignature(true);
       toastService.showToast({
@@ -341,7 +341,7 @@ const Allocation = (): ReactElement => {
       return;
     }
     /**
-     * The initial value of UQ for every user is 0.2 / 0.01 (after https://linear.app/golemfoundation/issue/OCT-1928/change-the-uq-leverage-to-001-and-1)
+     * The initial value of UQ for every user is 0.01.
      * It does not update automatically after delegation nor after change in Gitcoin Passport itself.
      *
      * We need to refreshAntisybilStatus to force BE to refetch current values from Gitcoin Passport

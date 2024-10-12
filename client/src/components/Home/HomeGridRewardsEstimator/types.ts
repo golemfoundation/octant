@@ -3,7 +3,7 @@ export default interface HomeGridRewardsEstimatorProps {
 }
 
 export type FormFields = {
-  isUqScoreOver20: boolean;
+  isUqScoreOverThresholdGivingMultiplier1: boolean;
   numberOfEpochs: number;
   valueCrypto?: string;
 };
