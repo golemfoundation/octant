@@ -59,18 +59,18 @@ export default function useSearchedProjectsDetails(
     queries: (projectsSearchResults || []).map(projectsSearchResult => ({
       queryFn: async () => {
         const projectsEpoch = await apiGetProjects(Number(projectsSearchResult.epoch));
+        const shouldFetchEstimatedRewards =
+          projectsSearchResult.epoch === currentEpoch! - 1 && !!isDecisionWindowOpen;
         return Promise.all([
           projectsSearchResult.epoch,
           projectsSearchResult.address,
           apiGetProjectIpfsData(`${projectsEpoch?.projectsCid}/${projectsSearchResult.address}`),
           projectsSearchResult.epoch !== currentEpoch ||
-          (projectsSearchResult.epoch === currentEpoch && isDecisionWindowOpen)
+          (projectsSearchResult.epoch === currentEpoch - 1 && isDecisionWindowOpen)
             ? apiGetAllocationsPerProject(projectsSearchResult.address, projectsSearchResult.epoch)
             : undefined,
-          projectsSearchResult.epoch === currentEpoch && isDecisionWindowOpen
-            ? apiGetEstimatedMatchedProjectRewards()
-            : undefined,
-          projectsSearchResult.epoch !== currentEpoch
+          shouldFetchEstimatedRewards ? apiGetEstimatedMatchedProjectRewards() : undefined,
+          !shouldFetchEstimatedRewards
             ? apiGetMatchedProjectRewards(projectsSearchResult.epoch)
             : undefined,
         ]);
