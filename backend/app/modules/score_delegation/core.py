@@ -92,7 +92,7 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
 
 
 def _verify_timeout_list(primary_addr: str, timeout_list: set):
-    if primary_addr in timeout_list:
+    if primary_addr.lower() in timeout_list:
         raise InvalidDelegationRequest()
 
 
