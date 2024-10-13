@@ -69,7 +69,7 @@ def test_score_delegation_fails_when_primary_is_timeouted():
     hashed_addresses = hash_addresses(
         USER1_ADDRESS, USER2_ADDRESS, "salt", "salt_primary"
     )
-    TIMEOUT_LIST = {USER1_ADDRESS}
+    TIMEOUT_LIST = {USER1_ADDRESS.lower()}
     with pytest.raises(InvalidDelegationRequest):
         core.verify_score_delegation(
             hashed_addresses,
