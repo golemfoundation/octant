@@ -6,7 +6,6 @@ import ProjectMilestones from 'components/Project/ProjectMilestones';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
-import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
@@ -23,7 +22,6 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
   index,
   epoch,
 }) => {
-  const { isMobile } = useMediaQuery();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
   const projectIpfsWithRewards = projectsIpfsWithRewards.find(p => p.address === address);
   // loadedProjects (ProjectView) aren't updated during changes in open AW
@@ -64,7 +62,6 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
             epoch={epoch}
             matchedRewards={matchedRewards}
             numberOfDonors={numberOfDonors}
-            showMoreInfo={!isMobile}
             totalValueOfAllocations={totalValueOfAllocations}
           />
         )}

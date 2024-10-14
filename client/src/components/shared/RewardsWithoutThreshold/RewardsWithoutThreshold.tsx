@@ -15,7 +15,6 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
   totalValueOfAllocations,
   matchedRewards,
   donations,
-  showMoreInfo,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.projectRewards',
@@ -54,12 +53,11 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isArchivedProject]);
 
-  const showVerticalDividers = showMoreInfo && (isLargeDesktop || isDesktop);
+  const showMoreInfo = isLargeDesktop || isDesktop;
 
   return (
     <div className={cx(styles.root, className)} data-test="ProjectRewards">
-      <div className={styles.divider} />
-      <div className={cx(styles.sections, showVerticalDividers && styles.showVerticalDividers)}>
+      <div className={styles.sections}>
         <div className={cx(styles.section, styles.leftSection)}>
           <div className={styles.label} data-test="ProjectRewards__currentTotal__label">
             {leftSectionLabel}
@@ -68,6 +66,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
             {currentTotalIncludingMFForProjectsAboveThresholdToDisplay}
           </div>
         </div>
+        <div className={styles.divider} />
         {showMoreInfo && (
           <>
             <div className={styles.section}>
@@ -76,6 +75,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
                 <div className={styles.value}>{donationsToDisplay}</div>
               </div>
             </div>
+            <div className={styles.divider} />
             <div className={styles.section}>
               <div className={styles.container}>
                 <div className={styles.label}>{i18n.t('common.matchFunding')}</div>
@@ -84,6 +84,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
             </div>
           </>
         )}
+        <div className={styles.divider} />
         <div className={cx(styles.section, styles.rightSection)}>
           <div className={styles.label}>{i18n.t('common.donors')}</div>
           <div className={styles.value}>{numberOfDonors}</div>

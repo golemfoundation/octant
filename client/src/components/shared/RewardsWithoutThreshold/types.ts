@@ -6,6 +6,5 @@ export default interface RewardsWithoutThresholdProps {
   epoch?: number;
   matchedRewards?: ProjectIpfsWithRewards['matchedRewards'];
   numberOfDonors: ProjectIpfsWithRewards['numberOfDonors'];
-  showMoreInfo?: boolean;
   totalValueOfAllocations: ProjectIpfsWithRewards['totalValueOfAllocations'];
 }
