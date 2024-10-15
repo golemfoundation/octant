@@ -493,7 +493,18 @@
     "project": {
       "loadingProblem": "Loading of this project encountered a problem.",
       "backToTop": "Back to Top",
-      "share": "Share"
+      "share": "Share",
+      "milestones": {
+        "header": "Reporting",
+        "milestone": "Milestone",
+        "posted": "Posted",
+        "viewOnKarmaGap": "View on KarmaGap",
+        "states": {
+          "pending": "Pending",
+          "complete": "Complete",
+          "all": "All"
+        }
+      }
     },
     "projects": {
       "viewTitle": "Browse Epoch {{epochNumber}} projects",

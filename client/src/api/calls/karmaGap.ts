@@ -16,6 +16,7 @@ export type GrantsPerProgram = {
       details: {
         data: {
           description: string;
+          slug: string;
           title: string;
         };
       };
@@ -26,7 +27,9 @@ export type GrantsPerProgram = {
       recipient: string;
     };
     recipient: string;
-    updatedAt: string; // Date;
+    // Date;
+    uid: string; 
+    updatedAt: string;
   }[];
 };
 

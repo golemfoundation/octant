@@ -5,15 +5,15 @@
   padding: 4.8rem 5.6rem 4rem;
 
   @media #{$tablet-up} {
-    padding: 9.6rem 13.2rem 4rem;
+    padding: 9.6rem $projectListItemHorizontalPaddingTabletUp 4rem;
   }
 
   @media #{$desktop-up} {
-    padding: 9.6rem 17.8rem 4rem;
+    padding: 9.6rem $projectListItemHorizontalPaddingDesktopUp 4rem;
   }
 
   @media #{$large-desktop-up} {
-    padding: 9.6rem 24.6rem 4rem;
+    padding: 9.6rem $projectListItemHorizontalPaddingLargeDesktop 4rem;
   }
 
   .projectRewards {
