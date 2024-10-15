@@ -10,7 +10,8 @@ from app.constants import (
 )
 from app.shared.blockchain_types import ChainTypes
 from fastapi import Depends
-from pydantic import Field
+from pydantic import Field, TypeAdapter
+from v2.core.types import Address
 from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings
 
 from .services import UQScoreGetter
@@ -50,14 +51,18 @@ def get_uq_score_getter(
     uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
     timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
 
+    address_set_validator = TypeAdapter(set[Address])
+    timeout_set = address_set_validator.validate_python(timeout_list)
+    guest_set = address_set_validator.validate_python(GUEST_LIST)
+
     return UQScoreGetter(
         session=session,
         uq_score_threshold=uq_threshold,
         max_uq_score=settings.max_uq_score,
         low_uq_score=settings.low_uq_score,
         null_uq_score=settings.null_uq_score,
-        guest_list=GUEST_LIST,
-        timeout_list=timeout_list,
+        guest_list=guest_set,
+        timeout_list=timeout_set,
     )
 
 
