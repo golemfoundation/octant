@@ -9,24 +9,16 @@ export default function useMilestonesPerGrantPerProgram(
   projectAddress: string,
 ): UseQueryResult<any, unknown> {
   const programId: string = PROGRAMS_IDS_TO_EPOCH_NUMBER_MAPPING[epoch];
-  // eslint-disable-next-line no-console
-  console.log({ projectAddress });
+  const projectAddressToLowerCase = projectAddress.toLowerCase();
 
   return useQuery({
     queryFn: () => apiGetGrantsPerProgram(programId),
-    queryKey: QUERY_KEYS.karmaGapGrantsPerProgram(programId),
-    select: response => {
-      // eslint-disable-next-line no-console
-      console.log({ response });
-      const projectAddressToLowerCase = projectAddress.toLowerCase();
-      return response.data.find(element => {
-        // eslint-disable-next-line
-        console.log(element.project.recipient, projectAddressToLowerCase);
-        return (
+    queryKey: QUERY_KEYS.karmaGapMilestonesPerProjectPerGrantPerProgram(programId, projectAddress),
+    select: response =>
+      response.data.find(
+        element =>
           element.project.externalAddresses?.octant.toLowerCase() === projectAddressToLowerCase ||
-          element.project.recipient.toLowerCase() === projectAddressToLowerCase
-        );
-      });
-    },
+          element.project.recipient.toLowerCase() === projectAddressToLowerCase,
+      ),
   });
 }
