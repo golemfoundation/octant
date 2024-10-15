@@ -44,6 +44,7 @@ async def save_uq_score_for_user_address(
     )
 
     session.add(uq_score)
+    await session.commit()
 
 
 async def get_gp_stamps_by_address(
