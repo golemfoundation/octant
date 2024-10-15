@@ -12,7 +12,9 @@ import {
   OCTANT_BUILD_LINK,
   OCTANT_DOCS,
   TERMS_OF_USE,
-  TWITTER_LINK,
+  // TODO OCT-2097 Bring Twitter link back.
+  // TWITTER_LINK,
+  PRIVACY_POLICY,
 } from 'constants/urls';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { octantSemiTransparent } from 'svg/logo';
@@ -31,16 +33,18 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
         { label: t('links.blog'), link: BLOG_POST },
         { label: t('links.discord'), link: DISCORD_LINK },
         { label: t('links.farcaster'), link: FARCASTER_LINK },
-        { label: t('links.twitterX'), link: TWITTER_LINK },
+        // TODO OCT-2097 Bring Twitter/X back.
+        // { label: t('links.twitterX'), link: TWITTER_LINK },
         { label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
+        { label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
         { label: t('links.termsOfUse'), link: TERMS_OF_USE },
       ]
     : [
         { label: t('links.website'), link: OCTANT_BUILD_LINK },
         { label: t('links.docs'), link: OCTANT_DOCS },
         { label: t('links.farcaster'), link: FARCASTER_LINK },
-        { label: t('links.twitterX'), link: TWITTER_LINK },
         { label: t('links.discord'), link: DISCORD_LINK },
+        { label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
         { label: t('links.termsOfUse'), link: TERMS_OF_USE },
       ];
 

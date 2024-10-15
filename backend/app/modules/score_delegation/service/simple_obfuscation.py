@@ -36,15 +36,30 @@ class Antisybil(Protocol):
 
 class SimpleObfuscationDelegationVerifier(Verifier, Model):
     def _verify_logic(self, context: Context, **kwargs):
-        hashed_addresses, action_type, score, secondary_budget = (
+        (
+            hashed_addresses,
+            action_type,
+            score,
+            secondary_budget,
+            primary_addr,
+            timeout_list,
+        ) = (
             kwargs["hashed_addresses"],
             kwargs["action_type"],
             kwargs["score"],
             kwargs["secondary_budget"],
+            kwargs["primary_addr"],
+            kwargs["timeout_list"],
         )
         get_all_delegations = database.score_delegation.get_all_delegations()
         core.verify_score_delegation(
-            hashed_addresses, get_all_delegations, score, secondary_budget, action_type
+            hashed_addresses,
+            get_all_delegations,
+            score,
+            secondary_budget,
+            action_type,
+            primary_addr,
+            timeout_list,
         )
 
     def _verify_signature(self, _: Context, **kwargs):
@@ -56,6 +71,7 @@ class SimpleObfuscationDelegation(Model):
     verifier: Verifier
     antisybil: Antisybil
     user_deposits_service: UserEffectiveDeposits
+    timeout_list: set
 
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
         primary, secondary, both = get_hashed_addresses(
@@ -98,6 +114,8 @@ class SimpleObfuscationDelegation(Model):
             score=score,
             secondary_budget=secondary_budget,
             action_type=action,
+            primary_addr=payload.primary_addr,
+            timeout_list=self.timeout_list,
         )
         self.antisybil.update_antisybil_status(
             context, payload.primary_addr, score, expires_at, stamps

@@ -8,6 +8,7 @@ import Img from 'components/ui/Img';
 import useSortedProjects from 'hooks/helpers/useIdsInAllocation/useSortedProjects';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import { ProjectsIpfsWithRewardsAndEpochs } from 'hooks/queries/useSearchedProjectsDetails';
 
 import styles from './ProjectsSearchResults.module.scss';
 import ProjectsSearchResultsProps from './types';
@@ -29,6 +30,15 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
     orderOption,
   );
 
+  const getEpochNumberToFetchData = (
+    epochNumber: ProjectsIpfsWithRewardsAndEpochs['epoch'],
+  ): number | undefined => {
+    if (isDecisionWindowOpen) {
+      return epochNumber === currentEpoch! - 1 ? undefined : epochNumber;
+    }
+    return epochNumber === currentEpoch ? undefined : epochNumber;
+  };
+
   return (
     <div className={styles.list}>
       {projectsIpfsWithRewardsAndEpochs.length === 0 && !isLoading && (
@@ -44,25 +54,28 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
       <Grid>
         {projectsIpfsWithRewardsAndEpochs.length > 0 &&
           !isLoading &&
-          projectsIpfsWithRewardsSorted.map((projectIpfsWithRewards, index) => (
-            <ProjectsListItem
-              key={`${projectIpfsWithRewards.address}--${projectIpfsWithRewards.epoch}`}
-              dataTest={
-                projectIpfsWithRewards.epoch
-                  ? `ProjectsView__ProjectsListItem--archive--${index}`
-                  : `ProjectsView__ProjectsListItem--${index}`
-              }
-              epoch={projectIpfsWithRewards.epoch}
-              projectIpfsWithRewards={projectIpfsWithRewards}
-              searchResultsLabel={
-                isDecisionWindowOpen && currentEpoch === projectIpfsWithRewards.epoch
-                  ? ''
-                  : t('searchResultsLabel', { epochNumber: projectIpfsWithRewards.epoch })
-              }
-            />
-          ))}
-        {projectsIpfsWithRewardsAndEpochs.length === 0 &&
-          isLoading &&
+          projectsIpfsWithRewardsSorted.map((projectIpfsWithRewards, index) => {
+            const epochNumberToFetchData = getEpochNumberToFetchData(projectIpfsWithRewards.epoch);
+
+            return (
+              <ProjectsListItem
+                key={`${projectIpfsWithRewards.address}--${projectIpfsWithRewards.epoch}`}
+                dataTest={
+                  projectIpfsWithRewards.epoch
+                    ? `ProjectsView__ProjectsListItem--archive--${index}`
+                    : `ProjectsView__ProjectsListItem--${index}`
+                }
+                epoch={epochNumberToFetchData}
+                projectIpfsWithRewards={projectIpfsWithRewards}
+                searchResultsLabel={
+                  epochNumberToFetchData
+                    ? t('searchResultsLabel', { epochNumber: projectIpfsWithRewards.epoch })
+                    : ''
+                }
+              />
+            );
+          })}
+        {isLoading &&
           [...Array(5).keys()].map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <ProjectsListSkeletonItem key={index} className={styles.element} />

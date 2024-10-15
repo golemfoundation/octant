@@ -7,7 +7,7 @@ import styles from './HomeGridRewardsEstimatorUqSelector.module.scss';
 import HomeGridRewardsEstimatorUqSelectorProps from './types';
 
 const HomeGridRewardsEstimatorUqSelector: FC<HomeGridRewardsEstimatorUqSelectorProps> = ({
-  isUqScoreOver20,
+  isUqScoreOverThresholdGivingMultiplier1,
   onChange,
 }) => {
   const { t } = useTranslation('translation', {
@@ -20,7 +20,7 @@ const HomeGridRewardsEstimatorUqSelector: FC<HomeGridRewardsEstimatorUqSelectorP
     <div className={styles.root} data-test={dataTest}>
       <div className={styles.label}>{t('minimalUqValueGivingMultiplier1')}</div>
       <InputToggle
-        isChecked={isUqScoreOver20}
+        isChecked={isUqScoreOverThresholdGivingMultiplier1}
         onChange={({ target: { checked: isChecked } }) => onChange(isChecked)}
       />
     </div>

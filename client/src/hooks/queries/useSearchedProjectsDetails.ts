@@ -5,12 +5,14 @@ import { apiGetProjectIpfsData, apiGetProjects } from 'api/calls/projects';
 import {
   apiGetEstimatedMatchedProjectRewards,
   apiGetMatchedProjectRewards,
+  Response as ResponseRewards,
 } from 'api/calls/rewards';
 import { apiGetAllocationsPerProject } from 'api/calls/userAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
+import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 import { ProjectIpfsWithRewards } from './useProjectsIpfsWithRewards';
 import { ProjectsSearchResults } from './useSearchedProjects';
 
@@ -25,23 +27,52 @@ export interface ProjectsDetails {
   refetch: () => void;
 }
 
+const getRewards = ({
+  currentEpoch,
+  isDecisionWindowOpen,
+  epoch,
+  rewardsEstimated,
+  rewardsPast,
+}: {
+  currentEpoch: number | undefined;
+  epoch: number | undefined;
+  isDecisionWindowOpen: boolean | undefined;
+  rewardsEstimated: ResponseRewards | undefined;
+  rewardsPast: ResponseRewards | undefined;
+}): ResponseRewards['rewards'] | undefined => {
+  if (epoch === currentEpoch && isDecisionWindowOpen) {
+    return rewardsEstimated?.rewards;
+  }
+  if (epoch !== currentEpoch) {
+    return rewardsPast?.rewards;
+  }
+  return [];
+};
+
 export default function useSearchedProjectsDetails(
   projectsSearchResults: ProjectsSearchResults | undefined,
 ): ProjectsDetails {
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const queries = useQueries({
     queries: (projectsSearchResults || []).map(projectsSearchResult => ({
       queryFn: async () => {
         const projectsEpoch = await apiGetProjects(Number(projectsSearchResult.epoch));
+        const shouldFetchEstimatedRewards =
+          projectsSearchResult.epoch === currentEpoch! - 1 && !!isDecisionWindowOpen;
         return Promise.all([
-          apiGetProjectIpfsData(`${projectsEpoch?.projectsCid}/${projectsSearchResult.address}`),
-          projectsSearchResult.epoch === currentEpoch
-            ? apiGetEstimatedMatchedProjectRewards()
-            : apiGetMatchedProjectRewards(projectsSearchResult.epoch),
-          apiGetAllocationsPerProject(projectsSearchResult.address, projectsSearchResult.epoch),
           projectsSearchResult.epoch,
           projectsSearchResult.address,
+          apiGetProjectIpfsData(`${projectsEpoch?.projectsCid}/${projectsSearchResult.address}`),
+          projectsSearchResult.epoch !== currentEpoch ||
+          (projectsSearchResult.epoch === currentEpoch - 1 && isDecisionWindowOpen)
+            ? apiGetAllocationsPerProject(projectsSearchResult.address, projectsSearchResult.epoch)
+            : undefined,
+          shouldFetchEstimatedRewards ? apiGetEstimatedMatchedProjectRewards() : undefined,
+          !shouldFetchEstimatedRewards
+            ? apiGetMatchedProjectRewards(projectsSearchResult.epoch)
+            : undefined,
         ]);
       },
       queryKey: QUERY_KEYS.searchResultsDetails(
@@ -69,9 +100,20 @@ export default function useSearchedProjectsDetails(
 
   return {
     data: queries.map(({ data }) => {
-      const rewards = data?.[1]?.rewards ?? [];
-      const address = data?.[4];
-      const rewardsOfProject = rewards.find(element => element.address === address);
+      const epoch = data?.[0];
+      const address = data?.[1];
+      const rewardsEstimated = data?.[4] ?? undefined;
+      const rewardsPast = data?.[5] ?? undefined;
+      const rewards = getRewards({
+        currentEpoch,
+        epoch,
+        isDecisionWindowOpen,
+        rewardsEstimated,
+        rewardsPast,
+      });
+      const rewardsOfProject = rewards
+        ? rewards.find(element => element.address === address)
+        : undefined;
       const rewardsOfProjectMatched = rewardsOfProject
         ? parseUnitsBigInt(rewardsOfProject.matched, 'wei')
         : BigInt(0);
@@ -82,11 +124,11 @@ export default function useSearchedProjectsDetails(
       return {
         address,
         donations: rewardsOfProjectAllocated,
-        epoch: data?.[3],
+        epoch: data?.[0],
         matchedRewards: rewardsOfProjectMatched,
-        numberOfDonors: data?.[2].length ?? 0,
+        numberOfDonors: data?.[3]?.length ?? 0,
         totalValueOfAllocations: rewardsOfProjectMatched + rewardsOfProjectAllocated,
-        ...(data?.[0] ?? {}),
+        ...(data?.[2] ?? {}),
       };
     }),
     isFetching: false,

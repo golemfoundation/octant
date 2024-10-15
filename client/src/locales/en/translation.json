@@ -59,7 +59,7 @@
   "components": {
     "allocation": {
       "emptyState": "Lock some GLM to earn rewards, then add projects here from the<br/> Projects view to donate to them during Allocation window",
-      "emptyStateAwOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
+      "emptyStateAWOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
       "emptyStateMobile": "Lock some GLM to earn rewards,<br/> then add projects here from the Projects view<br/> to donate to them during Allocation window",
       "emptyStateMobileAWOpen": "Visit the <0>Projects view</0> to add your favourite<br/> projects so you can donate rewards to them here",
       "allocateRewards": "Allocate rewards",
@@ -231,7 +231,9 @@
         "matchingShort": "M",
         "totalShort": "T",
         "clickToVisitProject": "Click to visit project",
-        "loadingChartData": "Loading chart data "
+        "loadingChartData": "Loading chart data ",
+        "scrollInfo": "Click and drag or scroll to see more projects",
+        "scrollInfoMobile": "Tap and drag to see more projects"
       }
     },
     "settings": {
@@ -379,7 +381,8 @@
         "brandAssets": "Brand assets",
         "termsOfUse": "Terms of use",
         "farcaster": "Farcaster",
-        "twitterX": "Twitter/X"
+        "twitterX": "Twitter/X",
+        "privacyPolicy": "Privacy policy"
       }
     }
   },
