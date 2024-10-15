@@ -285,11 +285,6 @@
         "walletConnect": "WalletConnect",
         "ledgerConnect": "Ledger"
       },
-      "donors": {
-        "donationsNotEnabled": "Donations are not enabled in this epoch",
-        "noDonationsYet": "No donations yet",
-        "viewAll": "View all"
-      },
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
@@ -328,7 +323,8 @@
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
-        "didNotReachThreshold": "Did not reach threshold"
+        "didNotReachThreshold": "Did not reach threshold",
+        "viewAllDonors": "View all donors"
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"

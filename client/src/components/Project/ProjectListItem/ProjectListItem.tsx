@@ -1,6 +1,6 @@
+import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 
-import ProjectDonors from 'components/Project/ProjectDonors';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
 import ProjectMilestones from 'components/Project/ProjectMilestones';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
@@ -48,7 +48,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         {!isEpoch1 && epoch && epoch < 4 && (
           <RewardsWithThreshold
             address={address}
-            className={styles.projectRewards}
+            className={cx(styles.projectRewards, styles.hasPaddingAndBorder)}
             epoch={epoch}
             isProjectView
             numberOfDonors={numberOfDonors}
@@ -57,12 +57,15 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         )}
         {!isEpoch1 && (!epoch || epoch >= 4) && (
           <RewardsWithoutThreshold
+            address={address}
             className={styles.projectRewards}
             donations={donations}
             epoch={epoch}
             matchedRewards={matchedRewards}
             numberOfDonors={numberOfDonors}
+            showMoreInfo
             totalValueOfAllocations={totalValueOfAllocations}
+            variant="projectView"
           />
         )}
         <Description
@@ -72,7 +75,6 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           variant="big"
         />
       </div>
-      <ProjectDonors dataTest="ProjectListItem__Donors" projectAddress={address} />
       <ProjectMilestones projectAddress={address} />
     </Fragment>
   );

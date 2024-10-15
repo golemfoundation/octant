@@ -127,11 +127,10 @@
     }
 
     .buttonAddToAllocate {
-      margin-top: 1.4rem;
+      margin-left: auto;
 
-      @media #{$tablet-up} {
-        margin-top: 0;
-        margin-left: auto;
+      @media #{$tablet-down} {
+        display: none;
       }
     }
   }

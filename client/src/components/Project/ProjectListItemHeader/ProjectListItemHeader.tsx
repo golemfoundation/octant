@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsAllocatedTo from 'hooks/helpers/useIsAllocatedTo';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -50,19 +51,13 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   const isArchivedProject =
     epochUrlInt < (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
 
-  const isAllocatedTo = useMemo(() => {
-    const isInUserAllocations = !!userAllocations?.elements.find(
-      ({ address: userAllocationAddress }) => userAllocationAddress === address,
-    );
-    const isInAllocations = allocations.includes(address);
-    if (epoch !== undefined) {
-      return isInUserAllocations;
-    }
-    if (isDecisionWindowOpen) {
-      return isInUserAllocations && isInAllocations;
-    }
-    return false;
-  }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
+  const isAllocatedTo = useIsAllocatedTo(
+    address,
+    allocations,
+    epoch!,
+    isDecisionWindowOpen!,
+    userAllocations,
+  );
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
