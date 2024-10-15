@@ -36,7 +36,10 @@ from v2.projects.dependencies import (
     get_projects_settings,
 )
 from v2.projects.services import ProjectsAllocationThresholdGetter
-from v2.uniqueness_quotients.dependencies import get_uq_score_getter, get_uq_score_settings
+from v2.uniqueness_quotients.dependencies import (
+    get_uq_score_getter,
+    get_uq_score_settings,
+)
 
 from .schemas import UserAllocationRequest, UserAllocationRequestV1
 
@@ -174,7 +177,9 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 get_chain_settings(),
             )
 
-            uq_score_getter = get_uq_score_getter(s5, get_uq_score_settings())
+            uq_score_getter = get_uq_score_getter(
+                s5, get_uq_score_settings(), get_chain_settings()
+            )
 
             allocations = await get_allocator(
                 epoch_number,
