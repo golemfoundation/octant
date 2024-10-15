@@ -13,6 +13,7 @@ import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
 import TinyLabel from 'components/ui/TinyLabel';
 import networkConfig from 'constants/networkConfig';
+import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
@@ -137,17 +138,29 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       </div>
       {isDesktop && (
         <div className={styles.links}>
-          {tabs.map(({ label, to, isActive, isDisabled }, index) => (
+          {tabs.map(({ label, to, isActive, isDisabled }) => (
             <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
+              key={to}
               className={cx(styles.link, isActive && styles.isActive)}
-              onClick={isDisabled && to ? () => {} : () => navigate(to)}
+              onClick={
+                isDisabled && to
+                  ? () => {}
+                  : () => {
+                      if (pathname === ROOT_ROUTES.projects.absolute) {
+                        window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
+                      }
+                      navigate(to);
+                    }
+              }
             >
               {label}
               {isActive ? (
                 <div className={styles.underlineWrapper}>
-                  <motion.div className={styles.underline} layoutId="underline" />
+                  <motion.div
+                    animate={{ opacity: 1 }}
+                    className={styles.underline}
+                    initial={{ opacity: 0 }}
+                  />
                 </div>
               ) : null}
             </div>

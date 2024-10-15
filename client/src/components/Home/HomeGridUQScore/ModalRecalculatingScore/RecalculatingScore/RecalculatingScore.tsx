@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi';
 
 import AddressScore from 'components/Home/HomeGridUQScore/AddressScore';
 import ProgressPath from 'components/Home/HomeGridUQScore/ProgressPath';
-import { DELEGATION_MIN_SCORE } from 'constants/delegation';
+import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -58,10 +58,10 @@ const RecalculatingScore: FC<RecalculatingScoreProps> = ({ onLastStepDone }) => 
     }
     if (
       !isDelegationCompleted &&
-      antisybilStatusScore.score < DELEGATION_MIN_SCORE &&
+      antisybilStatusScore.score < UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 &&
       uqScore === 100n
     ) {
-      return DELEGATION_MIN_SCORE;
+      return UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1;
     }
     return antisybilStatusScore.score;
   }, [antisybilStatusScore, uqScore, lastDoneStep, isDelegationCompleted, isErrorUqScore]);

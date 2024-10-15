@@ -73,7 +73,6 @@ const ProjectsView = (): ReactElement => {
     data: searchedProjects,
     refetch: refetchSearchedProjects,
     status: statusSearchedProjects,
-    isFetching: isFetchingSearchedProjects,
   } = useSearchedProjects(projectsSearchParameters);
   const {
     data: searchedProjectsDetails,
@@ -82,11 +81,11 @@ const ProjectsView = (): ReactElement => {
   } = useSearchedProjectsDetails(searchedProjects);
 
   useEffect(() => {
-    if (isFetchingSearchedProjects || isFetchingSearchedProjectsDetails) {
+    if (isFetchingSearchedProjectsDetails) {
       return;
     }
     setIsProjectsSearchInProgress(false);
-  }, [isFetchingSearchedProjects, isFetchingSearchedProjectsDetails]);
+  }, [isFetchingSearchedProjectsDetails]);
 
   useEffect(() => {
     // Refetch is not required when no data already fetched.

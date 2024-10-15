@@ -80,7 +80,7 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
           showCryptoSuffix: true,
           valueCrypto:
             (parseUnitsBigInt(calculateRewards.matchedFunding, 'wei') *
-              (formik.values.isUqScoreOver20 ? 100n : 20n)) /
+              (formik.values.isUqScoreOverThresholdGivingMultiplier1 ? 100n : 10n)) /
             100n,
         })
       : undefined;
@@ -114,9 +114,14 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
       title={t('rewardsEstimator')}
       titleSuffix={
         <HomeGridRewardsEstimatorUqSelector
-          isUqScoreOver20={formik.values.isUqScoreOver20}
-          onChange={isUqScoreOver20 => {
-            formik.setFieldValue('isUqScoreOver20', isUqScoreOver20);
+          isUqScoreOverThresholdGivingMultiplier1={
+            formik.values.isUqScoreOverThresholdGivingMultiplier1
+          }
+          onChange={isUqScoreOverThresholdGivingMultiplier1 => {
+            formik.setFieldValue(
+              'isUqScoreOverThresholdGivingMultiplier1',
+              isUqScoreOverThresholdGivingMultiplier1,
+            );
           }}
         />
       }

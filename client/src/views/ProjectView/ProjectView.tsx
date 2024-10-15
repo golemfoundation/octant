@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import throttle from 'lodash/throttle';
-import React, { ReactElement, useState, useEffect, useMemo } from 'react';
+import React, { ReactElement, useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
@@ -80,6 +80,10 @@ const ProjectView = (): ReactElement => {
       );
     }
   };
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     if (!projectsIpfsWithRewards.length) {

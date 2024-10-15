@@ -61,6 +61,13 @@
   color: $color-octant-grey5;
   font-weight: $font-weight-bold;
 
+  &.variant-- {
+    &tiny,
+    &small {
+      font-size: $font-size-12;
+    }
+  }
+
   &.isError {
     color: $color-octant-orange;
   }

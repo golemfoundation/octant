@@ -4,7 +4,6 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import GridTile from 'components/shared/Grid/GridTile';
-import Svg from 'components/ui/Svg';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -12,7 +11,6 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProjectsIpfsWithRewards, {
   ProjectIpfsWithRewards,
 } from 'hooks/queries/useProjectsIpfsWithRewards';
-import { arrowRight } from 'svg/misc';
 
 import EpochResults from './EpochResults';
 import styles from './HomeGridEpochResults.module.scss';
@@ -27,31 +25,23 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsIpfsWithRewards } =
-    useProjectsIpfsWithRewards(epoch);
+    useProjectsIpfsWithRewards(
+      isDecisionWindowOpen && epoch === currentEpoch! - 1 ? undefined : epoch,
+    );
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
 
-  const projects = projectsIpfsWithRewards.reduce(
-    (acc, curr) => {
-      if (!curr.totalValueOfAllocations) {
-        return acc;
-      }
-      acc.unshift({
-        ...curr,
-        epoch,
-      });
+  const projects = projectsIpfsWithRewards.reduce((acc, curr, idx) => {
+    if (!curr.totalValueOfAllocations) {
       return acc;
-    },
-    [] as (ProjectIpfsWithRewards & { epoch: number })[],
-  );
+    }
+    acc[idx % 2 === 0 ? 'push' : 'unshift'](curr);
+    return acc;
+  }, [] as ProjectIpfsWithRewards[]);
 
   const isAnyProjectDonated = projects.some(({ donations }) => donations > 0n);
 
   const isLoading = isFetchingProjectsIpfsWithRewards && !isAnyProjectDonated;
-
-  const isRightArrowDisabled =
-    (isLoading && initalLoadingRef.current) || epoch === currentEpoch! - 1;
-  const isLeftArrowDisabled = (isLoading && initalLoadingRef.current) || epoch < 2;
 
   useEffect(() => {
     if (!isDecisionWindowOpen || isLoading || epoch !== currentEpoch! - 1 || isAnyProjectDonated) {
@@ -81,35 +71,9 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,
       })}
-      titleSuffix={
-        <div className={styles.arrowsWrapper}>
-          <div
-            className={cx(styles.arrow, styles.leftArrow, isLeftArrowDisabled && styles.isDisabled)}
-            onClick={() => {
-              if (isLeftArrowDisabled) {
-                return;
-              }
-              setEpoch(prev => prev - 1);
-            }}
-          >
-            <Svg img={arrowRight} size={1.4} />
-          </div>
-          <div
-            className={cx(styles.arrow, isRightArrowDisabled && styles.isDisabled)}
-            onClick={() => {
-              if (isRightArrowDisabled) {
-                return;
-              }
-              setEpoch(prev => prev + 1);
-            }}
-          >
-            <Svg img={arrowRight} size={1.4} />
-          </div>
-        </div>
-      }
     >
       <div className={styles.root}>
-        <EpochResults isLoading={isLoading} projects={projects} />
+        <EpochResults epoch={epoch} isLoading={isLoading} projects={projects} />
       </div>
     </GridTile>
   );
