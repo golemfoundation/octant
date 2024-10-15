@@ -80,5 +80,6 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
+  vimeoVideos: ['vimeoVideos'],
   withdrawals: ['withdrawals'],
 };

@@ -1,13 +1,10 @@
-import cx from 'classnames';
 import _first from 'lodash/first';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import GridTile from 'components/shared/Grid/GridTile';
-import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProjectsIpfsWithRewards, {
   ProjectIpfsWithRewards,
 } from 'hooks/queries/useProjectsIpfsWithRewards';
@@ -26,8 +23,6 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   });
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsIpfsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
-  const isProjectAdminMode = useIsProjectAdminMode();
-  const { data: isPatronMode } = useIsPatronMode();
 
   const projects = projectsIpfsWithRewards.reduce((acc, curr, idx) => {
     if (!curr.totalValueOfAllocations) {
@@ -60,12 +55,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
 
   return (
     <GridTile
-      className={cx(
-        styles.gridTile,
-        className,
-        isProjectAdminMode && styles.isProjectAdminMode,
-        isPatronMode && styles.isPatronMode,
-      )}
+      className={className}
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,
       })}
