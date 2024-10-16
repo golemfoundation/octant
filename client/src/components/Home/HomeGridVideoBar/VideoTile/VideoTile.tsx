@@ -45,7 +45,7 @@ const VideoTile: FC<VideoTileProps> = ({ title, author, url }) => {
             });
           });
         }}
-        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;"
         allowFullScreen
         className={styles.video}
         referrerPolicy="strict-origin-when-cross-origin"

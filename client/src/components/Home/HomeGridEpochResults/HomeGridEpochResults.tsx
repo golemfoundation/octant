@@ -22,8 +22,9 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsIpfsWithRewards } =
-    useProjectsIpfsWithRewards(epoch);
-
+    useProjectsIpfsWithRewards(
+      isDecisionWindowOpen && epoch === currentEpoch! - 1 ? undefined : epoch,
+    );
   const projects = projectsIpfsWithRewards.reduce((acc, curr, idx) => {
     if (!curr.totalValueOfAllocations) {
       return acc;
