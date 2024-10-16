@@ -11,8 +11,8 @@ from app.constants import (
 from app.shared.blockchain_types import ChainTypes
 from fastapi import Depends
 from pydantic import Field, TypeAdapter
-from v2.core.types import Address
 from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings
+from v2.core.types import Address
 
 from .services import UQScoreGetter
 

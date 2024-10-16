@@ -36,10 +36,7 @@ from v2.projects.dependencies import (
     get_projects_settings,
 )
 from v2.projects.services import ProjectsAllocationThresholdGetter
-from v2.uniqueness_quotients.dependencies import (
-    get_uq_score_getter,
-    get_uq_score_settings,
-)
+from v2.uniqueness_quotients.dependencies import get_uq_score_getter, get_uq_score_settings
 
 from .schemas import UserAllocationRequest, UserAllocationRequestV1
 
@@ -97,20 +94,10 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
             yield (s4, threshold_getter, estimated_project_rewards)
 
         except Exception:
-            await asyncio.gather(
-                s1.rollback(),
-                s2.rollback(),
-                s3.rollback(),
-                s4.rollback(),
-            )
+            await cleanup_sessions(s1, s2, s3, s4)
             raise
         finally:
-            await asyncio.gather(
-                s1.close(),
-                s2.close(),
-                s3.close(),
-                s4.close(),
-            )
+            pass
 
 
 @asynccontextmanager
@@ -199,26 +186,10 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
             )
 
         except Exception:
-            await asyncio.gather(
-                s1.rollback(),
-                s2.rollback(),
-                s3.rollback(),
-                s4.rollback(),
-                s5.rollback(),
-                s6.rollback(),
-                s7.rollback(),
-            )
+            await cleanup_sessions(s1, s2, s3, s4, s5, s6, s7)
             raise
         finally:
-            await asyncio.gather(
-                s1.close(),
-                s2.close(),
-                s3.close(),
-                s4.close(),
-                s5.close(),
-                s6.close(),
-                s7.close(),
-            )
+            pass
 
 
 class AllocateNamespace(socketio.AsyncNamespace):
@@ -378,3 +349,21 @@ def from_dict(data: str) -> UserAllocationRequest:
         isManuallyEdited=requestV1.is_manually_edited,
     )
     return request
+
+
+async def safe_session_cleanup(session):
+    try:
+        await session.rollback()
+    except Exception:
+        # Log the rollback error, but don't raise it
+        logging.exception("Error during session rollback")
+    finally:
+        try:
+            await session.close()
+        except Exception:
+            # Log the close error, but don't raise it
+            logging.exception("Error during session close")
+
+
+async def cleanup_sessions(*sessions):
+    await asyncio.gather(*(safe_session_cleanup(s) for s in sessions))
