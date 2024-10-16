@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem/ProjectsListSkeletonItem';
@@ -13,6 +13,7 @@ import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsAddToAllocateButtonVisible from 'hooks/helpers/useIsAddToAllocateButtonVisible';
+import useIsAllocatedTo from 'hooks/helpers/useIsAllocatedTo';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -51,19 +52,13 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
     userAllocationsElements: userAllocations?.elements,
   });
 
-  const isAllocatedTo = useMemo(() => {
-    const isInUserAllocations = !!userAllocations?.elements.find(
-      ({ address: userAllocationAddress }) => userAllocationAddress === address,
-    );
-    const isInAllocations = allocations.includes(address);
-    if (epoch !== undefined) {
-      return isInUserAllocations;
-    }
-    if (isDecisionWindowOpen) {
-      return isInUserAllocations && isInAllocations;
-    }
-    return false;
-  }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
+  const isAllocatedTo = useIsAllocatedTo(
+    address,
+    allocations,
+    epoch!,
+    isDecisionWindowOpen!,
+    userAllocations,
+  );
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProject = epoch !== undefined;
 
@@ -158,10 +153,12 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
           )}
           {!isEpoch1 && (!epoch || epoch >= 4) && (
             <RewardsWithoutThreshold
+              address={address}
               className={styles.projectRewards}
               epoch={epoch}
               numberOfDonors={projectIpfsWithRewards.numberOfDonors}
               totalValueOfAllocations={projectIpfsWithRewards.totalValueOfAllocations}
+              variant="projectsView"
             />
           )}
         </Fragment>
