@@ -498,7 +498,15 @@
         "header": "Reporting",
         "milestone": "Milestone",
         "posted": "Posted",
+        "buttonExpand": {
+          "readMore": "Read more",
+          "readLess": "Read less"
+        },
         "viewOnKarmaGap": "View on KarmaGap",
+        "noResults": {
+          "header": "Nothing to report yet. Check back again soon",
+          "description": "Are you a project admin? Add your reporting <0>here</0>"
+        },
         "states": {
           "pending": "Pending",
           "complete": "Complete",

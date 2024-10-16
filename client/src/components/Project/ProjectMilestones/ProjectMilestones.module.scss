@@ -70,6 +70,12 @@
       }
     }
   }
+
+  .filtersNoMilestones {
+    font-size: $font-size-12;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+  }
 }
 
 .milestone {
@@ -101,12 +107,13 @@
   }
 
   .description {
+    white-space: pre-wrap;
     text-align: left;
-    font-size: $font-size-16;
+    font-size: $font-size-14;
     color: $color-octant-grey5;
     font-weight: $font-weight-semibold;
     border-top: 0.1rem solid $color-octant-grey8;
-    //padding-top: 0.8rem;
+    padding-top: 0.8rem;
     margin-top: 1rem;
 
     .date {
@@ -116,7 +123,11 @@
   }
 }
 
-.button {
+.buttonExpand {
+  font-size: $font-size-14 // button variant link3 has font-size-16, but here 14.
+}
+
+.buttonViewKarma {
   background: transparent;
   margin: 5.6rem auto;
   max-width: 22.6rem;

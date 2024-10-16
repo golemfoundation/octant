@@ -1,0 +1,17 @@
+.root {
+  height: 8rem;
+  width: 100%;
+}
+
+.rectangle1 {
+  @include skeleton();
+  height: 1.2rem;
+  width: 16rem;
+  margin-bottom: 0.8rem;
+}
+
+.rectangle2 {
+  @include skeleton();
+  height: 3.2rem;
+  width: 57.8rem;
+}

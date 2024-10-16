@@ -1,0 +1,44 @@
+.root {
+
+  .image {
+    width: 25rem;
+    margin-top: 8.8rem;
+    margin-bottom: 3.8rem;
+
+    @media #{$desktop-down} {
+      margin-top: 9.9rem;
+      margin-bottom: 4.5rem;
+    }
+
+    @media #{$tablet-down} {
+      margin-top: 7rem;
+      margin-bottom: 5rem;
+      width: 22rem;
+    }
+
+    @media #{$phone-down} {
+      margin-top: 4.3rem;
+      margin-bottom: 1.8rem;
+      width: 18rem;
+    }
+  }
+
+  .header {
+    font-size: $font-size-18;
+    font-weight: $font-weight-semibold;
+  }
+
+  .description {
+    font-size: $font-size-12;
+    color: $color-octant-grey5;
+    margin-top: 0.5rem;
+
+    @media #{$phone-down} {
+      font-size: $font-size-10;
+    }
+  }
+}
+
+.button {
+  font-size: $font-size-12;
+}
