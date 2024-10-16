@@ -59,3 +59,9 @@
     }
   }
 }
+
+.buttonsWebsiteAndShare {
+  @media #{$desktop-up} {
+    display: none;
+  }
+}

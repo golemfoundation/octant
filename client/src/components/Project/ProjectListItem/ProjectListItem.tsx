@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 
+import ProjectListItemButtonsWebsiteAndShare from 'components/Project/ProjectListItemButtonsWebsiteAndShare';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
 import ProjectMilestones from 'components/Project/ProjectMilestones';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
@@ -73,6 +74,12 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           dataTest="ProjectListItem__Description"
           innerHtml={decodedDescription}
           variant="big"
+        />
+        <ProjectListItemButtonsWebsiteAndShare
+          address={address}
+          className={styles.buttonsWebsiteAndShare}
+          name={name}
+          website={website}
         />
       </div>
       <ProjectMilestones projectAddress={address} />
