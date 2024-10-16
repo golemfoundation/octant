@@ -73,12 +73,25 @@ const ProjectsView = (): ReactElement => {
     data: searchedProjects,
     refetch: refetchSearchedProjects,
     status: statusSearchedProjects,
+    isFetching: isFetchingSearchedProjects,
   } = useSearchedProjects(projectsSearchParameters);
   const {
     data: searchedProjectsDetails,
     refetch: refetchSearchedProjectsDetails,
     isFetching: isFetchingSearchedProjectsDetails,
   } = useSearchedProjectsDetails(searchedProjects);
+
+  useEffect(() => {
+    if (
+      isProjectsSearchInProgress &&
+      searchedProjects &&
+      searchedProjects.length === 0 &&
+      !isFetchingSearchedProjects
+    ) {
+      setIsProjectsSearchInProgress(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchedProjects, isFetchingSearchedProjects]);
 
   useEffect(() => {
     if (isFetchingSearchedProjectsDetails) {
