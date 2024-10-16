@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from app.constants import GUEST_LIST, TIMEOUT_LIST
 from app.modules.user.antisybil.core import (
     _apply_gtc_staking_stamp_nullification,
     _has_guest_stamp_applied_by_gp,
