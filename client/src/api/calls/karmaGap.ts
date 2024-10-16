@@ -19,6 +19,7 @@ export type GrantsPerProgram = {
           slug: string;
           title: string;
         };
+        recipient: string;
       };
       // externalAddresses is set only when recipient does not match project has in Octant.
       externalAddresses?: {
@@ -28,7 +29,7 @@ export type GrantsPerProgram = {
     };
     recipient: string;
     // Date;
-    uid: string; 
+    uid: string;
     updatedAt: string;
   }[];
 };

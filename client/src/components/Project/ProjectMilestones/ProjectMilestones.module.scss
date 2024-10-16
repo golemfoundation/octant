@@ -135,4 +135,9 @@
   svg path {
     stroke: $color-octant-dark;
   }
+
+  @media #{$phone-down} {
+    width: 100%;
+    max-width: 100%;
+  }
 }

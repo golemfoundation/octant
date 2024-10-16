@@ -44,10 +44,6 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
     });
   };
 
-  if (isFetching) {
-    return <div>Loading...</div>;
-  }
-
   const states = [
     {
       filter: 'all',
@@ -96,7 +92,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
         [...Array(5).keys()].map(element => (
           <ProjectMilestonesSkeleton key={element} className={styles.milestone} />
         ))}
-      {!isFetching &&
+      {areMilestonesAvailable &&
         data?.milestones.slice(0, 5).map((element, index) => {
           const isCompleted = !!element?.completed;
           const isPending = !isCompleted;
@@ -157,13 +153,15 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
             </div>
           );
         })}
-      <Button
-        className={styles.buttonViewKarma}
-        hasLinkArrow
-        href={`https://gap.karmahq.xyz/project/${data?.project.details.data.slug}/grants/${data?.uid}/milestones-and-updates#all`}
-        label={t('viewOnKarmaGap')}
-        variant="secondary"
-      />
+      {areMilestonesAvailable && (
+        <Button
+          className={styles.buttonViewKarma}
+          hasLinkArrow
+          href={`https://gap.karmahq.xyz/project/${data?.project.details.data.slug}/grants/${data?.uid}/milestones-and-updates#all`}
+          label={t('viewOnKarmaGap')}
+          variant="secondary"
+        />
+      )}
     </div>
   );
 };
