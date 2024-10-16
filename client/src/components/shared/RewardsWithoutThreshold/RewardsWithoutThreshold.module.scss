@@ -96,11 +96,15 @@
       }
 
       &.donorsSection {
-        @media #{$tablet-up} {
-          cursor: pointer;
+        &.variant-- {
+          &projectView {
+            @media #{$tablet-up} {
+              cursor: pointer;
 
-          &:hover {
-            background: $color-octant-grey8;
+              &:hover {
+                background: $color-octant-grey8;
+              }
+            }
           }
         }
       }
