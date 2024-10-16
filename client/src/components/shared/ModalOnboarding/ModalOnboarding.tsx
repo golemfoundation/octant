@@ -79,6 +79,10 @@ const ModalOnboarding = (): ReactElement => {
     steps: stepsToUse,
   });
 
+  const shouldOnboardingBeOpened =
+    isConnected &&
+    (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed);
+
   // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
   const currentStep = useMemo(() => {
     if (!stepsToUse.length || (isFetchingUserTOS && !isContract)) {
@@ -99,7 +103,7 @@ const ModalOnboarding = (): ReactElement => {
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
-    if (!isOnboardingDone || !antisybilStatusScore) {
+    if (isOnboardingModalOpen || !antisybilStatusScore || shouldOnboardingBeOpened) {
       return;
     }
     // When user is on the list - open the modal.
@@ -117,17 +121,19 @@ const ModalOnboarding = (): ReactElement => {
       setIsTimeoutListPresenceModalOpen({ address: address!, value: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isOnboardingDone, antisybilStatusScore?.isOnTimeOutList]);
+  }, [
+    address,
+    isOnboardingModalOpen,
+    antisybilStatusScore?.isOnTimeOutList,
+    shouldOnboardingBeOpened,
+  ]);
 
   useEffect(() => {
-    if (
-      isConnected &&
-      (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed)
-    ) {
+    if (shouldOnboardingBeOpened) {
       setIsOnboardingModalOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected]);
+  }, [isConnected, shouldOnboardingBeOpened]);
 
   useEffect(() => {
     if (isOnboardingDone) {
