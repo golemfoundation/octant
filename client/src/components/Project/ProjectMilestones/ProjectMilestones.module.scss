@@ -1,0 +1,143 @@
+.root {
+  padding: 0 3.2rem;
+
+  @media #{$tablet-up} {
+    padding: 0 $projectListItemHorizontalPaddingTabletUp;
+  }
+
+  @media #{$desktop-up} {
+    padding: 0 $projectListItemHorizontalPaddingDesktopUp;
+  }
+
+  @media #{$large-desktop-up} {
+    padding: 0 $projectListItemHorizontalPaddingLargeDesktop;
+  }
+}
+
+.header {
+  @include fontBig($font-size-16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.1rem solid $color-octant-grey1;
+  height: 7.2rem;
+
+  @media #{$tablet-up} {
+    font-size: $font-size-18;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-24;
+    height: 8.8rem;
+  }
+
+  .filters {
+    display: flex;
+    height: 4rem;
+    font-size: $font-size-10;
+    background: $color-white;
+    padding: 0.4rem;
+    border-radius: $border-radius-08;
+
+    .filter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 8.3rem;
+      border-radius: $border-radius-08;
+      color: $color-octant-grey2;
+      cursor: pointer;
+
+      &.isSelected, &:hover {
+        color: $color-octant-dark;
+      }
+
+      &.isSelected {
+        background: $color-octant-grey6;
+
+        .icon {
+          opacity: 1;
+        }
+      }
+
+      @media #{$phone-down} {
+        width: 4.8rem;
+      }
+
+      .icon {
+        margin: 0 0.8rem;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .filtersNoMilestones {
+    font-size: $font-size-12;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.milestone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: $color-white;
+  padding: 2rem 2.4rem;
+  border-radius: $border-radius-20;
+  margin-top: 1.6rem;
+
+  .timelineAndState {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-10;
+    text-transform: uppercase;
+    color: $color-octant-grey5;
+    margin-bottom: 1rem;
+
+    .icon {
+      margin: 0 0.8rem;
+    }
+  }
+
+  .title {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-18;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    white-space: pre-wrap;
+    text-align: left;
+    font-size: $font-size-14;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+    border-top: 0.1rem solid $color-octant-grey8;
+    padding-top: 0.8rem;
+    margin-top: 1rem;
+
+    .date {
+      font-size: $font-size-10;
+      padding: 0.8rem 0;
+    }
+  }
+}
+
+.buttonExpand {
+  font-size: $font-size-14 // button variant link3 has font-size-16, but here 14.
+}
+
+.buttonViewKarma {
+  background: transparent;
+  margin: 5.6rem auto;
+  max-width: 22.6rem;
+
+  svg path {
+    stroke: $color-octant-dark;
+  }
+
+  @media #{$phone-down} {
+    width: 100%;
+    max-width: 100%;
+  }
+}
