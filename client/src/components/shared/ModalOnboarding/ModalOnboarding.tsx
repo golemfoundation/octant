@@ -121,7 +121,12 @@ const ModalOnboarding = (): ReactElement => {
       setIsTimeoutListPresenceModalOpen({ address: address!, value: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isOnboardingDone, antisybilStatusScore?.isOnTimeOutList, shouldOnboardingBeOpened]);
+  }, [
+    address,
+    isOnboardingModalOpen,
+    antisybilStatusScore?.isOnTimeOutList,
+    shouldOnboardingBeOpened,
+  ]);
 
   useEffect(() => {
     if (shouldOnboardingBeOpened) {
