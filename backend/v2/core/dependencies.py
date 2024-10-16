@@ -134,3 +134,21 @@ def get_chain_settings() -> ChainSettings:
 
 
 GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
+
+
+class SocketioSettings(OctantSettings):
+    host: str = Field(..., alias="SOCKETIO_REDIS_HOST")
+    port: int = Field(..., alias="SOCKETIO_REDIS_PORT")
+    password: str = Field(..., alias="SOCKETIO_REDIS_PASSWORD")
+    db: int = Field(..., alias="SOCKETIO_REDIS_DB")
+
+    @property
+    def url(self) -> str:
+        return f"redis://:{self.password}@{self.host}:{self.port}/{self.db}"
+
+
+def get_socketio_settings() -> SocketioSettings:
+    return SocketioSettings()
+
+
+GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]

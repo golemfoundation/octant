@@ -1,6 +1,8 @@
 # Create FastAPI app
 import logging
+import os
 
+import redis
 import socketio
 from app.exceptions import OctantException
 from fastapi import FastAPI
@@ -8,6 +10,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from v2.allocations.router import api as allocations_api
 from v2.allocations.socket import AllocateNamespace
+from v2.core.dependencies import get_socketio_settings
 from v2.project_rewards.router import api as project_rewards_api
 
 fastapi_app = FastAPI()
@@ -35,7 +38,28 @@ async def fastapi_endpoint():
     return {"message": "This is a FastAPI endpoint."}
 
 
-sio = socketio.AsyncServer(cors_allowed_origins="*", async_mode="asgi")
+def get_socketio_manager() -> socketio.AsyncRedisManager | None:
+    if os.environ.get("SOCKETIO_MANAGER_TYPE") != "redis":
+        logging.info("Initializing socketio manager to default in-memory manager")
+        return None
+
+    settings = get_socketio_settings()
+    try:
+        # Attempt to create a Redis connection
+        redis_client = redis.Redis.from_url(settings.url)
+        # Test the connection
+        redis_client.ping()
+        # If successful, return the AsyncRedisManager
+        return socketio.AsyncRedisManager(settings.url)
+    except Exception as e:
+        logging.error(f"Failed to establish Redis connection: {str(e)}")
+        raise
+
+
+mgr = get_socketio_manager()
+sio = socketio.AsyncServer(
+    cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
+)
 sio.register_namespace(AllocateNamespace("/"))
 sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=fastapi_app)
 
