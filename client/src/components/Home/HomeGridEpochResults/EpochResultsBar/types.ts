@@ -5,7 +5,6 @@ export default interface EpochResultsBarProps {
   imageSources: string[];
   isDragging: boolean;
   isHighlighted: boolean;
-  isLowlighted: boolean;
   setHighlightedBarAddress: (address: string | null) => void;
   topBarHeightPercentage: number;
 }

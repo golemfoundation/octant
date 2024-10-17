@@ -1,8 +1,9 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
-type GridTileProps = {
-  children: ReactNode;
-  className?: string;
+type GridTileProps = Omit<
+  React.PropsWithChildren<React.HtmlHTMLAttributes<HTMLDivElement>>,
+  'title'
+> & {
   dataTest?: string;
   showTitleDivider?: boolean;
   title: string | ReactNode;

@@ -2,6 +2,7 @@
   height: 100%;
   min-width: 0.8rem;
   position: relative;
+  flex-grow: 1;
 
   &.hasValue {
     cursor: pointer;
@@ -29,6 +30,7 @@
     left: 0;
     width: 100%;
     position: absolute;
+    min-height: 6%;
   }
 
   .bottomBar {
@@ -39,6 +41,7 @@
     width: 100%;
     position: absolute;
     z-index: $z-index-2;
+    min-height: 2%;
   }
 
   .projectLogo {
@@ -51,8 +54,8 @@
     height: 3.2rem;
     width: 3.2rem;
     border-radius: 100%;
-    background-color: $color-octant-grey2;
-    box-shadow: 0 0 2.5rem 0 $color-black-10;
+    background-color: $color-white;
+    box-shadow: 0 0 2.5rem 0 $color-black-20;
     z-index: $z-index-3;
 
     .projectLogoImg {
@@ -64,7 +67,7 @@
     .triangle {
       position: absolute;
       bottom: -0.7rem;
-      border-top: 0.8rem solid $color-octant-grey2;
+      border-top: 0.8rem solid $color-white;
       border-left: 0.4rem solid transparent;
       border-right: 0.4rem solid transparent;
     }
