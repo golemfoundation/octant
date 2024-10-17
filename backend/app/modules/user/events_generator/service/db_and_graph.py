@@ -45,6 +45,8 @@ class DbAndGraphEventsGenerator(Model):
             get_unlocks_by_address_and_timestamp_range(user_address, start, end)
         )
 
+        # TODO Integrate with Sablier here
+
         events = list(map(DepositEvent.from_dict, events))
         sorted_events = sorted(events, key=attrgetter("timestamp"))
 
@@ -71,6 +73,14 @@ class DbAndGraphEventsGenerator(Model):
 
         epoch_events = get_locks_by_timestamp_range(start, end)
         epoch_events += get_unlocks_by_timestamp_range(start, end)
+
+        # TODO add get_locks and unlocks from Sablier
+        # (
+        #     sablier_events_locks_related,
+        #     sablier_events_unlocks_related,
+        # ) = get_locks_unlocks_by_timestamp_range()
+        # mapped_locks, mapped_unlocks = map_from_sablier_to_lock_and_unlocks()
+
         epoch_events = list(map(DepositEvent.from_dict, epoch_events))
         sorted_events = sorted(epoch_events, key=attrgetter("user", "timestamp"))
 

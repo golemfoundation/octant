@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime as DateTime, timezone
 
@@ -30,7 +32,7 @@ class Timestamp:
     def __repr__(self):
         return f"Timestamp({str(self.timestamp_us())})"
 
-    def __eq__(self, o):
+    def __eq__(self, o: Timestamp):
         if isinstance(o, Timestamp):
             return self._timestamp_us == o._timestamp_us
         elif isinstance(o, int):
@@ -38,12 +40,20 @@ class Timestamp:
         else:
             return False
 
-    def __le__(self, o):
+    def __le__(self, o: Timestamp):
         if isinstance(o, Timestamp):
             return self._timestamp_us <= o._timestamp_us
         else:
             raise TypeError(
                 f"'<=' not supported between instances of type '{type(self)}' and '{type(o)}'"
+            )
+
+    def __lt__(self, o: Timestamp):
+        if isinstance(o, Timestamp):
+            return self._timestamp_us < o._timestamp_us
+        else:
+            raise TypeError(
+                f"'<' not supported between instances of type '{type(self)}' and '{type(o)}'"
             )
 
 

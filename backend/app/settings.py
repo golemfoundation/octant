@@ -71,6 +71,11 @@ class Config(object):
         "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROJECT_CIDS
     )
 
+    # Sablier
+    SABLIER_SUBGRAPH_ENDPOINT = os.getenv("SABLIER_SUBGRAPH_ENDPOINT")
+    SABLIER_SENDER_ADDRESS = os.getenv("SABLIER_SENDER_ADDRESS")
+    GLM_TOKEN_ADDRESS = os.getenv("GLM_TOKEN_ADDRESS")
+
 
 class ProdConfig(Config):
     """Production configuration."""
@@ -92,11 +97,11 @@ class ProdConfig(Config):
         "pool_pre_ping": True,
     }
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
-    CACHE_TYPE = "RedisCache"
-    CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST")
-    CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT")
-    CACHE_REDIS_PASSWORD = os.getenv("CACHE_REDIS_PASSWORD")
-    CACHE_REDIS_DB = os.getenv("CACHE_REDIS_DB")
+    # CACHE_TYPE = "RedisCache"
+    # CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST")
+    # CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT")
+    # CACHE_REDIS_PASSWORD = os.getenv("CACHE_REDIS_PASSWORD")
+    # CACHE_REDIS_DB = os.getenv("CACHE_REDIS_DB")
 
 
 class DevConfig(Config):
