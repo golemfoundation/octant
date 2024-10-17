@@ -17,7 +17,7 @@ const fields = [['name', 'player_embed_url', 'user.name']];
 export async function vimeoApiGetAlbumVideos(): Promise<GetAlbumVideosResponse> {
   return apiService
     .get(
-      `${vimeoApiEndpoint}/users/${vimeoUserId}/albums/${vimeoAlbumId}/videos?fields=${fields.join(',')}&per_page=100`,
+      `${vimeoApiEndpoint}/users/${vimeoUserId}/albums/${vimeoAlbumId}/videos?fields=${fields.join(',')}&sort=manual&per_page=100`,
       {
         headers: {
           Authorization: `bearer ${publicAccessToken}`,
