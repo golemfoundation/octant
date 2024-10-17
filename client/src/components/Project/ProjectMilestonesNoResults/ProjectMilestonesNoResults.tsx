@@ -8,7 +8,8 @@ import { KARMA_GAP } from 'constants/urls';
 import styles from './ProjectMilestonesNoResults.module.scss';
 
 const ProjectMilestonesNoResults = (): ReactElement => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.project.milestones.noResults' });
+  const keyPrefix = 'views.project.milestones.noResults';
+  const { t } = useTranslation('translation', { keyPrefix });
 
   return (
     <div className={styles.root}>
@@ -17,7 +18,7 @@ const ProjectMilestonesNoResults = (): ReactElement => {
       <div className={styles.description}>
         <Trans
           components={[<Button className={styles.button} href={KARMA_GAP} variant="link3" />]}
-          i18nKey="views.project.milestones.noResults.description"
+          i18nKey={`${keyPrefix}.description`}
         />
       </div>
     </div>
