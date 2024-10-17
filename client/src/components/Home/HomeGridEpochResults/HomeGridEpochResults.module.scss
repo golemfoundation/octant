@@ -1,22 +1,3 @@
-.gridTile {
-  @media #{$tablet-up} {
-    grid-column: span 2;
-  }
-
-  @media #{$desktop-up} {
-    grid-column: span 3;
-  }
-
-  @media #{$large-desktop-up} {
-    grid-column: span 2;
-
-    &.isProjectAdminMode,
-    &.isPatronMode {
-      grid-column: span 4;
-    }
-  }
-}
-
 .root {
   padding: 0 0.8rem 0.8rem;
   display: flex;

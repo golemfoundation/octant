@@ -13,6 +13,7 @@ import {
   LAST_SEEN_STEP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+  SHOW_HELP_VIDEOS,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
@@ -119,6 +120,10 @@ const LocalStorageService = () => {
     );
   };
 
+  const validateShowHelpVideos = (): void => {
+    validateBoolean(SHOW_HELP_VIDEOS, settingsStoreInitialState.showHelpVideos);
+  };
+
   const validateProjectsAddressesRandomizedOrder = ({
     currentEpoch,
     projectsEpoch,
@@ -204,6 +209,7 @@ const LocalStorageService = () => {
     validateIsOnboardingDone();
     validateDisplayCurrency();
     validateIsCryptoMainValueDisplay();
+    validateShowHelpVideos();
     validateRewardsForProjects();
     validateHasOnboardingBeenClosed();
     validateLastSeenStep();

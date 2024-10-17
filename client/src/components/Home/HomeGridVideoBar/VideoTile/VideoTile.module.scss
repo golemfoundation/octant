@@ -1,0 +1,62 @@
+.root {
+  position: relative;
+  width: 28rem;
+  transition: opacity $transition-time-1;
+  opacity: 0.5;
+
+  &.isInView {
+    opacity: 1;
+  }
+
+  .video,
+  .videoOverlay {
+    height: 16.8rem;
+    width: 100%;
+    border: none;
+    border-radius: $border-radius-08 $border-radius-08 0 0;
+  }
+
+  .videoOverlay {
+    top: 0;
+    position: absolute;
+    background-color: $color-octant-grey2;
+    opacity: 0.3;
+
+    &.isVideoPlaying {
+      cursor: pointer;
+      opacity: 0;
+    }
+  }
+
+  .playButton {
+    position: absolute;
+    top: 6.7rem;
+    left: 50%;
+    transform: translate(-50%);
+    cursor: pointer;
+  }
+
+  .info {
+    width: 100%;
+    background: $color-octant-grey8;
+    font-weight: $font-weight-bold;
+    line-height: 1.8rem;
+    padding: 1rem 2.4rem;
+    margin-top: -0.4rem;
+    border-radius: 0 0 $border-radius-08 $border-radius-08;
+    text-align: left;
+
+    .title {
+      font-size: $font-size-14;
+      color: $color-octant-dark;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subtitle {
+      font-size: $font-size-12;
+      color: $color-octant-grey5;
+    }
+  }
+}
