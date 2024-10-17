@@ -11,6 +11,7 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
 import styles from './Settings.module.scss';
+import SettingsShowHelpVideosBox from './SettingsShowHelpVideosBox';
 
 const Settings = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.settings' });
@@ -30,6 +31,7 @@ const Settings = (): ReactElement => {
         )}
         <SettingsCryptoMainValueBox />
         <SettingsCurrencyBox />
+        <SettingsShowHelpVideosBox />
         {isConnected && !isProjectAdminMode && <SettingsPatronModeBox />}
         {!isProjectAdminMode && !isPatronMode && <SettingsShowOnboardingBox />}
       </div>
