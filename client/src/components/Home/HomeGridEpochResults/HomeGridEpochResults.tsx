@@ -1,4 +1,3 @@
-import _first from 'lodash/first';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -58,6 +57,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   return (
     <GridTile
       className={className}
+      onMouseLeave={() => setHighlightedBarAddress(null)}
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,
       })}
