@@ -2,7 +2,7 @@ from typing import Literal, TypedDict
 from flask import current_app as app
 from gql import gql
 
-from app.extensions import gql_factory
+from app.extensions import gql_octant_factory
 
 
 class UnlockEvent(TypedDict):
@@ -44,9 +44,9 @@ def get_user_unlocks_history(
     }
 
     app.logger.debug(f"[Subgraph] Getting user {user_address} unlocks")
-    partial_result = gql_factory.build().execute(query, variable_values=variables)[
-        "unlockeds"
-    ]
+    partial_result = gql_octant_factory.build().execute(
+        query, variable_values=variables
+    )["unlockeds"]
 
     result = []
 
@@ -94,7 +94,9 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts) -> list[UnlockEvent]:
     app.logger.debug(
         f"[Subgraph] Getting unlocks in timestamp range {from_ts} - {to_ts}"
     )
-    result = gql_factory.build().execute(query, variable_values=variables)["unlockeds"]
+    result = gql_octant_factory.build().execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
@@ -130,7 +132,9 @@ def get_unlocks_by_address_and_timestamp_range(
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} unlocks in timestamp range {from_ts} - {to_ts}"
     )
-    result = gql_factory.build().execute(query, variable_values=variables)["unlockeds"]
+    result = gql_octant_factory.build().execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
@@ -164,7 +168,9 @@ def get_last_unlock_before(user_address: str, before: int) -> UnlockEvent | None
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} last unlock before {before}"
     )
-    unlocks = gql_factory.build().execute(query, variable_values=variables)["unlockeds"]
+    unlocks = gql_octant_factory.build().execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {unlocks}")
 
     return unlocks[0] if unlocks else None

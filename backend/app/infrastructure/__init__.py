@@ -22,6 +22,11 @@ default_decorators = {
 }
 
 
+class SubgraphEndpoints:
+    OCTANT_SUBGRAPH = "SUBGRAPH_ENDPOINT"
+    SABLIER_SUBGRAPH = "SABLIER_SUBGRAPH_ENDPOINT"
+
+
 class OctantResource(Resource):
     def __init__(self, *args, **kwargs):
         Resource.__init__(self, *args, *kwargs)
@@ -108,8 +113,8 @@ class GQLConnectionFactory:
     def __init__(self):
         self._url = None
 
-    def set_url(self, config: Config):
-        self._url = config["SUBGRAPH_ENDPOINT"]
+    def set_url(self, config: Config, key: SubgraphEndpoints):
+        self._url = config[key]
 
     def build(self):
         if not self._url:
