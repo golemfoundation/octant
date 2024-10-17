@@ -58,6 +58,11 @@ def config(app_level):
             "apscheduler.executors.default": {
                 "level": "WARNING",
             },
+            "uvicorn": {  # Adding for the uvicorn logger (FastAPI)
+                "level": app_level,
+                "handlers": ["stdout", "stderr"],
+                "propagate": 0,
+            },
         },
     }
 
