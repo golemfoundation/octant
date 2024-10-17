@@ -11,7 +11,6 @@ const VideoTile: FC<VideoTileProps> = ({ title, author, url }) => {
   const playerRef = useRef<Player>();
   const isInView = useInView(ref, { amount: 'all' });
 
-  // https://developer.vimeo.com/player/sdk/embed
   const urlWithOptions = `${url}&dnt=true&muted=true`;
 
   return (
