@@ -29,6 +29,7 @@ export default interface ButtonProps {
     [key: string]: string;
   };
   dataTest?: string;
+  hasLinkArrow?: boolean;
   href?: string;
   isActive?: boolean;
   isButtonScalingUpOnHover?: boolean;

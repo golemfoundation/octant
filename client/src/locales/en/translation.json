@@ -290,11 +290,6 @@
         "walletConnect": "WalletConnect",
         "ledgerConnect": "Ledger"
       },
-      "donors": {
-        "donationsNotEnabled": "Donations are not enabled in this epoch",
-        "noDonationsYet": "No donations yet",
-        "viewAll": "View all"
-      },
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
@@ -333,7 +328,8 @@
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
-        "didNotReachThreshold": "Did not reach threshold"
+        "didNotReachThreshold": "Did not reach threshold",
+        "viewAllDonors": "View all donors"
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
@@ -404,7 +400,13 @@
   },
   "views": {
     "home": {
-      "title": "Welcome to Epoch {{epoch}}"
+      "title": {
+        "isDecisionWindowOpenFalse": "Welcome to Epoch {{epoch}}",
+        "isDecisionWindowOpenTrue": {
+          "desktop": "Welcome to Epoch {{epoch}} allocation window",
+          "mobile": "Welcome to E{{epoch}} AW"
+        }
+      }
     },
     "metrics": {
       "epoch1Info": "It's Epoch 1, so there are no metrics for the past. It's just a placeholder, please come back in Epoch 2.",
@@ -500,7 +502,26 @@
     "project": {
       "loadingProblem": "Loading of this project encountered a problem.",
       "backToTop": "Back to Top",
-      "share": "Share"
+      "share": "Share",
+      "milestones": {
+        "header": "Reporting",
+        "milestone": "Milestone",
+        "posted": "Posted",
+        "buttonExpand": {
+          "readMore": "Read more",
+          "readLess": "Read less"
+        },
+        "viewOnKarmaGap": "View on KarmaGap",
+        "noResults": {
+          "header": "Nothing to report yet. Check back again soon",
+          "description": "Are you a project admin? Add your reporting <0>here</0>"
+        },
+        "states": {
+          "pending": "Pending",
+          "complete": "Complete",
+          "all": "All"
+        }
+      }
     },
     "projects": {
       "viewTitle": "Browse Epoch {{epochNumber}} projects",
