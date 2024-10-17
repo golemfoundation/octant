@@ -16,7 +16,6 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
   bottomBarHeightPercentage,
   setHighlightedBarAddress,
   isHighlighted,
-  isLowlighted,
   imageSources,
   epoch,
   isDragging,
@@ -52,7 +51,6 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
   return (
     <motion.div
       ref={ref}
-      animate={{ opacity: isLowlighted ? 0.5 : 1 }}
       className={cx(styles.root, topBarHeightPercentage && styles.hasValue)}
       id={EPOCH_RESULTS_BAR_ID}
       onClick={e => {
@@ -66,19 +64,12 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
         }
         window.open(`${ROOT_ROUTES.project.absolute}/${epoch}/${address}`);
       }}
-      onMouseLeave={() => {
-        if (isMobile) {
-          return;
-        }
-        setHighlightedBarAddress(null);
-      }}
       onMouseOver={() => {
         if (isDragging || isMobile) {
           return;
         }
         setHighlightedBarAddress(address);
       }}
-      whileHover={{ opacity: 1 }}
     >
       <AnimatePresence>
         {isHighlighted && (

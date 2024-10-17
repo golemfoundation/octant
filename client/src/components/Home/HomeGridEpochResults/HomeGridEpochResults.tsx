@@ -18,6 +18,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const [epoch, setEpoch] = useState<number>(currentEpoch! - 1);
+  const [highlightedBarAddress, setHighlightedBarAddress] = useState<null | string>(null);
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridEpochResults',
   });
@@ -62,7 +63,13 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
       })}
     >
       <div className={styles.root}>
-        <EpochResults epoch={epoch} isLoading={isLoading} projects={projects} />
+        <EpochResults
+          epoch={epoch}
+          highlightedBarAddress={highlightedBarAddress}
+          isLoading={isLoading}
+          projects={projects}
+          setHighlightedBarAddress={setHighlightedBarAddress}
+        />
       </div>
     </GridTile>
   );
