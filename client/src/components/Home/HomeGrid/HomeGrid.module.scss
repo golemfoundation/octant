@@ -1,3 +1,105 @@
 .gridTile {
   height: 32.8rem;
 }
+
+.transactions {
+  @media #{$large-desktop-up} {
+    order: 2;
+  }
+
+  &.isPatronMode,
+  &.isProjectAdminMode {
+    order: 0;
+  }
+}
+
+.rewardsEstimator {
+  @media #{$large-desktop-up} {
+    order: 2;
+  }
+
+  &.isPatronMode,
+  &.isProjectAdminMode {
+    order: 0;
+  }
+}
+
+.videoBar {
+  position: relative;
+  order: 1;
+  grid-column: span 1;
+
+  @media #{$tablet-up} {
+    grid-column: span 2;
+  }
+
+  @media #{$desktop-up} {
+    grid-column: span 3;
+  }
+
+  @media #{$large-desktop-up} {
+    grid-column: span 4;
+  }
+
+  &.isPatronMode {
+    @media #{$tablet-up} {
+      grid-column: span 2;
+    }
+
+    @media #{$large-desktop-up} {
+      grid-column: span 4;
+    }
+  }
+
+  &.isProjectAdminMode {
+    order: 1;
+    grid-column: span 1;
+
+    @media #{$desktop-up} {
+      grid-column: span 3;
+    }
+
+    @media #{$large-desktop-up} {
+      grid-column: span 1;
+    }
+  }
+}
+.epochResults {
+  order: 2;
+
+  @media #{$tablet-up} {
+    grid-column: span 2;
+  }
+
+  @media #{$desktop-up} {
+    grid-column: span 3;
+
+    &.isPatronMode:not(.withVideoBar) {
+      order: 0;
+      grid-column: span 2;
+    }
+  }
+
+  @media #{$large-desktop-up} {
+    grid-column: span 2;
+
+    &.isProjectAdminMode,
+    &.isPatronMode,
+    &.isPatronMode:not(.withVideoBar) {
+      order: 2;
+      grid-column: span 4;
+    }
+  }
+}
+
+.divider1 {
+  @media #{$tablet-up} {
+    order: 1;
+  }
+}
+
+.divider2 {
+  @media #{$tablet-up} {
+    order: 2;
+  }
+}

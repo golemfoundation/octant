@@ -9,6 +9,7 @@ import {
   LAST_SEEN_STEP,
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
+  SHOW_HELP_VIDEOS,
 } from 'constants/localStorageKeys';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 
@@ -89,6 +90,12 @@ describe('LocalStorageService', () => {
       localStorage.setItem(IS_CRYPTO_MAIN_VALUE_DISPLAY, 'not-a-boolean');
       localStorageService.init(localStorageInitParams);
       expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).toBe('true');
+    });
+
+    it(`should validate ${SHOW_HELP_VIDEOS}`, () => {
+      localStorage.setItem(SHOW_HELP_VIDEOS, 'not-a-boolean');
+      localStorageService.init(localStorageInitParams);
+      expect(localStorage.getItem(SHOW_HELP_VIDEOS)).toBe('true');
     });
 
     it(`should validate ${ALLOCATION_REWARDS_FOR_PROJECTS}`, () => {
