@@ -58,8 +58,8 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
                 className={cx(styles.buttonNavigation, isActive && styles.isActive)}
                 dataTest={`Navbar__Button--${label}`}
                 Icon={
-                  to === ROOT_ROUTES.settings.absolute ? (
-                    <Svg img={icon} size={isTablet ? 3 : 2.4} />
+                  to === ROOT_ROUTES.settings.absolute || to === ROOT_ROUTES.allocation.absolute ? (
+                    <Svg classNameSvg={styles.bigIcon} img={icon} size={isTablet ? 3 : 2.4} />
                   ) : (
                     <Svg
                       classNameSvg={
