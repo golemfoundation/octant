@@ -1,5 +1,9 @@
 .root {
-  padding: 0.8rem 2.4rem 2.4rem;
+  padding: 1.4rem 2.4rem 2.4rem;
+
+  @media #{$tablet-up} {
+    padding-top: 0.8rem;
+  }
 
   .divider {
     margin-top: 2rem;
@@ -11,5 +15,9 @@
   .withdrawEthButton {
     margin-top: 2.4rem;
     width: 100%;
+  }
+
+  .pending {
+    min-height: 6.4rem;
   }
 }

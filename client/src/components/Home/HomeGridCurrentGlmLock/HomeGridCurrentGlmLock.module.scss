@@ -1,5 +1,9 @@
 .root {
-  padding: 0.8rem 2.4rem 2.4rem;
+  padding: 1.4rem 2.4rem 2.4rem;
+
+  @media #{$tablet-up} {
+    padding-top: 0.8rem;
+  }
 
   .divider {
     margin-top: 2rem;
@@ -11,5 +15,8 @@
   .lockGlmButton {
     margin-top: 2.4rem;
     width: 100%;
+  }
+  .effective {
+    min-height: 6.4rem;
   }
 }

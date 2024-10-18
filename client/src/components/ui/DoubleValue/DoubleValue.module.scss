@@ -35,6 +35,7 @@
 
     &large {
       @include fontBig($font-size-24);
+      margin-bottom: 0.5rem;
     }
 
     &standard {
