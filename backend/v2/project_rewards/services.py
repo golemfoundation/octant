@@ -4,9 +4,11 @@ from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 from v2.allocations.repositories import get_allocations_with_user_uqs
 from v2.matched_rewards.services import MatchedRewardsEstimator
+from v2.project_rewards.capped_quadriatic import (
+    CappedQuadriaticFunding,
+    capped_quadriatic_funding,
+)
 from v2.projects.contracts import ProjectsContracts
-
-from .capped_quadriatic import CappedQuadriaticFunding, capped_quadriatic_funding
 
 
 @dataclass

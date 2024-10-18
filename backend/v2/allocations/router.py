@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-
-from .dependencies import GetAllocator
-from .schemas import UserAllocationRequest, UserAllocationRequestV1
+from v2.allocations.dependencies import GetAllocator
+from v2.allocations.schemas import UserAllocationRequest, UserAllocationRequestV1
 
 api = APIRouter(prefix="/allocations", tags=["Allocations"])
 

@@ -9,10 +9,13 @@ from sqlalchemy import Numeric, cast, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
+from v2.allocations.schemas import (
+    AllocationWithUserUQScore,
+    ProjectDonation,
+    UserAllocationRequest,
+)
 from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
-
-from .schemas import AllocationWithUserUQScore, ProjectDonation, UserAllocationRequest
 
 
 async def sum_allocations_by_epoch(session: AsyncSession, epoch_number: int) -> int:

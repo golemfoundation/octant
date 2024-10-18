@@ -63,12 +63,4 @@ async def get_gp_stamps_by_address(
         .limit(1)
     )
 
-    # result = await session.execute(
-    #     select(GPStamps)
-    #     .join(User)
-    #     .filter(User.address == to_checksum_address(user_address))
-    #     .order_by(GPStamps.created_at.desc())
-    #     .limit(1)
-    # )
-
     return result
