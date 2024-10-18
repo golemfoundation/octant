@@ -5,8 +5,8 @@ import styles from './style.module.scss';
 export const allocate: SvgImageConfig = {
   className: styles.allocate,
   markup:
-    '<path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m13.6 15.131-4.426-4.623A2.623 2.623 0 0 1 12.883 6.8l.723.725.724-.725a2.622 2.622 0 1 1 3.708 3.71L13.6 15.13ZM10 27.133a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 27.133a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m4 10.333 2.485 8.413a1.6 1.6 0 0 0 1.546 1.187h11.54a1.6 1.6 0 0 0 1.549-1.187L24.574 5.78A2.4 2.4 0 0 1 26.893 4H28"/>',
-  viewBox: '0 0 32 32',
+    '<g clip-path="url(#allocate)" stroke="#171717" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.124 9.66 4.666 6.048a2.05 2.05 0 0 1 2.898-2.897l.565.566.565-.566a2.048 2.048 0 1 1 2.897 2.897L8.124 9.66ZM5.313 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125ZM11.563 19.035a1.563 1.563 0 1 0 0-3.125 1.563 1.563 0 0 0 0 3.125Z"/><path d="m.625 5.912 1.942 6.573a1.25 1.25 0 0 0 1.207.927h9.016a1.25 1.25 0 0 0 1.21-.927l2.698-10.128A1.875 1.875 0 0 1 18.51.965h.865"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h20v20H0z"/></clipPath></defs>',
+  viewBox: '0 0 20 20',
 };
 
 export const metrics: SvgImageConfig = {
