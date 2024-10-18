@@ -5,8 +5,7 @@ from typing import Dict, NamedTuple
 
 from v2.allocations.schemas import AllocationWithUserUQScore
 from v2.core.types import Address
-
-from .schemas import ProjectFundingSummary
+from v2.project_rewards.schemas import ProjectFundingSummary
 
 
 class CappedQuadriaticFunding(NamedTuple):

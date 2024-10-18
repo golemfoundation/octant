@@ -104,7 +104,7 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
-    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "DEBUG")
     DB_NAME = "dev.db"
     CHAIN_ID = int(os.getenv("CHAIN_ID", 1337))
     # Put the db file in project root

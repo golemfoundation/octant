@@ -2,8 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from v2.core.dependencies import OctantSettings, Web3
-
-from .contracts import DEPOSITS_ABI, DepositsContracts
+from v2.deposits.contracts import DEPOSITS_ABI, DepositsContracts
 
 
 class DepositsSettings(OctantSettings):

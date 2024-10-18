@@ -3,10 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 from pydantic import Field
 from v2.core.dependencies import GetSession, OctantSettings, Web3
-from v2.epochs.dependencies import AssertAllocationWindowOpen
-
-from .contracts import PROJECTS_ABI, ProjectsContracts
-from .services import ProjectsAllocationThresholdGetter
+from v2.epochs.dependencies import GetOpenAllocationWindowEpochNumber
+from v2.projects.contracts import PROJECTS_ABI, ProjectsContracts
+from v2.projects.services import ProjectsAllocationThresholdGetter
 
 
 class ProjectsSettings(OctantSettings):
@@ -43,7 +42,7 @@ def get_projects_allocation_threshold_settings() -> ProjectsAllocationThresholdS
 
 
 def get_projects_allocation_threshold_getter(
-    epoch_number: AssertAllocationWindowOpen,
+    epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     projects: GetProjectsContracts,
     settings: Annotated[

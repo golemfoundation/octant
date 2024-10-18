@@ -1,7 +1,6 @@
 from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
-from app.infrastructure.database.models import BaseModel
 from fastapi import Depends
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -46,13 +45,6 @@ class DatabaseSettings(OctantSettings):
 
 def get_database_settings() -> DatabaseSettings:
     return DatabaseSettings()  # type: ignore[call-arg]
-
-
-async def create_tables():
-    settings = DatabaseSettings()
-    engine = create_async_engine(settings.sqlalchemy_database_uri)
-    async with engine.begin() as conn:
-        await conn.run_sync(BaseModel.metadata.create_all)
 
 
 @lru_cache(1)
@@ -148,7 +140,7 @@ class SocketioSettings(OctantSettings):
 
 
 def get_socketio_settings() -> SocketioSettings:
-    return SocketioSettings()
+    return SocketioSettings()  # type: ignore[call-arg]
 
 
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]

@@ -13,8 +13,7 @@ from fastapi import Depends
 from pydantic import Field, TypeAdapter
 from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings
 from v2.core.types import Address
-
-from .services import UQScoreGetter
+from v2.uniqueness_quotients.services import UQScoreGetter
 
 
 class UQScoreSettings(OctantSettings):

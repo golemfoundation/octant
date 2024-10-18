@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-
-from .dependencies import GetProjectRewardsEstimator
-from .schemas import EstimatedProjectRewardsResponse
+from v2.project_rewards.dependencies import GetProjectRewardsEstimator
+from v2.project_rewards.schemas import EstimatedProjectRewardsResponse
 
 api = APIRouter(prefix="/rewards", tags=["Allocations"])
 
@@ -16,12 +15,7 @@ async def get_estimated_project_rewards(
     This endpoint is available only for the pending epoch state.
     """
 
-    import time
-
-    start = time.time()
     estimated_funding = await project_rewards_estimator.get()
-
-    print("get_estimated_project_rewards took", time.time() - start, "seconds")
 
     return EstimatedProjectRewardsResponse(
         rewards=[f for f in estimated_funding.project_fundings.values()]

@@ -4,9 +4,11 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Tuple
 
 import socketio
+from app.exceptions import OctantException
 from sqlalchemy.ext.asyncio import AsyncSession
 from v2.allocations.dependencies import get_allocator, get_signature_verifier
 from v2.allocations.repositories import get_donations_by_project
+from v2.allocations.schemas import UserAllocationRequest, UserAllocationRequestV1
 from v2.allocations.services import Allocator
 from v2.core.dependencies import (
     get_chain_settings,
@@ -17,11 +19,11 @@ from v2.core.dependencies import (
 )
 from v2.core.exceptions import AllocationWindowClosed
 from v2.epochs.dependencies import (
-    assert_allocation_window_open,
     get_epochs_contracts,
     get_epochs_settings,
     get_epochs_subgraph,
     get_epochs_subgraph_settings,
+    get_open_allocation_window_epoch_number,
 )
 from v2.matched_rewards.dependencies import (
     get_matched_rewards_estimator,
@@ -41,8 +43,6 @@ from v2.uniqueness_quotients.dependencies import (
     get_uq_score_settings,
 )
 
-from .schemas import UserAllocationRequest, UserAllocationRequestV1
-
 
 @asynccontextmanager
 async def create_dependencies_on_connect() -> AsyncGenerator[
@@ -57,7 +57,7 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
 
     # We do not handle requests outside of pending epoch state (Allocation Window)
     # This will raise an exception if the allocation window is closed and connection does not happen
-    epoch_number = await assert_allocation_window_open(epochs_contracts)
+    epoch_number = await get_open_allocation_window_epoch_number(epochs_contracts)
 
     projects_contracts = get_projects_contracts(w3, get_projects_settings())
     epochs_subgraph = get_epochs_subgraph(get_epochs_subgraph_settings())
@@ -96,11 +96,9 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
             # Yield the dependencies to the on_connect handler
             yield (s4, threshold_getter, estimated_project_rewards)
 
-        except Exception:
+        except Exception as e:
             await cleanup_sessions(s1, s2, s3, s4)
-            raise
-        finally:
-            pass
+            raise e
 
 
 @asynccontextmanager
@@ -122,7 +120,7 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
 
     # We do not handle requests outside of pending epoch state (Allocation Window)
     # This will raise an exception if the allocation window is closed and connection does not happen
-    epoch_number = await assert_allocation_window_open(epochs_contracts)
+    epoch_number = await get_open_allocation_window_epoch_number(epochs_contracts)
 
     projects_contracts = get_projects_contracts(w3, get_projects_settings())
     epochs_subgraph = get_epochs_subgraph(get_epochs_subgraph_settings())
@@ -188,11 +186,9 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 estimated_project_rewards,
             )
 
-        except Exception:
+        except Exception as e:
             await cleanup_sessions(s1, s2, s3, s4, s5, s6, s7)
-            raise
-        finally:
-            pass
+            raise e
 
 
 class AllocateNamespace(socketio.AsyncNamespace):
@@ -247,10 +243,15 @@ class AllocateNamespace(socketio.AsyncNamespace):
     async def on_connect(self, sid: str, environ: dict):
         try:
             await self.handle_on_connect(sid, environ)
+
         except AllocationWindowClosed:
             logging.info("Allocation window is closed, connection not established")
+
+        except OctantException as e:
+            logging.error(f"OctantException({e.__class__.__name__}): {e}")
+
         except Exception as e:
-            logging.error(f"Error handling on_connect: {e}")
+            logging.error(f"Error handling on_connect ({e.__class__.__name__}): {e}")
 
     async def on_disconnect(self, sid):
         logging.debug("Client disconnected")
@@ -312,10 +313,13 @@ class AllocateNamespace(socketio.AsyncNamespace):
             await self.handle_on_allocate(sid, data)
 
         except AllocationWindowClosed:
-            logging.info("Allocation window is closed, allocation not processed")
+            logging.info("Allocation window is closed, connection not established")
+
+        except OctantException as e:
+            logging.error(f"OctantException({e.__class__.__name__}): {e.message}")
 
         except Exception as e:
-            logging.error(f"Error handling on_allocate: {e}")
+            logging.error(f"Error handling on_allocate ({e.__class__.__name__}): {e}")
 
 
 def from_dict(data: str) -> UserAllocationRequest:

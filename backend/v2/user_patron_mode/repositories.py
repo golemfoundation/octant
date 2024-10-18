@@ -1,47 +1,37 @@
 from datetime import datetime
-from typing import List
 
 from app.infrastructure.database.models import Budget, PatronModeEvent, User
 from sqlalchemy import Numeric, cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import aliased
 from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
 
 async def get_all_patrons_at_timestamp(
     session: AsyncSession, dt: datetime
-) -> List[str]:
+) -> list[str]:
     """
-    From PatronModeEvent table, get all the user addresses that have patron_mode_enabled=True at a given timestamp.
+    Get all the user addresses that at given timestamp have patron_mode_enabled=True.
     """
 
-    subquery = (
-        select(
-            PatronModeEvent.user_address,
-            PatronModeEvent.patron_mode_enabled,
-            PatronModeEvent.created_at,
-        )
+    results = await session.execute(
+        select(PatronModeEvent.user_address)
         .filter(PatronModeEvent.created_at <= dt)
-        .order_by(PatronModeEvent.user_address, PatronModeEvent.created_at.desc())
-        .subquery()
+        .group_by(PatronModeEvent.user_address)
+        .having(
+            func.max(PatronModeEvent.created_at).filter(
+                PatronModeEvent.patron_mode_enabled
+            )
+            == func.max(PatronModeEvent.created_at)
+        )
     )
 
-    alias = aliased(PatronModeEvent, subquery)
-
-    result = await session.execute(
-        select(alias.user_address)
-        .filter(alias.patron_mode_enabled)
-        .group_by(alias.user_address)
-    )
-
-    patrons = [row[0] for row in result.fetchall()]
-    return patrons
+    return [row[0] for row in results.all()]
 
 
 async def get_budget_sum_by_users_addresses_and_epoch(
-    session: AsyncSession, users_addresses: List[str], epoch_number: int
+    session: AsyncSession, users_addresses: list[str], epoch_number: int
 ) -> int:
     """
     Sum the budgets of given users for a given epoch.

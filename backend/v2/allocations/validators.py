@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from app import exceptions
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from sqlalchemy.ext.asyncio import AsyncSession
+from v2.allocations.repositories import get_last_allocation_request_nonce
+from v2.allocations.schemas import UserAllocationRequest
 from v2.core.types import Address
 from v2.crypto.signatures import verify_signed_message
 from v2.epochs.subgraphs import EpochsSubgraph
@@ -13,9 +15,6 @@ from v2.user_patron_mode.repositories import (
     user_is_patron_with_budget,
 )
 from web3 import AsyncWeb3
-
-from .repositories import get_last_allocation_request_nonce
-from .schemas import UserAllocationRequest
 
 
 @dataclass

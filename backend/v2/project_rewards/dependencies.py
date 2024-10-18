@@ -2,15 +2,14 @@ from typing import Annotated
 
 from fastapi import Depends
 from v2.core.dependencies import GetSession
-from v2.epochs.dependencies import AssertAllocationWindowOpen
+from v2.epochs.dependencies import GetOpenAllocationWindowEpochNumber
 from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
+from v2.project_rewards.services import ProjectRewardsEstimator
 from v2.projects.dependencies import GetProjectsContracts
-
-from .services import ProjectRewardsEstimator
 
 
 async def get_project_rewards_estimator(
-    epoch_number: AssertAllocationWindowOpen,
+    epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     projects_contracts: GetProjectsContracts,
     estimated_project_matched_rewards: GetMatchedRewardsEstimator,

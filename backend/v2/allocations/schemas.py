@@ -15,10 +15,6 @@ class AllocationRequest(OctantModel):
     project_address: Address = Field(..., alias="proposalAddress")
     amount: BigInteger
 
-    # first_name: str = Field(..., alias='firstName')
-    # last_name: str = Field(..., alias='lastName')
-    # age: int = Field(..., alias='age')
-
 
 class UserAllocationRequestPayloadV1(OctantModel):
     allocations: list[AllocationRequest]

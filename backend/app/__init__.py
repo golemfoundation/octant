@@ -46,6 +46,7 @@ def register_extensions(app):
     cors.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    # This is meant to be disabled because we migrate to FastAPI
     # socketio.init_app(app)
     cache.init_app(app)
     init_scheduler(app)

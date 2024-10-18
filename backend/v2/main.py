@@ -13,10 +13,10 @@ from v2.allocations.socket import AllocateNamespace
 from v2.core.dependencies import get_socketio_settings
 from v2.project_rewards.router import api as project_rewards_api
 
-fastapi_app = FastAPI()
+app = FastAPI()
 
 
-@fastapi_app.exception_handler(OctantException)
+@app.exception_handler(OctantException)
 async def handle_octant_exception(request, ex: OctantException):
     return JSONResponse(
         status_code=ex.status_code,
@@ -24,18 +24,13 @@ async def handle_octant_exception(request, ex: OctantException):
     )
 
 
-@fastapi_app.exception_handler(SQLAlchemyError)
+@app.exception_handler(SQLAlchemyError)
 async def handle_sqlalchemy_exception(request, ex: SQLAlchemyError):
     logging.error(f"SQLAlchemyError: {ex}")
     return JSONResponse(
         status_code=500,
         content={"message": "Internal server error"},
     )
-
-
-@fastapi_app.get("/fastapi-endpoint")
-async def fastapi_endpoint():
-    return {"message": "This is a FastAPI endpoint."}
 
 
 def get_socketio_manager() -> socketio.AsyncRedisManager | None:
@@ -50,6 +45,9 @@ def get_socketio_manager() -> socketio.AsyncRedisManager | None:
         # Test the connection
         redis_client.ping()
         # If successful, return the AsyncRedisManager
+        logging.info(
+            f"Initialized socketio manager to redis://{settings.host}:{settings.port}/{settings.db}"
+        )
         return socketio.AsyncRedisManager(settings.url)
     except Exception as e:
         logging.error(f"Failed to establish Redis connection: {str(e)}")
@@ -61,12 +59,10 @@ sio = socketio.AsyncServer(
     cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
 )
 sio.register_namespace(AllocateNamespace("/"))
-sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=fastapi_app)
+sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
 
-fastapi_app.add_route("/socket.io/", route=sio_asgi_app)
-fastapi_app.add_websocket_route("/socket.io/", sio_asgi_app)
+app.add_route("/socket.io/", route=sio_asgi_app)
+app.add_websocket_route("/socket.io/", sio_asgi_app)
 
-fastapi_app.include_router(allocations_api)
-fastapi_app.include_router(project_rewards_api)
-# from v2.core.dependencies import create_tables
-# fastapi_app.add_event_handler("startup", create_tables)
+app.include_router(allocations_api)
+app.include_router(project_rewards_api)

@@ -3,19 +3,18 @@ from dataclasses import dataclass
 
 from app import exceptions
 from sqlalchemy.ext.asyncio import AsyncSession
+from v2.allocations.repositories import (
+    get_allocations_with_user_uqs,
+    soft_delete_user_allocations_by_epoch,
+    store_allocation_request,
+)
+from v2.allocations.schemas import AllocationWithUserUQScore, UserAllocationRequest
+from v2.allocations.validators import SignatureVerifier
 from v2.matched_rewards.services import MatchedRewardsEstimator
 from v2.project_rewards.capped_quadriatic import cqf_simulate_leverage
 from v2.projects.contracts import ProjectsContracts
 from v2.uniqueness_quotients.dependencies import UQScoreGetter
 from v2.users.repositories import get_user_by_address
-
-from .repositories import (
-    get_allocations_with_user_uqs,
-    soft_delete_user_allocations_by_epoch,
-    store_allocation_request,
-)
-from .schemas import AllocationWithUserUQScore, UserAllocationRequest
-from .validators import SignatureVerifier
 
 
 @dataclass

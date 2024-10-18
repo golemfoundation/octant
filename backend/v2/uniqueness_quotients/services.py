@@ -8,8 +8,7 @@ from app.modules.user.antisybil.core import (
 from eth_utils import to_checksum_address
 from sqlalchemy.ext.asyncio import AsyncSession
 from v2.core.types import Address
-
-from .repositories import (
+from v2.uniqueness_quotients.repositories import (
     get_gp_stamps_by_address,
     get_uq_score_by_user_address,
     save_uq_score_for_user_address,

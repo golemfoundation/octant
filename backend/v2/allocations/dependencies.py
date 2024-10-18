@@ -1,14 +1,13 @@
 from typing import Annotated
 
 from fastapi import Depends
+from v2.allocations.services import Allocator
+from v2.allocations.validators import SignatureVerifier
 from v2.core.dependencies import GetChainSettings, GetSession
-from v2.epochs.dependencies import AssertAllocationWindowOpen, GetEpochsSubgraph
+from v2.epochs.dependencies import GetEpochsSubgraph, GetOpenAllocationWindowEpochNumber
 from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
 from v2.projects.dependencies import GetProjectsContracts
 from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
-
-from .services import Allocator
-from .validators import SignatureVerifier
 
 
 def get_signature_verifier(
@@ -26,7 +25,7 @@ GetSignatureVerifier = Annotated[SignatureVerifier, Depends(get_signature_verifi
 
 
 async def get_allocator(
-    epoch_number: AssertAllocationWindowOpen,
+    epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     signature_verifier: GetSignatureVerifier,
     uq_score_getter: GetUQScoreGetter,
