@@ -1,0 +1,20 @@
+.videosWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  padding: 0 2.4rem;
+  gap: 2.4rem;
+}
+
+.constraintsWrapper {
+  display: flex;
+  overflow: hidden;
+}
+
+.buttonClose {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  background-color: $color-octant-grey6;
+}
