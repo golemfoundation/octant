@@ -10,6 +10,9 @@ from app.modules.common.time import Timestamp, from_timestamp_s
 from app.modules.history.dto import LockItem, OpType
 from app.pydantic import Model
 
+# TODO implement for get_last_unlock_before and the same for lock
+# TODO do manual testing after refetching the data
+
 
 @runtime_checkable
 class EventsGenerator(Protocol):
@@ -54,17 +57,18 @@ class CalculatedUserDeposits(Model):
     ) -> List[LockItem]:
         sablier_events = get_user_events_history(user_address)
         mapped_events = process_to_locks_and_unlocks(
-            sablier_events, to_timestamp=int(from_timestamp.timestamp_s())
+            sablier_events,
+            to_timestamp=int(from_timestamp.timestamp_s()),
+            inclusively=True,
         )
         locks_from_sablier = mapped_events.locks
-        print("LOCKS FROM SABLIER", locks_from_sablier, flush=True)
-        print("UNLOCKS FROM SABLIER", mapped_events.unlocks)
+
         sablier_locks = [
             LockItem(
                 type=OpType.LOCK,
                 amount=int(r["amount"]),
                 timestamp=from_timestamp_s(r["timestamp"]),
-                transaction_hash=r["transaction_hash"],
+                transaction_hash=r["transactionHash"],
             )
             for r in locks_from_sablier
         ]
@@ -97,7 +101,7 @@ class CalculatedUserDeposits(Model):
                 type=OpType.UNLOCK,
                 amount=int(r["amount"]),
                 timestamp=from_timestamp_s(r["timestamp"]),
-                transaction_hash=r["transaction_hash"],
+                transaction_hash=r["transactionHash"],
             )
             for r in unlocks_from_sablier
         ]
