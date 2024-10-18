@@ -61,12 +61,12 @@ from v2.main import app as fastapi_app  # noqa
 class PathCheckMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
-        
+
         for route in fastapi_app.routes:
             if path == route.path:
                 # If path exists, proceed with the request
                 return await call_next(request)
-        
+
         # If path does not exist, modify the request to forward to the Flask app
         if path.startswith("/flask"):
             return await call_next(request)
