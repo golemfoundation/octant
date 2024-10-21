@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import List, TypedDict, Literal
+from typing import List, TypedDict, Literal, Tuple
 
 from app.engine.user.effective_deposit import (
     SablierEventType,
@@ -92,7 +92,9 @@ def _apply_filters(
     return copy_event_items
 
 
-def _process_create(action, starting_deposit):
+def _process_create(
+    action: SablierAction, starting_deposit: int
+) -> Tuple[SablierEvent, int]:
     amount = int(action["amountA"]) if action["amountA"] else 0
     deposit_before = starting_deposit
     starting_deposit += amount
@@ -109,10 +111,12 @@ def _process_create(action, starting_deposit):
     return lock_item, starting_deposit
 
 
-def _process_withdraw(action, starting_deposit):
+def _process_withdraw(
+    action: SablierAction, starting_deposit: int
+) -> Tuple[SablierEvent, int]:
     amount = int(action["amountB"]) if action["amountB"] else 0
     deposit_before = starting_deposit
-    starting_deposit -= amount  # Withdraw subtracts from deposit
+    starting_deposit -= amount
     lock_item = SablierEventUnlock(
         __source=DepositSource.SABLIER,
         __typename=EventType.UNLOCK.value,
@@ -126,7 +130,9 @@ def _process_withdraw(action, starting_deposit):
     return lock_item, starting_deposit
 
 
-def _process_cancel(action, starting_deposit):
+def _process_cancel(
+    action: SablierAction, starting_deposit: int
+) -> Tuple[SablierEvent, int]:
     intact_amount = int(action["amountB"]) if action["amountB"] else 0
     cancelled_amount = int(action["amountA"]) - intact_amount
     deposit_before = starting_deposit

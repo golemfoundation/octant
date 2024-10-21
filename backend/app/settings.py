@@ -74,7 +74,9 @@ class Config(object):
     # Sablier
     SABLIER_SUBGRAPH_ENDPOINT = os.getenv("SABLIER_SUBGRAPH_ENDPOINT")
     SABLIER_SENDER_ADDRESS = os.getenv("SABLIER_SENDER_ADDRESS")
-    GLM_TOKEN_ADDRESS = os.getenv("GLM_TOKEN_ADDRESS")
+    GLM_TOKEN_ADDRESS = os.getenv(
+        "GLM_TOKEN_ADDRESS", "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
+    )
 
 
 class ProdConfig(Config):

@@ -90,7 +90,10 @@ class History(OctantResource):
     @ns.param("cursor", description="History page cursor", _in="query")
     @ns.param("limit", description="History page size", _in="query")
     @ns.marshal_with(user_history_model)
-    @ns.response(200, "User history successfully retrieved")
+    @ns.response(
+        200,
+        "User history from the Octant's and Sablier's Subgraphes successfully retrieved",
+    )
     def get(self, user_address):
         page_cursor = request.args.get("cursor", type=str)
         page_limit = request.args.get("limit", type=int)

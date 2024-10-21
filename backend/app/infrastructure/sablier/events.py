@@ -1,4 +1,3 @@
-import os
 from typing import TypedDict, List, Dict, Optional
 
 from flask import current_app as app
@@ -137,8 +136,8 @@ def get_all_events_history() -> SablierStream:
 
 
 def _get_sender():
-    return os.getenv("SABLIER_SENDER_ADDRESS")
+    return app.config["SABLIER_SENDER_ADDRESS"]
 
 
 def _get_token_address():
-    return os.getenv("GLM_TOKEN_ADDRESS")
+    return app.config["GLM_TOKEN_ADDRESS"]
