@@ -301,6 +301,42 @@ describe('regExp', () => {
       expect(JSON.stringify([...'epoch 1-2'.matchAll(epochNumberGrabber)])).toBe(
         JSON.stringify([['epoch 1-2', '1-2']]),
       );
+      expect(JSON.stringify([...'epoch1, epoch2, epoch3'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([
+          ['epoch1', '1'],
+          [' epoch2', '2'],
+          [' epoch3', '3'],
+        ]),
+      );
+      expect(JSON.stringify([...'Epoch1, Epoch2, Epoch3'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([
+          ['Epoch1', '1'],
+          [' Epoch2', '2'],
+          [' Epoch3', '3'],
+        ]),
+      );
+      expect(JSON.stringify([...'e1, e2, e3'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([
+          ['e1', '1'],
+          [' e2', '2'],
+          [' e3', '3'],
+        ]),
+      );
+      expect(JSON.stringify([...'E1, E2, E3'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([
+          ['E1', '1'],
+          [' E2', '2'],
+          [' E3', '3'],
+        ]),
+      );
+      expect(JSON.stringify([...'E1, E2, E3, epoch 9-12'.matchAll(epochNumberGrabber)])).toBe(
+        JSON.stringify([
+          ['E1', '1'],
+          [' E2', '2'],
+          [' E3', '3'],
+          [' epoch 9-12', '9-12'],
+        ]),
+      );
     });
   });
 });
