@@ -7,8 +7,18 @@ from gql import gql
 from app.extensions import gql_sablier_factory
 
 
+class SablierAction(TypedDict):
+    category: str
+    addressA: str
+    addressB: str
+    amountA: int
+    amountB: int
+    timestamp: int
+    hash: str
+
+
 class SablierStream(TypedDict):
-    actions: List[Dict]
+    actions: List[SablierAction]
     intactAmount: int
 
 

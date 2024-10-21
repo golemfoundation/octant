@@ -4,12 +4,10 @@ from typing import List, TypedDict, Literal
 
 from app.engine.user.effective_deposit import (
     SablierEventType,
-    DepositSources,
     DepositSource,
     EventType,
 )
-from app.infrastructure.sablier.events import SablierStream
-from app.modules.history.dto import OpType
+from app.infrastructure.sablier.events import SablierStream, SablierAction
 
 
 class SablierEvent(TypedDict):
@@ -41,7 +39,7 @@ def process_to_locks_and_unlocks(
     *,
     from_timestamp: int = None,
     to_timestamp: int = None,
-    inclusively: bool = False
+    inclusively: bool = False,
 ) -> MappedEvents:
     """
     Returns TypedDict with locks and unlocks from Sablier stream.
@@ -49,49 +47,58 @@ def process_to_locks_and_unlocks(
     if len(sablier_stream["actions"]) == 0:
         return MappedEvents(locks=[], unlocks=[])
 
-    lock_items = _convert(sablier_stream["actions"])
-
+    event_items = _convert(sablier_stream["actions"])
     lock_items_with_filters = _apply_filters(
-        lock_items, from_timestamp, to_timestamp, inclusively
+        event_items,
+        from_timestamp=from_timestamp,
+        to_timestamp=to_timestamp,
+        inclusively=inclusively,
     )
 
     return MappedEvents(
         locks=list(
-            filter(lambda lock: lock["type"] == OpType.LOCK, lock_items_with_filters)
+            filter(
+                lambda lock: lock["__typename"] == EventType.LOCK,
+                lock_items_with_filters,
+            )
         ),
         unlocks=list(
-            filter(lambda lock: lock["type"] == OpType.UNLOCK, lock_items_with_filters)
+            filter(
+                lambda lock: lock["__typename"] == EventType.UNLOCK,
+                lock_items_with_filters,
+            )
         ),
     )
 
 
 def _apply_filters(
-    lock_items: List[SablierEvent],
+    event_items: List[SablierEvent],
+    *,
     from_timestamp: int,
     to_timestamp: int,
     inclusively: bool,
 ) -> List[SablierEvent]:
-    copy_lock_items = deepcopy(lock_items)
+    copy_event_items = deepcopy(event_items)
 
     if inclusively is True:
         to_timestamp += 1
 
-    for item in lock_items:
+    for item in event_items:
         if from_timestamp and item["timestamp"] < from_timestamp:
-            copy_lock_items.remove(item)
+            copy_event_items.remove(item)
         if to_timestamp and item["timestamp"] > to_timestamp:
-            copy_lock_items.remove(item)
+            copy_event_items.remove(item)
 
-    return copy_lock_items
+    return copy_event_items
 
 
 def _process_create(action, starting_deposit):
     amount = int(action["amountA"]) if action["amountA"] else 0
     deposit_before = starting_deposit
-    starting_deposit += amount  # Create adds to deposit
+    starting_deposit += amount
     lock_item = SablierEventLock(
-        __source=DepositSources.SABLIER,
-        __typename=EventType.LOCK.value[0],
+        __source=DepositSource.SABLIER,
+        __typename=EventType.LOCK.value,
         amount=amount,
         timestamp=int(action["timestamp"]),
         transactionHash=action["hash"],
@@ -108,7 +115,7 @@ def _process_withdraw(action, starting_deposit):
     starting_deposit -= amount  # Withdraw subtracts from deposit
     lock_item = SablierEventUnlock(
         __source=DepositSource.SABLIER,
-        __typename=EventType.UNLOCK.value[0],
+        __typename=EventType.UNLOCK.value,
         amount=amount,
         timestamp=int(action["timestamp"]),
         transactionHash=action["hash"],
@@ -120,15 +127,14 @@ def _process_withdraw(action, starting_deposit):
 
 
 def _process_cancel(action, starting_deposit):
-    amount = (
-        int(action["amountB"]) if action["amountB"] else 0
-    )  # AmountB represents the intactAmount
+    intact_amount = int(action["amountB"]) if action["amountB"] else 0
+    cancelled_amount = int(action["amountA"]) - intact_amount
     deposit_before = starting_deposit
-    starting_deposit = amount  # Cancel sets deposit to a specific value
+    starting_deposit = intact_amount
     lock_item = SablierEventUnlock(
         __source=DepositSource.SABLIER,
-        __typename=EventType.UNLOCK.value[0],
-        amount=amount,
+        __typename=EventType.UNLOCK.value,
+        amount=cancelled_amount,
         timestamp=int(action["timestamp"]),
         transactionHash=action["hash"],
         depositBefore=deposit_before,
@@ -138,12 +144,12 @@ def _process_cancel(action, starting_deposit):
     return lock_item, starting_deposit
 
 
-def _convert(actions) -> List[SablierEvent]:
+def _convert(actions: List[SablierAction]) -> List[SablierEvent]:
     lock_items = []
     action_strategy = {
-        SablierEventType.CREATE.value[0]: _process_create,
-        SablierEventType.WITHDRAW.value[0]: _process_withdraw,
-        SablierEventType.CANCEL.value[0]: _process_cancel,
+        SablierEventType.CREATE.value: _process_create,
+        SablierEventType.WITHDRAW.value: _process_withdraw,
+        SablierEventType.CANCEL.value: _process_cancel,
     }
     starting_deposit = 0
 

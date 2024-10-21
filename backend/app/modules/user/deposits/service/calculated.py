@@ -62,6 +62,7 @@ class CalculatedUserDeposits(Model):
             inclusively=True,
         )
         locks_from_sablier = mapped_events.locks
+        print("LOCKS FROM SABLIER", locks_from_sablier, flush=True)
 
         sablier_locks = [
             LockItem(
@@ -95,6 +96,7 @@ class CalculatedUserDeposits(Model):
             sablier_events, to_timestamp=int(from_timestamp.timestamp_s())
         )
         unlocks_from_sablier = mapped_events.unlocks
+        print("UNLOCKS FROM SABLIER", unlocks_from_sablier, flush=True)
 
         sablier_unlocks = [
             LockItem(
