@@ -1,16 +1,19 @@
 import { isAfter, isSameDay, isWithinInterval } from 'date-fns';
 import { motion, useMotionValue } from 'framer-motion';
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import CalendarItem from 'components/shared/Layout/LayoutTopBarCalendar/CalendarItem';
 import getMilestones, { Milestone } from 'constants/milestones';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
 import styles from './Calendar.module.scss';
+import CalendarProps from './types';
 
 let isInitialResizeDone = false;
 
-const Calendar = (): ReactElement => {
+const Calendar: FC<CalendarProps> = ({ showAWAlert, durationToChangeAWInMinutes }) => {
+  const { i18n } = useTranslation();
   const constraintsRef = useRef<HTMLDivElement>(null);
   const milestonesWrapperRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useMediaQuery();
@@ -31,11 +34,18 @@ const Calendar = (): ReactElement => {
           isAfter(curr.from, currentDate) &&
           !acc.some(element => element.isActive));
 
-      acc.push({ ...curr, isActive });
+      acc.push({
+        ...curr,
+        isActive,
+        isAlert:
+          isActive &&
+          curr.label === i18n.t('views.projects.projectsTimelineWidget.allocationWindow') &&
+          showAWAlert,
+      });
 
       return acc;
     },
-    [] as (Milestone & { isActive: boolean })[],
+    [] as (Milestone & { isActive: boolean; isAlert?: boolean })[],
   );
 
   const setMotionValue = useCallback(() => {
@@ -102,7 +112,12 @@ const Calendar = (): ReactElement => {
           style={isMobile ? { y } : { x }}
         >
           {milestonesWithIsActive.map(({ id, ...milestone }) => (
-            <CalendarItem key={id} id={id} {...milestone} />
+            <CalendarItem
+              key={id}
+              id={id}
+              {...milestone}
+              durationToChangeAWInMinutes={durationToChangeAWInMinutes}
+            />
           ))}
         </motion.div>
       </div>

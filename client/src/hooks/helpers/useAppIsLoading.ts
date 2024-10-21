@@ -3,6 +3,7 @@ import useIsContract from 'hooks/queries/useIsContract';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
+import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import useAllocationsStore from 'store/allocations/store';
 import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
@@ -15,6 +16,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingUserTOS, isRefetching: isRefetchingUserTOS } = useUserTOS();
   const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const { isFetching: isFetchingEpochsStartEndTime } = useEpochsStartEndTime();
 
   const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
     isInitialized: state.meta.isInitialized,
@@ -47,6 +49,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     (isFetchingUserTOS && !isRefetchingUserTOS) ||
     isFetchingAllProjects ||
     isFetchingPatronModeStatus ||
-    isFetchingIsContract
+    isFetchingIsContract ||
+    isFetchingEpochsStartEndTime
   );
 }
