@@ -129,7 +129,8 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
       <div className={styles.root}>
         <InputText
           autocomplete="off"
-          className={styles.glmInput}
+          className={styles.glmInputBox}
+          classNameInput={styles.glmInput}
           dataTest="HomeGridRewardsEstimator__InputText--glm"
           error={formik.errors.valueCrypto}
           inputMode="decimal"
