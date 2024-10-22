@@ -15,12 +15,13 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_address_and_timestamp_range,
     get_unlocks_by_timestamp_range,
 )
-from app.pydantic import Model
 from app.infrastructure.sablier.events import (
     get_all_events_history,
     get_user_events_history,
 )
 from app.modules.common.sablier_events_mapper import process_to_locks_and_unlocks
+from app.modules.user.events_generator.core import unify_deposit_balances
+from app.pydantic import Model
 
 
 class DbAndGraphEventsGenerator(Model):
@@ -64,7 +65,9 @@ class DbAndGraphEventsGenerator(Model):
         if len(sorted_events) == 1 and sorted_events[0].deposit_after == 0:
             return []
 
-        return sorted_events
+        sorted_events_with_unified_deposits = unify_deposit_balances(sorted_events)
+
+        return sorted_events_with_unified_deposits
 
     def get_all_users_events(self, context: Context) -> Dict[str, List[DepositEvent]]:
         """

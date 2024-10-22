@@ -15,6 +15,7 @@ from tests.helpers.constants import (
     USER1_ED,
     USER2_ED,
     USER3_ED,
+    SABLIER_LOCKING_ADDRESS,
 )
 from tests.helpers.context import get_context
 
@@ -43,6 +44,22 @@ def events(dave):
                 (2000, 300),
             ],
             dave: [(2200, 300), (3200, -300)],
+        }
+    )
+
+
+@pytest.fixture()
+def events_with_sablier_user():
+    return create_deposit_events(
+        {
+            ALICE_ADDRESS: [(1000, 3_300), (1300, USER1_ED - 3300), (2300, 100)],
+            BOB_ADDRESS: [
+                (1050, 400),
+                (1200, -200),
+                (1800, USER2_ED - 200),
+                (2000, 300),
+            ],
+            SABLIER_LOCKING_ADDRESS: [(2200, 300), (3200, -300)],
         }
     )
 
@@ -248,3 +265,18 @@ def test_returned_events_are_sorted_by_timestamp(mocker, events):
     for _user, user_events in generator.get_all_users_events(context).items():
         for a, b in zip(user_events, user_events[1:]):
             assert a.timestamp <= b.timestamp
+
+
+def test_returns_sorted_events_from_sablier_and_octant(
+    mocker, events_with_sablier_user
+):
+    events = events_with_sablier_user
+    mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
+    context = get_context(epoch_num=6, start=4000, duration=1729095199)
+
+    generator = DbAndGraphEventsGenerator()
+
+    user_events = generator.get_user_events(context, SABLIER_LOCKING_ADDRESS)
+
+    print("TESTS RESULT", user_events, flush=True)

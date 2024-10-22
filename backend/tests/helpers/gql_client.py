@@ -1,5 +1,7 @@
 from graphql import DocumentNode
 
+from tests.helpers.constants import SABLIER_LOCKING_ADDRESS
+
 filters = {
     "lte": (lambda compared_value: (lambda v: v <= compared_value)),
     "lt": (lambda compared_value: (lambda v: v < compared_value)),
@@ -188,7 +190,7 @@ class MockSablierGQLClient:
                     "actions": [
                         {
                             "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
-                            "addressB": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
+                            "addressB": SABLIER_LOCKING_ADDRESS,
                             "amountA": "10000000000000000000",
                             "amountB": None,
                             "category": "Create",
@@ -196,8 +198,8 @@ class MockSablierGQLClient:
                             "timestamp": "1726833047",
                         },
                         {
-                            "addressA": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
-                            "addressB": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
+                            "addressA": SABLIER_LOCKING_ADDRESS,
+                            "addressB": SABLIER_LOCKING_ADDRESS,
                             "amountA": None,
                             "amountB": "355443302891933020",
                             "category": "Withdraw",
@@ -206,7 +208,7 @@ class MockSablierGQLClient:
                         },
                         {
                             "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
-                            "addressB": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
+                            "addressB": SABLIER_LOCKING_ADDRESS,
                             "amountA": "9644339802130898030",
                             "amountB": "216894977168950",
                             "category": "Cancel",
@@ -214,8 +216,8 @@ class MockSablierGQLClient:
                             "timestamp": "1729076267",
                         },
                         {
-                            "addressA": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
-                            "addressB": "0xc8ef823f4f154415bc4931071f53c61b4f979152",
+                            "addressA": SABLIER_LOCKING_ADDRESS,
+                            "addressB": SABLIER_LOCKING_ADDRESS,
                             "amountA": None,
                             "amountB": "216894977168950",
                             "category": "Withdraw",

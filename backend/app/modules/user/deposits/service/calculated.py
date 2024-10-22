@@ -28,12 +28,14 @@ class CalculatedUserDeposits(Model):
     def get_all_effective_deposits(
         self, context: Context
     ) -> Tuple[List[UserDeposit], int]:
+        # TODO align
         events = self.events_generator.get_all_users_events(context)
         return calculate_effective_deposits(
             context.epoch_details, context.epoch_settings, events
         )
 
     def get_total_effective_deposit(self, context: Context) -> int:
+        # TODO align
         events = self.events_generator.get_all_users_events(context)
         _, total = calculate_effective_deposits(
             context.epoch_details, context.epoch_settings, events
@@ -41,6 +43,7 @@ class CalculatedUserDeposits(Model):
         return total
 
     def get_user_effective_deposit(self, context: Context, user_address: str) -> int:
+        # TODO align
         events = {
             user_address: self.events_generator.get_user_events(context, user_address)
         }
