@@ -65,6 +65,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
             hasBottomDivider
             sections={[
               {
+                className: styles.pending,
                 dataTest: 'HomeGridPersonalAllocation__Section',
                 doubleValueProps: {
                   cryptoCurrency: 'ethereum',

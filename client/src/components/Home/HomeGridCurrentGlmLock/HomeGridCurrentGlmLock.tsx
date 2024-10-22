@@ -64,6 +64,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
             hasBottomDivider
             sections={[
               {
+                className: styles.effective,
                 dataTest: 'HomeGridCurrentGlmLock__Section--effective',
                 doubleValueProps: {
                   coinPricesServerDowntimeText: '...',
