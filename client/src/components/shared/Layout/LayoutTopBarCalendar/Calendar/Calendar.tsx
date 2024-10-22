@@ -1,7 +1,6 @@
 import { isAfter, isSameDay, isWithinInterval } from 'date-fns';
 import { motion, useMotionValue } from 'framer-motion';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import CalendarItem from 'components/shared/Layout/LayoutTopBarCalendar/CalendarItem';
 import getMilestones, { Milestone } from 'constants/milestones';
@@ -13,7 +12,6 @@ import CalendarProps from './types';
 let isInitialResizeDone = false;
 
 const Calendar: FC<CalendarProps> = ({ showAWAlert, durationToChangeAWInMinutes }) => {
-  const { i18n } = useTranslation();
   const constraintsRef = useRef<HTMLDivElement>(null);
   const milestonesWrapperRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useMediaQuery();
@@ -37,10 +35,7 @@ const Calendar: FC<CalendarProps> = ({ showAWAlert, durationToChangeAWInMinutes 
       acc.push({
         ...curr,
         isActive,
-        isAlert:
-          isActive &&
-          curr.label === i18n.t('views.projects.projectsTimelineWidget.allocationWindow') &&
-          showAWAlert,
+        isAlert: isActive && showAWAlert && curr.isAllocationWindowMilestone,
       });
 
       return acc;

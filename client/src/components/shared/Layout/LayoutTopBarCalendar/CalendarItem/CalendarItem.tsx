@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
-/* eslint-disable react-hooks/exhaustive-deps */
 import cx from 'classnames';
 import { format } from 'date-fns';
 import { useInView } from 'framer-motion';
@@ -51,7 +50,9 @@ const CalendarItem: FC<CalendarItemProps> = ({
     }
 
     return `${format(from, 'haaa')} CET`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     to?.getTime(),
     isAlert,
     isHovered,

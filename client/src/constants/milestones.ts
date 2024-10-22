@@ -4,6 +4,7 @@ export type Milestone = {
   from: Date;
   href?: string;
   id: string;
+  isAllocationWindowMilestone?: boolean;
   label: string;
   shouldUseThirdPersonSingularVerb?: boolean;
   to?: Date;
@@ -36,6 +37,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-01-17T17:00:00+0100'),
         id: 'e2-allocation-window',
+        isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-01-31T17:00:00+0100'),
       },
@@ -65,6 +67,7 @@ export default function getMilestones(): Milestone[] {
         // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
         from: new Date('2024-04-16T18:00:00+0200'),
         id: 'e3-allocation-window',
+        isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-04-30T18:00:00+0200'),
       },
@@ -98,6 +101,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e2-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-01-31T17:00:00+0100'),
@@ -130,6 +134,7 @@ export default function getMilestones(): Milestone[] {
       // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
       from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e3-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-04-30T18:00:00+0200'),
@@ -161,6 +166,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-07-15T18:00:00+0200'),
       id: 'e4-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-07-29T18:00:00+0200'),
@@ -192,6 +198,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e5-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-10-27T17:00:00+0100'),
