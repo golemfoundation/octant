@@ -8,7 +8,6 @@ import GridTile from 'components/shared/Grid/GridTile';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import Button from 'components/ui/Button';
 import DoubleValue from 'components/ui/DoubleValue';
-import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -39,14 +38,10 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
     <>
-      <GridTile
-        className={className}
-        title={isProjectAdminMode ? t('yourFunds') : t('currentGlmLock')}
-      >
+      <GridTile className={className} title={t('currentGlmLock')}>
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
@@ -78,7 +73,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
                   valueCrypto: estimatedEffectiveDeposit,
                 },
                 isDisabled: isPreLaunch && !isConnected,
-                label: isProjectAdminMode ? i18n.t('common.pending') : t('effective'),
+                label: t('effective'),
                 tooltipProps: {
                   dataTest: 'TooltipEffectiveLockedBalance',
                   position: 'bottom-right',

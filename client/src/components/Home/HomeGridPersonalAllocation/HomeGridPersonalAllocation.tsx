@@ -46,7 +46,10 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
 
   return (
     <>
-      <GridTile className={className} title={i18n.t('common.personalAllocation')}>
+      <GridTile
+        className={className}
+        title={isProjectAdminMode ? t('yourFunds') : i18n.t('common.personalAllocation')}
+      >
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="ethereum"
