@@ -23,6 +23,8 @@ from app.pydantic import Model
 
 
 class GitcoinPassportAntisybil(Model):
+    timeout_list: set
+
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[AntisybilStatusDTO]:
@@ -35,7 +37,7 @@ class GitcoinPassportAntisybil(Model):
             )
             raise ex
 
-        return determine_antisybil_score(score, user_address)
+        return determine_antisybil_score(score, user_address, self.timeout_list)
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
@@ -58,6 +60,10 @@ class GitcoinPassportAntisybil(Model):
             expires_at = _parse_expiration_date(
                 min([stamp["credential"]["expirationDate"] for stamp in valid_stamps])
             )
+
+        if user_address in self.timeout_list:
+            score["score"] = 0.0
+
         return float(score["score"]), expires_at, all_stamps
 
     def update_antisybil_status(

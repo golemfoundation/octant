@@ -6,22 +6,21 @@
 
   &.size {
     &--S {
-      height: 14.4rem;
       grid-column: span 1;
       grid-row: span 1;
+      height: 100%;
     }
 
     &--M {
-      height: 14.4rem;
+      height: 100%;
       grid-column: span 2;
       grid-row: span 1;
     }
 
     &--L {
-      min-height: 30.4rem;
+      height: 100%;
       grid-column: span 2;
       grid-row: span 2;
-      max-height: 50.4rem;
     }
   }
 }
@@ -46,25 +45,26 @@
   }
 
   .groupTitleWrapper {
-    padding: 1.2rem 1.6rem 0 2.4rem;
+    padding: 1.6rem;
     display: flex;
     align-items: center;
     margin: 0;
 
-    &.hasTitileBottomPadding {
-      padding-bottom: 1.2rem;
+    &.hasTitleLargeBottomPadding {
+      padding-bottom: 3.6rem;
     }
 
     .title {
       text-align: left;
-      font-size: $font-size-10;
+      font-size: $font-size-12;
       color: $color-octant-green;
-      text-transform: uppercase;
       font-weight: $font-weight-bold;
-      letter-spacing: 0.03rem;
-      height: 3.2rem;
+      height: 2.4rem;
       align-items: center;
       display: flex;
+      border-radius: $border-radius-08;
+      background: $color-octant-grey6;
+      padding: 0 0.6rem;
     }
   }
 }

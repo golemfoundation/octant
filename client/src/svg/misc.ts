@@ -36,18 +36,6 @@ export const heart: SvgImageConfig = {
   viewBox: '0 0 32 32',
 };
 
-export const plus: SvgImageConfig = {
-  markup:
-    '<path stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.344 7.657h12M7.344 13.657v-12"/>',
-  viewBox: '0 0 15 15',
-};
-
-export const minus: SvgImageConfig = {
-  markup:
-    '<path stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1.001h12"/>',
-  viewBox: '0 0 14 2',
-};
-
 export const notificationIconWarning: SvgImageConfig = {
   markup:
     '<path fill="#1D4558" d="M16.5 4c8.868 0 12 3.147 12 12 0 8.82-3.184 12-12 12-8.79 0-12-3.22-12-12 0-8.813 3.158-12 12-12Z"/><path fill="#fff" d="M15.05 18.53h2.058l.32-5.27V9.5H14.73v3.76l.319 5.27ZM16.079 23c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
@@ -78,12 +66,6 @@ export const checkMark: SvgImageConfig = {
   viewBox: '0 0 32 32',
 };
 
-export const pencil: SvgImageConfig = {
-  markup:
-    '<path fill="#CDD1CD" d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path fill="#fff" fill-rule="evenodd" d="m8.022 15.977 2.475-.354 3.063-3.063-2.121-2.121-3.063 3.063-.354 2.475ZM12.5 9.378l2.122 2.122.917-.917a1.5 1.5 0 1 0-2.122-2.122l-.917.917Z" clip-rule="evenodd"/>',
-  viewBox: '0 0 24 24',
-};
-
 export const share: SvgImageConfig = {
   markup:
     '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 13.5h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h1M16 9v10M13.5 11 16 8.5l2.5 2.5"/>',
@@ -112,4 +94,22 @@ export const magnifyingGlass: SvgImageConfig = {
   markup:
     '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><g stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M17.312 19.584a4.295 4.295 0 1 0-3.36-7.905 4.295 4.295 0 0 0 3.36 7.905ZM18.668 18.669 21.998 22"/></g></svg>',
   viewBox: '0 0 32 32',
+};
+
+export const calendar: SvgImageConfig = {
+  markup:
+    '<g clip-path="url(#calendar)" stroke="#2D9B87" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5h-13a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1ZM.5 6.5h15M4.5 4V.5M11.5 4V.5"/></g><defs><clipPath id="calendar"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs>',
+  viewBox: '0 0 16 16',
+};
+
+export const hammer: SvgImageConfig = {
+  markup:
+    '<g stroke="#171717" stroke-linecap="round" stroke-linejoin="round"><path d="m8.009 7.583-4.823 4.823a.75.75 0 0 1-1.06 0l-.531-.53a.75.75 0 0 1 0-1.06l4.823-4.824"/><path d="m7.1 1.594-2.011 2.01a.75.75 0 0 0 0 1.061L9.33 8.908a.75.75 0 0 0 1.061 0l2.01-2.01a.75.75 0 0 0 0-1.061L8.16 1.594a.75.75 0 0 0-1.06 0Z"/></g>',
+  viewBox: '0 0 14 14',
+};
+
+export const play: SvgImageConfig = {
+  markup:
+    '<g opacity=".6" clip-path="url(#a)"><path d="m13.516 16.409 9.164-4.76-9.164-4.794v9.554Z" fill="#fff"/><path d="M33.634 5.202s-.332-2.343-1.349-3.375C30.997.472 29.55.466 28.89.386 24.14.043 17.022.043 17.022.043h-.013S9.89.043 5.142.386c-.66.08-2.108.086-3.397 1.441C.73 2.86.397 5.202.397 5.202S.06 7.952.06 10.705v2.58c0 2.752.338 5.502.338 5.502s.332 2.343 1.348 3.375c1.292 1.355 2.985 1.312 3.739 1.455 2.713.26 11.531.343 11.531.343s7.126-.01 11.874-.356c.664-.08 2.108-.087 3.396-1.442 1.017-1.032 1.349-3.375 1.349-3.375s.338-2.753.338-5.502v-2.58c0-2.753-.338-5.503-.338-5.503ZM13.512 16.41V6.857l9.165 4.793-9.165 4.76Z" fill="#060101"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h34v24H0z"/></clipPath></defs>',
+  viewBox: '0 0 34 24',
 };

@@ -1,5 +1,12 @@
+$elementMargin: 1.6rem;
+
+.viewTitle {
+  border-bottom: 0.1rem solid $color-octant-grey1;
+  margin-bottom: 2.4rem;
+}
+
 .tip {
-  margin-bottom: 1.6rem;
+  margin-bottom: $elementMargin;
 
   @media #{$desktop-up} {
     margin-bottom: 2.8rem;
@@ -9,6 +16,32 @@
 .loaderWrapper {
   display: flex;
   justify-content: center;
+}
+
+.searchAndFilter {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $elementMargin;
+
+  @media #{$phone-down} {
+    flex-direction: column;
+  }
+}
+
+.inputSearch {
+  max-width: 70rem;
+  margin-right: 2.4rem;
+
+  @media #{$phone-down} {
+    margin-bottom: $elementMargin;
+  }
+}
+
+.inputOrder {
+  @media #{$phone-down} {
+    width: 100% !important;
+  }
 }
 
 .archives {

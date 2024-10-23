@@ -26,17 +26,42 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
           : projects.map(project => (
               <MetricsProjectsListItem
                 key={project.address}
-                address={project.address}
                 dataTest={`${dataTest}__item`}
-                epoch={project.epoch}
-                value={
+                donations={
                   getValuesToDisplay({
                     cryptoCurrency: 'ethereum',
                     getFormattedEthValueProps: {
                       shouldIgnoreGwei: true,
                       shouldIgnoreWei: true,
                     },
-                    valueCrypto: project.value,
+                    showCryptoSuffix: true,
+                    showFiatPrefix: true,
+                    valueCrypto: project.donations,
+                  }).primary
+                }
+                image={project.profileImageSmall!}
+                matchFunding={
+                  getValuesToDisplay({
+                    cryptoCurrency: 'ethereum',
+                    getFormattedEthValueProps: {
+                      shouldIgnoreGwei: true,
+                      shouldIgnoreWei: true,
+                    },
+                    showCryptoSuffix: true,
+                    valueCrypto: project.matchedRewards,
+                  }).primary
+                }
+                name={project.name!}
+                numberOfDonors={project.numberOfDonors}
+                total={
+                  getValuesToDisplay({
+                    cryptoCurrency: 'ethereum',
+                    getFormattedEthValueProps: {
+                      shouldIgnoreGwei: true,
+                      shouldIgnoreWei: true,
+                    },
+                    showCryptoSuffix: true,
+                    valueCrypto: project.totalValueOfAllocations,
                   }).primary
                 }
               />

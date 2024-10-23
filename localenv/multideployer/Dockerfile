@@ -11,8 +11,10 @@ RUN npx hardhat compile
 
 WORKDIR /app/
 
-COPY --chmod=+x entrypoint.sh .
-COPY --chmod=+x wait_for_subgraph.sh .
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
+COPY wait_for_subgraph.sh .
+RUN chmod +x ./wait_for_subgraph.sh
 COPY server.py /app/server.py
 
 ENTRYPOINT ["./entrypoint.sh"]

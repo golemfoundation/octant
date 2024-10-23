@@ -16,8 +16,10 @@ const Button = <T extends ButtonProps>(
     className,
     dataParameters,
     dataTest = 'Button',
+    hasLinkArrow,
     href,
     isActive,
+    isButtonScalingUpOnHover = true,
     isDisabled,
     isEventStopPropagation = true,
     isHigh,
@@ -30,12 +32,13 @@ const Button = <T extends ButtonProps>(
     to,
     type = 'button',
     variant = 'secondary',
+    onMouseOver,
   }: T,
   ref,
 ) => {
   const filteredProps = {};
   const isActionDisabled = isDisabled || isLoading;
-  const hasHoverState = !to && !href && !isDisabled;
+  const hasHoverState = isButtonScalingUpOnHover && !to && !href && !isDisabled;
 
   let Component;
   if (to) {
@@ -50,6 +53,7 @@ const Button = <T extends ButtonProps>(
     Component = 'button';
     Object.assign(filteredProps, {
       disabled: isActionDisabled,
+      onMouseOver,
       type,
     });
   }
@@ -112,7 +116,7 @@ const Button = <T extends ButtonProps>(
         )}
         {children}
         {label}
-        {['link', 'link5'].includes(variant) && (
+        {(['link', 'link5', 'link6'].includes(variant) || hasLinkArrow) && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrowTopRight}

@@ -1,0 +1,35 @@
+.root {
+  padding: 0;
+  display: flex;
+  background: $color-white;
+  border-radius: $border-radius-16;
+  width: 100%;
+  flex-direction: column;
+  display: flex;
+  max-height: 100%;
+}
+
+.titleWrapper {
+  padding: 2.4rem;
+  display: flex;
+  align-items: center;
+  margin: 0;
+
+  &.showTitleDivider {
+    border-bottom: 0.1rem solid $color-octant-grey3;
+  }
+
+  .title {
+    padding: 0 1rem;
+    height: 3.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    font-size: $font-size-14;
+    color: $color-octant-green;
+    font-weight: $font-weight-bold;
+    color: $color-octant-dark;
+    background: $color-octant-grey8;
+    border-radius: $border-radius-10;
+  }
+}

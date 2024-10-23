@@ -8,7 +8,6 @@ import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import useSettingsStore from 'store/settings/store';
-import useTipsStore from 'store/tips/store';
 import getValidatedProjectsFromLocalStorage from 'utils/getValidatedProjectsFromLocalStorage';
 
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from './useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
@@ -32,15 +31,10 @@ export default function useAppPopulateState(): void {
       reset: state.reset,
       setAllocations: state.setAllocations,
     }));
-  const { setInitialState: setInitialStateTips } = useTipsStore(state => ({
-    setInitialState: state.setInitialState,
+  const { displayCurrency, setIsCryptoMainValueDisplay } = useSettingsStore(state => ({
+    displayCurrency: state.data.displayCurrency,
+    setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
   }));
-  const { areOctantTipsAlwaysVisible, displayCurrency, setIsCryptoMainValueDisplay } =
-    useSettingsStore(state => ({
-      areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,
-      displayCurrency: state.data.displayCurrency,
-      setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
-    }));
 
   useEffect(() => {
     /**
@@ -138,14 +132,6 @@ export default function useAppPopulateState(): void {
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     userAllocations?.elements.length,
   ]);
-
-  useEffect(() => {
-    if (!areOctantTipsAlwaysVisible) {
-      return;
-    }
-
-    setInitialStateTips();
-  }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
 
   const cryptoValuesQuery = useCryptoValues(displayCurrency);
 

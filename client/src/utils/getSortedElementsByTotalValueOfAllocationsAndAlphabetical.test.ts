@@ -1,3 +1,4 @@
+import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 import {
   mockedProjectATotalValueOfAllocations1,
   mockedProjectBTotalValueOfAllocations2,
@@ -84,9 +85,11 @@ const testCases = [
 describe('getSortedElementsByTotalValueOfAllocationsAndAlphabetical', () => {
   for (const { argument, expectedValue } of testCases) {
     it('properly returns expectedValue', () => {
-      expect(getSortedElementsByTotalValueOfAllocationsAndAlphabetical(argument)).toEqual(
-        expectedValue,
-      );
+      expect(
+        getSortedElementsByTotalValueOfAllocationsAndAlphabetical(
+          argument as ProjectIpfsWithRewards[],
+        ),
+      ).toEqual(expectedValue);
     });
   }
 });

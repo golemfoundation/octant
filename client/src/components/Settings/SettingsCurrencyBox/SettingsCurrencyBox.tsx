@@ -5,9 +5,9 @@ import BoxRounded from 'components/ui/BoxRounded';
 import InputSelect from 'components/ui/InputSelect';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
-import { Options } from 'views/SettingsView/types';
 
 import styles from './SettingsCurrencyBox.module.scss';
+import { Options } from './types';
 
 const options: Options = [
   { label: 'USD', value: 'usd' },

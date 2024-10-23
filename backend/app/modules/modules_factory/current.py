@@ -45,7 +45,12 @@ from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST_NOT_MAINNET,
+    TIMEOUT_LIST,
+)
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
@@ -102,7 +107,10 @@ class CurrentServices(Model):
         user_allocations = SavedUserAllocations()
         user_allocations_nonce = SavedUserAllocationsNonce()
         user_withdrawals = FinalizedWithdrawals()
-        user_antisybil_service = GitcoinPassportAntisybil()
+
+        timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
+        user_antisybil_service = GitcoinPassportAntisybil(timeout_list=timeout_list)
+
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
@@ -118,6 +126,7 @@ class CurrentServices(Model):
             verifier=score_delegation_verifier,
             antisybil=user_antisybil_service,
             user_deposits_service=user_deposits,
+            timeout_list=timeout_list,
         )
 
         multisig_signatures = OffchainMultisigSignatures(
@@ -134,7 +143,7 @@ class CurrentServices(Model):
         )
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
+            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
             budgets=user_budgets,
             uq_threshold=uq_threshold,
         )

@@ -1,7 +1,10 @@
 import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
-import { apiGetUserAllocations, Response as ApiResponse } from 'api/calls/userAllocations';
+import {
+  apiGetUserAllocations,
+  GetUserAllocationsResponse as ApiResponse,
+} from 'api/calls/userAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';

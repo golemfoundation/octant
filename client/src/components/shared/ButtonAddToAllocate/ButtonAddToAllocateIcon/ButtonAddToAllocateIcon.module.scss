@@ -1,0 +1,43 @@
+.root {
+  display: flex;
+
+  &.isDisabled {
+    stroke: $color-octant-grey1;
+  }
+
+  &.isAllocatedTo {
+    svg path {
+      stroke: $color-white;
+      // fill: $color-white; -- no fill here, it makes the stroke bigger.
+    }
+  }
+
+  &:not(.isAllocatedTo) {
+    &:not(.isArchivedProject) {
+      &.isAddedToAllocate {
+        svg path {
+          stroke: $color-octant-orange;
+          fill: $color-octant-orange;
+        }
+      }
+    }
+  }
+
+  &.isArchivedProject {
+    &:hover {
+      background: transparent;
+      cursor: default;
+    }
+
+    svg path {
+      stroke: $color-octant-grey1;
+    }
+
+    &.isAllocatedTo {
+      svg circle {
+        stroke: $color-octant-grey5;
+        fill: $color-octant-grey5;
+      }
+    }
+  }
+}
