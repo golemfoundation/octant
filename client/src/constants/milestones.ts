@@ -208,5 +208,36 @@ export default function getMilestones(): Milestone[] {
       id: 'e6-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Six' }),
     },
+    // 2024-10-27 timezone changes from UTC+00200 to UTC+00100.
+    {
+      from: new Date('2024-11-18T17:00:00+0100'),
+      id: 'e6-applications-open',
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      to: new Date('2024-12-05T23:59:00+0100'),
+    },
+    {
+      from: new Date('2024-12-10T23:59:00+0100'),
+      id: 'e6-project-updates-close',
+      label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
+    },
+    {
+      from: new Date('2024-12-12T17:00:00+0100'),
+      id: 'e6-snapshot-vote',
+      label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2024-12-17T23:59:00+0100'),
+    },
+    {
+      from: new Date('2025-01-11T17:00:00+0100'),
+      id: 'e6-allocation-window',
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2025-01-25T17:00:00+0100'),
+    },
+    {
+      from: new Date('2025-01-11T17:00:00+0100'),
+      id: 'e7-epoch-starts',
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Seven' }),
+    },
   ];
 }

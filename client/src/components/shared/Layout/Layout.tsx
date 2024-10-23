@@ -9,6 +9,7 @@ import ModalLayoutConnectWallet from 'components/shared/Layout/ModalLayoutConnec
 import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
 import Loader from 'components/ui/Loader';
 import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
+import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -115,6 +116,7 @@ const Layout: FC<LayoutProps> = ({
             styles.topBarWrapper,
             isProjectAdminMode && styles.isProjectAdminMode,
             isPatronMode && styles.isPatronMode,
+            networkConfig.isTestnet && styles.isTestnet,
           )}
         >
           <LayoutTopBar className={styles.section} />

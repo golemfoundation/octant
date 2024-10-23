@@ -52,47 +52,49 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
             className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}
             data-test="Navbar__buttons"
           >
-            {tabs.map(({ key, icon, label, to, isActive, isDisabled = false }) => (
-              <Button
-                key={key}
-                className={cx(styles.buttonNavigation, isActive && styles.isActive)}
-                dataTest={`Navbar__Button--${label}`}
-                Icon={
-                  to === ROOT_ROUTES.settings.absolute ? (
-                    <Svg img={icon} size={isTablet ? 3 : 2.4} />
-                  ) : (
-                    <Svg
-                      classNameSvg={
-                        to === ROOT_ROUTES.home.absolute ? styles.octantLogo : undefined
-                      }
-                      img={icon}
-                      size={isTablet ? 4 : 3.2}
-                    />
-                  )
-                }
-                isActive={isActive}
-                isDisabled={isDisabled}
-                label={label}
-                onClick={() => {
-                  if (location.pathname !== ROOT_ROUTES.projects.absolute) {
-                    return;
+            {tabs.map(
+              ({ key, icon, label, to, isActive, isDisabled = false, isBigIcon = false }) => (
+                <Button
+                  key={key}
+                  className={cx(styles.buttonNavigation, isActive && styles.isActive)}
+                  dataTest={`Navbar__Button--${label}`}
+                  Icon={
+                    isBigIcon ? (
+                      <Svg classNameSvg={styles.bigIcon} img={icon} size={isTablet ? 3 : 2.4} />
+                    ) : (
+                      <Svg
+                        classNameSvg={
+                          to === ROOT_ROUTES.home.absolute ? styles.octantLogo : undefined
+                        }
+                        img={icon}
+                        size={isTablet ? 4 : 3.2}
+                      />
+                    )
                   }
-                  window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
-                }}
-                to={to}
-                variant="iconVertical"
-              >
-                {to === ROOT_ROUTES.allocation.absolute && allocations.length > 0 && (
-                  <div
-                    ref={scope}
-                    className={styles.numberOfAllocations}
-                    data-test="Navbar__numberOfAllocations"
-                  >
-                    {allocations.length}
-                  </div>
-                )}
-              </Button>
-            ))}
+                  isActive={isActive}
+                  isDisabled={isDisabled}
+                  label={label}
+                  onClick={() => {
+                    if (location.pathname !== ROOT_ROUTES.projects.absolute) {
+                      return;
+                    }
+                    window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
+                  }}
+                  to={to}
+                  variant="iconVertical"
+                >
+                  {to === ROOT_ROUTES.allocation.absolute && allocations.length > 0 && (
+                    <div
+                      ref={scope}
+                      className={styles.numberOfAllocations}
+                      data-test="Navbar__numberOfAllocations"
+                    >
+                      {allocations.length}
+                    </div>
+                  )}
+                </Button>
+              ),
+            )}
           </div>
         </nav>
       </div>

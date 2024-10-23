@@ -34,6 +34,13 @@ def handle_connect():
                 {"project": project.address, "donors": _serialize_donors(donors)},
             )
 
+        for project in project_rewards:
+            donors = controller.get_all_donations_by_project(project.address)
+            emit(
+                "project_donors",
+                {"project": project.address, "donors": _serialize_donors(donors)},
+            )
+
 
 @socketio.on("disconnect")
 def handle_disconnect():

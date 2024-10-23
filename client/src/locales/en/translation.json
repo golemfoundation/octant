@@ -108,10 +108,9 @@
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
-        "yourFunds": "Your funds",
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
-        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch.",
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.",
         "modalLockGlm": {
           "unlockGLM": "Unlock GLM",
           "lockGlmBudgetBox": {
@@ -121,6 +120,7 @@
         }
       },
       "homeGridPersonalAllocation": {
+        "yourFunds": "Your funds",
         "withdrawToWallet": "Withdraw to wallet",
         "pendingFundsAvailableAfter": "Pending funds available after",
         "modalWithdrawEth": {

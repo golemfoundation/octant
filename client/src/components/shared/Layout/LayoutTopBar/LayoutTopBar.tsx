@@ -131,9 +131,18 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   return (
     <div className={cx(styles.root, className)}>
       <div className={styles.logoWrapper}>
-        <Svg classNameSvg={styles.octantLogo} img={octant} onClick={onLogoClick} size={4} />
+        <Svg
+          classNameSvg={cx(styles.octantLogo, networkConfig.isTestnet && styles.isTestnet)}
+          img={octant}
+          onClick={onLogoClick}
+          size={4}
+        />
         {networkConfig.isTestnet && (
-          <TinyLabel className={styles.testnetIndicator} text={networkConfig.name} />
+          <TinyLabel
+            className={styles.testnetIndicator}
+            text={networkConfig.name}
+            textClassName={styles.testnetIndicatorText}
+          />
         )}
       </div>
       {isDesktop && (
@@ -141,7 +150,11 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           {tabs.map(({ label, to, isActive, isDisabled }) => (
             <div
               key={to}
-              className={cx(styles.link, isActive && styles.isActive)}
+              className={cx(
+                styles.link,
+                isActive && styles.isActive,
+                networkConfig.isTestnet && styles.isTestnet,
+              )}
               onClick={
                 isDisabled && to
                   ? () => {}
@@ -188,14 +201,14 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       {isDesktop && (
         <Fragment>
           <div
-            className={styles.settingsButton}
+            className={cx(styles.settingsButton, networkConfig.isTestnet && styles.isTestnet)}
             onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
           {!isProjectAdminMode && !isPatronMode && (
             <div
-              className={styles.allocateButton}
+              className={cx(styles.allocateButton, networkConfig.isTestnet && styles.isTestnet)}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
               <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
