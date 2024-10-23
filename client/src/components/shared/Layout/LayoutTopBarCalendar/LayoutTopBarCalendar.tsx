@@ -1,6 +1,7 @@
 import cx from 'classnames';
+import { differenceInMinutes } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -10,6 +11,7 @@ import Svg from 'components/ui/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import { calendar } from 'svg/misc';
 
 import styles from './LayoutTopBarCalendar.module.scss';
@@ -19,27 +21,98 @@ const LayoutTopBarCalendar = (): ReactElement => {
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-
+  const { data: epochsStartEndTime } = useEpochsStartEndTime();
+  const [durationToChangeAWInMinutes, setDurationToChangeAWInMinutes] = useState(0);
+  const [showAWAlert, setShowAWAlert] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const allocationInfoText = useMemo(() => {
     const epoch = currentEpoch! - 1;
 
+    const durationMinutes = `${durationToChangeAWInMinutes}${isMobile ? `${t('minutesShort')}` : ` ${t('minutes', { count: durationToChangeAWInMinutes })}`}`;
+
+    const durationToChangeAWInHours = Math.floor(durationToChangeAWInMinutes / 60);
+    const durationHours = `${durationToChangeAWInHours}${isMobile ? `${t('hoursShort')}` : ` ${t('hours', { count: durationToChangeAWInHours })}`}`;
+
+    const durationToChangeAWInDays = Math.ceil(durationToChangeAWInHours / 24);
+    const durationDays = `${durationToChangeAWInDays} ${t('days', { count: durationToChangeAWInDays })}`;
+
+    let duration = durationDays;
+
+    if (durationToChangeAWInHours <= 24) {
+      duration = durationHours;
+    }
+    if (durationToChangeAWInMinutes <= 60) {
+      duration = durationMinutes;
+    }
+
     if (isDecisionWindowOpen) {
+      if (showAWAlert) {
+        return isMobile
+          ? t('epochAllocationClosesInShort', { duration })
+          : t('epochAllocationClosesIn', {
+              duration,
+              epoch,
+            });
+      }
+
       return isMobile
         ? t('epochAllocationWindowOpenShort', { epoch })
         : t('epochAllocationWindowOpen', { epoch });
     }
 
-    return isMobile
-      ? t('epochAllocationWindowClosedShort', { epoch })
-      : t('epochAllocationWindowClosed', { epoch });
+    if (isMobile) {
+      return t('epochAllocationOpensInShort', { duration });
+    }
+    return t('epochAllocationOpensIn', { duration, epoch });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDecisionWindowOpen, currentEpoch, isMobile]);
+  }, [isDecisionWindowOpen, currentEpoch, isMobile, durationToChangeAWInMinutes, showAWAlert]);
+
+  useEffect(() => {
+    if (!epochsStartEndTime || isDecisionWindowOpen === undefined) {
+      return;
+    }
+
+    const epochData = epochsStartEndTime[currentEpoch! - 1];
+    const allocationWindowEndTimestamp =
+      (parseInt(epochData?.fromTs, 10) + parseInt(epochData.decisionWindow, 10)) * 1000;
+    const nextAllocationWindowStartTimestamp =
+      (parseInt(epochData?.toTs, 10) + parseInt(epochData.decisionWindow, 10)) * 1000;
+
+    const setNextDuration = () => {
+      const minutes =
+        Math.abs(
+          differenceInMinutes(
+            isDecisionWindowOpen
+              ? allocationWindowEndTimestamp
+              : nextAllocationWindowStartTimestamp,
+            new Date(),
+          ),
+        ) || 1;
+
+      setDurationToChangeAWInMinutes(minutes);
+
+      setShowAWAlert(isDecisionWindowOpen && minutes <= 24 * 60);
+    };
+
+    setNextDuration();
+
+    const intervalId = setInterval(setNextDuration, 60 * 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!!epochsStartEndTime, isDecisionWindowOpen]);
+
+  const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 
   return (
     <>
-      <div className={styles.allocationInfo} onClick={() => setIsCalendarOpen(true)}>
+      <div
+        className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
+        onClick={() => setIsCalendarOpen(true)}
+      >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
         {allocationInfoText}
       </div>
@@ -64,7 +137,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
                 exit={{ opacity: 0 }}
                 initial={{ left: '50%', opacity: 0, top: 64, x: '-50%' }}
               >
-                <Calendar />
+                <Calendar {...calendarProps} />
               </motion.div>
             </>
           )}
@@ -76,7 +149,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
         isOpen={isMobile && isCalendarOpen}
         onClosePanel={() => setIsCalendarOpen(false)}
       >
-        <Calendar />
+        <Calendar {...calendarProps} />
       </Modal>
     </>
   );

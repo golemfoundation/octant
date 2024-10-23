@@ -11,9 +11,29 @@
   color: $color-octant-green;
   border-radius: $border-radius-16;
   cursor: pointer;
+  border: 0.2rem solid transparent;
+
+  &:hover {
+    border-color: $color-octant-green10;
+  }
 
   .calendarIcon {
     margin-right: 1.2rem;
+  }
+
+  &.showAWAlert {
+    background: $color-octant-orange8;
+    color: $color-octant-orange;
+
+    .calendarIcon {
+      path {
+        stroke: $color-octant-orange;
+      }
+    }
+
+    &:hover {
+      border-color: $color-octant-orange7;
+    }
   }
 }
 
