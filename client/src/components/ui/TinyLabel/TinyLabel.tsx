@@ -9,9 +9,10 @@ const TinyLabel: FC<TinyLabelProps> = ({
   text,
   variant = 'orange2',
   isInTopRightCorner = true,
+  textClassName,
 }) => (
   <div className={cx(styles.root, isInTopRightCorner && styles.isInTopRightCorner, className)}>
-    <div className={cx(styles.text, styles[`variant--${variant}`])}>{text}</div>
+    <div className={cx(styles.text, styles[`variant--${variant}`], textClassName)}>{text}</div>
   </div>
 );
 
