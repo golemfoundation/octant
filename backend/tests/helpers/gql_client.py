@@ -1,6 +1,9 @@
 from graphql import DocumentNode
 
-from tests.helpers.constants import SABLIER_LOCKING_ADDRESS
+from tests.helpers.constants import (
+    ALICE_SABLIER_LOCKING_ADDRESS,
+    BOB_SABLIER_LOCKING_ADDRESS,
+)
 
 filters = {
     "lte": (lambda compared_value: (lambda v: v <= compared_value)),
@@ -180,55 +183,70 @@ class MockGQLClient:
 
 
 class MockSablierGQLClient:
-    def __init__(self, *args, **kwargs):
-        pass
-
     def execute(self, query: DocumentNode, variable_values=None):
-        result = {
-            "streams": [
-                {
-                    "actions": [
-                        {
-                            "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
-                            "addressB": SABLIER_LOCKING_ADDRESS,
-                            "amountA": "10000000000000000000",
-                            "amountB": None,
-                            "category": "Create",
-                            "hash": "0xe4395aa03aaf8bb3d2d8009106cc2a5049f9afde8a5b19bb70d3e19660eae43b",
-                            "timestamp": "1726833047",
-                        },
-                        {
-                            "addressA": SABLIER_LOCKING_ADDRESS,
-                            "addressB": SABLIER_LOCKING_ADDRESS,
-                            "amountA": None,
-                            "amountB": "355443302891933020",
-                            "category": "Withdraw",
-                            "hash": "0x685ec53bdcbaca88d87438b33f6c82b3720937126db1d3982cfd62a9bf71b138",
-                            "timestamp": "1729075199",
-                        },
-                        {
-                            "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
-                            "addressB": SABLIER_LOCKING_ADDRESS,
-                            "amountA": "9644339802130898030",
-                            "amountB": "216894977168950",
-                            "category": "Cancel",
-                            "hash": "0x244c9de88860320b89575a0d8f62f9eb5c7ba4597947ac63f94b6ef0db354b83",
-                            "timestamp": "1729076267",
-                        },
-                        {
-                            "addressA": SABLIER_LOCKING_ADDRESS,
-                            "addressB": SABLIER_LOCKING_ADDRESS,
-                            "amountA": None,
-                            "amountB": "216894977168950",
-                            "category": "Withdraw",
-                            "hash": "0xcdf10032cf3bc74a255510e632d4e7fe876503bc2ec04c8d79dce714492ad11d",
-                            "timestamp": "1729077035",
-                        },
-                    ],
-                    "id": "0x3962f6585946823440d274ad7c719b02b49de51e-1-1147",
-                    "intactAmount": "0",
-                    "transferable": False,
-                }
+        recipient = variable_values.get("recipient")
+        if recipient is None:
+            payload = self._prepare_payload(ALICE_SABLIER_LOCKING_ADDRESS)
+            payload["streams"] += self._prepare_payload(BOB_SABLIER_LOCKING_ADDRESS)[
+                "streams"
             ]
-        }
+        else:
+            payload = self._prepare_payload(recipient)
+
+        return payload
+
+    def _prepare_payload(self, recipient):
+        result = {"streams": []}
+
+        actions = [
+            {
+                "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
+                "addressB": recipient,
+                "amountA": "10000000000000000000",
+                "amountB": None,
+                "category": "Create",
+                "hash": "0xe4395aa03aaf8bb3d2d8009106cc2a5049f9afde8a5b19bb70d3e19660eae43b",
+                "timestamp": "1726833047",
+            },
+            {
+                "addressA": recipient,
+                "addressB": recipient,
+                "amountA": None,
+                "amountB": "355443302891933020",
+                "category": "Withdraw",
+                "hash": "0x685ec53bdcbaca88d87438b33f6c82b3720937126db1d3982cfd62a9bf71b138",
+                "timestamp": "1729075199",
+            },
+            {
+                "addressA": "0x76273dcc41356e5f0c49bb68e525175dc7e83417",
+                "addressB": recipient,
+                "amountA": "9644339802130898030",
+                "amountB": "216894977168950",
+                "category": "Cancel",
+                "hash": "0x244c9de88860320b89575a0d8f62f9eb5c7ba4597947ac63f94b6ef0db354b83",
+                "timestamp": "1729076267",
+            },
+            {
+                "addressA": recipient,
+                "addressB": recipient,
+                "amountA": None,
+                "amountB": "216894977168950",
+                "category": "Withdraw",
+                "hash": "0xcdf10032cf3bc74a255510e632d4e7fe876503bc2ec04c8d79dce714492ad11d",
+                "timestamp": "1729077035",
+            },
+        ]
+
+        if recipient in [ALICE_SABLIER_LOCKING_ADDRESS, BOB_SABLIER_LOCKING_ADDRESS]:
+            result = {
+                "streams": [
+                    {
+                        "actions": actions,
+                        "id": "0x3962f6585946823440d274ad7c719b02b49de51e-1-1147",
+                        "intactAmount": "0",
+                        "transferable": False,
+                    }
+                ]
+            }
+
         return result

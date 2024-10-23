@@ -55,12 +55,12 @@ class CalculatedUserDeposits(Model):
     def get_locks(
         self, user_address: str, from_timestamp: Timestamp, limit: int
     ) -> List[LockItem]:
-        sablier_events = get_user_events_history(user_address)
+        sablier_streams = get_user_events_history(user_address)
         mapped_events = process_to_locks_and_unlocks(
-            sablier_events,
+            sablier_streams,
             to_timestamp=int(from_timestamp.timestamp_s()),
             inclusively=True,
-        )
+        )[0]
         locks_from_sablier = mapped_events.locks
 
         sablier_locks = [
@@ -90,10 +90,10 @@ class CalculatedUserDeposits(Model):
     def get_unlocks(
         self, user_address: str, from_timestamp: Timestamp, limit: int
     ) -> List[LockItem]:
-        sablier_events = get_user_events_history(user_address)
+        sablier_streams = get_user_events_history(user_address)
         mapped_events = process_to_locks_and_unlocks(
-            sablier_events, to_timestamp=int(from_timestamp.timestamp_s())
-        )
+            sablier_streams, to_timestamp=int(from_timestamp.timestamp_s())
+        )[0]
         unlocks_from_sablier = mapped_events.unlocks
 
         sablier_unlocks = [

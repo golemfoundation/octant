@@ -2,6 +2,8 @@ from app.modules.common.sablier_events_mapper import process_to_locks_and_unlock
 from app.engine.user.effective_deposit import SablierEventType
 from typing import Dict
 
+from app.infrastructure.sablier.events import SablierStream
+
 
 def create_action(
     category: str, timestamp: int, amountA: int = 0, amountB: int = 0
@@ -18,16 +20,16 @@ def create_action(
 
 
 def test_empty_actions():
-    sablier_stream = {"actions": [], "intactAmount": 0}
-    result = process_to_locks_and_unlocks(sablier_stream)
+    sablier_streams = [SablierStream(actions=[], intactAmount=0)]
+    result = process_to_locks_and_unlocks(sablier_streams)[0]
     assert len(result.locks) == 0
     assert len(result.unlocks) == 0
 
 
 def test_create_action():
     action = create_action(SablierEventType.CREATE, timestamp=100, amountA=100)
-    sablier_stream = {"actions": [action], "intactAmount": 0}
-    result = process_to_locks_and_unlocks(sablier_stream)
+    sablier_streams = [SablierStream(actions=[action], intactAmount=0)]
+    result = process_to_locks_and_unlocks(sablier_streams)[0]
 
     assert len(result.locks) == 1
     assert len(result.unlocks) == 0
@@ -45,11 +47,13 @@ def test_withdraw_action():
     withdraw_action_item = create_action(
         SablierEventType.WITHDRAW, timestamp=200, amountB=50
     )
-    sablier_stream = {
-        "actions": [create_action_item, withdraw_action_item],
-        "intactAmount": 0,
-    }
-    result = process_to_locks_and_unlocks(sablier_stream)
+    sablier_streams = [
+        SablierStream(
+            actions=[create_action_item, withdraw_action_item],
+            intactAmount=0,
+        )
+    ]
+    result = process_to_locks_and_unlocks(sablier_streams)[0]
 
     assert len(result.locks) == 1
     assert len(result.unlocks) == 1
@@ -71,13 +75,15 @@ def test_cancel_action():
         SablierEventType.CREATE, timestamp=100, amountA=150
     )
     cancel_action_item = create_action(
-        SablierEventType.CANCEL, timestamp=300, amountA=150, amountB=50
+        SablierEventType.CANCEL, timestamp=300, amountA=150, amountB=0
     )
-    sablier_stream = {
-        "actions": [create_action_item, cancel_action_item],
-        "intactAmount": 0,
-    }
-    result = process_to_locks_and_unlocks(sablier_stream)
+    sablier_streams = [
+        SablierStream(
+            actions=[create_action_item, cancel_action_item],
+            intactAmount=0,
+        )
+    ]
+    result = process_to_locks_and_unlocks(sablier_streams)[0]
 
     assert len(result.locks) == 1
     assert len(result.unlocks) == 1
@@ -88,7 +94,7 @@ def test_cancel_action():
     assert lock["__source"] == "Sablier"
 
     unlock = result.unlocks[0]
-    assert unlock["amount"] == 100
+    assert unlock["amount"] == 150
     assert unlock["__typename"] == "Unlocked"
     assert unlock["depositBefore"] == 150
     assert unlock["__source"] == "Sablier"
@@ -101,9 +107,9 @@ def test_mixed_actions():
         create_action(SablierEventType.CREATE, timestamp=200, amountA=200),
         create_action(SablierEventType.CANCEL, timestamp=250, amountA=150, amountB=50),
     ]
-    sablier_stream = {"actions": actions, "intactAmount": 0}
+    sablier_streams = [SablierStream(actions=actions, intactAmount=0)]
 
-    result = process_to_locks_and_unlocks(sablier_stream)
+    result = process_to_locks_and_unlocks(sablier_streams)[0]
 
     assert len(result.locks) == 2
     assert len(result.unlocks) == 2
@@ -127,7 +133,7 @@ def test_mixed_actions():
     assert lock2["__source"] == "Sablier"
 
     unlock2 = result.unlocks[1]
-    assert unlock2["amount"] == 100
+    assert unlock2["amount"] == 150
     assert unlock2["__typename"] == "Unlocked"
     assert unlock2["depositBefore"] == 250
     assert unlock2["__source"] == "Sablier"

@@ -35,40 +35,46 @@ class MappedEvents:
 
 
 def process_to_locks_and_unlocks(
-    sablier_stream: SablierStream,
+    sablier_streams: List[SablierStream],
     *,
     from_timestamp: int = None,
     to_timestamp: int = None,
     inclusively: bool = False,
-) -> MappedEvents:
+) -> List[MappedEvents]:
     """
     Returns TypedDict with locks and unlocks from Sablier stream.
+    We assume that the sender sends GLMs only to eligible users.
     """
-    if len(sablier_stream["actions"]) == 0:
-        return MappedEvents(locks=[], unlocks=[])
+    if len(sablier_streams) == 0:
+        return [MappedEvents(locks=[], unlocks=[])]
 
-    event_items = _convert(sablier_stream["actions"])
-    lock_items_with_filters = _apply_filters(
-        event_items,
-        from_timestamp=from_timestamp,
-        to_timestamp=to_timestamp,
-        inclusively=inclusively,
-    )
+    mapped_streams = []
+    for sablier_stream in sablier_streams:
+        event_items = _convert(sablier_stream["actions"])
+        lock_items_with_filters = _apply_filters(
+            event_items,
+            from_timestamp=from_timestamp,
+            to_timestamp=to_timestamp,
+            inclusively=inclusively,
+        )
 
-    return MappedEvents(
-        locks=list(
-            filter(
-                lambda lock: lock["__typename"] == EventType.LOCK,
-                lock_items_with_filters,
+        mapped_streams.append(
+            MappedEvents(
+                locks=list(
+                    filter(
+                        lambda lock: lock["__typename"] == EventType.LOCK,
+                        lock_items_with_filters,
+                    )
+                ),
+                unlocks=list(
+                    filter(
+                        lambda lock: lock["__typename"] == EventType.UNLOCK,
+                        lock_items_with_filters,
+                    )
+                ),
             )
-        ),
-        unlocks=list(
-            filter(
-                lambda lock: lock["__typename"] == EventType.UNLOCK,
-                lock_items_with_filters,
-            )
-        ),
-    )
+        )
+    return mapped_streams
 
 
 def _apply_filters(
@@ -95,7 +101,7 @@ def _apply_filters(
 def _process_create(
     action: SablierAction, starting_deposit: int
 ) -> Tuple[SablierEvent, int]:
-    amount = int(action["amountA"]) if action["amountA"] else 0
+    amount = int(action["amountA"])
     deposit_before = starting_deposit
     starting_deposit += amount
     lock_item = SablierEventLock(
@@ -114,7 +120,7 @@ def _process_create(
 def _process_withdraw(
     action: SablierAction, starting_deposit: int
 ) -> Tuple[SablierEvent, int]:
-    amount = int(action["amountB"]) if action["amountB"] else 0
+    amount = int(action["amountB"])
     deposit_before = starting_deposit
     starting_deposit -= amount
     lock_item = SablierEventUnlock(
@@ -133,8 +139,8 @@ def _process_withdraw(
 def _process_cancel(
     action: SablierAction, starting_deposit: int
 ) -> Tuple[SablierEvent, int]:
-    intact_amount = int(action["amountB"]) if action["amountB"] else 0
-    cancelled_amount = int(action["amountA"]) - intact_amount
+    intact_amount = int(action["amountB"])
+    cancelled_amount = int(action["amountA"])
     deposit_before = starting_deposit
     starting_deposit = intact_amount
     lock_item = SablierEventUnlock(

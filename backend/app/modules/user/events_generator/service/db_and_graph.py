@@ -16,7 +16,7 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
 )
 from app.infrastructure.sablier.events import (
-    get_all_events_history,
+    get_all_streams_history,
     get_user_events_history,
 )
 from app.modules.common.sablier_events_mapper import process_to_locks_and_unlocks
@@ -51,10 +51,10 @@ class DbAndGraphEventsGenerator(Model):
             get_unlocks_by_address_and_timestamp_range(user_address, start, end)
         )
 
-        sablier_events = get_user_events_history(user_address)
+        sablier_streams = get_user_events_history(user_address)
         mapped_events = process_to_locks_and_unlocks(
-            sablier_events, from_timestamp=start, to_timestamp=end
-        )
+            sablier_streams, from_timestamp=start, to_timestamp=end
+        )[0]
         events += mapped_events.locks + mapped_events.unlocks
 
         events = list(map(DepositEvent.from_dict, events))
@@ -83,12 +83,13 @@ class DbAndGraphEventsGenerator(Model):
         end = context.epoch_details.end_sec
         epoch_start_events = self._get_epoch_start_deposits(epoch_num, start)
 
-        sablier_events = get_all_events_history()
-        mapped_events = process_to_locks_and_unlocks(
-            sablier_events, from_timestamp=start, to_timestamp=end
+        sablier_streams = get_all_streams_history()
+        mapped_streams = process_to_locks_and_unlocks(
+            sablier_streams, from_timestamp=start, to_timestamp=end
         )
-
-        epoch_events = mapped_events.locks + mapped_events.unlocks
+        epoch_events = []
+        for mapped_events in mapped_streams:
+            epoch_events += mapped_events.locks + mapped_events.unlocks
         epoch_events += get_locks_by_timestamp_range(start, end)
         epoch_events += get_unlocks_by_timestamp_range(start, end)
 
@@ -118,6 +119,10 @@ class DbAndGraphEventsGenerator(Model):
                         deposit_before=0,
                     ),
                 )
+
+            user_events[user_address] = unify_deposit_balances(
+                user_events[user_address]
+            )
 
         return user_events
 

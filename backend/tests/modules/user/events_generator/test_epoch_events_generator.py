@@ -1,7 +1,12 @@
 import pytest
 
+from app.engine.user.effective_deposit import (
+    DepositEvent,
+    EventType,
+    SablierEventType,
+    DepositSource,
+)
 from app.extensions import db
-from app.engine.user.effective_deposit import DepositEvent, EventType
 from app.infrastructure import database
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
@@ -15,7 +20,8 @@ from tests.helpers.constants import (
     USER1_ED,
     USER2_ED,
     USER3_ED,
-    SABLIER_LOCKING_ADDRESS,
+    ALICE_SABLIER_LOCKING_ADDRESS,
+    BOB_SABLIER_LOCKING_ADDRESS,
 )
 from tests.helpers.context import get_context
 
@@ -49,7 +55,7 @@ def events(dave):
 
 
 @pytest.fixture()
-def events_with_sablier_user():
+def events_with_sablier_users():
     return create_deposit_events(
         {
             ALICE_ADDRESS: [(1000, 3_300), (1300, USER1_ED - 3300), (2300, 100)],
@@ -59,7 +65,8 @@ def events_with_sablier_user():
                 (1800, USER2_ED - 200),
                 (2000, 300),
             ],
-            SABLIER_LOCKING_ADDRESS: [(2200, 300), (3200, -300)],
+            ALICE_SABLIER_LOCKING_ADDRESS: [(2200, 300), (3200, -200)],
+            BOB_SABLIER_LOCKING_ADDRESS: [(2200, 300), (3200, -200)],
         }
     )
 
@@ -267,16 +274,104 @@ def test_returned_events_are_sorted_by_timestamp(mocker, events):
             assert a.timestamp <= b.timestamp
 
 
-def test_returns_sorted_events_from_sablier_and_octant(
-    mocker, events_with_sablier_user
+@pytest.mark.parametrize(
+    "epoch_num, start, duration, expected",
+    [
+        (
+            6,
+            1000,
+            1729095199,
+            {
+                ALICE_SABLIER_LOCKING_ADDRESS: [
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.LOCK,
+                        timestamp=1000,
+                        amount=0,
+                        deposit_before=0,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.LOCK,
+                        timestamp=2200,
+                        amount=300,
+                        deposit_before=0,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.UNLOCK,
+                        timestamp=3200,
+                        amount=200,
+                        deposit_before=300,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.LOCK,
+                        timestamp=1726833047,
+                        amount=10000000000000000000,
+                        deposit_before=100,
+                        source=DepositSource.SABLIER,
+                        mapped_event=SablierEventType.CREATE,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.UNLOCK,
+                        timestamp=1729075199,
+                        amount=355443302891933020,
+                        deposit_before=10000000000000000100,
+                        source=DepositSource.SABLIER,
+                        mapped_event=SablierEventType.WITHDRAW,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.UNLOCK,
+                        timestamp=1729076267,
+                        amount=9644339802130898030,
+                        deposit_before=9644556697108067080,
+                        source=DepositSource.SABLIER,
+                        mapped_event=SablierEventType.CANCEL,
+                    ),
+                    DepositEvent(
+                        ALICE_SABLIER_LOCKING_ADDRESS,
+                        EventType.UNLOCK,
+                        timestamp=1729077035,
+                        amount=216894977168950,
+                        deposit_before=216894977169050,
+                        source=DepositSource.SABLIER,
+                        mapped_event=SablierEventType.WITHDRAW,
+                    ),
+                ],
+            },
+        ),
+    ],
+)
+def test_returns_sorted_events_from_sablier_and_octant_for_user(
+    mocker, events_with_sablier_users, epoch_num, start, duration, expected
 ):
-    events = events_with_sablier_user
+    events = events_with_sablier_users
+
     mock_graphql(mocker, events, EPOCHS)
     mock_sablier_graphql(mocker)
-    context = get_context(epoch_num=6, start=4000, duration=1729095199)
+    context = get_context(epoch_num=epoch_num, start=start, duration=duration)
 
     generator = DbAndGraphEventsGenerator()
 
-    user_events = generator.get_user_events(context, SABLIER_LOCKING_ADDRESS)
+    assert (
+        generator.get_user_events(context, ALICE_SABLIER_LOCKING_ADDRESS)
+        == expected[ALICE_SABLIER_LOCKING_ADDRESS]
+    )
 
-    print("TESTS RESULT", user_events, flush=True)
+
+@pytest.mark.parametrize("epoch_num, start, duration", [(6, 1000, 1729095199)])
+def test_returns_sorted_events_from_sablier_and_octant_for_all_users(
+    epoch_num, start, duration, mocker, events_with_sablier_users
+):
+    events = events_with_sablier_users
+
+    mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
+    context = get_context(epoch_num=epoch_num, start=start, duration=duration)
+
+    generator = DbAndGraphEventsGenerator()
+
+    print(generator.get_all_users_events(context))  # TODO finish test for that
