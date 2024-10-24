@@ -17,6 +17,7 @@ import styles from './ProjectMilestones.module.scss';
 import ProjectMilestonesProps from './types';
 
 const MILESTONE_MAX_HEIGHT_CLIPPED = 110; // pixels.
+const MIELSTONES_MAX_LENGTH_CLIPPED = 5;
 
 const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project.milestones' });
@@ -68,12 +69,19 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
     },
   ];
 
-  const areMilestonesAvailable = !isFetching && data !== undefined;
+  const areMilestonesAvailable = !isFetching && data !== undefined && data.milestones.length > 0;
+  const areMilestonesClipped =
+    areMilestonesAvailable && data.milestones.length > MIELSTONES_MAX_LENGTH_CLIPPED;
 
   return (
     <div className={cx(styles.root, isFetching && styles.isFetching)}>
       <div className={styles.header}>
-        {t('header')}
+        <div className={styles.reportingAndNumber}>
+          {t('header')}
+          {areMilestonesAvailable && (
+            <div className={styles.milestonesNumber}>{data.milestones.length}</div>
+          )}
+        </div>
         {areMilestonesAvailable ? (
           <div className={styles.filters}>
             {states.map(({ filter: elementFilter, label, icon }) => {
@@ -102,7 +110,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
           <ProjectMilestonesSkeleton key={element} className={styles.milestone} />
         ))}
       {areMilestonesAvailable &&
-        data?.milestones.slice(0, 5).map((element, index) => {
+        data?.milestones.slice(0, MIELSTONES_MAX_LENGTH_CLIPPED).map((element, index) => {
           const isCompleted = !!element?.completed;
           const isPending = !isCompleted;
           const isExpandable = milestonesExpandable.includes(element.uid);
@@ -183,7 +191,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
           className={styles.buttonViewKarma}
           hasLinkArrow
           href={`https://gap.karmahq.xyz/project/${data?.project.details.data.slug}/grants/${data?.uid}/milestones-and-updates#all`}
-          label={t('viewOnKarmaGap')}
+          label={areMilestonesClipped ? t('viewMoreOnKarmaGap') : t('viewOnKarmaGap')}
           variant="secondary"
         />
       )}

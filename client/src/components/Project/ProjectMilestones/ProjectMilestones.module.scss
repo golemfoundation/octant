@@ -41,6 +41,23 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
     height: 8.8rem;
   }
 
+  .reportingAndNumber {
+    display: flex;
+    align-items: center;
+  }
+
+  .milestonesNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-14;
+    background: $color-octant-grey1;
+    border-radius: $border-radius-08;
+    height: 2.4rem;
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+  }
+
   .filters {
     display: flex;
     height: 4rem;
