@@ -1,7 +1,7 @@
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import cx from 'classnames';
 import { format } from 'date-fns';
-import React, { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -21,7 +21,6 @@ const MIELSTONES_MAX_LENGTH_CLIPPED = 5;
 
 const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project.milestones' });
-  const milestonesRefs = useRef([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'complete'>('all');
   const [expandedMilestoneId, setExpandedMilestoneId] = useState<string>('');
   const [milestonesExpandable, setMilestonesExpandable] = useState<string[]>([]);
@@ -34,23 +33,6 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const { data, isFetching } = useGrantsPerProgram(epochNumber, projectAddress);
 
   const getDateFormatted = (date: string | number): string => format(date, 'd LLL');
-
-  useEffect(() => {
-    if (isFetching) {
-      return;
-    }
-    Object.keys(milestonesRefs.current).forEach(elementKey => {
-      const { clientHeight } = milestonesRefs.current[elementKey];
-      if (clientHeight > MILESTONE_MAX_HEIGHT_CLIPPED) {
-        setMilestonesExpandable(prevState => {
-          if (prevState.includes(elementKey)) {
-            return prevState;
-          }
-          return [...prevState, elementKey];
-        });
-      }
-    });
-  }, [isFetching]);
 
   const states = [
     {
@@ -98,7 +80,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
             })}
           </div>
         ) : (
-          <div className={styles.filtersNoMilestones}>No milestones yet</div>
+          <div className={styles.filtersNoMilestones}>{t('noMilestonesYet')}</div>
         )}
       </div>
       {!isFetching && (data === undefined || data.milestones.length === 0) && (
@@ -135,15 +117,19 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
               </div>
               <div className={styles.title}>{element.data.title}</div>
               <div
-                /* eslint-disable no-return-assign */
                 ref={div => {
                   if (div === null) {
                     return;
                   }
-                  /* @ts-expect-error hacky bypass of div assignment to ref */
-                  milestonesRefs.current[element.uid] = div;
+                  if (div.clientHeight > MILESTONE_MAX_HEIGHT_CLIPPED) {
+                    setMilestonesExpandable(prevState => {
+                      if (prevState.includes(element.uid)) {
+                        return prevState;
+                      }
+                      return [...prevState, element.uid];
+                    });
+                  }
                 }}
-                /* eslint-enable no-return-assign */
                 className={cx(
                   styles.body,
                   isExpandable && styles.isExpandable,

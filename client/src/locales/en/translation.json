@@ -519,6 +519,7 @@
         "header": "Reporting",
         "milestone": "Milestone",
         "posted": "Posted",
+        "noMilestonesYet": "No milestones yet",
         "buttonExpand": {
           "readMore": "Read more",
           "readLess": "Read less"

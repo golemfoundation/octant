@@ -140,10 +140,10 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-bottom: 1rem;
 
     &.isExpandable {
       max-height: 11rem;
+      padding-bottom: 1rem;
     }
 
     &.isExpanded {
@@ -204,7 +204,7 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
   position: absolute;
   bottom: 1rem;
   left: $milestoneHorizontalPadding;
-  z-index: 3;
+  z-index: $z-index-2;
   font-size: $font-size-14 // button variant link3 has font-size-16, but here 14.
 }
 
