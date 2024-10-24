@@ -7,6 +7,10 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
 .root {
   padding: 0 3.2rem;
 
+  &.isFetching {
+    margin-bottom: 1.6rem;
+  }
+
   @media #{$tablet-up} {
     padding: 0 $projectListItemHorizontalPaddingTabletUp;
   }
@@ -117,9 +121,12 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
     position: relative;
     display: flex;
     flex-direction: column;
-    max-height: 11rem;
     overflow: hidden;
     padding-bottom: 1rem;
+
+    &.isExpandable {
+      max-height: 11rem;
+    }
 
     &.isExpanded {
       max-height: none;
@@ -136,7 +143,7 @@ $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargi
     padding-top: 0.8rem;
     margin-top: 1rem;
 
-    p {
+    p, ul, ol, li {
       font-size: $font-size-14;
       font-family: 'Inter', sans-serif;
       color: $color-octant-grey5 !important;

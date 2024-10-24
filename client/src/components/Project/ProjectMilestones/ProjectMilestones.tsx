@@ -1,7 +1,7 @@
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import cx from 'classnames';
 import { format } from 'date-fns';
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -16,11 +16,14 @@ import { pending, completed } from 'svg/projectMilestones';
 import styles from './ProjectMilestones.module.scss';
 import ProjectMilestonesProps from './types';
 
+const MILESTONE_MAX_HEIGHT_CLIPPED = 110; // pixels.
+
 const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project.milestones' });
+  const milestonesRefs = useRef([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'complete'>('all');
   const [expandedMilestoneId, setExpandedMilestoneId] = useState<string>('');
-  const [milestonesIdsWithReadMore, _setMilestonesIdsWithReadMore] = useState<string[]>([]);
+  const [milestonesExpandable, setMilestonesExpandable] = useState<string[]>([]);
   const { isMobile } = useMediaQuery();
 
   const { epoch } = useParams();
@@ -31,18 +34,22 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
 
   const getDateFormatted = (date: string | number): string => format(date, 'd LLL');
 
-  // const handleReflow = (id: string, isClamped: boolean) => {
-  //   if (!isClamped) {
-  //     return;
-  //   }
-  //
-  //   setMilestonesIdsWithReadMore(prevState => {
-  //     if (prevState.includes(id)) {
-  //       return prevState;
-  //     }
-  //     return [...prevState, id];
-  //   });
-  // };
+  useEffect(() => {
+    if (isFetching) {
+      return;
+    }
+    Object.keys(milestonesRefs.current).forEach(elementKey => {
+      const { clientHeight } = milestonesRefs.current[elementKey];
+      if (clientHeight > MILESTONE_MAX_HEIGHT_CLIPPED) {
+        setMilestonesExpandable(prevState => {
+          if (prevState.includes(elementKey)) {
+            return prevState;
+          }
+          return [...prevState, elementKey];
+        });
+      }
+    });
+  }, [isFetching]);
 
   const states = [
     {
@@ -64,7 +71,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const areMilestonesAvailable = !isFetching && data !== undefined;
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, isFetching && styles.isFetching)}>
       <div className={styles.header}>
         {t('header')}
         {areMilestonesAvailable ? (
@@ -86,7 +93,9 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
           <div className={styles.filtersNoMilestones}>No milestones yet</div>
         )}
       </div>
-      {!isFetching && data === undefined && <ProjectMilestonesNoResults />}
+      {!isFetching && (data === undefined || data.milestones.length === 0) && (
+        <ProjectMilestonesNoResults />
+      )}
       {isFetching &&
         data === undefined &&
         [...Array(5).keys()].map(element => (
@@ -96,7 +105,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
         data?.milestones.slice(0, 5).map((element, index) => {
           const isCompleted = !!element?.completed;
           const isPending = !isCompleted;
-          const isReadMoreVisible = milestonesIdsWithReadMore.includes(element.uid);
+          const isExpandable = milestonesExpandable.includes(element.uid);
           const isExpanded = expandedMilestoneId === element.uid;
 
           if ((filter === 'pending' && isCompleted) || (filter === 'complete' && isPending)) {
@@ -117,7 +126,22 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
                 {getDateFormatted(element.data.endsAt * 1000)}
               </div>
               <div className={styles.title}>{element.data.title}</div>
-              <div className={cx(styles.body, isExpanded && styles.isExpanded)}>
+              <div
+                /* eslint-disable no-return-assign */
+                ref={div => {
+                  if (div === null) {
+                    return;
+                  }
+                  /* @ts-expect-error hacky bypass of div assignment to ref */
+                  milestonesRefs.current[element.uid] = div;
+                }}
+                /* eslint-enable no-return-assign */
+                className={cx(
+                  styles.body,
+                  isExpandable && styles.isExpandable,
+                  isExpanded && styles.isExpanded,
+                )}
+              >
                 <div className={styles.description}>
                   <MarkdownPreview
                     source={element.data.description}
@@ -137,9 +161,9 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
                     />
                   </div>
                 )}
-                {!isExpanded && <div className={styles.blur} />}
+                {isExpandable && !isExpanded && <div className={styles.blur} />}
               </div>
-              {(isReadMoreVisible || true) && (
+              {isExpandable && (
                 <Button
                   className={styles.buttonExpand}
                   label={isExpanded ? t('buttonExpand.readLess') : t('buttonExpand.readMore')}
