@@ -33,6 +33,8 @@ services:
       DELEGATION_SALT: "salt"
       DELEGATION_SALT_PRIMARY: "salt_primary"
 
+      SABLIER_SUBGRAPH_ENDPOINT: "${SABLIER_SUBGRAPH_ENDPOINT}"
+
     depends_on:
       - anvil
       - graph-node
