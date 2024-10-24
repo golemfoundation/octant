@@ -1,7 +1,7 @@
 from flask import current_app as app
 from gql import gql
 
-from app.extensions import gql_factory
+from app.extensions import gql_octant_factory
 
 
 def get_all_vault_merkle_roots():
@@ -18,7 +18,7 @@ def get_all_vault_merkle_roots():
     )
 
     app.logger.debug("[Subgraph] Getting all vault merkle roots")
-    result = gql_factory.build().execute(query)["vaultMerkleRoots"]
+    result = gql_octant_factory.build().execute(query)["vaultMerkleRoots"]
     app.logger.debug(f"[Subgraph] Received merkle roots: {result}")
 
     return result

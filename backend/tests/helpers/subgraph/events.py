@@ -2,7 +2,11 @@ from typing import Dict, List, Tuple
 from datetime import datetime
 from itertools import chain, repeat, accumulate
 
+from app.engine.user.effective_deposit import DepositSource
 from tests.helpers.constants import USER1_ADDRESS
+
+EventDetails = Tuple[int, int]
+EventDetailsWithSource = Tuple[int, int, DepositSource]
 
 
 def generate_epoch_events(
@@ -28,8 +32,10 @@ def generate_epoch_events(
     return events
 
 
-# pass mapping user_address => [(timestamp, amount)]
-def create_deposit_events(events: Dict[str, List[Tuple[int, int]]]):
+# pass mapping user_address => [(timestamp, amount, source), ...]
+def create_deposit_events(
+    events: Dict[str, List[EventDetails | EventDetailsWithSource]]
+):
     def flatten(list_of_lists):
         return list(chain(*list_of_lists))
 
@@ -51,7 +57,7 @@ def create_user_deposit_events(user, events):
     return list(map(_tuple_to_event_dict, events_and_deposits))
 
 
-def _tuple_to_event_dict(tuple: Tuple[str, Tuple[int, int], int]):
+def _tuple_to_event_dict(tuple: Tuple[str, EventDetailsWithSource | EventDetails, int]):
     user, event, deposit_before = tuple
     return create_deposit_event(
         user=user,
@@ -59,6 +65,7 @@ def _tuple_to_event_dict(tuple: Tuple[str, Tuple[int, int], int]):
         timestamp=event[0],
         amount=str(abs(event[1])),
         deposit_before=str(deposit_before),
+        source=event[2] if len(event) == 3 else DepositSource.OCTANT,
     )
 
 

@@ -1,9 +1,13 @@
 from collections import defaultdict
 from operator import attrgetter
-from typing import List, Dict, Tuple
+from typing import List, Dict
 
 from app.engine.user.effective_deposit import DepositEvent
-from tests.helpers.subgraph.events import create_deposit_events
+from tests.helpers.subgraph.events import (
+    create_deposit_events,
+    EventDetailsWithSource,
+    EventDetails,
+)
 
 
 class MockEventGenerator:
@@ -25,7 +29,7 @@ class MockEventGenerator:
 class MockEventGeneratorFactory:
     def build(
         self,
-        events: Dict[str, List[Tuple[int, int]]],
+        events: Dict[str, List[EventDetails | EventDetailsWithSource]],
     ) -> MockEventGenerator:
         events_by_user = defaultdict(list)
         for event in create_deposit_events(events):

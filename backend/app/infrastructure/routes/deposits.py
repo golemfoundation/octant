@@ -93,7 +93,7 @@ class LockedRatio(OctantResource):
 
 @ns.route("/users/<string:user_address>/<int:epoch>")
 @ns.doc(
-    description="Returns user's effective deposit for a finialized or pending epoch.",
+    description="Returns user's effective deposit for a finalized or pending epoch.",
     params={
         "epoch": "Epoch number",
         "user_address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",

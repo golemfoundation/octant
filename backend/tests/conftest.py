@@ -22,8 +22,17 @@ import logging
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
-from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
-from app.infrastructure import Client as GQLClient
+from app.extensions import (
+    db,
+    deposits,
+    glm,
+    gql_octant_factory,
+    w3,
+    vault,
+    epochs,
+    gql_sablier_factory,
+)
+from app.infrastructure import Client as GQLClient, SubgraphEndpoints
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
@@ -71,7 +80,7 @@ from tests.helpers.constants import (
     LOW_UQ_SCORE,
 )
 from tests.helpers.context import get_context
-from tests.helpers.gql_client import MockGQLClient
+from tests.helpers.gql_client import MockGQLClient, MockSablierGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
@@ -1523,6 +1532,12 @@ def _split_deposit_events(deposit_events):
     return locks_events, unlocks_events
 
 
+def mock_sablier_graphql(mocker):
+    mock_client = MockSablierGQLClient()
+    mocker.patch.object(gql_sablier_factory, "build")
+    gql_sablier_factory.build.return_value = mock_client
+
+
 def mock_graphql(
     mocker,
     deposit_events=None,
@@ -1539,8 +1554,8 @@ def mock_graphql(
         withdrawals=withdrawals_events,
         merkle_roots=merkle_roots_events,
     )
-    mocker.patch.object(gql_factory, "build")
-    gql_factory.build.return_value = mock_client
+    mocker.patch.object(gql_octant_factory, "build")
+    gql_octant_factory.build.return_value = mock_client
 
 
 @pytest.fixture(scope="function")
@@ -1550,7 +1565,10 @@ def mock_failing_gql(
     monkeypatch,
 ):
     # this URL is not called in this test, but it needs to be a proper URL
-    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
+    gql_octant_factory.set_url(
+        {"SUBGRAPH_ENDPOINT": "http://domain.example:12345"},
+        SubgraphEndpoints.OCTANT_SUBGRAPH,
+    )
 
     mocker.patch.object(GQLClient, "execute_sync")
     GQLClient.execute_sync.side_effect = TransportQueryError(
