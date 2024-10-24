@@ -76,7 +76,10 @@ def register_epoch_settings():
             community_fund=NotSupportedCFCalculator(),
             leftover=PreliminaryLeftover(),
         ),
-        user=UserSettings(budget=PreliminaryUserBudget()),
+        user=UserSettings(
+            budget=PreliminaryUserBudget(),
+            effective_deposit=DefaultWeightedAverageEffectiveDeposit(),
+        ),
         project=ProjectSettings(
             rewards=PreliminaryProjectRewards(
                 projects_threshold=PreliminaryProjectThreshold(2),
@@ -86,6 +89,13 @@ def register_epoch_settings():
 
     SETTINGS[3] = EpochSettings(
         octant_rewards=OctantRewardsSettings(leftover=LeftoverWithPPF()),
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit()),
         project=ProjectSettings(rewards=PreliminaryProjectRewards()),
     )
-    SETTINGS[4] = EpochSettings()
+    SETTINGS[4] = EpochSettings(
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
+    )
+    SETTINGS[5] = EpochSettings(
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
+    )
+    SETTINGS[6] = EpochSettings()

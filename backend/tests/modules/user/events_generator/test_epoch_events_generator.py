@@ -362,16 +362,235 @@ def test_returns_sorted_events_from_sablier_and_octant_for_user(
     )
 
 
-@pytest.mark.parametrize("epoch_num, start, duration", [(6, 1000, 1729095199)])
-def test_returns_sorted_events_from_sablier_and_octant_for_all_users(
-    epoch_num, start, duration, mocker, events_with_sablier_users
-):
+def test_returns_locks_and_unlocks_for_other_events(mocker, events_with_sablier_users):
     events = events_with_sablier_users
 
     mock_graphql(mocker, events, EPOCHS)
     mock_sablier_graphql(mocker)
-    context = get_context(epoch_num=epoch_num, start=start, duration=duration)
+    context = get_context(epoch_num=6, start=0, duration=1829095199)
+
+    expected = {
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8": [
+            DepositEvent(
+                user="0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                type=EventType.LOCK,
+                timestamp=0,
+                amount=0,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                type=EventType.LOCK,
+                timestamp=1050,
+                amount=400,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                type=EventType.UNLOCK,
+                timestamp=1200,
+                amount=200,
+                deposit_before=400,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                type=EventType.LOCK,
+                timestamp=1800,
+                amount=5499999999999999999800,
+                deposit_before=200,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                type=EventType.LOCK,
+                timestamp=2000,
+                amount=300,
+                deposit_before=5500000000000000000000,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+        ],
+        "0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f": [
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.LOCK,
+                timestamp=0,
+                amount=0,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.LOCK,
+                timestamp=2200,
+                amount=300,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.UNLOCK,
+                timestamp=3200,
+                amount=200,
+                deposit_before=300,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.LOCK,
+                timestamp=1726833047,
+                amount=10000000000000000000,
+                deposit_before=100,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.CREATE,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.UNLOCK,
+                timestamp=1729075199,
+                amount=355443302891933020,
+                deposit_before=10000000000000000100,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.WITHDRAW,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.UNLOCK,
+                timestamp=1729076267,
+                amount=9644339802130898030,
+                deposit_before=9644556697108067080,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.CANCEL,
+            ),
+            DepositEvent(
+                user="0x7fc77B5C761F3FaE3BE3F2FA3F6fA3FA3fA3Fa3f",
+                type=EventType.UNLOCK,
+                timestamp=1729077035,
+                amount=216894977168950,
+                deposit_before=216894977169050,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.WITHDRAW,
+            ),
+        ],
+        "0xC8ef823f4f154415Bc4931071F53c61B4F979152": [
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.LOCK,
+                timestamp=0,
+                amount=0,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.LOCK,
+                timestamp=2200,
+                amount=300,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.UNLOCK,
+                timestamp=3200,
+                amount=200,
+                deposit_before=300,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.LOCK,
+                timestamp=1726833047,
+                amount=10000000000000000000,
+                deposit_before=100,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.CREATE,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.UNLOCK,
+                timestamp=1729075199,
+                amount=355443302891933020,
+                deposit_before=10000000000000000100,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.WITHDRAW,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.UNLOCK,
+                timestamp=1729076267,
+                amount=9644339802130898030,
+                deposit_before=9644556697108067080,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.CANCEL,
+            ),
+            DepositEvent(
+                user="0xC8ef823f4f154415Bc4931071F53c61B4F979152",
+                type=EventType.UNLOCK,
+                timestamp=1729077035,
+                amount=216894977168950,
+                deposit_before=216894977169050,
+                source=DepositSource.SABLIER,
+                mapped_event=SablierEventType.WITHDRAW,
+            ),
+        ],
+        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266": [
+            DepositEvent(
+                user="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                type=EventType.LOCK,
+                timestamp=0,
+                amount=0,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                type=EventType.LOCK,
+                timestamp=1000,
+                amount=3300,
+                deposit_before=0,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                type=EventType.LOCK,
+                timestamp=1300,
+                amount=1500000055376999996700,
+                deposit_before=3300,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+            DepositEvent(
+                user="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                type=EventType.LOCK,
+                timestamp=2300,
+                amount=100,
+                deposit_before=1500000055377000000000,
+                source=DepositSource.OCTANT,
+                mapped_event=None,
+            ),
+        ],
+    }
 
     generator = DbAndGraphEventsGenerator()
 
-    print(generator.get_all_users_events(context))  # TODO finish test for that
+    for user_address, expected_events in expected.items():
+        user_events = generator.get_user_events(context, user_address)
+        assert user_events == expected_events
+
+    assert generator.get_all_users_events(context) == expected

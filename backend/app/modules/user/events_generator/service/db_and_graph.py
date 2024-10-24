@@ -50,7 +50,6 @@ class DbAndGraphEventsGenerator(Model):
         events.extend(
             get_unlocks_by_address_and_timestamp_range(user_address, start, end)
         )
-
         sablier_streams = get_user_events_history(user_address)
         mapped_events = process_to_locks_and_unlocks(
             sablier_streams, from_timestamp=start, to_timestamp=end
