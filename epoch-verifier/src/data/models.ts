@@ -220,6 +220,7 @@ export class FinalizedSimulationImpl implements Deserializable<FinalizedSimulati
       const simulatedReward = new SimulatedRewardImpl();
       return simulatedReward.from(reward);
     });
+    this.totalWithdrawals = BigInt(input.totalWithdrawals);
 
     return this;
   }

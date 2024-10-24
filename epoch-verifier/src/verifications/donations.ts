@@ -127,7 +127,7 @@ export function verifyTotalWithdrawals(context: Context): VerificationResult {
       .filter((reward) => reward.matched !== BigInt(0))
       .reduce((acc, reward) => acc + reward.amount, BigInt(0))
 
-    return assertEq(claimed + rewards, context.epochInfo.totalWithdrawals)
+    return assertEq(claimed + rewards, context.rewards.totalWithdrawals)
   }
 
   const rewards = context.rewards
