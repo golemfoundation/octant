@@ -1,8 +1,8 @@
+import MarkdownPreview from '@uiw/react-markdown-preview';
 import cx from 'classnames';
 import { format } from 'date-fns';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import LinesEllipsis from 'react-lines-ellipsis';
 import { useParams } from 'react-router-dom';
 
 import ProjectMilestonesNoResults from 'components/Project/ProjectMilestonesNoResults';
@@ -20,7 +20,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project.milestones' });
   const [filter, setFilter] = useState<'all' | 'pending' | 'complete'>('all');
   const [expandedMilestoneId, setExpandedMilestoneId] = useState<string>('');
-  const [milestonesIdsWithReadMore, setMilestonesIdsWithReadMore] = useState<string[]>([]);
+  const [milestonesIdsWithReadMore, _setMilestonesIdsWithReadMore] = useState<string[]>([]);
   const { isMobile } = useMediaQuery();
 
   const { epoch } = useParams();
@@ -31,18 +31,18 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
 
   const getDateFormatted = (date: string | number): string => format(date, 'd LLL');
 
-  const handleReflow = (id: string, isClamped: boolean) => {
-    if (!isClamped) {
-      return;
-    }
-
-    setMilestonesIdsWithReadMore(prevState => {
-      if (prevState.includes(id)) {
-        return prevState;
-      }
-      return [...prevState, id];
-    });
-  };
+  // const handleReflow = (id: string, isClamped: boolean) => {
+  //   if (!isClamped) {
+  //     return;
+  //   }
+  //
+  //   setMilestonesIdsWithReadMore(prevState => {
+  //     if (prevState.includes(id)) {
+  //       return prevState;
+  //     }
+  //     return [...prevState, id];
+  //   });
+  // };
 
   const states = [
     {
@@ -117,28 +117,29 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
                 {getDateFormatted(element.data.endsAt * 1000)}
               </div>
               <div className={styles.title}>{element.data.title}</div>
-              <div className={styles.description}>
-                <LinesEllipsis
-                  ellipsis=" ..."
-                  maxLine={isExpanded ? '999' : '3'}
-                  onReflow={({ clamped: isClamped }) => handleReflow(element.uid, isClamped)}
-                  text={element.data.description}
-                />
-              </div>
-              {isCompleted && (
+              <div className={cx(styles.body, isExpanded && styles.isExpanded)}>
                 <div className={styles.description}>
-                  <div className={styles.date}>
-                    {t('posted')} {getDateFormatted(element.completed.status.createdAt)}
-                  </div>
-                  <LinesEllipsis
-                    ellipsis=" ..."
-                    maxLine={isExpanded ? '999' : '3'}
-                    onReflow={({ clamped: isClamped }) => handleReflow(element.uid, isClamped)}
-                    text={element.completed.status.data.reason}
+                  <MarkdownPreview
+                    source={element.data.description}
+                    /* eslint-disable-next-line @typescript-eslint/naming-convention */
+                    wrapperElement={{ 'data-color-mode': 'light' }}
                   />
                 </div>
-              )}
-              {isReadMoreVisible && (
+                {isCompleted && (
+                  <div className={styles.description}>
+                    <div className={styles.date}>
+                      {t('posted')} {getDateFormatted(element.completed.status.createdAt)}
+                    </div>
+                    <MarkdownPreview
+                      source={element.completed.status.data.reason}
+                      /* eslint-disable-next-line @typescript-eslint/naming-convention */
+                      wrapperElement={{ 'data-color-mode': 'light' }}
+                    />
+                  </div>
+                )}
+                {!isExpanded && <div className={styles.blur} />}
+              </div>
+              {(isReadMoreVisible || true) && (
                 <Button
                   className={styles.buttonExpand}
                   label={isExpanded ? t('buttonExpand.readLess') : t('buttonExpand.readMore')}
