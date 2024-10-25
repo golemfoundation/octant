@@ -9,18 +9,32 @@
 
   .logoWrapper {
     position: relative;
+    height: 4rem;
   }
 
   .octantLogo {
     cursor: pointer;
+
+    &.isTestnet {
+      path {
+        fill: $color-octant-orange;
+      }
+    }
   }
 
   .testnetIndicator {
     position: absolute;
-    top: -1rem;
-    right: -0.2rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-transform: uppercase;
-    letter-spacing: 0.1rem;
+    letter-spacing: 0.05rem;
+    font-size: $font-size-10;
+    background-color: $color-octant-orange4;
+  }
+
+  .testnetIndicatorText {
+    padding: 0 0.5rem;
   }
 
   .links {
@@ -33,6 +47,10 @@
       font-weight: $font-weight-bold;
       color: $color-octant-grey2;
       cursor: pointer;
+
+      &.isTestnet {
+        color: $color-octant-dark;
+      }
 
       &:not(:last-child) {
         margin-right: 2.4rem;
@@ -140,6 +158,10 @@
     background-color: $color-white;
     border-radius: $border-radius-16;
     margin-left: 1.6rem;
+
+    &.isTestnet {
+      background-color: $color-octant-orange11;
+    }
   }
 
   .allocateButton {
