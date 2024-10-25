@@ -519,11 +519,13 @@
         "header": "Reporting",
         "milestone": "Milestone",
         "posted": "Posted",
+        "noMilestonesYet": "No milestones yet",
         "buttonExpand": {
           "readMore": "Read more",
           "readLess": "Read less"
         },
         "viewOnKarmaGap": "View on KarmaGap",
+        "viewMoreOnKarmaGap": "View more on KarmaGap",
         "noResults": {
           "header": "Nothing to report yet. Check back again soon",
           "description": "Are you a project admin? Add your reporting <0>here</0>"
