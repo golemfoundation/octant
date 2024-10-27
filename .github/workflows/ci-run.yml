@@ -46,6 +46,7 @@ jobs:
       DELEGATION_SALT: "${{ secrets.DELEGATION_SALT }}"
       DELEGATION_SALT_PRIMARY: "${{ secrets.DELEGATION_SALT_PRIMARY }}"
       SABLIER_MAINNET_SUBGRAPH_URL: "${{ secrets.SABLIER_MAINNET_SUBGRAPH_URL }}"
+      SABLIER_SEPOLIA_SUBGRAPH_URL: "${{ secrets.SABLIER_SEPOLIA_SUBGRAPH_URL }}"
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4
