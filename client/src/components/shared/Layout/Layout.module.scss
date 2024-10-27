@@ -37,6 +37,10 @@
     backdrop-filter: blur(2.5rem);
     border-bottom: 0.1rem solid $color-octant-grey1;
 
+    &.isTestnet {
+      background-color: $color-octant-orange4;
+    }
+
     &.isPatronMode {
       background: $color-octant-purple3-20;
     }

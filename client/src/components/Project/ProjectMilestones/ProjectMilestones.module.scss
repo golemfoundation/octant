@@ -1,0 +1,224 @@
+$milestoneHorizontalPadding: 2.4rem;
+$milestoneLineHeight: 2rem;
+$milestoneParagraphMargin: 0.5rem;
+$milestoneReadMoreButtonBackground: 1.5 * $milestoneLineHeight;
+$milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargin;
+
+.root {
+  padding: 0 3.2rem;
+
+  &.isFetching {
+    margin-bottom: 1.6rem;
+  }
+
+  @media #{$tablet-up} {
+    padding: 0 $projectListItemHorizontalPaddingTabletUp;
+  }
+
+  @media #{$desktop-up} {
+    padding: 0 $projectListItemHorizontalPaddingDesktopUp;
+  }
+
+  @media #{$large-desktop-up} {
+    padding: 0 $projectListItemHorizontalPaddingLargeDesktop;
+  }
+}
+
+.header {
+  @include fontBig($font-size-16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.1rem solid $color-octant-grey1;
+  height: 7.2rem;
+
+  @media #{$tablet-up} {
+    font-size: $font-size-18;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-24;
+    height: 8.8rem;
+  }
+
+  .reportingAndNumber {
+    display: flex;
+    align-items: center;
+  }
+
+  .milestonesNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-14;
+    background: $color-octant-grey1;
+    border-radius: $border-radius-08;
+    height: 2.4rem;
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+  }
+
+  .filters {
+    display: flex;
+    height: 4rem;
+    font-size: $font-size-10;
+    background: $color-white;
+    padding: 0.4rem;
+    border-radius: $border-radius-08;
+
+    .filter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 8.3rem;
+      border-radius: $border-radius-08;
+      color: $color-octant-grey2;
+      cursor: pointer;
+
+      &.isSelected, &:hover {
+        color: $color-octant-dark;
+      }
+
+      &.isSelected {
+        background: $color-octant-grey6;
+
+        .icon {
+          opacity: 1;
+        }
+      }
+
+      @media #{$phone-down} {
+        width: 4.8rem;
+      }
+
+      .icon {
+        margin: 0 0.8rem;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .filtersNoMilestones {
+    font-size: $font-size-12;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.milestone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: $color-white;
+  padding: 2rem $milestoneHorizontalPadding;
+  border-radius: $border-radius-20;
+  margin-top: 1.6rem;
+
+  .timelineAndState {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-10;
+    text-transform: uppercase;
+    color: $color-octant-grey5;
+    margin-bottom: 1rem;
+
+    .icon {
+      margin: 0 0.8rem;
+    }
+  }
+
+  .title {
+    text-align: left;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-18;
+    margin-bottom: 0.5rem;
+  }
+
+  .body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &.isExpandable {
+      max-height: 11rem;
+      padding-bottom: 1rem;
+    }
+
+    &.isExpanded {
+      max-height: none;
+      padding-bottom: 3rem;
+    }
+  }
+
+  .description {
+    text-align: left;
+    font-size: $font-size-14;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+    border-top: 0.1rem solid $color-octant-grey8;
+    padding-top: 0.8rem;
+    margin-top: 1rem;
+
+    p, ul, ol, li {
+      font-size: $font-size-14;
+      font-family: 'Inter', sans-serif;
+      color: $color-octant-grey5 !important;
+      margin-bottom: 0;
+      line-height: $milestoneLineHeight;
+    }
+
+    a {
+      @include buttonVariantLink3($font-size-14);
+    }
+
+    .date {
+      font-size: $font-size-10;
+      padding: 0.8rem 0;
+    }
+  }
+
+  .blur {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: $milestoneReadMoreButtonBackground;
+    background: $color-white;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      height: $milestoneReadMoreFadeOutHeight;
+      opacity: 0.75;
+      background: $color-white;
+    }
+  }
+}
+
+.buttonExpand {
+  position: absolute;
+  bottom: 1rem;
+  left: $milestoneHorizontalPadding;
+  z-index: $z-index-2;
+  font-size: $font-size-14 // button variant link3 has font-size-16, but here 14.
+}
+
+.buttonViewKarma {
+  background: transparent;
+  margin: 5.6rem auto;
+  max-width: 22.6rem;
+
+  svg path {
+    stroke: $color-octant-dark;
+  }
+
+  @media #{$phone-down} {
+    width: 100%;
+    max-width: 100%;
+  }
+}

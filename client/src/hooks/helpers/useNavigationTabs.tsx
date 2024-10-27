@@ -43,6 +43,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
     {
       icon: allocate,
       isActive: ROOT_ROUTES.allocation.absolute === pathname,
+      isBigIcon: true,
       key: 'allocate',
       label: t('allocate'),
       to: ROOT_ROUTES.allocation.absolute,
@@ -57,6 +58,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
     {
       icon: settings,
       isActive: ROOT_ROUTES.settings.absolute === pathname,
+      isBigIcon: true,
       key: 'settings',
       label: t('settings'),
       to: ROOT_ROUTES.settings.absolute,

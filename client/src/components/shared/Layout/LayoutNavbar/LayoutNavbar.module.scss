@@ -147,3 +147,11 @@
     }
   }
 }
+
+.bigIcon {
+  margin: 0.4rem 0;
+
+  @media #{$tablet-up} {
+    margin: 0.5rem 0;
+  }
+}

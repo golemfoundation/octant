@@ -25,6 +25,9 @@
     align-items: center;
     margin: 1.6rem 0 0.8rem;
     height: 3.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media #{$tablet-up} {
       @include fontBig($font-size-32);
@@ -48,88 +51,16 @@
     width: 100%;
     align-items: center;
 
+    .buttonAddToAllocate {
+      margin-left: auto;
+    }
+
     @media #{$tablet-up} {
       display: flex;
     }
 
-    .actionButtonsWrapper {
-      display: flex;
-
-      .element,
-      .actionButton {
-        flex: 1;
-      }
-
-      .actionButton {
-        position: relative;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        height: 4rem;
-        outline: none;
-        padding: 0 1.4rem;
-        font-size: $font-size-12;
-        font-weight: $font-weight-bold;
-        background-color: $color-octant-grey8;
-        color: $color-octant-grey5;
-        border: none;
-        border-radius: $border-radius-16;
-        justify-content: center;
-
-        svg path {
-          stroke: $color-octant-grey5;
-          stroke-width: 1.5;
-        }
-
-        &:hover {
-          color: $color-octant-dark;
-
-          svg path {
-            stroke: $color-octant-dark;
-          }
-        }
-
-        &:active {
-          background-color: $color-octant-grey1;
-          color: $color-octant-dark;
-
-          svg path {
-            stroke: $color-octant-dark;
-          }
-        }
-
-        &.websiteLink {
-          margin-right: 1.6rem;
-
-          .labelOrUrl {
-            max-width: 9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-          }
-
-          .arrowTopRightIcon {
-            margin-left: 0.8rem;
-            margin-right: 0.2rem;
-          }
-        }
-      }
-
-      @media #{$tablet-up} {
-        .element,
-        .actionButton {
-          flex: 0;
-        }
-      }
-    }
-
-    .buttonAddToAllocate {
-      margin-top: 1.4rem;
-
-      @media #{$tablet-up} {
-        margin-top: 0;
-        margin-left: auto;
-      }
+    @media #{$tablet-down} {
+      display: none;
     }
   }
 }

@@ -15,6 +15,7 @@ export const ROOTS: Root = {
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   individualReward: 'individualReward',
+  karmaGapMilestonesPerProjectPerGrantPerProgram: 'karmaGapMilestonesPerProjectPerGrantPerProgram',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
   projectRewardsThreshold: 'projectRewardsThreshold',
@@ -53,6 +54,11 @@ export const QUERY_KEYS: QueryKeys = {
   individualProjectRewards: ['individualProjectRewards'],
   individualReward: epochNumber => [ROOTS.individualReward, epochNumber.toString()],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
+  karmaGapMilestonesPerProjectPerGrantPerProgram: (selectedProgramIds, projectAddress) => [
+    ROOTS.karmaGapMilestonesPerProjectPerGrantPerProgram,
+    selectedProgramIds,
+    projectAddress,
+  ],
   largestLockedAmount: ['largestLockedAmount'],
   lockedSummaryLatest: ['lockedSummaryLatest'],
   lockedSummarySnapshots: ['lockedSummarySnapshots'],
@@ -80,5 +86,6 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
+  vimeoVideos: ['vimeoVideos'],
   withdrawals: ['withdrawals'],
 };

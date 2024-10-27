@@ -13,7 +13,7 @@ $border-radius-40: 4rem;
 $box-shadow-1: 0px 0px 25px rgba(0, 0, 0, 0.05);
 $box-shadow-2: 0px 4px 25px rgba(0, 0, 0, 0.15);
 
-$transition-time-1: 0.05s;
+$transition-time-1: 0.5s;
 $transition-time-2: 0.25s;
 $transition-time-3: 0.2s;
 $transition-time-4: 0.1s;
@@ -35,6 +35,9 @@ $modalVariantSmallPaddingMobile: 2.4rem;
 $modalVariantSmallPaddingDesktop: 5.6rem;
 $projectItemPadding: 2.4rem;
 $historyHorizontalPadding: 1.6rem;
+$projectListItemHorizontalPaddingLargeDesktop: 24.6rem;
+$projectListItemHorizontalPaddingDesktopUp: 17.8rem;
+$projectListItemHorizontalPaddingTabletUp: 13.2rem;
 
 // layout
 $layout-horizontal-padding-small: 2.4rem;

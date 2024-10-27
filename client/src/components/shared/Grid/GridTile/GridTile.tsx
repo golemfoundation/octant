@@ -11,8 +11,9 @@ const GridTile: FC<GridTileProps> = ({
   className,
   dataTest = 'GridTile',
   showTitleDivider,
+  ...rest
 }) => (
-  <div className={cx(styles.root, className)} data-test={dataTest}>
+  <div className={cx(styles.root, className)} data-test={dataTest} {...rest}>
     <div className={cx(styles.titleWrapper, showTitleDivider && styles.showTitleDivider)}>
       <div className={styles.title} data-test={`${dataTest}__title`}>
         {title}

@@ -16,6 +16,7 @@ const Button = <T extends ButtonProps>(
     className,
     dataParameters,
     dataTest = 'Button',
+    hasLinkArrow,
     href,
     isActive,
     isButtonScalingUpOnHover = true,
@@ -115,7 +116,7 @@ const Button = <T extends ButtonProps>(
         )}
         {children}
         {label}
-        {['link', 'link5', 'link6'].includes(variant) && (
+        {(['link', 'link5', 'link6'].includes(variant) || hasLinkArrow) && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrowTopRight}

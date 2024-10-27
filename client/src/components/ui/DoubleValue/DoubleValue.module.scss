@@ -35,6 +35,7 @@
 
     &large {
       @include fontBig($font-size-24);
+      margin-bottom: 0.5rem;
     }
 
     &standard {
@@ -60,6 +61,13 @@
   font-size: $font-size-16;
   color: $color-octant-grey5;
   font-weight: $font-weight-bold;
+
+  &.variant-- {
+    &tiny,
+    &small {
+      font-size: $font-size-12;
+    }
+  }
 
   &.isError {
     color: $color-octant-orange;

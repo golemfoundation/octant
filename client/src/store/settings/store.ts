@@ -2,6 +2,7 @@ import {
   DISPLAY_CURRENCY,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
+  SHOW_HELP_VIDEOS,
 } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
@@ -11,6 +12,7 @@ export const initialState: SettingsData = {
   displayCurrency: 'usd',
   isAllocateOnboardingAlwaysVisible: false,
   isCryptoMainValueDisplay: true,
+  showHelpVideos: true,
 };
 
 export default getStoreWithMeta<SettingsData, SettingsMethods>({
@@ -35,6 +37,12 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
       set(state => ({ data: { ...state.data, isCryptoMainValueDisplay: payload } }));
     },
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    setShowHelpVideos: payload => {
+      localStorage.setItem(SHOW_HELP_VIDEOS, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, showHelpVideos: payload } }));
+    },
+
     setValuesFromLocalStorage: () =>
       set({
         data: {
@@ -46,6 +54,7 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
           isCryptoMainValueDisplay: JSON.parse(
             localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY) || 'null',
           ),
+          showHelpVideos: JSON.parse(localStorage.getItem(SHOW_HELP_VIDEOS) || 'true'),
         },
         meta: {
           isInitialized: true,
