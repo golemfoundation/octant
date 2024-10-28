@@ -10,6 +10,12 @@ from app.engine.user.effective_deposit import (
 from app.infrastructure.sablier.events import SablierStream, SablierAction
 
 
+class FlattenStrategy:
+    LOCKS = 0
+    UNLOCKS = 1
+    ALL = 2
+
+
 class SablierEvent(TypedDict):
     __source: DepositSource
     depositBefore: int
@@ -173,3 +179,18 @@ def _convert(actions: List[SablierAction]) -> List[SablierEvent]:
             lock_items.append(lock_item)
 
     return lock_items
+
+
+def flatten_sablier_events(
+    streams: List[MappedEvents], flatten_strategy: FlattenStrategy
+):
+    output = []
+    for mapped_events in streams:
+        if flatten_strategy == FlattenStrategy.LOCKS:
+            output += mapped_events.locks
+        elif flatten_strategy == FlattenStrategy.UNLOCKS:
+            output += mapped_events.unlocks
+        elif flatten_strategy == FlattenStrategy.ALL:
+            output += mapped_events.locks + mapped_events.unlocks
+
+    return output

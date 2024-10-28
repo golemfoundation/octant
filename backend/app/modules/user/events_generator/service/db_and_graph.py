@@ -21,7 +21,11 @@ from app.infrastructure.sablier.events import (
 from app.infrastructure.sablier.events import (
     get_user_events_history,
 )
-from app.modules.common.sablier_events_mapper import process_to_locks_and_unlocks
+from app.modules.common.sablier_events_mapper import (
+    process_to_locks_and_unlocks,
+    flatten_sablier_events,
+    FlattenStrategy,
+)
 from app.modules.user.events_generator.core import unify_deposit_balances
 from app.pydantic import Model
 
@@ -53,10 +57,10 @@ class DbAndGraphEventsGenerator(Model):
             get_unlocks_by_address_and_timestamp_range(user_address, start, end)
         )
         sablier_streams = get_user_events_history(user_address)
-        mapped_events = process_to_locks_and_unlocks(
+        mapped_streams = process_to_locks_and_unlocks(
             sablier_streams, from_timestamp=start, to_timestamp=end
-        )[0]
-        events += mapped_events.locks + mapped_events.unlocks
+        )
+        events += flatten_sablier_events(mapped_streams, FlattenStrategy.ALL)
 
         events = list(map(DepositEvent.from_dict, events))
         sorted_events = sorted(events, key=attrgetter("timestamp"))
@@ -89,8 +93,7 @@ class DbAndGraphEventsGenerator(Model):
             sablier_streams, from_timestamp=start, to_timestamp=end
         )
         epoch_events = []
-        for mapped_events in mapped_streams:
-            epoch_events += mapped_events.locks + mapped_events.unlocks
+        epoch_events += flatten_sablier_events(mapped_streams, FlattenStrategy.ALL)
         epoch_events += get_locks_by_timestamp_range(start, end)
         epoch_events += get_unlocks_by_timestamp_range(start, end)
 
