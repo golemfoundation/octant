@@ -27,7 +27,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const allocationInfoText = useMemo(() => {
-    const epoch = currentEpoch! - 1;
+    const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!;
 
     const durationMinutes = `${durationToChangeAWInMinutes}${isMobile ? `${t('minutesShort')}` : ` ${t('minutes', { count: durationToChangeAWInMinutes })}`}`;
 

@@ -20,6 +20,9 @@ const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = 
     cryptoCurrency: 'ethereum',
     showCryptoSuffix: true,
     valueCrypto: totalUserDonations,
+    getFormattedEthValueProps: {
+      maxNumberOfDigitsToShow: 6,
+    },
   });
 
   return (
