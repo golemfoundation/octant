@@ -1,11 +1,9 @@
-import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 
 import ProjectListItemButtonsWebsiteAndShare from 'components/Project/ProjectListItemButtonsWebsiteAndShare';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
 import ProjectMilestones from 'components/Project/ProjectMilestones';
-import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
-import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
+import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
@@ -46,18 +44,8 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           profileImageSmall={profileImageSmall}
           website={website}
         />
-        {!isEpoch1 && epoch && epoch < 4 && (
-          <RewardsWithThreshold
-            address={address}
-            className={cx(styles.projectRewards, styles.hasPaddingAndBorder)}
-            epoch={epoch}
-            isProjectView
-            numberOfDonors={numberOfDonors}
-            totalValueOfAllocations={totalValueOfAllocations}
-          />
-        )}
-        {!isEpoch1 && (!epoch || epoch >= 4) && (
-          <RewardsWithoutThreshold
+        {!isEpoch1 && (
+          <Rewards
             address={address}
             className={styles.projectRewards}
             donations={donations}
