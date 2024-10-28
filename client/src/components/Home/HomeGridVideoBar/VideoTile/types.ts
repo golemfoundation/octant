@@ -1,5 +1,5 @@
 export default interface VideoTileProps {
-  author: string;
+  isDragging: boolean;
   title: string;
   url: string;
 }

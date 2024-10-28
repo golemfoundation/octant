@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import VideoTile from 'components/Home/HomeGridVideoBar/VideoTile';
@@ -19,6 +19,7 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
   });
   const { data } = useVimeoVideos();
   const constraintsRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const { setShowHelpVideos } = useSettingsStore(state => ({
     setShowHelpVideos: state.setShowHelpVideos,
@@ -38,11 +39,17 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
       }
     >
       <div ref={constraintsRef} className={styles.constraintsWrapper}>
-        <motion.div className={styles.videosWrapper} drag="x" dragConstraints={constraintsRef}>
-          {data?.map(({ name, player_embed_url, user }) => (
+        <motion.div
+          className={styles.videosWrapper}
+          drag="x"
+          dragConstraints={constraintsRef}
+          onDragEnd={() => setIsDragging(false)}
+          onDragStart={() => setIsDragging(true)}
+        >
+          {data?.map(({ name, player_embed_url }) => (
             <VideoTile
               key={player_embed_url}
-              author={user.name}
+              isDragging={isDragging}
               title={name}
               url={player_embed_url}
             />
