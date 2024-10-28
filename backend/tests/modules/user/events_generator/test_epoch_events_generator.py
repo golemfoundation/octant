@@ -6,7 +6,7 @@ from app.infrastructure import database
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
-from tests.conftest import mock_graphql
+from tests.conftest import mock_graphql, mock_sablier_graphql
 from tests.helpers import create_deposit_events, generate_epoch_events
 from tests.helpers.constants import (
     ALICE_ADDRESS,
@@ -49,6 +49,7 @@ def events(dave):
 
 def test_returns_locks_and_unlocks_for_first_epoch(mocker, events):
     mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
     context = get_context()
     expected = {
         ALICE_ADDRESS: [
@@ -117,6 +118,7 @@ def test_returns_locks_and_unlocks_for_second_epoch(
     mocker, dave, events, mock_pending_epoch_snapshot_db
 ):
     mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
     context = get_context(2, start=2000)
     expected = {
         ALICE_ADDRESS: [
@@ -193,6 +195,7 @@ def test_returns_events_with_one_element_if_deposit_is_gt_0(mocker, dave, events
     database.deposits.add(2, user, 300, 300)
     db.session.commit()
     mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
     context = get_context(3, start=3000)
 
     generator = DbAndGraphEventsGenerator()
@@ -221,6 +224,8 @@ def test_returns_empty_list_if_there_is_one_event_with_deposit_eq_0(
     user = database.user.add_user(dave)
     database.deposits.add(3, user, 0, 0)
     mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
+    mock_sablier_graphql(mocker)
     context = get_context(4, start=4000)
 
     generator = DbAndGraphEventsGenerator()
@@ -230,6 +235,7 @@ def test_returns_empty_list_if_there_is_one_event_with_deposit_eq_0(
 
 def test_returned_events_are_sorted_by_timestamp(mocker, events):
     mock_graphql(mocker, events, EPOCHS)
+    mock_sablier_graphql(mocker)
     context = get_context()
 
     generator = DbAndGraphEventsGenerator()

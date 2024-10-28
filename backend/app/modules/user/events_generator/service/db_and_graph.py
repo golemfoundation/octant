@@ -16,6 +16,11 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
 )
 from app.pydantic import Model
+from app.infrastructure.sablier.events import (
+    get_all_events_history,
+    get_user_events_history,
+)
+from app.modules.common.sablier_events_mapper import process_to_locks_and_unlocks
 
 
 class DbAndGraphEventsGenerator(Model):
@@ -23,7 +28,7 @@ class DbAndGraphEventsGenerator(Model):
         self, context: Context, user_address: str
     ) -> List[DepositEvent]:
         """
-        Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
+        Get user lock and unlock events from the subgraph & sablier within the given timestamp range, sort them by timestamp,
 
         Returns:
             A list of event dictionaries sorted by timestamp.
@@ -44,6 +49,12 @@ class DbAndGraphEventsGenerator(Model):
         events.extend(
             get_unlocks_by_address_and_timestamp_range(user_address, start, end)
         )
+
+        sablier_events = get_user_events_history(user_address)
+        mapped_events = process_to_locks_and_unlocks(
+            sablier_events, from_timestamp=start, to_timestamp=end
+        )
+        events += mapped_events.locks + mapped_events.unlocks
 
         events = list(map(DepositEvent.from_dict, events))
         sorted_events = sorted(events, key=attrgetter("timestamp"))
@@ -69,8 +80,15 @@ class DbAndGraphEventsGenerator(Model):
         end = context.epoch_details.end_sec
         epoch_start_events = self._get_epoch_start_deposits(epoch_num, start)
 
-        epoch_events = get_locks_by_timestamp_range(start, end)
+        sablier_events = get_all_events_history()
+        mapped_events = process_to_locks_and_unlocks(
+            sablier_events, from_timestamp=start, to_timestamp=end
+        )
+
+        epoch_events = mapped_events.locks + mapped_events.unlocks
+        epoch_events += get_locks_by_timestamp_range(start, end)
         epoch_events += get_unlocks_by_timestamp_range(start, end)
+
         epoch_events = list(map(DepositEvent.from_dict, epoch_events))
         sorted_events = sorted(epoch_events, key=attrgetter("user", "timestamp"))
 

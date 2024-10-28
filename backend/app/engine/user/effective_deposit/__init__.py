@@ -12,6 +12,17 @@ class EventType(StrEnum):
     UNLOCK = "Unlocked"
 
 
+class SablierEventType(StrEnum):
+    CREATE = "Create"
+    WITHDRAW = "Withdraw"
+    CANCEL = "Cancel"
+
+
+class DepositSource(StrEnum):
+    OCTANT = "Octant"
+    SABLIER = "Sablier"
+
+
 def _calculate_deposit_after_event(
     event_type: EventType, before: int, amount: int
 ) -> int:
@@ -32,6 +43,8 @@ class DepositEvent:
     amount: int
     deposit_before: int
     deposit_after: int
+    source: DepositSource
+    mapped_event: Optional[SablierEventType]
 
     def __init__(
         self,
@@ -40,6 +53,8 @@ class DepositEvent:
         timestamp: int,
         amount: int,
         deposit_before: int,
+        source: DepositSource = DepositSource.OCTANT,
+        mapped_event: Optional[SablierEventType] = None,
     ):
         self.user = user
         self.type = type
@@ -49,10 +64,17 @@ class DepositEvent:
         self.deposit_after = _calculate_deposit_after_event(
             type, deposit_before, amount
         )
+        self.source = source
+        self.mapped_event = mapped_event
 
     @staticmethod
     def from_dict(event: Dict):
         event_type = EventType(event["__typename"])
+        source = DepositSource.OCTANT
+        mapped_event = None
+        if event.get("__source") == DepositSource.SABLIER:
+            mapped_event = event["type"]
+            source = DepositSource.SABLIER
         user = to_checksum_address(event["user"])
         timestamp = int(event["timestamp"])
         amount = int(event["amount"])
@@ -64,6 +86,8 @@ class DepositEvent:
             timestamp=timestamp,
             amount=amount,
             deposit_before=deposit_before,
+            source=source,
+            mapped_event=mapped_event,
         )
 
 
