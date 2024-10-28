@@ -1,7 +1,8 @@
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import cx from 'classnames';
 import { format } from 'date-fns';
 import { useInView } from 'framer-motion';
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
@@ -18,11 +19,46 @@ const CalendarItem: FC<CalendarItemProps> = ({
   isActive,
   href,
   shouldUseThirdPersonSingularVerb,
+  isAlert,
+  durationToChangeAWInMinutes,
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: 'all' });
   const [initialClientX, setInitialClientX] = useState<number | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const date = useMemo(() => {
+    if (to) {
+      let dateFormat = `${format(to, 'dd MMMM haaa')} CET`;
+
+      if (isAlert && isHovered) {
+        const durationToChangeAWInHours = Math.floor(durationToChangeAWInMinutes / 60);
+        const durationHours = `${durationToChangeAWInHours} ${t('hours', { count: durationToChangeAWInHours })}`;
+
+        const durationMinutes = `${durationToChangeAWInMinutes} ${t('minutes', { count: durationToChangeAWInMinutes })}`;
+
+        const duration = durationToChangeAWInMinutes <= 60 ? durationMinutes : durationHours;
+
+        dateFormat = `${t('in')} ${duration}`;
+      }
+
+      if (shouldUseThirdPersonSingularVerb) {
+        return `${i18n.t('common.closes')} ${dateFormat}`;
+      }
+      return `${i18n.t('common.close')} ${dateFormat}`;
+    }
+
+    return `${format(from, 'haaa')} CET`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    to?.getTime(),
+    isAlert,
+    isHovered,
+    durationToChangeAWInMinutes,
+    shouldUseThirdPersonSingularVerb,
+  ]);
 
   return (
     <div
@@ -32,6 +68,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
         isActive && styles.isActive,
         isInView && styles.isInView,
         href && styles.hasHref,
+        isAlert && styles.isAlert,
       )}
       data-test="CalendarItem"
       id={id}
@@ -41,6 +78,8 @@ const CalendarItem: FC<CalendarItemProps> = ({
         }
         setInitialClientX(e.clientX);
       }}
+      onMouseLeave={() => setIsHovered(false)}
+      onMouseOver={() => setIsHovered(true)}
       onMouseUp={e => {
         if (!href) {
           return;
@@ -69,11 +108,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
             />
           )}
         </div>
-        <div className={styles.date}>
-          {to
-            ? `${i18n.t(shouldUseThirdPersonSingularVerb ? 'common.closes' : 'common.close')} ${format(to, 'dd MMMM haaa')} CET`
-            : `${format(from, 'haaa')} CET`}
-        </div>
+        <div className={styles.date}>{date}</div>
       </div>
     </div>
   );

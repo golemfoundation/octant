@@ -37,7 +37,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
         result = gql_sablier_factory.build().execute(
             gql(query), variable_values=variables
         )
-        print("XD", result, flush=True)
+
         streams = result.get("streams", [])
 
         app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
@@ -132,6 +132,7 @@ def get_all_streams_history() -> List[SablierStream]:
         "sender": _get_sender(),
         "tokenAddress": _get_token_address(),
     }
+
     return fetch_streams(query, variables)
 
 

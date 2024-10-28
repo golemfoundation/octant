@@ -49,12 +49,8 @@
   color: $color-octant-grey5;
   font-weight: $font-weight-bold;
   display: grid;
-  grid-template-columns: 8rem 11.8rem 11.8rem 11.8rem;
-  margin-left: 10rem;
+  grid-template-columns: 8rem 12rem 12rem 12rem;
+  margin-left: 8.8rem;
   font-size: $font-size-12;
   text-align: left;
-
-  .label {
-    margin-left: 0.2rem;
-  }
 }

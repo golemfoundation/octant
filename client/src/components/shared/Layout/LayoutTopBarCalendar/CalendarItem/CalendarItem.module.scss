@@ -55,6 +55,10 @@
   &.isActive {
     background-color: $color-octant-green5;
 
+    &:hover {
+      background-color: $color-octant-green11;
+    }
+
     .day,
     .monthShort,
     .label,
@@ -67,6 +71,29 @@
       path {
         stroke: $color-octant-green;
         fill: $color-octant-green;
+      }
+    }
+  }
+
+  &.isActive.isAlert {
+    background-color: $color-octant-orange9;
+
+    &:hover {
+      background-color: $color-octant-orange10;
+    }
+
+    .day,
+    .monthShort,
+    .label,
+    .date {
+      color: $color-octant-orange;
+    }
+
+    .arrow {
+      svg,
+      path {
+        stroke: $color-octant-orange;
+        fill: $color-octant-orange;
       }
     }
   }

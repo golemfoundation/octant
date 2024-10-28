@@ -13,8 +13,13 @@ import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards
 import styles from './EpochResults.module.scss';
 import EpochResultsProps from './types';
 
-const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => {
-  const [highlightedBarAddress, setHighlightedBarAddress] = useState<null | string>(null);
+const EpochResults: FC<EpochResultsProps> = ({
+  projects,
+  isLoading,
+  epoch,
+  highlightedBarAddress,
+  setHighlightedBarAddress,
+}) => {
   const [startDraggingPageX, setStartDraggingPageX] = useState<number | null>(null);
   const [lastScrollLeft, setLastScrollLeft] = useState(0);
   const [isScrollable, setIsScrollable] = useState(false);
@@ -207,7 +212,6 @@ const EpochResults: FC<EpochResultsProps> = ({ projects, isLoading, epoch }) => 
                   .map(element => `${element}${profileImageSmall}`)}
                 isDragging={isDragging}
                 isHighlighted={!!(highlightedBarAddress && highlightedBarAddress === address)}
-                isLowlighted={!!(highlightedBarAddress && highlightedBarAddress !== address)}
                 setHighlightedBarAddress={setHighlightedBarAddress}
                 topBarHeightPercentage={getBarHeightPercentage(matchedRewards)}
               />

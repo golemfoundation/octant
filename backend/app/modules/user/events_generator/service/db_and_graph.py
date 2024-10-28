@@ -17,6 +17,8 @@ from app.infrastructure.graphql.unlocks import (
 )
 from app.infrastructure.sablier.events import (
     get_all_streams_history,
+)
+from app.infrastructure.sablier.events import (
     get_user_events_history,
 )
 from app.modules.common.sablier_events_mapper import process_to_locks_and_unlocks

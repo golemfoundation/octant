@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 from typing import Tuple, List
 
-from app.engine.user import DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit import (
     UserEffectiveDepositPayload,
     LockEventsByAddr,
     DepositSource,
     EventType,
     UserDeposit,
+)
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
 )
 
 

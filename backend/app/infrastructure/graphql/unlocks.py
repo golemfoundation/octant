@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict
+from typing import Literal, TypedDict, List
 from flask import current_app as app
 from gql import gql
 
@@ -16,7 +16,7 @@ class UnlockEvent(TypedDict):
 
 def get_user_unlocks_history(
     user_address: str, from_timestamp: int, limit: int
-) -> list[UnlockEvent]:
+) -> List[UnlockEvent]:
     query = gql(
         """
         query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {

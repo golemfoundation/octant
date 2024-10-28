@@ -4,9 +4,6 @@
   flex-direction: column;
   flex: 1;
 
-  @media #{$tablet-up} {
-  }
-
   @media #{$desktop-up} {
     padding-bottom: 0;
     width: 68rem;

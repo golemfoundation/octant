@@ -34,9 +34,6 @@ from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
-from app.engine.user import (
-    DefaultWeightedAverageEffectiveDeposit,
-)
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
@@ -53,6 +50,9 @@ from app.engine.octant_rewards import LeftoverWithPPFAndUnusedMR
 from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 from app.engine.user import DefaultWeightedAverageWithSablierTimebox
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
 
 
 def test_default_epoch_settings():

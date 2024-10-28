@@ -9,10 +9,10 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 
 import styles from './RewardsWithThreshold.module.scss';
-import RewardsProps from './types';
+import RewardsWithThresholdProps from './types';
 import { getProgressPercentage } from './utils';
 
-const RewardsWithThreshold: FC<RewardsProps> = ({
+const RewardsWithThreshold: FC<RewardsWithThresholdProps> = ({
   address,
   className,
   epoch,

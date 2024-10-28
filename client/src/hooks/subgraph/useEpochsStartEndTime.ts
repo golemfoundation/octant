@@ -45,7 +45,7 @@ export default function useEpochsStartEndTime(): UseQueryResult<
       request(subgraphAddress, GET_EPOCHS_START_END_TIME, {
         lastEpoch: currentEpoch,
       }),
-    queryKey: QUERY_KEYS.epochesEndTime(currentEpoch!),
+    queryKey: QUERY_KEYS.epochesEndTime(currentEpoch ?? -1),
     refetchOnMount: false,
     select: data => data.epoches,
   });

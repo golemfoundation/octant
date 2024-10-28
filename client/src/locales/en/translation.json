@@ -103,12 +103,14 @@
         "epochTotalMatchFunding": "Epoch total match funding",
         "epochMF": "Epoch MF"
       },
+      "homeGridVideoBar": {
+        "learnHowToUseOctant": "Learn how to use Octant"
+      },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
-        "yourFunds": "Your funds",
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
-        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch.",
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.",
         "modalLockGlm": {
           "unlockGLM": "Unlock GLM",
           "lockGlmBudgetBox": {
@@ -118,6 +120,7 @@
         }
       },
       "homeGridPersonalAllocation": {
+        "yourFunds": "Your funds",
         "withdrawToWallet": "Withdraw to wallet",
         "pendingFundsAvailableAfter": "Pending funds available after",
         "modalWithdrawEth": {
@@ -287,11 +290,6 @@
         "walletConnect": "WalletConnect",
         "ledgerConnect": "Ledger"
       },
-      "donors": {
-        "donationsNotEnabled": "Donations are not enabled in this epoch",
-        "noDonationsYet": "No donations yet",
-        "viewAll": "View all"
-      },
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
@@ -330,7 +328,8 @@
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
-        "didNotReachThreshold": "Did not reach threshold"
+        "didNotReachThreshold": "Did not reach threshold",
+        "viewAllDonors": "View all donors"
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
@@ -362,16 +361,28 @@
       "allocate": "Allocate"
     },
     "topBar": {
-      "epochAllocationWindowOpen": "Epoch {{epoch}} allocation window now open",
-      "epochAllocationWindowOpenShort": "E{{epoch}} allocation open",
-      "epochAllocationWindowClosed": "Epoch {{epoch}} allocation window is closed",
-      "epochAllocationWindowClosedShort": "E{{epoch}} allocation is closed",
+      "epochAllocationOpensIn": "Epoch {{epoch}} allocation opens in {{duration}}",
+      "epochAllocationOpensInShort": "{{duration}} to allocation",
+      "epochAllocationClosesIn": "Epoch {{epoch}} allocation closes in {{duration}}",
+      "epochAllocationClosesInShort": "Allocation closes in {{duration}}",
+      "epochAllocationWindowOpen": "Epoch {{epoch}} allocation window is open",
+      "epochAllocationWindowOpenShort": "Allocate now!",
       "connectWallet": "Connect wallet",
       "connect": "Connect",
       "admin": "Admin",
-      "patron": "Patron"
+      "patron": "Patron",
+      "in": "in",
+      "days_one": "day",
+      "days_other": "days",
+      "hours_one": "hour",
+      "hours_other": "hours",
+      "hoursShort": "h",
+      "minutes_one": "minute",
+      "minutes_other": "minutes",
+      "minutesShort": "min"
     },
     "footer": {
+      "newsletterText": "Get PGF news and updates from Octant. No spam, ever",
       "octantText": "Octant is a <0>Golem Foundation</0> project,<br/> launched in 2023.",
       "links": {
         "website": "Website",
@@ -401,7 +412,13 @@
   },
   "views": {
     "home": {
-      "title": "Welcome to Epoch {{epoch}}"
+      "title": {
+        "isDecisionWindowOpenFalse": "Welcome to Epoch {{epoch}}",
+        "isDecisionWindowOpenTrue": {
+          "desktop": "Welcome to Epoch {{epoch}} allocation window",
+          "mobile": "Welcome to E{{epoch}} AW"
+        }
+      }
     },
     "metrics": {
       "epoch1Info": "It's Epoch 1, so there are no metrics for the past. It's just a placeholder, please come back in Epoch 2.",
@@ -497,7 +514,28 @@
     "project": {
       "loadingProblem": "Loading of this project encountered a problem.",
       "backToTop": "Back to Top",
-      "share": "Share"
+      "share": "Share",
+      "milestones": {
+        "header": "Reporting",
+        "milestone": "Milestone",
+        "posted": "Posted",
+        "noMilestonesYet": "No milestones yet",
+        "buttonExpand": {
+          "readMore": "Read more",
+          "readLess": "Read less"
+        },
+        "viewOnKarmaGap": "View on KarmaGap",
+        "viewMoreOnKarmaGap": "View more on KarmaGap",
+        "noResults": {
+          "header": "Nothing to report yet. Check back again soon",
+          "description": "Are you a project admin? Add your reporting <0>here</0>"
+        },
+        "states": {
+          "pending": "Pending",
+          "complete": "Complete",
+          "all": "All"
+        }
+      }
     },
     "projects": {
       "viewTitle": "Browse Epoch {{epochNumber}} projects",
@@ -526,6 +564,7 @@
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use ETH as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
+      "showHelpVideos": "Show help videos",
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
       "docs": "Docs"
