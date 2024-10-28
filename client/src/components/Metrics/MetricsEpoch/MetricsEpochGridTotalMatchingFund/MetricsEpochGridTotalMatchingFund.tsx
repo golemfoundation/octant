@@ -18,11 +18,11 @@ const MetricsEpochGridTotalMatchingFund: FC<MetricsEpochGridTotalMatchingFundPro
 
   const totalMatchingFundToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
-    valueCrypto: matchingFund,
     getFormattedEthValueProps: {
       maxNumberOfDigitsToShow: 6,
     },
+    showCryptoSuffix: true,
+    valueCrypto: matchingFund,
   });
 
   return (
