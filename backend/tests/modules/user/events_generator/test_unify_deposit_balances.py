@@ -240,7 +240,6 @@ def test_unify_deposit_balances(
         expected
     ), "Number of events in result does not match expected."
     for r, e in zip(result, expected):
-        print("HELLO", r, e, flush=True)
         assert (
             r.deposit_before == e.deposit_before
         ), f"deposit_before mismatch: {r.deposit_before} != {e.deposit_before}"
