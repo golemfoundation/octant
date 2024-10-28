@@ -50,7 +50,9 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
       ];
 
   useLayoutEffect(() => {
-    if (!newsletterRef.current || newsletterRef.current.children.length) {return;}
+    if (!newsletterRef.current || newsletterRef.current.children.length) {
+      return;
+    }
     const script = document.createElement('script');
     script.setAttribute(
       'src',

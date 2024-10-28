@@ -21,6 +21,9 @@ const MetricsEpochGridUnallocatedValue: FC<MetricsEpochGridUnallocatedValueProps
 
   const unallocatedValue = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    getFormattedEthValueProps: {
+      maxNumberOfDigitsToShow: 6,
+    },
     showCryptoSuffix: true,
     valueCrypto: epochUnusedRewards?.value,
   });
