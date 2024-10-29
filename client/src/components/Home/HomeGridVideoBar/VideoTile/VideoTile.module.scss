@@ -1,9 +1,14 @@
 .root {
   position: relative;
-  width: 39.2rem;
+  width: 28rem;
   transition: opacity $transition-time-1;
   opacity: 0.5;
-  height: 19.8rem;
+  height: 14.4rem;
+
+  @media #{$desktop-up} {
+    width: 39.2rem;
+    height: 19.8rem;
+  }
 
   .previewVideoOverlay {
     cursor: pointer;
@@ -30,10 +35,25 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 141.6rem;
-  height: 68.6rem;
+  width: 0;
+  height: 0;
   transform: translate(-50%, -50%);
   z-index: $z-index-7;
+
+  @media #{$tablet-up} {
+    width: 71.2rem;
+    height: 34.2rem;
+  }
+
+  @media #{$desktop-up} {
+    width: 94.6rem;
+    height: 45.4rem;
+  }
+
+  @media #{$large-desktop-up} {
+    width: 141.6rem;
+    height: 68.6rem;
+  }
 
   .closeButton {
     border-radius: $border-radius-10;

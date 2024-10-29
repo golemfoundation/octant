@@ -10,6 +10,11 @@
 .constraintsWrapper {
   display: flex;
   overflow: hidden;
+  margin-top: 4rem;
+
+  @media #{$desktop-up} {
+    margin-top: 1.2rem;
+  }
 }
 
 .buttonClose {
