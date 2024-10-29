@@ -2,6 +2,7 @@ from typing import Protocol
 
 from app.modules.dto import SignatureOpType
 from app.modules.modules_factory.protocols import (
+    RaffleWinningsService,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -91,6 +92,7 @@ class PendingServices(Model):
     user_patron_mode_service: UserPatronMode
     user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
+    user_winnings_service: RaffleWinningsService
     finalized_snapshots_service: SimulateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
     project_rewards_service: PendingProjectRewardsProtocol
@@ -166,6 +168,7 @@ class PendingServices(Model):
             finalized_snapshots_service=finalized_snapshots_service,
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
+            user_winnings_service=RaffleWinningsService(),
             withdrawals_service=withdrawals_service,
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,

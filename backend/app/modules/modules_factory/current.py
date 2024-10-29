@@ -6,6 +6,7 @@ from app.modules.dto import SignatureOpType
 from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.protocols import (
     OctantRewards,
+    RaffleWinningsService,
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
     HistoryService,
@@ -66,6 +67,7 @@ class CurrentServices(Model):
     user_tos_service: UserTos
     user_antisybil_service: GitcoinPassportAntisybil
     octant_rewards_service: OctantRewards
+    user_winnings_service: RaffleWinningsService
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
     multisig_signatures_service: MultisigSignatures
@@ -157,6 +159,7 @@ class CurrentServices(Model):
             multisig_signatures_service=multisig_signatures,
             user_tos_service=user_tos,
             user_antisybil_service=user_antisybil_service,
+            user_winnings_service=RaffleWinningsService(),
             projects_metadata_service=StaticProjectsMetadataService(),
             projects_details_service=StaticProjectsDetailsService(),
             user_budgets_service=user_budgets,

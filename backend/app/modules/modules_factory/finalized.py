@@ -4,6 +4,7 @@ from app.modules.modules_factory.protocols import (
     OctantRewards,
     DonorsAddresses,
     GetUserAllocationsProtocol,
+    RaffleWinningsService,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -53,6 +54,7 @@ class FinalizedServices(Model):
     user_patron_mode_service: UserPatronMode
     user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
+    user_winnings_service: RaffleWinningsService
     withdrawals_service: WithdrawalsService
     project_rewards_service: SavedProjectRewardsService
     projects_metadata_service: ProjectsMetadataService
@@ -77,6 +79,7 @@ class FinalizedServices(Model):
             user_patron_mode_service=events_based_patron_mode,
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
+            user_winnings_service=RaffleWinningsService(),
             withdrawals_service=withdrawals_service,
             project_rewards_service=SavedProjectRewards(),
             projects_metadata_service=StaticProjectsMetadataService(),

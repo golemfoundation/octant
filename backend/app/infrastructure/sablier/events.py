@@ -17,7 +17,15 @@ class SablierAction(TypedDict):
 
 
 class SablierStream(TypedDict):
+    id: str
     actions: List[SablierAction]
+    intactAmount: int
+
+
+class SablierStreamForTrackingWinner(TypedDict):
+    id: str
+    endTime: int
+    depositAmount: int
     intactAmount: int
 
 
@@ -134,6 +142,40 @@ def get_all_streams_history() -> List[SablierStream]:
     }
 
     return fetch_streams(query, variables)
+
+
+def get_streams_with_create_events_to_user(
+    user_address: str,
+) -> List[SablierStreamForTrackingWinner]:
+    """
+    Get all the create events for a user.
+    """
+    query = """
+        query GetCreateEvents($sender: String!, $recipient: String!, $tokenAddress: String!) {
+          streams(
+            where: {
+              sender: $sender
+              recipient: $recipient
+              asset_: {address: $tokenAddress}
+              transferable: false
+            }
+            orderBy: timestamp
+          ) {
+            id
+            intactAmount
+            endTime
+            depositAmount
+          }
+        }
+    """
+    variables = {
+        "sender": "0x76273DCC41356e5f0c49bB68e525175DC7e83417",  # _get_sender(),
+        "recipient": user_address,
+        "tokenAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",  # _get_token_address(),
+    }
+
+    result = gql_sablier_factory.build().execute(gql(query), variable_values=variables)
+    return result.get("streams", [])
 
 
 def _get_sender():

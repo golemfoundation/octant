@@ -1,3 +1,4 @@
+from app.modules.user.winnings.controller import get_user_winnings
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 from flask_restx import reqparse
@@ -93,6 +94,20 @@ uq_score_model = api.model(
     {
         "uniquenessQuotient": fields.String(
             required=True, description="Uniqueness quotient score"
+        ),
+    },
+)
+
+user_winning_model = api.model(
+    "UserWinning",
+    {
+        "amount": fields.String(
+            required=True,
+            description="Amount in WEI",
+        ),
+        "dateAvailableForWithdrawal": fields.Integer(  # Changed to Integer
+            required=True,
+            description="Date when winning is available for withdrawal as unix timestamp",
         ),
     },
 )
@@ -316,3 +331,26 @@ class AllUQScores(OctantResource):
                 for user_address, uq_score in uq_scores
             ]
         }
+
+
+@ns.route("/<string:user_address>/winnings/<int:epoch>")
+@ns.doc(
+    params={
+        "epoch": "Epoch number",
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+    }
+)
+class UserWinnings(OctantResource):
+    @ns.doc(
+        description="Returns an array of user's winnings with amounts and availability dates",
+    )
+    @ns.marshal_with(fields.List(fields.Nested(user_winning_model)))
+    @ns.response(200, "User's winnings retrieved successfully")
+    def get(self, epoch: int, user_address: str):
+        app.logger.debug(f"Getting winnings for user {user_address} in epoch {epoch}")
+        winnings = get_user_winnings(epoch, user_address)
+        app.logger.debug(
+            f"Retrieved {len(winnings)} winnings for user {user_address} in epoch {epoch}"
+        )
+
+        return winnings
