@@ -18,7 +18,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   className,
   totalUserDonationsWithPatronRewards,
   unusedRewards,
-  ethBelowThreshold,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
@@ -30,15 +29,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const leftover = epochInfo ? epochInfo.leftover : BigInt(0);
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
+  const donatedToProjects = epochInfo ? epochInfo.donatedToProjects : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
   const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
   const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
-
-  const donatedToProjects = epochInfo
-    ? epochInfo.matchedRewards +
-      (totalUserDonationsWithPatronRewards - epochInfo.patronsRewards) -
-      ethBelowThreshold
-    : BigInt(0);
 
   const claimedByUsers = useMemo(() => {
     if (!epochInfo) {

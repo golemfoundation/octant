@@ -1,0 +1,24 @@
+.notification {
+  display: flex;
+  align-items: center;
+}
+
+.info {
+  height: 11.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  font-size: $font-size-12;
+  line-height: 2rem;
+  margin-left: 2rem;
+
+  .label {
+    color: $color-octant-dark;
+  }
+
+  .text {
+    color: $color-octant-grey5;
+    text-align: left;
+  }
+}

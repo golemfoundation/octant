@@ -28,7 +28,6 @@ class Config(object):
     GC_PASSPORT_SCORER_ID = os.getenv("GC_PASSPORT_SCORER_ID")
     GC_PASSPORT_SCORER_API_KEY = os.getenv("GC_PASSPORT_SCORER_API_KEY")
     SCHEDULER_ENABLED = parse_bool(os.getenv("SCHEDULER_ENABLED"))
-    CACHE_TYPE = "SimpleCache"
     DELEGATION_SALT = os.getenv("DELEGATION_SALT")
     DELEGATION_SALT_PRIMARY = os.getenv("DELEGATION_SALT_PRIMARY")
 
@@ -93,6 +92,11 @@ class ProdConfig(Config):
         "pool_pre_ping": True,
     }
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST")
+    CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT")
+    CACHE_REDIS_PASSWORD = os.getenv("CACHE_REDIS_PASSWORD")
+    CACHE_REDIS_DB = os.getenv("CACHE_REDIS_DB")
 
 
 class DevConfig(Config):
@@ -108,6 +112,7 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
     SUBGRAPH_RETRY_TIMEOUT_SEC = 2
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
+    CACHE_TYPE = "SimpleCache"
 
 
 class ComposeConfig(Config):
@@ -117,6 +122,7 @@ class ComposeConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
+    CACHE_TYPE = "SimpleCache"
 
 
 class TestConfig(Config):
@@ -141,6 +147,7 @@ class TestConfig(Config):
     DELEGATION_SALT = "salt"
     DELEGATION_SALT_PRIMARY = "salt_primary"
     SUBGRAPH_RETRY_TIMEOUT_SEC = 2
+    CACHE_TYPE = "SimpleCache"
 
 
 def get_config():

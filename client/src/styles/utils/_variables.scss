@@ -1,4 +1,5 @@
 $border-radius-standard: 0.5rem;
+$border-radius-01: 0.1rem;
 $border-radius-04: 0.4rem;
 $border-radius-06: 0.6rem;
 $border-radius-08: 0.8rem;
@@ -28,7 +29,6 @@ $z-index-7: 7; // modals
 $z-index-8: 8; // connect wallet modal
 
 // distances
-$headerHeight: 7.2rem;
 $layoutMarginHorizontal: 2.4rem;
 $progressStepperSlimStepPadding: 2.4rem;
 $modalVariantSmallPaddingMobile: 2.4rem;
@@ -40,3 +40,15 @@ $modalDesktopWidth: 47.2rem;
 $modalPadding: 0 5.6rem 5.6rem;
 $modalHeaderHeight: 8.8rem;
 $modalHeaderFontSize: $font-size-20;
+$projectListItemHorizontalPaddingLargeDesktop: 24.6rem;
+$projectListItemHorizontalPaddingDesktopUp: 17.8rem;
+$projectListItemHorizontalPaddingTabletUp: 13.2rem;
+
+// layout
+$layout-horizontal-padding-small: 2.4rem;
+$layout-horizontal-padding-large: 11.2rem;
+$layout-section-width-large-desktop: calc(
+  nth($large-desktop-range, 1) - 2 * $layout-horizontal-padding-large
+);
+$layout-top-bar-height: 8rem;
+$layout-navbar-bottom: 2.4rem;

@@ -3,73 +3,64 @@
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding-top: 4.8rem;
-
-  .imageProfileWrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    align-self: stretch;
-    margin-bottom: 1.6rem;
-  }
-
-  .buttonAddToAllocate {
-    margin-left: 3.2rem;
-
-    @media #{$desktop-up} {
-      margin-left: 2.6rem;
-    }
-  }
 
   .imageProfile {
-    width: 6.4rem;
-    height: 6.4rem;
+    width: 4.8rem;
+    height: 4.8rem;
     border-radius: 50%;
 
-    @media #{$tablet-down} {
-      width: 4.8rem;
-      height: 4.8rem;
+    @media #{$desktop-up} {
+      width: 6.4rem;
+      height: 6.4rem;
+    }
+    @media #{$large-desktop-up} {
+      width: 8rem;
+      height: 8rem;
     }
   }
 
   .name {
-    font-size: $font-size-24;
-    font-weight: $font-weight-bold;
+    @include fontBig($font-size-24);
+    display: flex;
+    align-items: center;
+    margin: 1.6rem 0 0.8rem;
+    height: 3.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media #{$tablet-up} {
+      @include fontBig($font-size-32);
+      margin: 0.6rem 0 0.8rem;
+      height: 4.8rem;
+    }
+
+    @media #{$desktop-up} {
+      @include fontBig($font-size-40);
+      margin: 1.2rem 0;
+    }
+
+    @media #{$large-desktop-up} {
+      @include fontBig($font-size-48);
+      margin: 2.4rem 0;
+    }
+  }
+
+  .wrapper {
+    display: block;
+    width: 100%;
+    align-items: center;
+
+    .buttonAddToAllocate {
+      margin-left: auto;
+    }
+
+    @media #{$tablet-up} {
+      display: flex;
+    }
 
     @media #{$tablet-down} {
-      font-size: $font-size-20;
+      display: none;
     }
-  }
-
-  .actionsWrapper {
-    display: flex;
-
-    .shareIcon {
-      border-radius: $border-radius-10;
-
-      @media #{$desktop-up} {
-        &:hover {
-          cursor: pointer;
-          background: $color-octant-grey8;
-
-          path {
-            stroke: $color-octant-dark;
-          }
-        }
-
-        &.isCopied {
-          background: $color-octant-grey1;
-
-          path {
-            stroke: $color-octant-dark;
-          }
-        }
-      }
-    }
-  }
-
-  .buttonWebsite {
-    text-align: left;
-    justify-content: flex-start;
   }
 }

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script async src="https://analytics.golem.foundation/gftracker.js" data-ackee-server="https://analytics.golem.foundation" data-ackee-domain-id="fb017ee5-7526-4c13-8694-b16aac48091c"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link
@@ -78,6 +77,26 @@
     <meta property="og:site_name" content="Octant App" />
     <meta property="og:url" content="https://octant.app" />
     <meta property="og:type" content="website" />
+     <!-- Matomo -->
+     <script>
+      if(window.location.origin === 'https://octant.app') {
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+        _paq.push(["setDoNotTrack", true]);
+        _paq.push(["disableCookies"]);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+          var u="//analytics.golem.foundation/";
+          _paq.push(['setTrackerUrl', u+'matomo.php']);
+          _paq.push(['setSiteId', '2']);
+          var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+          g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        })();
+      }
+    </script>
+    <!-- End Matomo Code -->
     <title>Octant App</title>
   </head>
   <body>

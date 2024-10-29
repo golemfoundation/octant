@@ -1,202 +1,113 @@
-$headerNavigationBorderRadius: $border-radius-32;
-$headerMarginTop: 1.6rem;
-$bodyPaddingTop: calc(1.6rem + $headerMarginTop + $headerHeight);
-
 .root {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 100%;
-}
-
-.root,
-.headerWrapper {
-  @include layoutFloatingElementWidth();
-  margin: 0 auto;
-}
-
-.headerWrapper {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: $z-index-5;
-
-  &.isAbsoluteHeaderPosition {
-    position: absolute;
-  }
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
+  padding: 0 $layout-horizontal-padding-small;
   align-items: center;
-  height: $headerHeight;
-  border-radius: $headerNavigationBorderRadius;
-  background: $color-white;
-  padding: 1.6rem;
-  margin: $headerMarginTop $layoutMarginHorizontal 0;
-  box-shadow: $box-shadow-1;
-  z-index: $z-index-3;
-}
+  margin: 8rem auto 0;
 
-.headerBlur {
-  @include layoutOverflowBlurCommonProperties();
-  height: $bodyPaddingTop;
-  top: 0;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1),
-    rgba(0, 0, 0, 0.9),
-    rgba(0, 0, 0, 0.8),
-    rgba(0, 0, 0, 0.05)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1),
-    rgba(0, 0, 0, 0.9),
-    rgba(0, 0, 0, 0.8),
-    rgba(0, 0, 0, 0.05)
-  );
-
-  &.isAbsoluteHeaderPosition {
-    position: absolute;
-  }
-}
-
-.logo {
-  position: relative;
-  height: 4rem;
-  cursor: pointer;
-}
-
-.testnetIndicatorWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: -1rem;
-  right: -0.2rem;
-  transform: translate(75%, 0);
-  background: $color-white;
-  height: 1.6rem;
-  box-sizing: content-box;
-  border-radius: 1.2rem;
-  padding: 0.4rem 0.5rem;
-}
-
-.testnetIndicator {
-  display: flex;
-  align-items: center;
-  font-size: $font-size-10;
-  font-weight: $font-weight-bold;
-  text-transform: uppercase;
-  color: $color-white;
-  letter-spacing: 0.1rem;
-  background: $color-octant-orange;
-  border-radius: 0.8rem;
-  height: 1.6rem;
-  padding: 0 0.8rem;
-  user-select: none;
-}
-
-.buttons {
-  display: flex;
-  align-items: center;
-}
-
-.buttonWallet {
-  margin-left: 1.6rem;
-  cursor: pointer;
-
-  &.isWalletModalOpen {
-    transform: rotate(180deg);
-  }
-}
-
-.profileInfo {
-  display: flex;
-  align-items: center;
-  font-size: $font-size-14;
-  cursor: pointer;
-  padding: $layoutMarginHorizontal;
-  margin: (-$layoutMarginHorizontal);
-}
-
-.walletInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.addressWrapper {
-  display: flex;
-
-  .badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: $font-size-10;
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
-    font-weight: $font-weight-bold;
-    color: $color-white;
-    border-radius: $border-radius-04;
-    height: 1.6rem;
-    margin-right: 0.8rem;
-    background: $color-octant-purple;
-    width: 5.6rem;
-
-    &.isProjectAdminMode {
-      background: $color-octant-green;
-      width: 4.4rem;
-    }
-  }
-}
-
-.address {
-  @include ethereumAddress();
-  font-weight: $font-weight-bold;
-
-  &.isProjectAdminMode {
-    color: $color-octant-green;
+  @media #{$large-desktop-up} {
+    padding: 0 $layout-horizontal-padding-large;
   }
 
-  &.isPatronMode {
-    color: $color-octant-purple;
-  }
-}
-
-.budget,
-.allocationPeriod {
-  font-size: $font-size-14;
-}
-
-.highlighted {
-  color: $color-octant-orange;
-  font-weight: $font-weight-bold;
-}
-
-.body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  flex: 1;
-  padding: $bodyPaddingTop $layoutMarginHorizontal 12rem;
-
-  @media #{$desktop-up} {
-    padding-bottom: 15.2rem;
-  }
-
-  &.isNavigationBottomSuffix {
-    padding-bottom: 20rem;
+  &.isProjectView {
+    padding: 0;
 
     @media #{$desktop-up} {
-      padding-bottom: 24.8rem;
+      padding: 0 $layout-horizontal-padding-large;
     }
   }
 
-  &.isLoading {
+  .section {
+    width: 100%;
+
+    @media #{$large-desktop-up} {
+      width: $layout-section-width-large-desktop;
+    }
+  }
+
+  .topBarWrapper {
+    position: absolute;
+    top: 0;
+    background: $color-octant-grey3;
+    width: 100%;
+    padding: 0 $layout-horizontal-padding-small;
+    z-index: $z-index-5;
+    backdrop-filter: blur(2.5rem);
+    border-bottom: 0.1rem solid $color-octant-grey1;
+
+    &.isTestnet {
+      background-color: $color-octant-orange4;
+    }
+
+    &.isPatronMode {
+      background: $color-octant-purple3-20;
+    }
+
+    &.isProjectAdminMode {
+      background: $color-octant-green5-60;
+    }
+
+    @media #{$tablet-up} {
+      position: fixed;
+    }
+
+    @media #{$large-desktop-up} {
+      padding: 0 $layout-horizontal-padding-large;
+    }
+
+    .section {
+      @media #{$large-desktop-up} {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .body {
+    @include layoutMaxWidth();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex-grow: 1;
+    flex-shrink: 0;
+    // 15.3 rem -> height of navbar with AllocationNavigation on mobile
+    min-height: calc(100% - $layout-top-bar-height - 15.3rem - $layout-navbar-bottom);
+
+    @media #{$tablet-up} {
+      // 20.1 rem -> height of navbar with AllocationNavigation on tablet
+      min-height: calc(100% - $layout-top-bar-height - 20.1rem - $layout-navbar-bottom);
+    }
+
+    &.isNavigationBottomSuffix {
+      padding-bottom: 20rem;
+
+      @media #{$desktop-up} {
+        padding-bottom: 24.8rem;
+      }
+    }
+
+    &.isLoading {
+      justify-content: center;
+    }
+  }
+
+  .footerWrapper {
+    width: calc(100% + 2 * $layout-horizontal-padding-small);
+    border-top: 0.1rem solid $color-octant-grey1;
+    margin-top: 8rem;
+    padding: 0 $layout-horizontal-padding-small;
+    display: flex;
     justify-content: center;
+
+    @media #{$desktop-up} {
+      margin-top: 4rem;
+    }
+
+    @media #{$large-desktop-up} {
+      width: calc(100% + 2 * $layout-horizontal-padding-large);
+      padding: 0 $layout-horizontal-padding-large;
+    }
   }
 }

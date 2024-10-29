@@ -9,3 +9,11 @@
   justify-content: center;
   margin-left: 1.2rem;
 }
+
+.tooltipBox {
+  .tooltip {
+    @media #{$desktop-up} {
+      left: -13.6rem;
+    }
+  }
+}

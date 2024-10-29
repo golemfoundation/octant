@@ -92,6 +92,7 @@ const config: HardhatUserConfig = {
     sepolia: {
       accounts: [TESTNET_DEPLOYER_PRIVATE_KEY, TESTNET_MULTISIG_PRIVATE_KEY],
       chainId: 11155111,
+      gasMultiplier: 2,
       url: TESTNET_RPC_URL,
     },
   },

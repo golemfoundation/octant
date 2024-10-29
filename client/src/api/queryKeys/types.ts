@@ -15,12 +15,15 @@ export type Root = {
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
+  karmaGapMilestonesPerProjectPerGrantPerProgram: 'karmaGapMilestonesPerProjectPerGrantPerProgram';
   matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
   projectRewardsThreshold: 'projectRewardsThreshold';
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  rewardsRate: 'rewardsRate';
+  searchResultsDetails: 'searchResultsDetails';
   upcomingBudget: 'upcomingBudget';
   uqScore: 'uqScore';
   userAllocationNonce: 'userAllocationNonce';
@@ -53,6 +56,10 @@ export type QueryKeys = {
   individualProjectRewards: ['individualProjectRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
+  karmaGapMilestonesPerProjectPerGrantPerProgram: (
+    selectedProgramIds: string,
+    projectAddress: string,
+  ) => [Root['karmaGapMilestonesPerProjectPerGrantPerProgram'], string, string];
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
@@ -67,6 +74,12 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
+  rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
+  searchResults: ['searchResults'];
+  searchResultsDetails: (
+    address: string,
+    epoch: number,
+  ) => [Root['searchResultsDetails'], string, string];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];
@@ -76,5 +89,6 @@ export type QueryKeys = {
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];
+  vimeoVideos: ['vimeoVideos'];
   withdrawals: ['withdrawals'];
 };

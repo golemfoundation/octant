@@ -1,8 +1,8 @@
 import {
-  ARE_OCTANT_TIPS_ALWAYS_VISIBLE,
   DISPLAY_CURRENCY,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
+  SHOW_HELP_VIDEOS,
 } from 'constants/localStorageKeys';
 
 import useSettingsStore from './store';
@@ -19,22 +19,23 @@ describe('useSettingsStore', () => {
       setIsCryptoMainValueDisplay,
       setDisplayCurrency,
       setIsAllocateOnboardingAlwaysVisible,
-      setAreOctantTipsAlwaysVisible,
+      setShowHelpVideos,
       reset,
     } = useSettingsStore.getState();
 
     setIsCryptoMainValueDisplay(false);
-    setAreOctantTipsAlwaysVisible(true);
     setDisplayCurrency('jpy');
     setIsAllocateOnboardingAlwaysVisible(true);
+    setShowHelpVideos(false);
     expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(false);
     expect(useSettingsStore.getState().data.displayCurrency).toEqual('jpy');
     expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(true);
+    expect(useSettingsStore.getState().data.showHelpVideos).toEqual(false);
     reset();
     expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(true);
-    expect(useSettingsStore.getState().data.areOctantTipsAlwaysVisible).toEqual(false);
     expect(useSettingsStore.getState().data.displayCurrency).toEqual('usd');
     expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(false);
+    expect(useSettingsStore.getState().data.showHelpVideos).toEqual(true);
   });
 
   it('should set display currency in localStorage and state', () => {
@@ -72,34 +73,16 @@ describe('useSettingsStore', () => {
     );
   });
 
-  it('should set areOctantTipsAlwaysVisible in localStorage and state', () => {
-    const { setAreOctantTipsAlwaysVisible } = useSettingsStore.getState();
-    const areOctantTipsAlwaysVisible = true;
-
-    setAreOctantTipsAlwaysVisible(areOctantTipsAlwaysVisible);
-    expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).toEqual(
-      JSON.stringify(areOctantTipsAlwaysVisible),
-    );
-    expect(useSettingsStore.getState().data.areOctantTipsAlwaysVisible).toEqual(
-      areOctantTipsAlwaysVisible,
-    );
-  });
-
   it('should set values from localStorage in state', () => {
     const { setValuesFromLocalStorage } = useSettingsStore.getState();
     const displayCurrency = 'usd';
     const isAllocateOnboardingAlwaysVisible = true;
     const isCryptoMainValueDisplay = true;
-    const areOctantTipsAlwaysVisible = true;
 
     localStorage.setItem(DISPLAY_CURRENCY, JSON.stringify(displayCurrency));
     localStorage.setItem(
       IS_ONBOARDING_ALWAYS_VISIBLE,
       JSON.stringify(isAllocateOnboardingAlwaysVisible),
-    );
-    localStorage.setItem(
-      ARE_OCTANT_TIPS_ALWAYS_VISIBLE,
-      JSON.stringify(areOctantTipsAlwaysVisible),
     );
     localStorage.setItem(IS_CRYPTO_MAIN_VALUE_DISPLAY, JSON.stringify(isCryptoMainValueDisplay));
     expect(useSettingsStore.getState().meta.isInitialized).toEqual(false);
@@ -112,8 +95,14 @@ describe('useSettingsStore', () => {
     expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(
       isCryptoMainValueDisplay,
     );
-    expect(useSettingsStore.getState().data.areOctantTipsAlwaysVisible).toEqual(
-      areOctantTipsAlwaysVisible,
-    );
+  });
+
+  it('should set showHelpVideos in localStorage and state', () => {
+    const { setShowHelpVideos } = useSettingsStore.getState();
+    const showHelpVideos = true;
+
+    setShowHelpVideos(showHelpVideos);
+    expect(localStorage.getItem(SHOW_HELP_VIDEOS)).toEqual(JSON.stringify(showHelpVideos));
+    expect(useSettingsStore.getState().data.showHelpVideos).toEqual(showHelpVideos);
   });
 });

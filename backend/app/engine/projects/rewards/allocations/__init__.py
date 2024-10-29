@@ -33,10 +33,9 @@ class ProjectAllocations(ABC):
     ) -> Union[int, Decimal]:
         ...
 
-    def group_allocations_by_projects(
+    def segregate_allocations(
         self, payload: ProjectAllocationsPayload
-    ) -> (Dict[str, List], List[ProjectSumAllocationsDTO], Union[int, Decimal]):
-        result_allocations = []
+    ) -> Dict[str, List]:
         grouped_allocations = {
             key: list(group)
             for key, group in groupby(
@@ -44,7 +43,14 @@ class ProjectAllocations(ABC):
                 key=lambda a: a.project_address,
             )
         }
+        return grouped_allocations
 
+    def group_allocations_by_projects(
+        self, payload: ProjectAllocationsPayload
+    ) -> (Dict[str, List], List[ProjectSumAllocationsDTO], Union[int, Decimal]):
+        grouped_allocations = self.segregate_allocations(payload)
+
+        result_allocations = []
         total_plain_qf = 0
         for project_address, project_allocations in grouped_allocations.items():
             project_allocations = self._calc_allocations(project_allocations)

@@ -10,8 +10,10 @@ import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
+import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useIsContract from 'hooks/queries/useIsContract';
 import useUserTOS from 'hooks/queries/useUserTOS';
+import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 
@@ -28,6 +30,15 @@ const ModalOnboarding = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
   const { address } = useAccount();
+
+  const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
+
+  const { setIsTimeoutListPresenceModalOpen, isTimeoutListPresenceModalOpen } = useDelegationStore(
+    state => ({
+      isTimeoutListPresenceModalOpen: state.data.isTimeoutListPresenceModalOpen,
+      setIsTimeoutListPresenceModalOpen: state.setIsTimeoutListPresenceModalOpen,
+    }),
+  );
   const {
     setIsOnboardingDone,
     isOnboardingDone,
@@ -52,7 +63,7 @@ const ModalOnboarding = (): ReactElement => {
   }));
   const { data: isContract } = useIsContract();
 
-  const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
+  const { data: antisybilStatusScore } = useAntisybilStatusScore(address);
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
@@ -67,6 +78,10 @@ const ModalOnboarding = (): ReactElement => {
     initialCurrentStepIndex: lastSeenStep - 1,
     steps: stepsToUse,
   });
+
+  const shouldOnboardingBeOpened =
+    isConnected &&
+    (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed);
 
   // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
   const currentStep = useMemo(() => {
@@ -88,14 +103,37 @@ const ModalOnboarding = (): ReactElement => {
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
+    if (isOnboardingModalOpen || !antisybilStatusScore || shouldOnboardingBeOpened) {
+      return;
+    }
+    // When user is on the list - open the modal.
     if (
-      isConnected &&
-      (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed)
+      antisybilStatusScore.isOnTimeOutList &&
+      isTimeoutListPresenceModalOpen?.address !== address
     ) {
+      setIsTimeoutListPresenceModalOpen({ address: address!, value: true });
+    }
+    // When user was on the list, but no longer is -- hide the modal.
+    if (
+      !antisybilStatusScore.isOnTimeOutList &&
+      isTimeoutListPresenceModalOpen?.address === address
+    ) {
+      setIsTimeoutListPresenceModalOpen({ address: address!, value: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    address,
+    isOnboardingModalOpen,
+    antisybilStatusScore?.isOnTimeOutList,
+    shouldOnboardingBeOpened,
+  ]);
+
+  useEffect(() => {
+    if (shouldOnboardingBeOpened) {
       setIsOnboardingModalOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected]);
+  }, [isConnected, shouldOnboardingBeOpened]);
 
   useEffect(() => {
     if (isOnboardingDone) {

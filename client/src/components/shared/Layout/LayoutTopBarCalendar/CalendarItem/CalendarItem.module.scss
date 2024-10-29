@@ -1,0 +1,159 @@
+.root {
+  padding: 0 0.8rem;
+  background-color: $color-octant-grey6;
+  border-radius: $border-radius-16;
+  min-height: 5.6rem;
+  max-height: 5.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  opacity: 0.5;
+  transition: opacity $transition-time-1;
+  min-width: 21.6rem;
+
+  &:not(:last-child) {
+    margin-bottom: 1.6rem;
+
+    @media #{$tablet-up} {
+      margin-right: 1.6rem;
+      margin-bottom: 0;
+    }
+  }
+
+  &.hasHref {
+    cursor: pointer;
+
+    .arrowTopRight {
+      margin-left: 0.4rem;
+
+      path {
+        stroke: $color-octant-dark;
+      }
+    }
+
+    &.isActive {
+      .arrowTopRight path {
+        stroke: $color-octant-green;
+      }
+    }
+
+    &:hover {
+      background: $color-octant-grey8;
+      &.isActive {
+        background: $color-octant-green6;
+      }
+    }
+
+    &:active {
+      background: $color-octant-grey1;
+      &.isActive {
+        background: $color-octant-green7;
+      }
+    }
+  }
+
+  &.isActive {
+    background-color: $color-octant-green5;
+
+    &:hover {
+      background-color: $color-octant-green11;
+    }
+
+    .day,
+    .monthShort,
+    .label,
+    .date {
+      color: $color-octant-green;
+    }
+
+    .arrow {
+      svg,
+      path {
+        stroke: $color-octant-green;
+        fill: $color-octant-green;
+      }
+    }
+  }
+
+  &.isActive.isAlert {
+    background-color: $color-octant-orange9;
+
+    &:hover {
+      background-color: $color-octant-orange10;
+    }
+
+    .day,
+    .monthShort,
+    .label,
+    .date {
+      color: $color-octant-orange;
+    }
+
+    .arrow {
+      svg,
+      path {
+        stroke: $color-octant-orange;
+        fill: $color-octant-orange;
+      }
+    }
+  }
+
+  &.isInView {
+    opacity: 1;
+  }
+
+  .tile {
+    width: 4rem;
+    height: 4rem;
+    border-radius: $border-radius-10;
+    background: $color-white;
+    padding-top: 0.8rem;
+    margin-right: 1.6rem;
+
+    .day {
+      font-size: $font-size-14;
+      line-height: 1.6rem;
+      text-align: center;
+      font-weight: $font-weight-semibold;
+    }
+
+    .monthShort {
+      font-size: $font-size-08;
+      line-height: 1.6rem;
+      text-align: center;
+      font-weight: $font-weight-bold;
+      letter-spacing: 0.024rem;
+      line-height: 1.1rem;
+      text-align: center;
+      text-transform: uppercase;
+    }
+  }
+
+  .label {
+    color: $color-octant-dark;
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+  }
+
+  .date {
+    color: $color-octant-grey5;
+    font-size: $font-size-10;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.02rem;
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+  }
+
+  .arrow {
+    margin: 0 0.4rem;
+
+    & svg,
+    path {
+      stroke: $color-octant-grey2;
+      fill: $color-octant-grey2;
+    }
+  }
+}

@@ -4,7 +4,6 @@ import ToastProps from 'components/ui/Toast/types';
 import triggerToast from 'utils/triggerToast';
 
 export const TOAST_NAMES = [
-  'allocationSuccessful',
   'backendError',
   'changeNetwork',
   'confirmChanges',
@@ -14,6 +13,7 @@ export const TOAST_NAMES = [
   'allocationMultisigInitialSignature',
   'delegationTooManyUniqueAddresses',
   'unableToDelegateToAddressWithPositiveGLMLock',
+  'uqScoreSuccessfullyIncreased',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 

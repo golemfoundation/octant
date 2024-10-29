@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { LeverageMatched } from 'api/calls/allocate';
+import { AllocationValue } from 'components/Allocation/types';
 import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
-import { AllocationValue } from 'views/AllocationView/types';
 
 export interface AllocationItemWithAllocations extends ProjectIpfsWithRewards {
   isAllocatedTo: boolean;
@@ -12,7 +12,7 @@ export interface AllocationItemWithAllocations extends ProjectIpfsWithRewards {
 export default interface AllocationItemProps
   extends Omit<
     AllocationItemWithAllocations,
-    'totalValueOfAllocations' | 'percentage' | 'numberOfDonors'
+    'totalValueOfAllocations' | 'percentage' | 'numberOfDonors' | 'matchedRewards' | 'donations'
   > {
   className?: string;
   isError: boolean;

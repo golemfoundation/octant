@@ -16,7 +16,7 @@ export type GetValuesToDisplayProps = {
 } & GetValueCryptoToDisplayProps;
 
 export type GetValuesToDisplayReturnType = {
-  cryptoSuffix?: 'WEI' | 'GWEI' | 'ETH' | 'GLM';
+  cryptoSuffix?: 'WEI' | 'GWEI' | 'ETH' | 'GLM' | 'Ξ';
   primary: string;
   secondary?: string;
 };

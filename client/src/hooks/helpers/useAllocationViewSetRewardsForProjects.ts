@@ -45,7 +45,7 @@ export default function useAllocationViewSetRewardsForProjects(): {
     const localStorageRewardsForProjects = BigInt(
       JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS) || '0'),
     );
-    if (isDecisionWindowOpen && userAllocations && userAllocations.elements.length > 0) {
+    if (userAllocations && userAllocations.elements.length > 0) {
       const userAllocationsSum = userAllocations.elements.reduce(
         (acc, curr) => acc + curr.value,
         BigInt(0),

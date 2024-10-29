@@ -3,9 +3,7 @@ import React, { ReactNode, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/ui/BoxRounded';
-import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
-import { TERMS_OF_USE } from 'constants/urls';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import { octantWordmark } from 'svg/logo';
@@ -35,15 +33,7 @@ const SettingsMainInfoBox = (): ReactNode => {
         <div className={cx(styles.info, styles.golemFoundationProject)}>
           {t('golemFoundationProject')}
         </div>
-        <div className={cx(styles.info, styles.poweredBy)}>{t('poweredByCoinGeckoApi')}</div>
-        <Button
-          className={styles.buttonLink}
-          dataTest="SettingsMainInfoBox__Button"
-          href={TERMS_OF_USE}
-          variant="link3"
-        >
-          {t('termsAndConditions')}
-        </Button>
+        <div className={styles.info}>{t('poweredByCoinGeckoApi')}</div>
       </div>
     </BoxRounded>
   );

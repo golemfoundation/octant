@@ -9,7 +9,7 @@ import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
 import networkConfig from 'constants/networkConfig';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useSettingsStore from 'store/settings/store';
+import useDelegationStore from 'store/delegation/store';
 import { browserWallet, walletConnect, ledgerConnect } from 'svg/wallet';
 
 import styles from './LayoutConnectWallet.module.scss';
@@ -42,7 +42,7 @@ const LayoutConnectWallet: FC = () => {
     keyPrefix: 'components.dedicated.connectWallet',
   });
 
-  const { isDelegationInProgress, setIsDelegationConnectModalOpen } = useSettingsStore(state => ({
+  const { isDelegationInProgress, setIsDelegationConnectModalOpen } = useDelegationStore(state => ({
     isDelegationInProgress: state.data.isDelegationInProgress,
     setIsDelegationConnectModalOpen: state.setIsDelegationConnectModalOpen,
   }));

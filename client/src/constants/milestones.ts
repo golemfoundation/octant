@@ -4,7 +4,9 @@ export type Milestone = {
   from: Date;
   href?: string;
   id: string;
+  isAllocationWindowMilestone?: boolean;
   label: string;
+  shouldUseThirdPersonSingularVerb?: boolean;
   to?: Date;
 };
 
@@ -35,6 +37,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-01-17T17:00:00+0100'),
         id: 'e2-allocation-window',
+        isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-01-31T17:00:00+0100'),
       },
@@ -64,6 +67,7 @@ export default function getMilestones(): Milestone[] {
         // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
         from: new Date('2024-04-16T18:00:00+0200'),
         id: 'e3-allocation-window',
+        isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-04-30T18:00:00+0200'),
       },
@@ -91,12 +95,15 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-01-01T00:00:00+0100'),
       id: 'e2-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-01-05T00:00:00+0100'),
     },
     {
       from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e2-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-01-31T17:00:00+0100'),
     },
     {
@@ -120,13 +127,16 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-03-18T00:00:00+0100'),
       id: 'e3-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-03-22T00:00:00+0100'),
     },
     {
       // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
       from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e3-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-04-30T18:00:00+0200'),
     },
     {
@@ -150,12 +160,15 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-06-17T00:00:00+0200'),
       id: 'e4-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-06-21T00:00:00+0200'),
     },
     {
       from: new Date('2024-07-15T18:00:00+0200'),
       id: 'e4-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-07-29T18:00:00+0200'),
     },
     {
@@ -179,18 +192,52 @@ export default function getMilestones(): Milestone[] {
       from: new Date('2024-08-19T18:00:00+0200'),
       id: 'e5-snapshot-vote',
       label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-08-25T18:00:00+0200'),
     },
     {
       from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e5-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
       to: new Date('2024-10-27T17:00:00+0100'),
     },
     {
       from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e6-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Six' }),
+    },
+    // 2024-10-27 timezone changes from UTC+00200 to UTC+00100.
+    {
+      from: new Date('2024-11-18T17:00:00+0100'),
+      id: 'e6-applications-open',
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      to: new Date('2024-12-05T23:59:00+0100'),
+    },
+    {
+      from: new Date('2024-12-10T23:59:00+0100'),
+      id: 'e6-project-updates-close',
+      label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
+    },
+    {
+      from: new Date('2024-12-12T17:00:00+0100'),
+      id: 'e6-snapshot-vote',
+      label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2024-12-17T23:59:00+0100'),
+    },
+    {
+      from: new Date('2025-01-11T17:00:00+0100'),
+      id: 'e6-allocation-window',
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2025-01-25T17:00:00+0100'),
+    },
+    {
+      from: new Date('2025-01-11T17:00:00+0100'),
+      id: 'e7-epoch-starts',
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Seven' }),
     },
   ];
 }

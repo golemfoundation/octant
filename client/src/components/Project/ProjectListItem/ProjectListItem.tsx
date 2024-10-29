@@ -1,7 +1,9 @@
+import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 
-import ProjectDonors from 'components/Project/ProjectDonors';
+import ProjectListItemButtonsWebsiteAndShare from 'components/Project/ProjectListItemButtonsWebsiteAndShare';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
+import ProjectMilestones from 'components/Project/ProjectMilestones';
 import RewardsWithoutThreshold from 'components/shared/RewardsWithoutThreshold';
 import RewardsWithThreshold from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
@@ -26,6 +28,8 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
   // loadedProjects (ProjectView) aren't updated during changes in open AW
   // to provide live updates, the following values are taken directly from projectsIpfsWithRewards
   const numberOfDonors = projectIpfsWithRewards?.numberOfDonors || 0;
+  const matchedRewards = projectIpfsWithRewards?.matchedRewards || 0n;
+  const donations = projectIpfsWithRewards?.donations || 0n;
   const totalValueOfAllocations = projectIpfsWithRewards?.totalValueOfAllocations || 0n;
   const { data: currentEpoch } = useCurrentEpoch();
   const isEpoch1 = currentEpoch === 1;
@@ -45,7 +49,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         {!isEpoch1 && epoch && epoch < 4 && (
           <RewardsWithThreshold
             address={address}
-            className={styles.projectRewards}
+            className={cx(styles.projectRewards, styles.hasPaddingAndBorder)}
             epoch={epoch}
             isProjectView
             numberOfDonors={numberOfDonors}
@@ -54,19 +58,31 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         )}
         {!isEpoch1 && (!epoch || epoch >= 4) && (
           <RewardsWithoutThreshold
+            address={address}
             className={styles.projectRewards}
+            donations={donations}
             epoch={epoch}
+            matchedRewards={matchedRewards}
             numberOfDonors={numberOfDonors}
+            showMoreInfo
             totalValueOfAllocations={totalValueOfAllocations}
+            variant="projectView"
           />
         )}
         <Description
+          className={styles.description}
           dataTest="ProjectListItem__Description"
           innerHtml={decodedDescription}
           variant="big"
         />
+        <ProjectListItemButtonsWebsiteAndShare
+          address={address}
+          className={styles.buttonsWebsiteAndShare}
+          name={name}
+          website={website}
+        />
       </div>
-      <ProjectDonors dataTest="ProjectListItem__Donors" projectAddress={address} />
+      <ProjectMilestones projectAddress={address} />
     </Fragment>
   );
 };

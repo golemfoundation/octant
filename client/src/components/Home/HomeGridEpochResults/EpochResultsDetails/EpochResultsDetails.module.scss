@@ -1,0 +1,79 @@
+.root {
+  display: flex;
+  font-size: $font-size-12;
+  height: 3.2rem;
+  align-items: center;
+  padding: 0 0.8rem 0rem 1.6rem;
+  background-color: $color-octant-grey6;
+  border-radius: $border-radius-08;
+
+  .scrollInfo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-12;
+
+    .scrollInfoText {
+      margin: 0 0.2rem;
+    }
+  }
+
+  .loading {
+    color: $color-octant-grey5;
+    font-weight: $font-weight-bold;
+  }
+
+  .projectName {
+    color: $color-octant-dark;
+    font-weight: $font-weight-bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    margin-right: auto;
+  }
+
+  .donations {
+    color: $color-octant-green;
+  }
+
+  .matching {
+    color: $color-octant-orange2;
+  }
+
+  .total {
+    color: $color-octant-dark;
+  }
+
+  .donations,
+  .matching,
+  .total {
+    white-space: nowrap;
+    font-weight: $font-weight-semibold;
+    margin-left: 0.8rem;
+
+    @media #{$tablet-up} {
+      margin-left: 1.6rem;
+    }
+  }
+
+  .link {
+    white-space: nowrap;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-semibold;
+    padding: 0 1.6rem;
+
+    path {
+      stroke: $color-octant-grey5;
+    }
+
+    &:hover {
+      path {
+        stroke: $color-octant-grey5;
+      }
+    }
+  }
+}

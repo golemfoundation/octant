@@ -9,6 +9,7 @@ from app.exceptions import (
     AntisybilScoreTooLow,
     InvalidRecalculationRequest,
     InvalidDelegationForLockingAddress,
+    InvalidDelegationRequest,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -53,7 +54,10 @@ def verify_score_delegation(
     score: float,
     secondary_budget: int,
     action: ActionType,
+    primary_addr: str,
+    timeout_list: set,
 ):
+    _verify_timeout_list(primary_addr, timeout_list)
     _verify_hashed_addresses(action, hashed_addresses, all_hashes)
     _verify_score(score)
     _verify_non_locking(secondary_budget)
@@ -85,6 +89,11 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
 
     if not verify_secondary:
         raise InvalidSignature(payload.secondary_addr, payload.secondary_addr_signature)
+
+
+def _verify_timeout_list(primary_addr: str, timeout_list: set):
+    if primary_addr.lower() in timeout_list:
+        raise InvalidDelegationRequest()
 
 
 def _verify_hashed_addresses(

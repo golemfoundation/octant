@@ -15,6 +15,7 @@ from app.modules.modules_factory.protocols import (
     UserAllocationNonceProtocol,
     ScoreDelegation,
     UniquenessQuotients,
+    ProjectsDetailsService,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -44,7 +45,15 @@ from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import UQ_THRESHOLD_MAINNET, UQ_THRESHOLD_NOT_MAINNET
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST_NOT_MAINNET,
+    TIMEOUT_LIST,
+)
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
@@ -61,6 +70,7 @@ class CurrentServices(Model):
     simulated_pending_snapshot_service: SimulatePendingSnapshots
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    projects_details_service: ProjectsDetailsService
     user_budgets_service: UpcomingUserBudgets
     score_delegation_service: ScoreDelegation
     uniqueness_quotients: UniquenessQuotients
@@ -97,7 +107,10 @@ class CurrentServices(Model):
         user_allocations = SavedUserAllocations()
         user_allocations_nonce = SavedUserAllocationsNonce()
         user_withdrawals = FinalizedWithdrawals()
-        user_antisybil_service = GitcoinPassportAntisybil()
+
+        timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
+        user_antisybil_service = GitcoinPassportAntisybil(timeout_list=timeout_list)
+
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
@@ -113,6 +126,7 @@ class CurrentServices(Model):
             verifier=score_delegation_verifier,
             antisybil=user_antisybil_service,
             user_deposits_service=user_deposits,
+            timeout_list=timeout_list,
         )
 
         multisig_signatures = OffchainMultisigSignatures(
@@ -129,7 +143,7 @@ class CurrentServices(Model):
         )
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
+            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
             budgets=user_budgets,
             uq_threshold=uq_threshold,
         )
@@ -144,6 +158,7 @@ class CurrentServices(Model):
             user_tos_service=user_tos,
             user_antisybil_service=user_antisybil_service,
             projects_metadata_service=StaticProjectsMetadataService(),
+            projects_details_service=StaticProjectsDetailsService(),
             user_budgets_service=user_budgets,
             score_delegation_service=score_delegation,
             uniqueness_quotients=uniqueness_quotients,

@@ -7,8 +7,9 @@ import pytest
 from app.extensions import db
 from app.infrastructure import database
 from app.modules.uq import core
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from tests.helpers.allocations import mock_request
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
 
@@ -18,14 +19,16 @@ def before(app):
 
 
 def test_calculate_uq_above_threshold(context, mock_antisybil, service):
-    mock_antisybil.get_antisybil_status.return_value = (20.0, datetime.now())
+    mock_antisybil.get_antisybil_status.return_value = AntisybilStatusDTO(
+        score=20.0, expires_at=datetime.now(), is_on_timeout_list=False
+    )
     result = service.calculate(context, USER1_ADDRESS)
     assert result == 1.0
 
 
 def test_calculate_uq_below_threshold(context, service):
     result = service.calculate(context, USER1_ADDRESS)
-    assert result == Decimal("0.2")
+    assert result == LOW_UQ_SCORE
 
 
 def test_retrieve_uq_when_score_in_the_db(service, mock_users_db_with_scores):
@@ -46,7 +49,7 @@ def test_retrieve_uq_when_score_calculated_dynamically(context, service, mock_us
     db.session.commit()
 
     result = service.retrieve(context, USER1_ADDRESS)
-    assert result == Decimal("0.2")
+    assert result == LOW_UQ_SCORE
 
 
 def test_get_all_user_uq_pairs(context, service, mock_users_db):
@@ -60,4 +63,4 @@ def test_get_all_user_uq_pairs(context, service, mock_users_db):
     db.session.commit()
 
     result = core.get_all_uqs(1)
-    assert result == [(alice.address, Decimal("0.2")), (bob.address, Decimal("0.2"))]
+    assert result == [(alice.address, LOW_UQ_SCORE), (bob.address, LOW_UQ_SCORE)]
