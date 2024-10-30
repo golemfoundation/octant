@@ -3,7 +3,6 @@ from typing import Protocol
 from app.modules.modules_factory.protocols import (
     OctantRewards,
     DonorsAddresses,
-    WinningsService,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -18,6 +17,12 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
 from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
@@ -27,14 +32,7 @@ from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
-from app.modules.projects.metadata.service.projects_metadata import (
-    StaticProjectsMetadataService,
-)
 from app.pydantic import Model
-from app.modules.projects.details.service.projects_details import (
-    StaticProjectsDetailsService,
-)
-from app.modules.user.winnings.service.raffle import RaffleWinningsService
 
 
 class FinalizingOctantRewards(OctantRewards, Leverage, Protocol):

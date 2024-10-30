@@ -120,7 +120,7 @@ user_winnings_model = api.model(
             required=True,
             description="User winnings",
         ),
-    }
+    },
 )
 
 
@@ -359,14 +359,14 @@ class UserWinnings(OctantResource):
     def get(self, user_address: str):
         app.logger.debug(f"Getting winnings for user {user_address}.")
         winnings = get_user_winnings(user_address)
-        app.logger.debug(
-            f"Retrieved {len(winnings)} winnings for user {user_address}."
-        )
+        app.logger.debug(f"Retrieved {len(winnings)} winnings for user {user_address}.")
 
-        return {"winnings": [
-            {
-                "amount": winning.amount,
-                "dateAvailableForWithdrawal": winning.date_available_for_withdrawal,
-            }
-            for winning in winnings
-        ]}
+        return {
+            "winnings": [
+                {
+                    "amount": winning.amount,
+                    "dateAvailableForWithdrawal": winning.date_available_for_withdrawal,
+                }
+                for winning in winnings
+            ]
+        }
