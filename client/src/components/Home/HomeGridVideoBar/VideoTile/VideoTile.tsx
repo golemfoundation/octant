@@ -1,7 +1,7 @@
 import Player from '@vimeo/player';
 import cx from 'classnames';
 import { AnimatePresence, motion, useInView } from 'framer-motion';
-import React, { FC, Fragment, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -12,17 +12,17 @@ import { cross } from 'svg/misc';
 import VideoTileProps from './types';
 import styles from './VideoTile.module.scss';
 
-const VideoTile: FC<VideoTileProps> = ({ title, url, isDragging }) => {
+const VideoTile = ({ title, url, isDragging }, ref) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridVideoBar',
   });
-  const ref = useRef<HTMLDivElement>(null);
   const videoIframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<Player>();
   const previewVideoIframeRef = useRef<HTMLIFrameElement>(null);
   const previewPlayerRef = useRef<Player>();
 
-  const isInView = useInView(ref, { amount: 'all' });
+  const isInViewRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(isInViewRef, { amount: 'all' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useMediaQuery();
 
   const urlWithOptions = `${url}&dnt=true`;
@@ -71,7 +71,17 @@ const VideoTile: FC<VideoTileProps> = ({ title, url, isDragging }) => {
   }, [isMobile, isTablet, isDesktop, isLargeDesktop]);
 
   return (
-    <div ref={ref} className={cx(styles.root, isInView && styles.isInView)}>
+    <div
+      ref={el => {
+        if (!el) {
+          return;
+        }
+        // @ts-expect-error wrong linter information that "current" is a read-only prop.
+        isInViewRef.current = el;
+        ref(el);
+      }}
+      className={cx(styles.root, isInView && styles.isInView)}
+    >
       <div
         className={styles.previewVideoOverlay}
         onClick={() => {
@@ -161,4 +171,4 @@ const VideoTile: FC<VideoTileProps> = ({ title, url, isDragging }) => {
   );
 };
 
-export default VideoTile;
+export default forwardRef<HTMLDivElement, VideoTileProps>(VideoTile);
