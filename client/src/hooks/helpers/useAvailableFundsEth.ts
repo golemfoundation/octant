@@ -14,7 +14,6 @@ export default function useAvailableFundsEth(): UseBalanceReturnType<{
   const { address } = useAccount();
   const { data: blockNumber } = useBlockNumber({
     chainId: networkConfig.id,
-    watch: true,
   });
   const queryClient = useQueryClient();
   const balance = useBalance({

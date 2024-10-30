@@ -12,7 +12,7 @@ export default function useAvailableFundsGlm(): UseBalanceReturnType<{
   value: bigint;
 }> {
   const { address } = useAccount();
-  const { data: blockNumber } = useBlockNumber({ chainId: networkConfig.id, watch: true });
+  const { data: blockNumber } = useBlockNumber({ chainId: networkConfig.id });
   const queryClient = useQueryClient();
   const balance = useBalance({
     address,
