@@ -1,23 +1,15 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { usePublicClient } from 'wagmi';
 
+import { apiGetCurrentEpoch, Response } from 'api/calls/epochs';
 import { QUERY_KEYS } from 'api/queryKeys';
-import networkConfig from 'constants/networkConfig';
-import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useCurrentEpoch(
-  options?: Omit<UseQueryOptions<BigInt, unknown, number, any>, 'queryKey'>,
+  options?: Omit<UseQueryOptions<Response, unknown, number, any>, 'queryKey'>,
 ): UseQueryResult<number, unknown> {
-  const publicClient = usePublicClient({ chainId: networkConfig.id });
-
   return useQuery({
-    queryFn: () =>
-      readContractEpochs({
-        functionName: 'getCurrentEpoch',
-        publicClient,
-      }),
+    queryFn: () => apiGetCurrentEpoch(),
     queryKey: QUERY_KEYS.currentEpoch,
-    select: res => Number(res),
+    select: ({ currentEpoch }) => currentEpoch,
     staleTime: Infinity,
     ...options,
   });
