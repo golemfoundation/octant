@@ -3,16 +3,17 @@ from typing import List
 from dataclasses import dataclass
 
 from app.infrastructure.sablier.events import get_streams_with_create_events_to_user
+from app.context.manager import Context
 
 
 @dataclass
 class UserWinningDTO:
-    amount: int
-    date_available_for_withdrawal: int
+    amount: str
+    date_available_for_withdrawal: str
 
 
 class RaffleWinningsService(Model):
-    def get_user_winnings(self, user_address: str) -> List[UserWinningDTO]:
+    def get_user_winnings(self, _: Context, user_address: str) -> List[UserWinningDTO]:
         streams = get_streams_with_create_events_to_user(user_address)
         user_winnings = []
 

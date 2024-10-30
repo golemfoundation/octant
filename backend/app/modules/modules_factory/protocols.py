@@ -127,7 +127,7 @@ class UserRewards(Protocol):
 
 
 @runtime_checkable
-class RaffleWinningsService(Protocol):
+class WinningsService(Protocol):
     def get_user_winnings(
         self, context: Context, user_address: str
     ) -> List[UserWinningDTO]:

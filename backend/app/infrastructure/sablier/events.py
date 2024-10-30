@@ -19,14 +19,14 @@ class SablierAction(TypedDict):
 class SablierStream(TypedDict):
     id: str
     actions: List[SablierAction]
-    intactAmount: int
+    intactAmount: str
 
 
 class SablierStreamForTrackingWinner(TypedDict):
     id: str
-    endTime: int
-    depositAmount: int
-    intactAmount: int
+    endTime: str
+    depositAmount: str
+    intactAmount: str
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:

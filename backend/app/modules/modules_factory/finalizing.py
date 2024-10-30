@@ -3,7 +3,7 @@ from typing import Protocol
 from app.modules.modules_factory.protocols import (
     OctantRewards,
     DonorsAddresses,
-    RaffleWinningsService,
+    WinningsService,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -34,6 +34,7 @@ from app.pydantic import Model
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
+from app.modules.user.winnings.service.raffle import RaffleWinningsService
 
 
 class FinalizingOctantRewards(OctantRewards, Leverage, Protocol):
@@ -51,7 +52,6 @@ class FinalizingServices(Model):
     user_patron_mode_service: UserPatronMode
     user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
-    user_winnings_service: RaffleWinningsService
     finalized_snapshots_service: CreateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
     project_rewards_service: SavedProjectRewardsService
@@ -93,7 +93,6 @@ class FinalizingServices(Model):
             user_patron_mode_service=events_based_patron_mode,
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
-            user_winnings_service=RaffleWinningsService(),
             finalized_snapshots_service=finalized_snapshots_service,
             withdrawals_service=withdrawals_service,
             project_rewards_service=SavedProjectRewards(),

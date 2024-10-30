@@ -245,6 +245,8 @@ class MockSablierGQLClient:
                         "id": "0x3962f6585946823440d274ad7c719b02b49de51e-1-1147",
                         "intactAmount": "0",
                         "transferable": False,
+                        "endTime": "1729077035",
+                        "depositAmount": "10000000000000000000",
                     }
                 ]
             }
