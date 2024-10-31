@@ -47,7 +47,13 @@ export default function useProjectRewardsThreshold(
     queryKey: QUERY_KEYS.projectRewardsThreshold(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
-    select: response => parseUnitsBigInt(response.threshold, 'wei'),
+    select: response => {
+      // When BE returns null we asked for an epoch in which there was no threshold. Meaning, 0.
+      if (response.threshold === null) {
+        return BigInt(0);
+      }
+      return parseUnitsBigInt(response.threshold, 'wei');
+    },
     staleTime: Infinity,
     ...options,
   });

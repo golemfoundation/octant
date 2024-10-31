@@ -1,6 +1,6 @@
 import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 
-export default interface RewardsWithoutThresholdProps {
+export default interface RewardsProps {
   address: string;
   className?: string;
   donations?: ProjectIpfsWithRewards['donations'];

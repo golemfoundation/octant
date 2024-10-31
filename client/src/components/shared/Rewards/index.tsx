@@ -1,2 +1,2 @@
 // eslint-disable-next-line no-restricted-exports
-export { default } from './RewardsWithThreshold';
+export { default } from './Rewards';

@@ -8,15 +8,16 @@ import Button from 'components/ui/Button';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsAllocatedTo from 'hooks/helpers/useIsAllocatedTo';
+import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 
-import styles from './RewardsWithoutThreshold.module.scss';
-import RewardsWithoutThresholdProps from './types';
+import styles from './Rewards.module.scss';
+import RewardsProps from './types';
 
-const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
+const Rewards: FC<RewardsProps> = ({
   address,
   className,
   epoch,
@@ -35,6 +36,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
   const getValuesToDisplay = useGetValuesToDisplay();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: userAllocations } = useUserAllocations(epoch);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, projectAddress: address });
 
   const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
@@ -87,6 +89,9 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
   }).primary;
 
   const leftSectionLabel = useMemo(() => {
+    if (!isDonationAboveThreshold) {
+      return i18n.t('common.totalDonated');
+    }
     if (!isArchivedProject) {
       return t('currentTotal');
     }
@@ -108,7 +113,13 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
             <div className={styles.label} data-test="ProjectRewards__currentTotal__label">
               {leftSectionLabel}
             </div>
-            <div className={styles.value} data-test="ProjectRewards__currentTotal__number">
+            <div
+              className={cx(
+                styles.value,
+                isDonationAboveThreshold && styles.isDonationAboveThreshold,
+              )}
+              data-test="ProjectRewards__currentTotal__number"
+            >
               {currentTotalIncludingMFForProjectsAboveThresholdToDisplay}
             </div>
           </div>
@@ -118,14 +129,28 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
               <div className={cx(styles.section, styles[`variant--${variant}`])}>
                 <div className={styles.container}>
                   <div className={styles.label}>{i18n.t('common.donations')}</div>
-                  <div className={styles.value}>{donationsToDisplay}</div>
+                  <div
+                    className={cx(
+                      styles.value,
+                      isDonationAboveThreshold && styles.isDonationAboveThreshold,
+                    )}
+                  >
+                    {donationsToDisplay}
+                  </div>
                 </div>
               </div>
               {variant === 'projectView' && <div className={cx(styles.verticalDivider)} />}
               <div className={cx(styles.section, styles[`variant--${variant}`])}>
                 <div className={styles.container}>
                   <div className={styles.label}>{i18n.t('common.matchFunding')}</div>
-                  <div className={styles.value}>{matchFundingToDisplay}</div>
+                  <div
+                    className={cx(
+                      styles.value,
+                      isDonationAboveThreshold && styles.isDonationAboveThreshold,
+                    )}
+                  >
+                    {matchFundingToDisplay}
+                  </div>
                 </div>
               </div>
             </>
@@ -136,7 +161,14 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
             onClick={isMobile ? () => {} : () => setIsFullDonorsListModalOpen(true)}
           >
             <div className={styles.label}>{i18n.t('common.donors')}</div>
-            <div className={styles.value}>{numberOfDonors}</div>
+            <div
+              className={cx(
+                styles.value,
+                isDonationAboveThreshold && styles.isDonationAboveThreshold,
+              )}
+            >
+              {numberOfDonors}
+            </div>
           </div>
         </div>
       </div>
@@ -169,4 +201,4 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
     </div>
   );
 };
-export default RewardsWithoutThreshold;
+export default Rewards;

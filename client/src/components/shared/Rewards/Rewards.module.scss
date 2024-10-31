@@ -4,6 +4,7 @@
   align-items: stretch;
   align-self: stretch;
   justify-content: space-between;
+  flex: 1;
 
   &.variant-- {
     &projectView {
@@ -83,6 +84,10 @@
       .value {
         color: $color-octant-dark;
         font-size: $font-size-18;
+
+        &:not(.isDonationAboveThreshold) {
+          color: $color-octant-grey5;
+        }
 
         @media #{$tablet-up} {
           font-size: $font-size-14;
