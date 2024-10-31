@@ -6,17 +6,17 @@ from app.modules.modules_factory.protocols import (
 from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
 )
-from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
-from app.modules.user.deposits.service.contract_balance import (
-    ContractBalanceUserDeposits,
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
 )
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )
-from app.pydantic import Model
-from app.modules.projects.details.service.projects_details import (
-    StaticProjectsDetailsService,
+from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.user.deposits.service.contract_balance import (
+    ContractBalanceUserDeposits,
 )
+from app.pydantic import Model
 
 
 class FutureServices(Model):
