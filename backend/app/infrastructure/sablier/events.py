@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Dict, Optional
+from typing import TypedDict, List, Dict
 
 from flask import current_app as app
 from gql import gql
@@ -21,13 +21,11 @@ class SablierStream(TypedDict):
     intactAmount: int
 
 
-def fetch_streams(query: str, variables: Dict) -> SablierStream:
+def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
     """
     Fetch streams with retry logic for pagination.
     """
     all_streams = []
-    merged_actions = []
-    final_intact_amount = 0
     has_more = True
     limit = 1000
     skip = 0
@@ -39,25 +37,27 @@ def fetch_streams(query: str, variables: Dict) -> SablierStream:
         result = gql_sablier_factory.build().execute(
             gql(query), variable_values=variables
         )
+
         streams = result.get("streams", [])
 
         app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
 
-        all_streams.extend(streams)
-
         for stream in streams:
-            merged_actions.extend(stream.get("actions", []))
+            actions = stream.get("actions", [])
             final_intact_amount = stream.get("intactAmount", 0)
+            all_streams.append(
+                SablierStream(actions=actions, intactAmount=final_intact_amount)
+            )
 
         if len(streams) < limit:
             has_more = False
         else:
             skip += limit
 
-    return SablierStream(actions=merged_actions, intactAmount=final_intact_amount)
+    return all_streams
 
 
-def get_user_events_history(user_address: str) -> Optional[SablierStream]:
+def get_user_events_history(user_address: str) -> List[SablierStream]:
     """
     Get all the locks and unlocks for a user.
     """
@@ -94,10 +94,11 @@ def get_user_events_history(user_address: str) -> Optional[SablierStream]:
         "tokenAddress": _get_token_address(),
     }
 
-    return fetch_streams(query, variables)
+    streams = fetch_streams(query, variables)
+    return streams
 
 
-def get_all_events_history() -> SablierStream:
+def get_all_streams_history() -> List[SablierStream]:
     """
     Get all the locks and unlocks in history.
     """

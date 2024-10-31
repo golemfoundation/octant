@@ -103,11 +103,14 @@ class UserDeposit(JSONWizard):
         yield self.deposit
 
 
+LockEventsByAddr = Dict[str, List[DepositEvent]]
+
+
 @dataclass
 class UserEffectiveDepositPayload:
     epoch_start: int = None
     epoch_end: int = None
-    lock_events_by_addr: Dict[str, List[DepositEvent]] = None
+    lock_events_by_addr: LockEventsByAddr = None
 
 
 @dataclass
