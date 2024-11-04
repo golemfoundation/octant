@@ -68,7 +68,9 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
       isVertical
     >
       <div className={styles.budgetRow}>
-        <div className={styles.budgetLabel}>{t('currentlyLocked')}</div>
+        <div className={styles.budgetLabel}>
+          {t(shouldRaffleWinningsBeDisplayed ? 'availableToUnlock' : 'currentlyLocked')}
+        </div>
         {isFetchingDepositValue ? (
           <div className={styles.skeleton} />
         ) : (
@@ -83,7 +85,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{secondRowLabel}</div>
         <AvailableFundsGlm
-          classNameBudgetValue={cx(styles.budgetValue && isWalletBalanceError && styles.isError)}
+          classNameBudgetValue={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}
           classNameSkeleton={styles.skeleton}
           isLoading={areFundsFetching}
           value={secondRowValue}

@@ -38,7 +38,8 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
     useEstimatedEffectiveDeposit();
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
-  const { data: userRaffleWinnings } = useUserRaffleWinnings();
+  const { data: userRaffleWinnings, isFetching: isFetchingUserRaffleWinnings } =
+    useUserRaffleWinnings();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.sum > 0;
@@ -49,18 +50,19 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
         className={className}
         classNameTitleWrapper={didUserWinAnyRaffles ? styles.didUserWinAnyRaffles : ''}
         title={t('currentGlmLock')}
-        titleSuffix={didUserWinAnyRaffles && <RaffleWinnerBadge />}
+        titleSuffix={<RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
       >
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
             isFetching={
               isFetchingDepositValue ||
+              isFetchingUserRaffleWinnings ||
               (isAppWaitingForTransactionToBeIndexed &&
                 _first(transactionsPending)?.type !== 'withdrawal')
             }
             showCryptoSuffix
-            valueCrypto={depositsValue}
+            valueCrypto={(depositsValue || 0n) + (userRaffleWinnings?.sum || 0n)}
             variant={isMobile ? 'large' : 'extra-large'}
           />
           <div className={styles.divider} />

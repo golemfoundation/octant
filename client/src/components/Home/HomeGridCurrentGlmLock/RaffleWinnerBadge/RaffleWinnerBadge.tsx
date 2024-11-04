@@ -1,5 +1,6 @@
+import cx from 'classnames';
 import { format } from 'date-fns';
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg/Svg';
@@ -12,8 +13,9 @@ import getFormattedValueWithSymbolSuffix from 'utils/getFormattedValueWithSymbol
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './RaffleWinnerBadge.module.scss';
+import RaffleWinnerBadgeProps from './types';
 
-const RaffleWinnerBadge = (): ReactElement => {
+const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridCurrentGlmLock.raffleWinnerBadge',
   });
@@ -66,7 +68,7 @@ const RaffleWinnerBadge = (): ReactElement => {
     : '';
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, isVisible && styles.isVisible)}>
       <Tooltip
         className={styles.tooltipWrapper}
         position="bottom-right"

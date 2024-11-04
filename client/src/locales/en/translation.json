@@ -114,6 +114,7 @@
         "modalLockGlm": {
           "unlockGLM": "Unlock GLM",
           "lockGlmBudgetBox": {
+            "availableToUnlock": "Available to unlock",
             "currentlyLocked": "Currently Locked",
             "walletBalance": "Wallet balance",
             "raffleWinnings": {
