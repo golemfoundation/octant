@@ -7,7 +7,7 @@ import LockGlmBudgetBox from 'components/Home/HomeGridCurrentGlmLock/ModalLockGl
 import styles from './LockGlmBudget.module.scss';
 import LockGlmBudgetProps from './types';
 
-const LockGlmBudget: FC<LockGlmBudgetProps> = ({ isVisible }) => {
+const LockGlmBudget: FC<LockGlmBudgetProps> = ({ currentMode, isVisible }) => {
   const { errors } = useFormikContext<FormFields>();
 
   if (!isVisible) {
@@ -17,6 +17,7 @@ const LockGlmBudget: FC<LockGlmBudgetProps> = ({ isVisible }) => {
   return (
     <LockGlmBudgetBox
       className={styles.root}
+      currentMode={currentMode}
       isCurrentlyLockedError={errors.valueToDeposeOrWithdraw === 'cantUnlock'}
       isWalletBalanceError={errors.valueToDeposeOrWithdraw === 'dontHaveEnough'}
     />

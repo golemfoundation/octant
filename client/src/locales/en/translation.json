@@ -115,7 +115,11 @@
           "unlockGLM": "Unlock GLM",
           "lockGlmBudgetBox": {
             "currentlyLocked": "Currently Locked",
-            "walletBalance": "Wallet balance"
+            "walletBalance": "Wallet balance",
+            "raffleWinnings": {
+              "oneWin": "Locked until {{date}}",
+              "multipleWins": "Time locked winnings"
+            }
           }
         },
         "raffleWinnerBadge": {
