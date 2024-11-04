@@ -1,0 +1,48 @@
+$padding: 1.1rem;
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.2rem;
+  background: $color-octant-green5;
+  border-radius: $border-radius-10;
+  font-size: $font-size-10;
+  color: $color-octant-green;
+  font-weight: $font-weight-bold;
+  padding: 0 $padding;
+
+  .img {
+    margin-right: $padding;
+  }
+}
+
+.tooltipWrapper {
+  &:hover {
+    path {
+      stroke: $color-white !important;
+    }
+  }
+}
+
+.tooltip {
+  white-space: pre-wrap;
+  width: 29.2rem !important;
+
+  @media #{$phone-only} {
+    width: 25rem !important;
+    top: 2rem !important;
+    left: -14.4rem !important;
+  }
+
+  @media #{$tablet-up} {
+    top: 2rem !important;
+    left: -17.4rem !important;
+  }
+
+  @media #{$desktop-up} {
+    top: 3rem !important;
+    left: -16.4rem !important;
+  }
+}

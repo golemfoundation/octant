@@ -118,14 +118,14 @@ module.exports = {
           {
             format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
             leadingUnderscore: 'allow',
-            prefix: ['IS_', 'is', 'can', 'does', 'has', 'should', 'are', 'was', 'show', 'hide'],
+            prefix: ['IS_', 'is', 'can', 'does', 'did', 'has', 'should', 'are', 'was', 'show', 'hide'],
             selector: 'variable',
             types: ['boolean'],
           },
           {
             format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
             leadingUnderscore: 'allow',
-            prefix: ['IS_', 'is', 'can', 'does', 'has', 'should', 'are', 'was', 'show', 'hide'],
+            prefix: ['IS_', 'is', 'can', 'does', 'did', 'has', 'should', 'are', 'was', 'show', 'hide'],
             selector: 'parameter',
             types: ['boolean'],
           },

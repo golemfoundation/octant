@@ -117,6 +117,11 @@
             "currentlyLocked": "Currently Locked",
             "walletBalance": "Wallet balance"
           }
+        },
+        "raffleWinnerBadge": {
+          "text": "{{value}} GLM winnings",
+          "tooltipWinningRow": "{{value}} prize locked until {{date}}",
+          "tooltipCurrentBalanceRow": "{{value}} your locked balance"
         }
       },
       "homeGridPersonalAllocation": {
