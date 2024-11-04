@@ -10,6 +10,7 @@ import Button from 'components/ui/Button';
 import ButtonProps from 'components/ui/Button/types';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useUserRaffleWinnings from 'hooks/queries/useUserRaffleWinnings';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedGlmValue from 'utils/getFormattedGlmValue';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -38,6 +39,7 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue } = useDepositValue();
+  const { data: userRaffleWinnings } = useUserRaffleWinnings();
 
   const isMaxDisabled = isLoading || step > 1;
 
@@ -84,6 +86,8 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
 
   const isButtonDisabled =
     !formik.isValid || parseUnitsBigInt(formik.values.valueToDeposeOrWithdraw || '0') === 0n;
+  const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.sum > 0;
+  const shouldRaffleLabelBeVisible = didUserWinAnyRaffles && currentMode === 'unlock';
 
   return (
     <BoxRounded
@@ -135,9 +139,15 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
                     formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
                   )}
                 >
-                  {getFormattedGlmValue({ value: depositsValue || BigInt(0) }).value}
+                  {
+                    getFormattedGlmValue({
+                      value: shouldRaffleLabelBeVisible
+                        ? userRaffleWinnings?.sum
+                        : depositsValue || BigInt(0),
+                    }).value
+                  }
                 </div>
-                {t('glmLockTabs.locked')}
+                {t(shouldRaffleLabelBeVisible ? 'glmLockTabs.timeLocked' : 'glmLockTabs.locked')}
                 <div
                   className={cx(
                     styles.availableValue,

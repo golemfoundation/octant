@@ -1,5 +1,6 @@
 export default interface AvailableFundsGlmProps {
+  classNameBudgetValue?: string;
+  classNameSkeleton?: string;
   isLoading: boolean;
-  isWalletBalanceError?: boolean;
   value: string;
 }

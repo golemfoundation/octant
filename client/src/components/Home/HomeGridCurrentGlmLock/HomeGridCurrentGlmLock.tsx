@@ -41,7 +41,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: userRaffleWinnings } = useUserRaffleWinnings();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.winnings.length > 0;
+  const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.sum > 0;
 
   return (
     <>

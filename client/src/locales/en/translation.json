@@ -309,7 +309,8 @@
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
-          "locked": "Locked"
+          "locked": "Locked",
+          "timeLocked": "Time locked"
         },
         "glmLockNotification": {
           "success": {

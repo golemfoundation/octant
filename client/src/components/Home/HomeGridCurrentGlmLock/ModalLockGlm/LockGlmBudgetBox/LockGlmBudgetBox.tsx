@@ -35,7 +35,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
   );
 
   const shouldRaffleWinningsBeDisplayed =
-    currentMode === 'unlock' && userRaffleWinnings && userRaffleWinnings?.winnings.length > 0;
+    currentMode === 'unlock' && userRaffleWinnings && userRaffleWinnings.sum > 0;
   const areFundsFetching = isFetchingAvailableFundsGlm || isFetchingUserRaffleWinnings;
 
   const secondRowValue = getFormattedGlmValue({
@@ -83,8 +83,9 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{secondRowLabel}</div>
         <AvailableFundsGlm
+          classNameBudgetValue={cx(styles.budgetValue && isWalletBalanceError && styles.isError)}
+          classNameSkeleton={styles.skeleton}
           isLoading={areFundsFetching}
-          isWalletBalanceError={isWalletBalanceError}
           value={secondRowValue}
         />
       </div>

@@ -17,27 +17,12 @@ export default function useUserRaffleWinnings(): UseQueryResult<ReturnType, unkn
     enabled: !!address,
     queryFn: () => apiGetUserRaffleWinnings(address!),
     queryKey: QUERY_KEYS.raffleWinnings(address!),
-    select: _response => {
-      const response: Response = {
-        winnings: [
-          {
-            amount: '50000000000000000000000',
-            dateAvailableForWithdrawal: 1730721779,
-          },
-          {
-            amount: '60000000000000000000000',
-            dateAvailableForWithdrawal: 1730721779,
-          },
-        ],
-      };
-      return {
-        sum: response.winnings.reduce(
-          (acc, curr) => acc + parseUnitsBigInt(curr.amount, 'wei'),
-          BigInt(0),
-        ),
-        winnings: response.winnings,
-      };
-      // return response.winnings;
-    },
+    select: response => ({
+      sum: response.winnings.reduce(
+        (acc, curr) => acc + parseUnitsBigInt(curr.amount, 'wei'),
+        BigInt(0),
+      ),
+      winnings: response.winnings,
+    }),
   });
 }
