@@ -114,9 +114,19 @@
         "modalLockGlm": {
           "unlockGLM": "Unlock GLM",
           "lockGlmBudgetBox": {
+            "availableToUnlock": "Available to unlock",
             "currentlyLocked": "Currently Locked",
-            "walletBalance": "Wallet balance"
+            "walletBalance": "Wallet balance",
+            "raffleWinnings": {
+              "oneWin": "Locked until {{date}}",
+              "multipleWins": "Time locked winnings"
+            }
           }
+        },
+        "raffleWinnerBadge": {
+          "text": "{{value}} GLM winnings",
+          "tooltipWinningRow": "{{value}} prize locked until {{date}}",
+          "tooltipCurrentBalanceRow": "{{value}} your locked balance"
         }
       },
       "homeGridPersonalAllocation": {
@@ -300,7 +310,8 @@
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
-          "locked": "Locked"
+          "locked": "Locked",
+          "timeLocked": "Time locked"
         },
         "glmLockNotification": {
           "success": {

@@ -4,6 +4,7 @@ type GridTileProps = Omit<
   React.PropsWithChildren<React.HtmlHTMLAttributes<HTMLDivElement>>,
   'title'
 > & {
+  classNameTitleWrapper?: string;
   dataTest?: string;
   showTitleDivider?: boolean;
   title: string | ReactNode;
