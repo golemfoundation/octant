@@ -14,6 +14,12 @@ final_points = {}
 WEI_TO_ETH = 1_000_000_000_000_000_000  # 1 ETH = 1,000,000,000,000,000,000 WEI
 MAX_ETH = 0.1  # Maximum ETH cap
 
+# Get list of donors for epoch 5
+donors_response = requests.get('https://backend.mainnet.octant.app/flask/user/patrons/5')
+donors = []
+if donors_response.status_code == 200:
+    donors = [to_checksum_address(addr) for addr in donors_response.json().get('patrons', [])]
+
 # Read the CSV file and convert addresses to checksum format
 with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
     reader = csv.DictReader(csvfile)
@@ -39,10 +45,18 @@ with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
         
         if response.status_code == 200:
             allocations = response.json().get('allocations', [])
-            # Sum up all allocation amounts for this address
-            for allocation in allocations:
-                amount = int(allocation.get('amount', 0))  # amount in WEI
-                total_allocation += amount
+            if not allocations and checksum_address in donors:
+                # This is a donor with no allocations, get their budget
+                budget_url = f"https://backend.mainnet.octant.app/flask/rewards/budget/{checksum_address}/epoch/{epoch_num}"
+                budget_response = requests.get(budget_url)
+                if budget_response.status_code == 200:
+                    total_allocation = int(budget_response.json().get('budget', 0))
+                    # print(f"Donor found: {checksum_address} with budget: {total_allocation / WEI_TO_ETH:.4f} ETH")
+            else:
+                # Sum up all allocation amounts for this address
+                for allocation in allocations:
+                    amount = int(allocation.get('amount', 0))  # amount in WEI
+                    total_allocation += amount
         
         # Store total allocation for this address (in WEI)
         address_allocations[checksum_address] = total_allocation
@@ -66,7 +80,7 @@ with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
             
         final_points[checksum_address] = final_total
 
-        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}")
+        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Donor: {checksum_address in donors}")
 
 # Write results to new CSV file (only non-zero weights)
 output_file = 'raffle-weights/raffle_weights_output.csv'
