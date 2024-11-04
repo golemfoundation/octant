@@ -63,9 +63,10 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
       })
     : undefined;
 
-  const tooltipText = depositsValueFormatted
-    ? `${tooltipWinningsText}\n${t('tooltipCurrentBalanceRow', { value: depositsValueFormatted.primary })}`
-    : '';
+  const tooltipText =
+    depositsValue && depositsValue > 0n && depositsValueFormatted
+      ? `${tooltipWinningsText}\n${t('tooltipCurrentBalanceRow', { value: depositsValueFormatted.primary })}`
+      : tooltipWinningsText;
 
   return (
     <div className={cx(styles.root, isVisible && styles.isVisible)}>

@@ -157,7 +157,10 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
                 >
                   {
                     getFormattedGlmValue({
-                      value: BigInt(availableFundsGlm ? availableFundsGlm?.value : 0),
+                      value:
+                        currentMode === 'lock'
+                          ? BigInt(availableFundsGlm ? availableFundsGlm?.value : 0)
+                          : depositsValue || 0n,
                     }).value
                   }
                 </div>
