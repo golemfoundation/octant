@@ -12,10 +12,12 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useUserRaffleWinnings from 'hooks/queries/useUserRaffleWinnings';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './HomeGridCurrentGlmLock.module.scss';
+import RaffleWinnerBadge from './RaffleWinnerBadge';
 import HomeGridCurrentGlmLockProps from './types';
 
 const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) => {
@@ -36,22 +38,31 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
     useEstimatedEffectiveDeposit();
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
+  const { data: userRaffleWinnings, isFetching: isFetchingUserRaffleWinnings } =
+    useUserRaffleWinnings();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.sum > 0;
 
   return (
     <>
-      <GridTile className={className} title={t('currentGlmLock')}>
+      <GridTile
+        className={className}
+        classNameTitleWrapper={didUserWinAnyRaffles ? styles.didUserWinAnyRaffles : ''}
+        title={t('currentGlmLock')}
+        titleSuffix={<RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
+      >
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
             isFetching={
               isFetchingDepositValue ||
+              isFetchingUserRaffleWinnings ||
               (isAppWaitingForTransactionToBeIndexed &&
                 _first(transactionsPending)?.type !== 'withdrawal')
             }
             showCryptoSuffix
-            valueCrypto={depositsValue}
+            valueCrypto={(depositsValue || 0n) + (userRaffleWinnings?.sum || 0n)}
             variant={isMobile ? 'large' : 'extra-large'}
           />
           <div className={styles.divider} />

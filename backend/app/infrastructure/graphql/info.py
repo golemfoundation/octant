@@ -1,6 +1,6 @@
 from gql import gql
 
-from app.extensions import gql_factory
+from app.extensions import gql_octant_factory
 
 
 def get_indexed_block_num() -> int:
@@ -15,7 +15,7 @@ def get_indexed_block_num() -> int:
         }
     """
     )
-    data = gql_factory.build().execute(query)
+    data = gql_octant_factory.build().execute(query)
     if data:
         return data["_meta"]["block"]["number"]
     else:

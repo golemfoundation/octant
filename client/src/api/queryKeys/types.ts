@@ -22,6 +22,7 @@ export type Root = {
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  raffleWinnings: 'raffleWinnings';
   rewardsRate: 'rewardsRate';
   searchResultsDetails: 'searchResultsDetails';
   upcomingBudget: 'upcomingBudget';
@@ -74,6 +75,7 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
+  raffleWinnings: (userAddress: string) => [Root['raffleWinnings'], string];
   rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
   searchResults: ['searchResults'];
   searchResultsDetails: (

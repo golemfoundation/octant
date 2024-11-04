@@ -5,17 +5,18 @@ from flask_restx import reqparse
 import app.legacy.controllers.user as user_controller
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.uq import controller as uq_controller
+from app.modules.user.antisybil.controller import (
+    get_user_antisybil_status,
+    update_user_antisybil_status,
+)
 from app.modules.user.patron_mode.controller import get_patrons_addresses
 from app.modules.user.tos.controller import (
     post_user_terms_of_service_consent,
     get_user_terms_of_service_consent_status,
 )
-from app.modules.user.antisybil.controller import (
-    get_user_antisybil_status,
-    update_user_antisybil_status,
-)
+from app.modules.user.winnings.controller import get_user_winnings
 from app.settings import config
-from app.modules.uq import controller as uq_controller
 
 ns = Namespace("user", description="Octant user settings")
 api.add_namespace(ns)
@@ -93,6 +94,31 @@ uq_score_model = api.model(
     {
         "uniquenessQuotient": fields.String(
             required=True, description="Uniqueness quotient score"
+        ),
+    },
+)
+
+user_winning_model = api.model(
+    "UserWinning",
+    {
+        "amount": fields.String(
+            required=True,
+            description="Amount in WEI",
+        ),
+        "dateAvailableForWithdrawal": fields.String(
+            required=True,
+            description="Date when winning is available for withdrawal as unix timestamp",
+        ),
+    },
+)
+
+user_winnings_model = api.model(
+    "UserWinnings",
+    {
+        "winnings": fields.List(
+            fields.Nested(user_winning_model),
+            required=True,
+            description="User winnings",
         ),
     },
 )
@@ -314,5 +340,33 @@ class AllUQScores(OctantResource):
                     "userAddress": user_address,
                 }
                 for user_address, uq_score in uq_scores
+            ]
+        }
+
+
+@ns.route("/<string:user_address>/raffle/winnings")
+@ns.doc(
+    params={
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+    }
+)
+class UserWinnings(OctantResource):
+    @ns.doc(
+        description="Returns an array of user's winnings with amounts and availability dates",
+    )
+    @ns.marshal_with(user_winnings_model)
+    @ns.response(200, "User's winnings retrieved successfully")
+    def get(self, user_address: str):
+        app.logger.debug(f"Getting winnings for user {user_address}.")
+        winnings = get_user_winnings(user_address)
+        app.logger.debug(f"Retrieved {len(winnings)} winnings for user {user_address}.")
+
+        return {
+            "winnings": [
+                {
+                    "amount": winning.amount,
+                    "dateAvailableForWithdrawal": winning.date_available_for_withdrawal,
+                }
+                for winning in winnings
             ]
         }

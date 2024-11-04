@@ -3,7 +3,7 @@ import pytest
 from gql import gql
 from gql.transport.exceptions import TransportQueryError
 
-from app.extensions import gql_factory
+from app.extensions import gql_octant_factory
 
 from app.infrastructure import Client as GQLClient
 
@@ -30,7 +30,7 @@ query {
     with pytest.raises(
         TransportQueryError, match="the chain was reorganized while executing the query"
     ):
-        gql_factory.build().execute(query)
+        gql_octant_factory.build().execute(query)
 
     assert (
         GQLClient.execute_sync.call_count > 2

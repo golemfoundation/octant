@@ -223,7 +223,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
               type={step === 3 ? 'success' : 'info'}
             />
           ) : (
-            <LockGlmBudget isVisible={showBudgetBox} />
+            <LockGlmBudget currentMode={currentMode} isVisible={showBudgetBox} />
           )}
           <LockGlmTabs
             buttonUseMaxRef={buttonUseMaxRef}
