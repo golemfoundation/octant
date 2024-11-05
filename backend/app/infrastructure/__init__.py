@@ -25,6 +25,7 @@ default_decorators = {
 class SubgraphEndpoints:
     OCTANT_SUBGRAPH = "SUBGRAPH_ENDPOINT"
     SABLIER_SUBGRAPH = "SABLIER_MAINNET_SUBGRAPH_URL"
+    SABLIER_SUBGRAPH_SEPOLIA = "SABLIER_SEPOLIA_SUBGRAPH_URL"
 
 
 class OctantResource(Resource):

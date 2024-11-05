@@ -999,3 +999,8 @@ GTC_STAKING_STAMP_PROVIDERS_AND_SCORES = {
     "ExperiencedCommunityStaker": 2.5,
     "TrustedCitizen": 4.0,
 }
+
+SABLIER_SENDER_ADDRESS_SEPOLIA = ""
+SABLIER_TOKEN_ADDRESS_SEPOLIA = (
+    "0x2e5221B0f855Be4ea5Cefffb8311EED0563B6e87"  # native sETH
+)
