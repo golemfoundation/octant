@@ -14,23 +14,23 @@ const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose, dataTest = 'Drawer
   createPortal(
     <Fragment>
       {isOpen && (
-        <div className={styles.overlay} onClick={onClose} data-test={`${dataTest}__overlay`} />
+        <div className={styles.overlay} data-test={`${dataTest}__overlay`} onClick={onClose} />
       )}
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            data-test={dataTest}
             animate={{
               x: '0',
             }}
             className={styles.root}
+            data-test={dataTest}
             exit={{ x: '100%' }}
             initial={{ x: '100%' }}
             transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
           >
             <Button
-              dataTest={`${dataTest}__closeButton`}
               className={styles.buttonClose}
+              dataTest={`${dataTest}__closeButton`}
               Icon={<Svg img={cross} size={1} />}
               onClick={onClose}
               variant="iconOnly"

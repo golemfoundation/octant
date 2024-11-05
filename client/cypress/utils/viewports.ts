@@ -1,7 +1,7 @@
 type Viewport = {
   device: 'mobile' | 'tablet' | 'desktop' | 'large-desktop';
-  isLargeDesktop: boolean;
   isDesktop: boolean;
+  isLargeDesktop: boolean;
   isMobile: boolean;
   isTablet: boolean;
   viewportHeight: number;
@@ -13,28 +13,28 @@ type Viewports = {
 };
 
 const viewports: Viewports = {
-  largeDesktop: {
-    device: 'large-desktop',
-    isLargeDesktop: true,
-    isDesktop: true,
-    isMobile: false,
-    isTablet: false,
-    viewportHeight: 1080,
-    viewportWidth: 1920,
-  },
   desktop: {
     device: 'desktop',
-    isLargeDesktop: false,
     isDesktop: true,
+    isLargeDesktop: false,
     isMobile: false,
     isTablet: false,
     viewportHeight: 720,
     viewportWidth: 1280,
   },
+  largeDesktop: {
+    device: 'large-desktop',
+    isDesktop: true,
+    isLargeDesktop: true,
+    isMobile: false,
+    isTablet: false,
+    viewportHeight: 1080,
+    viewportWidth: 1920,
+  },
   mobile: {
     device: 'mobile',
-    isLargeDesktop: false,
     isDesktop: false,
+    isLargeDesktop: false,
     isMobile: true,
     isTablet: false,
     viewportHeight: 1020,
@@ -42,8 +42,8 @@ const viewports: Viewports = {
   },
   tablet: {
     device: 'tablet',
-    isLargeDesktop: false,
     isDesktop: false,
+    isLargeDesktop: false,
     isMobile: false,
     isTablet: true,
     viewportHeight: 1106,

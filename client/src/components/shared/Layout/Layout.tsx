@@ -71,20 +71,15 @@ const Layout: FC<LayoutProps> = ({
       if (window.scrollY > scrollRef.current) {
         topBarWrapperEl.style.position = 'absolute';
         if (window.scrollY < lastScrollYUpRef.current + offsetHeight) {
-          console.log('1');
           topBarWrapperEl.style.top = `${lastScrollYUpRef.current}px`;
         } else if (window.scrollY >= offsetHeight) {
           topBarWrapperEl.style.visibility = 'hidden';
-          console.log('2');
           topBarWrapperEl.style.top = `${window.scrollY - offsetHeight}px`;
         }
       } else {
-        console.log('3');
         topBarWrapperEl.style.visibility = 'visible';
         lastScrollYUpRef.current = window.scrollY;
         if (window.scrollY <= offsetTop) {
-          console.log('4');
-
           topBarWrapperEl.style.top = '0px';
           topBarWrapperEl.style.position = 'fixed';
         }
@@ -101,7 +96,6 @@ const Layout: FC<LayoutProps> = ({
     document.addEventListener('scroll', listener);
 
     return () => {
-      console.log('RETURN');
       topBarWrapperEl.style.position = 'fixed';
       topBarWrapperEl.style.top = '0px';
       document.removeEventListener('scroll', listener);
@@ -120,7 +114,6 @@ const Layout: FC<LayoutProps> = ({
         data-test={dataTestRoot}
       >
         <div
-          data-test={`${dataTestRoot}__topBarWrapper`}
           ref={topBarWrapperRef}
           className={cx(
             styles.topBarWrapper,
@@ -128,6 +121,7 @@ const Layout: FC<LayoutProps> = ({
             isPatronMode && styles.isPatronMode,
             networkConfig.isTestnet && styles.isTestnet,
           )}
+          data-test={`${dataTestRoot}__topBarWrapper`}
         >
           <LayoutTopBar className={styles.section} />
         </div>

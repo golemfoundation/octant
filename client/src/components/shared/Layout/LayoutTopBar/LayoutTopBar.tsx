@@ -133,8 +133,8 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     <div className={cx(styles.root, className)} data-test={dataTestRoot}>
       <div className={styles.logoWrapper}>
         <Svg
-          dataTest={`${dataTestRoot}__Logo`}
           classNameSvg={cx(styles.octantLogo, networkConfig.isTestnet && styles.isTestnet)}
+          dataTest={`${dataTestRoot}__Logo`}
           img={octant}
           onClick={onLogoClick}
           size={4}
@@ -151,13 +151,13 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         <div className={styles.links} data-test={`${dataTestRoot}__links`}>
           {tabs.map(({ label, to, isActive, isDisabled, key }) => (
             <div
-              data-test={`${dataTestRoot}__link--${key}`}
               key={key}
               className={cx(
                 styles.link,
                 isActive && styles.isActive,
                 networkConfig.isTestnet && styles.isTestnet,
               )}
+              data-test={`${dataTestRoot}__link--${key}`}
               onClick={
                 isDisabled && to
                   ? () => {}
@@ -173,9 +173,9 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
               {isActive ? (
                 <div className={styles.underlineWrapper}>
                   <motion.div
-                    data-test={`${dataTestRoot}__underline--${key}`}
                     animate={{ opacity: 1 }}
                     className={styles.underline}
+                    data-test={`${dataTestRoot}__underline--${key}`}
                     initial={{ opacity: 0 }}
                   />
                 </div>
@@ -186,13 +186,13 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       )}
       <LayoutTopBarCalendar />
       <Button
-        dataTest={`${dataTestRoot}__Button`}
         className={cx(
           styles.buttonWallet,
           !isConnected && styles.isConnectButton,
           isPatronMode && styles.isPatronMode,
           isProjectAdminMode && styles.isProjectAdminMode,
         )}
+        dataTest={`${dataTestRoot}__Button`}
         onClick={() =>
           isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
         }
@@ -206,16 +206,16 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       {isDesktop && (
         <Fragment>
           <div
-            data-test={`${dataTestRoot}__settingsButton`}
             className={cx(styles.settingsButton, networkConfig.isTestnet && styles.isTestnet)}
+            data-test={`${dataTestRoot}__settingsButton`}
             onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
           {!isProjectAdminMode && !isPatronMode && (
             <div
-              data-test={`${dataTestRoot}__allocationButton`}
               className={cx(styles.allocateButton, networkConfig.isTestnet && styles.isTestnet)}
+              data-test={`${dataTestRoot}__allocationButton`}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
               <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
@@ -235,16 +235,16 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       {isDesktop && (
         <>
           <Drawer
+            dataTest="SettingsDrawer"
             isOpen={isSettingsDrawerOpen}
             onClose={() => setIsSettingsDrawerOpen(false)}
-            dataTest="SettingsDrawer"
           >
             <Settings />
           </Drawer>
           <Drawer
+            dataTest="AllocationDrawer"
             isOpen={isAllocationDrawerOpen}
             onClose={() => setIsAllocationDrawerOpen(false)}
-            dataTest="AllocationDrawer"
           >
             <Allocation />
           </Drawer>
