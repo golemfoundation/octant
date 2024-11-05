@@ -8,6 +8,8 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
+import styles from './HomeView.module.scss';
+
 const HomeView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.home' });
   const { isMobile } = useMediaQuery();
@@ -25,11 +27,11 @@ const HomeView = (): ReactElement => {
   }, [currentEpoch, t, isMobile, isDecisionWindowOpen]);
 
   return (
-    <>
+    <div className={styles.root} data-test="HomeView">
       <ViewTitle>{title}</ViewTitle>
       <HomeRewards />
       <HomeGrid />
-    </>
+    </div>
   );
 };
 

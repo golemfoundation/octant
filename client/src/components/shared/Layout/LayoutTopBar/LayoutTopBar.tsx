@@ -30,6 +30,7 @@ import styles from './LayoutTopBar.module.scss';
 import LayoutTopBarProps from './types';
 
 const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
+  const dataTestRoot = 'LayoutTopBar';
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
@@ -129,9 +130,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   }, [allocations]);
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test={dataTestRoot}>
       <div className={styles.logoWrapper}>
         <Svg
+          dataTest={`${dataTestRoot}__Logo`}
           classNameSvg={cx(styles.octantLogo, networkConfig.isTestnet && styles.isTestnet)}
           img={octant}
           onClick={onLogoClick}
@@ -146,10 +148,11 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         )}
       </div>
       {isDesktop && (
-        <div className={styles.links}>
-          {tabs.map(({ label, to, isActive, isDisabled }) => (
+        <div className={styles.links} data-test={`${dataTestRoot}__links`}>
+          {tabs.map(({ label, to, isActive, isDisabled, key }) => (
             <div
-              key={to}
+              data-test={`${dataTestRoot}__link--${key}`}
+              key={key}
               className={cx(
                 styles.link,
                 isActive && styles.isActive,
@@ -170,6 +173,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
               {isActive ? (
                 <div className={styles.underlineWrapper}>
                   <motion.div
+                    data-test={`${dataTestRoot}__underline--${key}`}
                     animate={{ opacity: 1 }}
                     className={styles.underline}
                     initial={{ opacity: 0 }}
@@ -182,6 +186,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       )}
       <LayoutTopBarCalendar />
       <Button
+        dataTest={`${dataTestRoot}__Button`}
         className={cx(
           styles.buttonWallet,
           !isConnected && styles.isConnectButton,
@@ -201,6 +206,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       {isDesktop && (
         <Fragment>
           <div
+            data-test={`${dataTestRoot}__settingsButton`}
             className={cx(styles.settingsButton, networkConfig.isTestnet && styles.isTestnet)}
             onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
@@ -208,6 +214,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           </div>
           {!isProjectAdminMode && !isPatronMode && (
             <div
+              data-test={`${dataTestRoot}__allocationButton`}
               className={cx(styles.allocateButton, networkConfig.isTestnet && styles.isTestnet)}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
@@ -216,7 +223,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
                 <div
                   ref={scope}
                   className={styles.numberOfAllocations}
-                  data-test="LayoutTopBar__numberOfAllocations"
+                  data-test={`${dataTestRoot}__numberOfAllocations`}
                 >
                   {allocations.length}
                 </div>
@@ -227,10 +234,18 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       )}
       {isDesktop && (
         <>
-          <Drawer isOpen={isSettingsDrawerOpen} onClose={() => setIsSettingsDrawerOpen(false)}>
+          <Drawer
+            isOpen={isSettingsDrawerOpen}
+            onClose={() => setIsSettingsDrawerOpen(false)}
+            dataTest="SettingsDrawer"
+          >
             <Settings />
           </Drawer>
-          <Drawer isOpen={isAllocationDrawerOpen} onClose={() => setIsAllocationDrawerOpen(false)}>
+          <Drawer
+            isOpen={isAllocationDrawerOpen}
+            onClose={() => setIsAllocationDrawerOpen(false)}
+            dataTest="AllocationDrawer"
+          >
             <Allocation />
           </Drawer>
         </>

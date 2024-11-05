@@ -110,6 +110,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
   return (
     <>
       <div
+        data-test="LayoutTopBarCalendar"
         className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
         onClick={() => setIsCalendarOpen(true)}
       >

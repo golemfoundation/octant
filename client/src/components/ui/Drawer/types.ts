@@ -4,4 +4,5 @@ export default interface DrawerProps {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  dataTest?: string;
 }

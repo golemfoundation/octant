@@ -22,13 +22,14 @@ import LayoutProps from './types';
 
 const Layout: FC<LayoutProps> = ({
   children,
-  dataTest,
   navigationBottomSuffix,
   isLoading,
   isNavigationVisible = true,
   classNameBody,
   isSyncingInProgress,
 }) => {
+  const dataTestRoot = 'Layout';
+
   const { isMobile, isDesktop } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
@@ -65,18 +66,25 @@ const Layout: FC<LayoutProps> = ({
       if (e.target.body.className === 'bodyFixed' || window.scrollY < 0) {
         return;
       }
-      const { offsetTop, clientHeight } = topBarWrapperEl;
+      const { offsetTop, offsetHeight } = topBarWrapperEl;
 
       if (window.scrollY > scrollRef.current) {
         topBarWrapperEl.style.position = 'absolute';
-        if (window.scrollY < lastScrollYUpRef.current + clientHeight) {
+        if (window.scrollY < lastScrollYUpRef.current + offsetHeight) {
+          console.log('1');
           topBarWrapperEl.style.top = `${lastScrollYUpRef.current}px`;
-        } else if (window.scrollY >= clientHeight) {
-          topBarWrapperEl.style.top = `${window.scrollY - clientHeight}px`;
+        } else if (window.scrollY >= offsetHeight) {
+          topBarWrapperEl.style.visibility = 'hidden';
+          console.log('2');
+          topBarWrapperEl.style.top = `${window.scrollY - offsetHeight}px`;
         }
       } else {
+        console.log('3');
+        topBarWrapperEl.style.visibility = 'visible';
         lastScrollYUpRef.current = window.scrollY;
         if (window.scrollY <= offsetTop) {
+          console.log('4');
+
           topBarWrapperEl.style.top = '0px';
           topBarWrapperEl.style.position = 'fixed';
         }
@@ -93,6 +101,7 @@ const Layout: FC<LayoutProps> = ({
     document.addEventListener('scroll', listener);
 
     return () => {
+      console.log('RETURN');
       topBarWrapperEl.style.position = 'fixed';
       topBarWrapperEl.style.top = '0px';
       document.removeEventListener('scroll', listener);
@@ -108,9 +117,10 @@ const Layout: FC<LayoutProps> = ({
       <div
         ref={ref}
         className={cx(styles.root, isProjectView && styles.isProjectView)}
-        data-test={dataTest}
+        data-test={dataTestRoot}
       >
         <div
+          data-test={`${dataTestRoot}__topBarWrapper`}
           ref={topBarWrapperRef}
           className={cx(
             styles.topBarWrapper,
