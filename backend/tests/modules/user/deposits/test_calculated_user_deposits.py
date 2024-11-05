@@ -2,7 +2,7 @@ from app.engine.user.effective_deposit import UserDeposit
 from app.modules.common.time import from_timestamp_s
 from app.modules.history.dto import LockItem, OpType
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
-from tests.conftest import USER1_ADDRESS, mock_graphql
+from tests.conftest import USER1_ADDRESS, mock_graphql, mock_sablier_graphql
 from tests.helpers.context import get_context
 
 
@@ -62,6 +62,7 @@ def test_get_locks_by_timestamp(app, mocker, alice, mock_events_generator):
             },
         ],
     )
+    mock_sablier_graphql(mocker)
 
     timestamp_before = from_timestamp_s(1710719999)
     timestamp_after = from_timestamp_s(1710720001)
@@ -100,6 +101,7 @@ def test_get_unlocks_by_timestamp(app, mocker, alice, mock_events_generator):
             },
         ],
     )
+    mock_sablier_graphql(mocker)
 
     timestamp_before = from_timestamp_s(1710719999)
     timestamp_after = from_timestamp_s(1710720001)

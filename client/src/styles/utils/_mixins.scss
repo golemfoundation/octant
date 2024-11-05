@@ -87,3 +87,16 @@
     max-width: 141.5rem;
   }
 }
+
+@mixin buttonVariantLink3($font-size: $font-size-16) {
+  position: relative;
+  height: auto;
+  display: inline;
+  color: $color-octant-green;
+  padding: 0;
+  font-size: $font-size;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -7,6 +7,7 @@ from app.engine.octant_rewards.community_fund.not_supported import (
     NotSupportedCFCalculator,
 )
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.matched.preliminary import (
     PreliminaryMatchedRewards,
 )
@@ -23,12 +24,14 @@ from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
+from app.engine.user import UserSettings
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
-from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
-from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 
 
 @dataclass
@@ -76,7 +79,10 @@ def register_epoch_settings():
             community_fund=NotSupportedCFCalculator(),
             leftover=PreliminaryLeftover(),
         ),
-        user=UserSettings(budget=PreliminaryUserBudget()),
+        user=UserSettings(
+            budget=PreliminaryUserBudget(),
+            effective_deposit=DefaultWeightedAverageEffectiveDeposit(),
+        ),
         project=ProjectSettings(
             rewards=PreliminaryProjectRewards(
                 projects_threshold=PreliminaryProjectThreshold(2),
@@ -86,6 +92,13 @@ def register_epoch_settings():
 
     SETTINGS[3] = EpochSettings(
         octant_rewards=OctantRewardsSettings(leftover=LeftoverWithPPF()),
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit()),
         project=ProjectSettings(rewards=PreliminaryProjectRewards()),
     )
-    SETTINGS[4] = EpochSettings()
+    SETTINGS[4] = EpochSettings(
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
+    )
+    SETTINGS[5] = EpochSettings(
+        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
+    )
+    SETTINGS[6] = EpochSettings()
