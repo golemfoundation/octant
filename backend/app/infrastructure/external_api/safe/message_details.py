@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import requests
 
 import app as app_module
@@ -13,7 +14,8 @@ def get_message_details(message_hash: str, is_mainnet: bool) -> dict:
         response.raise_for_status()
         json_response = response.json()
     except requests.exceptions.RequestException as e:
-        app_module.ExceptionHandler.print_stacktrace(e)
+        if response.status_code != HTTPStatus.NOT_FOUND:
+            app_module.ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(e)
 
     return json_response
