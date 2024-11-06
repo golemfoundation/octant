@@ -2,7 +2,7 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 module.exports = {
   root: true,
-  extends: ['../.eslintrc.js'],
+  extends: ['../.eslintrc.cjs'],
   overrides: [
     {
       files: ['*.{ts,tsx}'],
