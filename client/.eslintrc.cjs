@@ -1,14 +1,14 @@
 // this is for allowing some rules to be disobeyed in local env, but not in pre-commit or CI
 const ruleDisabledForLocalEnvErrorOtherwise = process.env.WEBPACK_DEV_SERVER === 'true' ? 0 : 2;
 
-const rootEslintConfig = require('../.eslintrc');
+const rootEslintConfig = require('../.eslintrc.cjs');
 
 // Properties here are sorted by importance, not alphabetically, so rule disabled.
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 module.exports = {
   root: true,
   parser: '@babel/eslint-parser',
-  extends: ['airbnb', '../.eslintrc.js'],
+  extends: ['airbnb', '../.eslintrc.cjs'],
   plugins: ['react', 'react-hooks', 'cypress'],
   env: {
     'cypress/globals': true,

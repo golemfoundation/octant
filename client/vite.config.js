@@ -2,14 +2,13 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import i18n from 'i18next';
+import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, splitVendorChunkPlugin, loadEnv } from 'vite';
 import viteCompression from 'vite-plugin-compression';
 import htmlPlugin from 'vite-plugin-html-config';
 
 import translationEN from './src/locales/en/translation.json';
-
-const path = require('path');
 
 /* eslint-enable import/no-extraneous-dependencies */
 

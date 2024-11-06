@@ -3,7 +3,7 @@
 
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-import { ConnectWalletParameters } from './types';
+import { type ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
 

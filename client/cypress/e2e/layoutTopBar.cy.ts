@@ -16,20 +16,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
   describe(`LayoutTopBar: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
-      cy.setupMetamask();
     });
 
     beforeEach(() => {
       mockCoinPricesServer();
-      cy.disconnectMetamaskWalletFromAllDapps();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
-    });
-
-    after(() => {
-      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('Top bar is visible ', () => {

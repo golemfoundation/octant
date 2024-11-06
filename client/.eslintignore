@@ -1,2 +1,4 @@
 src/gql/**/*
 dist/**/*
+cypress/**/*
+cypress.config.ts

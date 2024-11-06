@@ -1,17 +1,11 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": ["../tsconfig.json", "@synthetixio/synpress-tsconfig/base.json"],
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": "../",
-    "types": [
-      "cypress",
-      "@synthetixio/synpress/support",
-      "cypress-wait-until",
-      "@testing-library/cypress",
-      "cypress-real-events",
-      "../src/global"
-    ],
-    "outDir": "./output"
+    "types": ["cypress", "cypress-real-events", "../global.d.ts"],
+    "outDir": "./output",
+    "verbatimModuleSyntax": false
   },
-  "include": ["**/*.*", "../synpress.config.ts"]
+  "include": ["**/*.*", "../cypress.config.ts"]
 }

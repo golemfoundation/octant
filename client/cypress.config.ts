@@ -1,9 +1,7 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import synpressPlugins from '@synthetixio/synpress/plugins';
-import { defineConfig } from 'cypress';
+import { configureSynpressForMetaMask } from '@synthetixio/synpress/cypress';
 import vitePreprocessor from 'cypress-vite';
-/* eslint-enable import/no-extraneous-dependencies */
 import path from 'path';
+import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: {
@@ -17,20 +15,18 @@ export default defineConfig({
         vitePreprocessor({
           resolve: {
             alias: {
-              cypress: path.resolve(__dirname, 'cypress'),
-              src: path.resolve(__dirname, 'src'),
+              cypress: path.resolve(import.meta.dirname, 'cypress'),
+              src: path.resolve(import.meta.dirname, 'src'),
             },
           },
         }),
       );
-
-      synpressPlugins(on, config);
-      return config;
+      return configureSynpressForMetaMask(on, config);
     },
-    supportFile: 'cypress/support/index.ts',
+    supportFile: 'cypress/support/e2e.ts',
+    numTestsKeptInMemory: 4,
+    video: true,
+    viewportHeight: 1080,
+    viewportWidth: 1920,
   },
-  numTestsKeptInMemory: 4,
-  video: true,
-  viewportHeight: 1080,
-  viewportWidth: 1920,
 });
