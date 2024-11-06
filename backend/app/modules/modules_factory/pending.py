@@ -1,5 +1,11 @@
 from typing import Protocol
 
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST,
+    TIMEOUT_LIST_NOT_MAINNET,
+)
 from app.modules.dto import SignatureOpType
 from app.modules.modules_factory.protocols import (
     UserPatronMode,
@@ -25,6 +31,9 @@ from app.modules.modules_factory.protocols import (
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
 from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )
@@ -49,15 +58,6 @@ from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import (
-    UQ_THRESHOLD_MAINNET,
-    UQ_THRESHOLD_NOT_MAINNET,
-    TIMEOUT_LIST,
-    TIMEOUT_LIST_NOT_MAINNET,
-)
-from app.modules.projects.details.service.projects_details import (
-    StaticProjectsDetailsService,
-)
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):

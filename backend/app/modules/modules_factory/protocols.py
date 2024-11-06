@@ -20,6 +20,7 @@ from app.modules.dto import (
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
 from app.modules.projects.details.service.projects_details import ProjectsDetailsDTO
+from app.modules.user.winnings.service.raffle import UserWinningDTO
 
 
 @runtime_checkable
@@ -122,6 +123,14 @@ class UpcomingUserBudgets(Protocol):
 @runtime_checkable
 class UserRewards(Protocol):
     def get_unused_rewards(self, context: Context) -> Dict[str, int]:
+        ...
+
+
+@runtime_checkable
+class WinningsService(Protocol):
+    def get_user_winnings(
+        self, context: Context, user_address: str
+    ) -> List[UserWinningDTO]:
         ...
 
 

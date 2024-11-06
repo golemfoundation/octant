@@ -71,6 +71,14 @@ class Config(object):
         "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROJECT_CIDS
     )
 
+    # Sablier
+    SABLIER_MAINNET_SUBGRAPH_URL = os.getenv("SABLIER_MAINNET_SUBGRAPH_URL")
+    SABLIER_SEPOLIA_SUBGRAPH_URL = os.getenv("SABLIER_SEPOLIA_SUBGRAPH_URL")
+    SABLIER_SENDER_ADDRESS = os.getenv("SABLIER_SENDER_ADDRESS", "")
+    GLM_TOKEN_ADDRESS = os.getenv(
+        "GLM_TOKEN_ADDRESS", "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
+    )
+
 
 class ProdConfig(Config):
     """Production configuration."""

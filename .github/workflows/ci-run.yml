@@ -45,6 +45,8 @@ jobs:
       GC_PASSPORT_SCORER_API_KEY: "${{ secrets.GITCOIN_SCORER_API_KEY }}"
       DELEGATION_SALT: "${{ secrets.DELEGATION_SALT }}"
       DELEGATION_SALT_PRIMARY: "${{ secrets.DELEGATION_SALT_PRIMARY }}"
+      SABLIER_SEPOLIA_SUBGRAPH_URL: "${{ secrets.SABLIER_SEPOLIA_SUBGRAPH_URL }}"
+      SABLIER_SENDER_ADDRESS: "0x4BEbdb9792ed50eBB00611083ba384F05791a9FB"
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4

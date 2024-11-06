@@ -3,7 +3,13 @@ from typing import Tuple, List, Protocol, Dict, runtime_checkable
 from app.context.manager import Context
 from app.engine.user.effective_deposit import UserDeposit, DepositEvent
 from app.infrastructure.graphql import locks, unlocks
+from app.infrastructure.sablier.events import get_user_events_history
 from app.modules.common.effective_deposits import calculate_effective_deposits
+from app.modules.common.sablier_events_mapper import (
+    process_to_locks_and_unlocks,
+    FlattenStrategy,
+    flatten_sablier_events,
+)
 from app.modules.common.time import Timestamp, from_timestamp_s
 from app.modules.history.dto import LockItem, OpType
 from app.pydantic import Model
@@ -49,8 +55,28 @@ class CalculatedUserDeposits(Model):
 
     def get_locks(
         self, user_address: str, from_timestamp: Timestamp, limit: int
-    ) -> list[LockItem]:
-        return [
+    ) -> List[LockItem]:
+        sablier_streams = get_user_events_history(user_address)
+        mapped_streams = process_to_locks_and_unlocks(
+            sablier_streams,
+            to_timestamp=int(from_timestamp.timestamp_s()),
+            inclusively=True,
+        )
+        locks_from_sablier = flatten_sablier_events(
+            mapped_streams, FlattenStrategy.LOCKS
+        )
+
+        sablier_locks = [
+            LockItem(
+                type=OpType.LOCK,
+                amount=int(r["amount"]),
+                timestamp=from_timestamp_s(r["timestamp"]),
+                transaction_hash=r["transactionHash"],
+            )
+            for r in locks_from_sablier
+        ]
+
+        octant_subgraph_locks = [
             LockItem(
                 type=OpType.LOCK,
                 amount=int(r["amount"]),
@@ -62,10 +88,29 @@ class CalculatedUserDeposits(Model):
             )
         ]
 
+        return sablier_locks + octant_subgraph_locks
+
     def get_unlocks(
         self, user_address: str, from_timestamp: Timestamp, limit: int
-    ) -> list[LockItem]:
-        return [
+    ) -> List[LockItem]:
+        sablier_streams = get_user_events_history(user_address)
+        mapped_streams = process_to_locks_and_unlocks(
+            sablier_streams, to_timestamp=int(from_timestamp.timestamp_s())
+        )
+        unlocks_from_sablier = flatten_sablier_events(
+            mapped_streams, FlattenStrategy.UNLOCKS
+        )
+
+        sablier_unlocks = [
+            LockItem(
+                type=OpType.UNLOCK,
+                amount=int(r["amount"]),
+                timestamp=from_timestamp_s(r["timestamp"]),
+                transaction_hash=r["transactionHash"],
+            )
+            for r in unlocks_from_sablier
+        ]
+        octant_subgraph_unlocks = [
             LockItem(
                 type=OpType.UNLOCK,
                 amount=int(r["amount"]),
@@ -76,3 +121,4 @@ class CalculatedUserDeposits(Model):
                 user_address, int(from_timestamp.timestamp_s()), limit
             )
         ]
+        return sablier_unlocks + octant_subgraph_unlocks

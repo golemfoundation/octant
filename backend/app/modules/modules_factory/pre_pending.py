@@ -6,6 +6,7 @@ from app.modules.modules_factory.protocols import (
     AllUserEffectiveDeposits,
     OctantRewards,
     PendingSnapshots,
+    WinningsService,
     UserEffectiveDeposits,
     SavedProjectRewardsService,
     ProjectsMetadataService,
@@ -28,6 +29,7 @@ from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
+from app.modules.user.winnings.service.raffle import RaffleWinningsService
 
 
 class PrePendingUserDeposits(UserEffectiveDeposits, AllUserEffectiveDeposits, Protocol):
@@ -41,6 +43,7 @@ class PrePendingServices(Model):
     project_rewards_service: SavedProjectRewardsService
     projects_metadata_service: ProjectsMetadataService
     projects_details_service: ProjectsDetailsService
+    user_winnings_service: WinningsService
 
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
@@ -69,4 +72,5 @@ class PrePendingServices(Model):
             project_rewards_service=SavedProjectRewards(),
             projects_metadata_service=StaticProjectsMetadataService(),
             projects_details_service=StaticProjectsDetailsService(),
+            user_winnings_service=RaffleWinningsService(),
         )

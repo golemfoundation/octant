@@ -1,0 +1,128 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: stretch;
+  justify-content: space-between;
+  flex: 1;
+
+  &.variant-- {
+    &projectView {
+      background: $color-octant-grey6;
+      border-radius: $border-radius-16;
+    }
+    &projectsView {
+      .section {
+        height: auto;
+      }
+      .value {
+        font-size: $font-size-16 !important;
+      }
+    }
+  }
+
+  .horizontalDivider {
+    height: 0.2rem;
+    margin: 0.3rem 0;
+    width: 100%;
+    content: '';
+    background: $color-octant-grey3;
+  }
+
+  .sections {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+
+    .verticalDivider {
+      height: 3.2rem;
+      width: 0.1rem;
+      background: $color-octant-grey1;
+      margin-top: 0;
+    }
+
+    .section {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      font-weight: $font-weight-bold;
+      flex: 1;
+      border-radius: $border-radius-12;
+
+      &.variant-- {
+        &projectView {
+          height: 8.8rem;
+          align-items: center;
+          justify-content: center;
+          margin: 0.8rem;
+        }
+        &projectsView {
+          justify-content: space-between;
+
+          &:first-child {
+            .label, .value {
+              text-align: left;
+            }
+          }
+          &:last-child {
+            .label, .value {
+              text-align: right;
+            }
+          }
+        }
+      }
+
+      .label {
+        text-align: center;
+        font-size: $font-size-12;
+        height: 1.6rem;
+        margin-bottom: 0.4rem;
+        color: $color-octant-grey5;
+      }
+
+      .value {
+        color: $color-octant-dark;
+        font-size: $font-size-18;
+
+        &:not(.isDonationAboveThreshold) {
+          color: $color-octant-grey5;
+        }
+
+        @media #{$tablet-up} {
+          font-size: $font-size-14;
+        }
+        @media #{$desktop-up} {
+          font-size: $font-size-18;
+        }
+        @media #{$large-desktop-up} {
+          font-size: $font-size-24;
+        }
+      }
+
+      &.donorsSection {
+        &.variant-- {
+          &projectView {
+            @media #{$tablet-up} {
+              cursor: pointer;
+
+              &:hover {
+                background: $color-octant-grey8;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.6rem;
+
+  @media #{$desktop-up} {
+    display: none;
+  }
+}

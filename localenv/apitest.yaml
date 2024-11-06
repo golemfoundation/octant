@@ -33,6 +33,8 @@ services:
       DELEGATION_SALT: "salt"
       DELEGATION_SALT_PRIMARY: "salt_primary"
 
+      SABLIER_SEPOLIA_SUBGRAPH_URL: "${SABLIER_SEPOLIA_SUBGRAPH_URL}"
+
     depends_on:
       - anvil
       - graph-node

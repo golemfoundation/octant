@@ -34,9 +34,6 @@ from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
-from app.engine.user import (
-    DefaultWeightedAverageEffectiveDeposit,
-)
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
@@ -52,6 +49,10 @@ from app.engine.projects.rewards.capped_quadratic_funding import (
 from app.engine.octant_rewards import LeftoverWithPPFAndUnusedMR
 from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
+from app.engine.user import DefaultWeightedAverageWithSablierTimebox
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
 
 
 def test_default_epoch_settings():
@@ -63,7 +64,6 @@ def test_default_epoch_settings():
             IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
             TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         ),
-        timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
         ppf=PPFCalculatorFromRewards(),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
@@ -74,6 +74,9 @@ def test_default_epoch_settings():
         projects_rewards=CappedQuadraticFundingProjectRewards(),
         projects_allocations=QuadraticFundingAllocations(),
         leftover=LeftoverWithPPFAndUnusedMR(),
+        effective_deposit=DefaultWeightedAverageWithSablierTimebox(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
     )
 
 
@@ -83,7 +86,6 @@ def test_epoch_1_settings():
     check_settings(
         settings=settings,
         total_and_vanilla_individual_rewards=AllProceedsWithOperationalCost(),
-        timebased_weights=DefaultTimebasedWeights(),
         operational_cost=OpCostPercent(Decimal("0.20")),
         matched_rewards=PreliminaryMatchedRewards(),
         ppf=NotSupportedPPFCalculator(),
@@ -94,6 +96,9 @@ def test_epoch_1_settings():
         ),
         projects_allocations=PreliminaryProjectAllocations(),
         leftover=PreliminaryLeftover(),
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
+            timebased_weights=DefaultTimebasedWeights()
+        ),
     )
 
 
@@ -103,7 +108,6 @@ def test_epoch_2_settings():
     check_settings(
         settings=settings,
         total_and_vanilla_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
-        timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
         matched_rewards=PreliminaryMatchedRewards(),
         ppf=NotSupportedPPFCalculator(),
@@ -114,6 +118,9 @@ def test_epoch_2_settings():
         ),
         projects_allocations=PreliminaryProjectAllocations(),
         leftover=PreliminaryLeftover(),
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
     )
 
 
@@ -131,7 +138,6 @@ def test_epoch_3_settings():
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
         ),
-        timebased_weights=TimebasedWithoutUnlocksWeights(),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
@@ -140,6 +146,9 @@ def test_epoch_3_settings():
         ),
         projects_allocations=PreliminaryProjectAllocations(),
         leftover=LeftoverWithPPF(),
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
     )
 
 
@@ -157,7 +166,6 @@ def test_epoch_4_settings():
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
         ),
-        timebased_weights=TimebasedWithoutUnlocksWeights(),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
@@ -166,6 +174,65 @@ def test_epoch_4_settings():
         ),
         projects_allocations=QuadraticFundingAllocations(),
         leftover=LeftoverWithPPFAndUnusedMR(),
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
+    )
+
+
+def test_epoch_5_settings():
+    register_epoch_settings()
+    settings = get_epoch_settings(5)
+
+    check_settings(
+        settings=settings,
+        operational_cost=OpCostPercent(Decimal("0.25")),
+        total_and_vanilla_individual_rewards=PercentTotalAndAllIndividualRewards(
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
+        ),
+        matched_rewards=PercentageMatchedRewards(
+            OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
+        ),
+        community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
+        ppf=PPFCalculatorFromRewards(),
+        user_budget=UserBudgetWithPPF(),
+        projects_rewards=CappedQuadraticFundingProjectRewards(
+            projects_allocations=QuadraticFundingAllocations(),
+        ),
+        projects_allocations=QuadraticFundingAllocations(),
+        leftover=LeftoverWithPPFAndUnusedMR(),
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
+    )
+
+
+def test_epoch_6_settings():
+    register_epoch_settings()
+    settings = get_epoch_settings(6)
+
+    check_settings(
+        settings=settings,
+        operational_cost=OpCostPercent(Decimal("0.25")),
+        total_and_vanilla_individual_rewards=PercentTotalAndAllIndividualRewards(
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
+        ),
+        matched_rewards=PercentageMatchedRewards(
+            OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
+        ),
+        community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
+        ppf=PPFCalculatorFromRewards(),
+        user_budget=UserBudgetWithPPF(),
+        projects_rewards=CappedQuadraticFundingProjectRewards(
+            projects_allocations=QuadraticFundingAllocations(),
+        ),
+        projects_allocations=QuadraticFundingAllocations(),
+        leftover=LeftoverWithPPFAndUnusedMR(),
+        effective_deposit=DefaultWeightedAverageWithSablierTimebox(
+            timebased_weights=TimebasedWithoutUnlocksWeights()
+        ),
     )
 
 
@@ -174,14 +241,14 @@ def check_settings(
     settings,
     total_and_vanilla_individual_rewards,
     operational_cost,
-    timebased_weights,
     matched_rewards,
     ppf,
     community_fund,
     user_budget,
     projects_rewards,
     projects_allocations,
-    leftover
+    leftover,
+    effective_deposit,
 ):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert (
@@ -196,9 +263,7 @@ def check_settings(
 
     assert settings.user.budget == user_budget
     assert settings.user.effective_deposit.cut_off == CutOff10GLM()
-    assert settings.user.effective_deposit == DefaultWeightedAverageEffectiveDeposit(
-        timebased_weights=timebased_weights
-    )
+    assert settings.user.effective_deposit == effective_deposit
 
     assert settings.project.rewards == projects_rewards
     assert settings.project.rewards.projects_allocations == projects_allocations
