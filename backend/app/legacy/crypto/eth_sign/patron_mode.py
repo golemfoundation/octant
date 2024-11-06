@@ -1,4 +1,4 @@
-from app.legacy.crypto.eth_sign.signature import verify_signed_message
+from app.modules.common.crypto.signature import encode_for_signing, EncodingStandardFor, verify_signed_message
 
 
 def build_patron_mode_msg(user_address: str, toggle: bool) -> str:
@@ -9,4 +9,6 @@ def build_patron_mode_msg(user_address: str, toggle: bool) -> str:
 def verify(user_address: str, toggle: bool, signature: str) -> bool:
     msg_text = build_patron_mode_msg(user_address, toggle)
 
-    return verify_signed_message(user_address, msg_text, signature)
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
+
+    return verify_signed_message(user_address, encoded_msg, signature)
