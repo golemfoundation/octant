@@ -35,6 +35,8 @@ spec:
             value: 'false'
           - name: 'webClient.ipfsGateways'
             value: '$IPFS_GATEWAYS'
+          - name: 'webClient.safeEndpoint'
+            value: 'https://safe-transaction-sepolia.safe.global/'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'
