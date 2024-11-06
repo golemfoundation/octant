@@ -34,6 +34,8 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
   const containerWidth = containerBoundingClientRect?.width ?? 0;
   const videosWrapperWidth = videosWrapperBoundingClientRect?.width ?? 0;
   const maxMotionValue = videosWrapperWidth - containerWidth;
+  const tilesGap = 24;
+  const tileWidth = isMobile || isTablet ? 280 : 392;
 
   const { setShowHelpVideos } = useSettingsStore(state => ({
     setShowHelpVideos: state.setShowHelpVideos,
@@ -48,8 +50,6 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
     if (!constraintsRef.current || !videosWrapperRef.current) {
       return;
     }
-    const tilesGap = 24;
-    const tileWidth = isMobile || isTablet ? 280 : 392;
 
     const amountOfVisibleTiles = Math.floor(containerWidth / (tileWidth + tilesGap));
     const numberOfHiddenTilesLeft = Math.ceil(Math.abs(x.get()) / (tileWidth + tilesGap));
@@ -130,6 +130,11 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
                 return el;
               }}
               isDragging={isDragging}
+              style={
+                isMobile && idx + 1 === data?.length
+                  ? { marginRight: containerWidth - 2 * tilesGap - tileWidth }
+                  : undefined
+              }
               title={name}
               url={player_embed_url}
             />

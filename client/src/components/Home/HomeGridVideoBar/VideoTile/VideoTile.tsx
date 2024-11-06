@@ -12,7 +12,7 @@ import { cross } from 'svg/misc';
 import VideoTileProps from './types';
 import styles from './VideoTile.module.scss';
 
-const VideoTile = ({ title, url, isDragging }, ref) => {
+const VideoTile = ({ title, url, isDragging, style }, ref) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridVideoBar',
   });
@@ -81,6 +81,7 @@ const VideoTile = ({ title, url, isDragging }, ref) => {
         ref(el);
       }}
       className={cx(styles.root, isInView && styles.isInView)}
+      style={style}
     >
       <div
         className={styles.previewVideoOverlay}
