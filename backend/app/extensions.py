@@ -15,6 +15,7 @@ from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure import GQLConnectionFactory, SubgraphEndpoints
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 # Flask extensions
 api = Api(
@@ -57,7 +58,12 @@ def init_web3(app):
 
 def init_subgraph(app):
     gql_octant_factory.set_url(app.config, SubgraphEndpoints.OCTANT_SUBGRAPH)
-    gql_sablier_factory.set_url(app.config, SubgraphEndpoints.SABLIER_SUBGRAPH)
+    gql_sablier_factory.set_url(
+        app.config,
+        SubgraphEndpoints.SABLIER_SUBGRAPH
+        if compare_blockchain_types(app.config["CHAIN_ID"], ChainTypes.MAINNET)
+        else SubgraphEndpoints.SABLIER_SUBGRAPH_SEPOLIA,
+    )
 
 
 def init_scheduler(app):

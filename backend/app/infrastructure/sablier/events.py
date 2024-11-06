@@ -4,6 +4,8 @@ from flask import current_app as app
 from gql import gql
 
 from app.extensions import gql_sablier_factory
+from app.constants import SABLIER_TOKEN_ADDRESS_SEPOLIA, SABLIER_SENDER_ADDRESS_SEPOLIA
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class SablierAction(TypedDict):
@@ -169,9 +171,9 @@ def get_streams_with_create_events_to_user(
         }
     """
     variables = {
-        "sender": "0x76273DCC41356e5f0c49bB68e525175DC7e83417",  # _get_sender(),
+        "sender": _get_sender(),
         "recipient": user_address,
-        "tokenAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",  # _get_token_address(),
+        "tokenAddress": _get_token_address(),
     }
 
     result = gql_sablier_factory.build().execute(gql(query), variable_values=variables)
@@ -179,8 +181,20 @@ def get_streams_with_create_events_to_user(
 
 
 def _get_sender():
-    return app.config["SABLIER_SENDER_ADDRESS"]
+    chain_id = app.config["CHAIN_ID"]
+    sender = (
+        app.config["SABLIER_SENDER_ADDRESS"]
+        if compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+        else SABLIER_SENDER_ADDRESS_SEPOLIA
+    )
+    return sender
 
 
 def _get_token_address():
-    return app.config["GLM_TOKEN_ADDRESS"]
+    chain_id = app.config["CHAIN_ID"]
+    token_address = (
+        app.config["GLM_TOKEN_ADDRESS"]
+        if compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+        else SABLIER_TOKEN_ADDRESS_SEPOLIA
+    )
+    return token_address
