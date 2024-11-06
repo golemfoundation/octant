@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'regenerator-runtime/runtime';
 import './wallect-connect-polyfill';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -14,6 +14,7 @@ import env, { envViteKeys, envsAllowedToBeEmpty } from 'env';
 import clientReactQuery from './api/clients/client-react-query';
 import { wagmiConfig } from './api/clients/client-wagmi';
 import App from './App';
+import { RAINBOW_KIT_PROVIDER } from './constants/domElementsIds';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -58,7 +59,17 @@ if (window.location.hash) {
   ReactDOM.createRoot(root).render(
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={clientReactQuery}>
-        <RainbowKitProvider modalSize="compact">
+        <RainbowKitProvider
+          id={RAINBOW_KIT_PROVIDER}
+          modalSize="compact"
+          theme={lightTheme({
+            accentColor: '#2d9b87',
+            accentColorForeground: '#f8f8f8',
+            borderRadius: 'medium',
+            fontStack: 'system',
+            overlayBlur: 'small',
+          })}
+        >
           <BrowserRouter>
             <App />
           </BrowserRouter>
