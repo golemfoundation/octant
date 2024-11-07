@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { tabletOnly, desktopOnly, largeDesktopOnly } from 'styles/utils/mediaQueries';
+import { phoneOnly, tabletOnly, desktopOnly, largeDesktopOnly } from 'styles/utils/mediaQueries';
 
 import { UseMediaQuery } from './types';
 
@@ -16,6 +16,7 @@ function useMediaQuery(): UseMediaQuery {
   const [isLargeDesktop, setIsLargeDesktop] = useState<boolean>(getMatches(largeDesktopOnly));
   const [isDesktop, setIsDesktop] = useState<boolean>(getMatches(desktopOnly));
   const [isTablet, setIsTablet] = useState<boolean>(getMatches(tabletOnly));
+  const [isMobile, setIsMobile] = useState<boolean>(getMatches(phoneOnly));
 
   function handleChangeLargeDesktop() {
     setIsLargeDesktop(getMatches(largeDesktopOnly));
@@ -29,10 +30,15 @@ function useMediaQuery(): UseMediaQuery {
     setIsTablet(getMatches(tabletOnly));
   }
 
+  function handleChangeMobile() {
+    setIsMobile(getMatches(phoneOnly));
+  }
+
   useEffect(() => {
     const matchMediaLargeDesktop = window.matchMedia(largeDesktopOnly);
     const matchMediaDesktop = window.matchMedia(desktopOnly);
     const matchMediaTablet = window.matchMedia(tabletOnly);
+    const matchMediaMobile = window.matchMedia(phoneOnly);
 
     // Listen matchMedia
     if (matchMediaLargeDesktop.addListener) {
@@ -53,6 +59,12 @@ function useMediaQuery(): UseMediaQuery {
       matchMediaTablet.addEventListener('change', handleChangeTablet);
     }
 
+    if (matchMediaMobile.addListener) {
+      matchMediaMobile.addListener(handleChangeMobile);
+    } else {
+      matchMediaMobile.addEventListener('change', handleChangeMobile);
+    }
+
     return () => {
       if (matchMediaLargeDesktop.removeListener) {
         matchMediaLargeDesktop.removeListener(handleChangeLargeDesktop);
@@ -71,6 +83,12 @@ function useMediaQuery(): UseMediaQuery {
       } else {
         matchMediaTablet.removeEventListener('change', handleChangeTablet);
       }
+
+      if (matchMediaMobile.removeListener) {
+        matchMediaMobile.removeListener(handleChangeMobile);
+      } else {
+        matchMediaMobile.removeEventListener('change', handleChangeMobile);
+      }
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +97,7 @@ function useMediaQuery(): UseMediaQuery {
   return {
     isDesktop,
     isLargeDesktop,
-    isMobile: !isDesktop && !isTablet && !isLargeDesktop,
+    isMobile,
     isTablet,
   };
 }

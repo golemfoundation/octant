@@ -104,7 +104,8 @@
         "epochMF": "Epoch MF"
       },
       "homeGridVideoBar": {
-        "learnHowToUseOctant": "Learn how to use Octant"
+        "learnHowToUseOctant": "Learn how to use Octant",
+        "closeVideoWithArrow": "Close video ->"
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",

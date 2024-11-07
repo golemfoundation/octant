@@ -3,60 +3,106 @@
   width: 28rem;
   transition: opacity $transition-time-1;
   opacity: 0.5;
+  height: 14.4rem;
+
+  @media #{$desktop-up} {
+    width: 39.2rem;
+    height: 19.8rem;
+  }
+
+  .previewVideoOverlay {
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
 
   &.isInView {
     opacity: 1;
   }
 
-  .video,
-  .videoOverlay {
-    height: 16.8rem;
+  .previewVideo {
+    height: 100%;
     width: 100%;
     border: none;
-    border-radius: $border-radius-08 $border-radius-08 0 0;
+    border-radius: $border-radius-08;
+  }
+}
+
+.videoBox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  z-index: $z-index-7;
+
+  @media #{$tablet-up} {
+    width: 71.2rem;
+    height: 34.2rem;
   }
 
-  .videoOverlay {
-    top: 0;
-    position: absolute;
-    background-color: $color-octant-grey2;
-    opacity: 0.3;
-
-    &.isVideoPlaying {
-      cursor: pointer;
-      opacity: 0;
-    }
+  @media #{$desktop-up} {
+    width: 94.6rem;
+    height: 45.4rem;
   }
 
-  .playButton {
+  @media #{$large-desktop-up} {
+    width: 141.6rem;
+    height: 68.6rem;
+  }
+
+  .closeButton {
+    border-radius: $border-radius-10;
+    display: flex;
+    align-items: center;
+    justify-content: end;
     position: absolute;
-    top: 6.7rem;
-    left: 50%;
-    transform: translate(-50%);
+    top: -6rem;
+    right: 0;
+    background: white;
+    width: 4rem;
+    height: 4rem;
+    overflow: hidden;
+    padding: 0.4rem;
     cursor: pointer;
-  }
 
-  .info {
-    width: 100%;
-    background: $color-octant-grey8;
-    font-weight: $font-weight-bold;
-    line-height: 1.8rem;
-    padding: 1rem 2.4rem;
-    margin-top: -0.4rem;
-    border-radius: 0 0 $border-radius-08 $border-radius-08;
-    text-align: left;
+    &:hover {
+      svg path {
+        transition: stroke $transition-time-2;
+        stroke: $color-octant-dark;
+      }
+    }
 
-    .title {
-      font-size: $font-size-14;
-      color: $color-octant-dark;
+    .closeButtonText {
+      margin-top: -0.2rem;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: $color-octant-dark;
+      font-size: $font-size-12;
+      font-weight: $font-weight-bold;
     }
 
-    .subtitle {
-      font-size: $font-size-12;
-      color: $color-octant-grey5;
+    svg {
+      margin: 1.1rem;
+    }
+
+    svg path {
+      stroke: $color-octant-grey5;
     }
   }
+
+  .video {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: $border-radius-12;
+    background: $color-octant-grey6;
+  }
+}
+
+.videoOverlay.isOpen {
+  @include overlay(100%, 100%);
 }
