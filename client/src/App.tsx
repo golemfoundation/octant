@@ -10,7 +10,7 @@ import OnboardingStepper from 'components/shared/OnboardingStepper';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
 import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
-import useCypressHelpers from 'hooks/helpers/useCypressHelpers';
+// import useCypressHelpers from 'hooks/helpers/useCypressHelpers';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
@@ -38,7 +38,7 @@ const App = (): ReactElement => {
   }));
 
   // useCypressHelpers needs to be called after all the initial sets done above.
-  const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
+  // const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
   if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
     return <AppLoader />;
@@ -46,7 +46,12 @@ const App = (): ReactElement => {
 
   return (
     <Fragment>
-      <Layout isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers}>
+      <Layout
+        isSyncingInProgress={
+          isSyncingInProgress
+          // /|| isFetchingCypressHelpers
+        }
+      >
         <RootRoutes />
       </Layout>
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
