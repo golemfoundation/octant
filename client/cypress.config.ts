@@ -1,4 +1,4 @@
-import { configureSynpressForMetaMask } from '@synthetixio/synpress/cypress';
+// import { configureSynpressForMetaMask } from '@synthetixio/synpress/cypress';
 import vitePreprocessor from 'cypress-vite';
 import path from 'path';
 import { defineConfig } from 'cypress';
@@ -21,7 +21,9 @@ export default defineConfig({
           },
         }),
       );
-      return configureSynpressForMetaMask(on, config);
+      // TODO: handle Metamask
+      // return configureSynpressForMetaMask(on, config);
+      return config;
     },
     supportFile: 'cypress/support/e2e.ts',
     numTestsKeptInMemory: 4,
