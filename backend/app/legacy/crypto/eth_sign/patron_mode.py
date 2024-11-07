@@ -1,4 +1,8 @@
-from app.modules.common.crypto.signature import encode_for_signing, EncodingStandardFor, verify_signed_message
+from app.modules.common.crypto.signature import (
+    encode_for_signing,
+    EncodingStandardFor,
+    verify_signed_message,
+)
 
 
 def build_patron_mode_msg(user_address: str, toggle: bool) -> str:
