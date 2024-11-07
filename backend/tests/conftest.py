@@ -44,6 +44,7 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
+from v2.main import app as fastapi_app 
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
@@ -1030,9 +1031,6 @@ def patch_vault(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
-    monkeypatch.setattr(
-        "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
-    )
     monkeypatch.setattr(
         "app.modules.common.crypto.signature.is_contract", MOCK_IS_CONTRACT
     )
