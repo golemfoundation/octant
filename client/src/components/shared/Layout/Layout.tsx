@@ -39,6 +39,7 @@ const Layout: FC<LayoutProps> = ({
   const scrollRef = useRef(window.scrollY);
   const lastScrollYUpRef = useRef(0);
   const { pathname } = useLocation();
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const isProjectView = pathname.includes(`${ROOT_ROUTES.project.absolute}/`);
 
@@ -119,7 +120,7 @@ const Layout: FC<LayoutProps> = ({
             styles.topBarWrapper,
             isProjectAdminMode && styles.isProjectAdminMode,
             isPatronMode && styles.isPatronMode,
-            networkConfig.isTestnet && styles.isTestnet,
+            isTestnet && styles.isTestnet,
           )}
           data-test={`${dataTestRoot}__topBarWrapper`}
         >

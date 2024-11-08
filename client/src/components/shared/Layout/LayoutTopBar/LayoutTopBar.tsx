@@ -60,6 +60,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
 
   const tabs = useNavigationTabs(true);
   const [scope, animate] = useAnimate();
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const buttonWalletText = useMemo(() => {
     if (!isConnected) {
@@ -133,15 +134,17 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     <div className={cx(styles.root, className)} data-test={dataTestRoot}>
       <div className={styles.logoWrapper}>
         <Svg
-          classNameSvg={cx(styles.octantLogo, networkConfig.isTestnet && styles.isTestnet)}
+          classNameSvg={cx(styles.octantLogo, isTestnet && styles.isTestnet)}
           dataTest={`${dataTestRoot}__Logo`}
           img={octant}
           onClick={onLogoClick}
           size={4}
         />
-        {networkConfig.isTestnet && (
+        {isTestnet && (
           <TinyLabel
             className={styles.testnetIndicator}
+            dataTest={`${dataTestRoot}__Logo__testnetIndicator`}
+            onClick={onLogoClick}
             text={networkConfig.name}
             textClassName={styles.testnetIndicatorText}
           />
@@ -155,7 +158,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
               className={cx(
                 styles.link,
                 isActive && styles.isActive,
-                networkConfig.isTestnet && styles.isTestnet,
+                isTestnet && styles.isTestnet,
               )}
               data-test={`${dataTestRoot}__link--${key}`}
               onClick={
@@ -206,7 +209,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       {isDesktop && (
         <Fragment>
           <div
-            className={cx(styles.settingsButton, networkConfig.isTestnet && styles.isTestnet)}
+            className={cx(styles.settingsButton, isTestnet && styles.isTestnet)}
             data-test={`${dataTestRoot}__settingsButton`}
             onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
@@ -214,7 +217,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           </div>
           {!isProjectAdminMode && !isPatronMode && (
             <div
-              className={cx(styles.allocateButton, networkConfig.isTestnet && styles.isTestnet)}
+              className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
               data-test={`${dataTestRoot}__allocationButton`}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
