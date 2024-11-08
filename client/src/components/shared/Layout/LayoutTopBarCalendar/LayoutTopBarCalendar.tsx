@@ -111,6 +111,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
     <>
       <div
         className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
+        data-test="LayoutTopBarCalendar"
         onClick={() => setIsCalendarOpen(true)}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}

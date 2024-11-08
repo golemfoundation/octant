@@ -30,6 +30,7 @@ import styles from './LayoutTopBar.module.scss';
 import LayoutTopBarProps from './types';
 
 const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
+  const dataTestRoot = 'LayoutTopBar';
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
@@ -129,10 +130,11 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   }, [allocations]);
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test={dataTestRoot}>
       <div className={styles.logoWrapper}>
         <Svg
           classNameSvg={cx(styles.octantLogo, networkConfig.isTestnet && styles.isTestnet)}
+          dataTest={`${dataTestRoot}__Logo`}
           img={octant}
           onClick={onLogoClick}
           size={4}
@@ -146,15 +148,16 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         )}
       </div>
       {isDesktop && (
-        <div className={styles.links}>
-          {tabs.map(({ label, to, isActive, isDisabled }) => (
+        <div className={styles.links} data-test={`${dataTestRoot}__links`}>
+          {tabs.map(({ label, to, isActive, isDisabled, key }) => (
             <div
-              key={to}
+              key={key}
               className={cx(
                 styles.link,
                 isActive && styles.isActive,
                 networkConfig.isTestnet && styles.isTestnet,
               )}
+              data-test={`${dataTestRoot}__link--${key}`}
               onClick={
                 isDisabled && to
                   ? () => {}
@@ -172,6 +175,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
                   <motion.div
                     animate={{ opacity: 1 }}
                     className={styles.underline}
+                    data-test={`${dataTestRoot}__underline--${key}`}
                     initial={{ opacity: 0 }}
                   />
                 </div>
@@ -188,6 +192,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           isPatronMode && styles.isPatronMode,
           isProjectAdminMode && styles.isProjectAdminMode,
         )}
+        dataTest={`${dataTestRoot}__Button`}
         onClick={() =>
           isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
         }
@@ -202,6 +207,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         <Fragment>
           <div
             className={cx(styles.settingsButton, networkConfig.isTestnet && styles.isTestnet)}
+            data-test={`${dataTestRoot}__settingsButton`}
             onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
@@ -209,6 +215,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           {!isProjectAdminMode && !isPatronMode && (
             <div
               className={cx(styles.allocateButton, networkConfig.isTestnet && styles.isTestnet)}
+              data-test={`${dataTestRoot}__allocationButton`}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
               <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
@@ -216,7 +223,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
                 <div
                   ref={scope}
                   className={styles.numberOfAllocations}
-                  data-test="LayoutTopBar__numberOfAllocations"
+                  data-test={`${dataTestRoot}__numberOfAllocations`}
                 >
                   {allocations.length}
                 </div>
@@ -227,10 +234,18 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
       )}
       {isDesktop && (
         <>
-          <Drawer isOpen={isSettingsDrawerOpen} onClose={() => setIsSettingsDrawerOpen(false)}>
+          <Drawer
+            dataTest="SettingsDrawer"
+            isOpen={isSettingsDrawerOpen}
+            onClose={() => setIsSettingsDrawerOpen(false)}
+          >
             <Settings />
           </Drawer>
-          <Drawer isOpen={isAllocationDrawerOpen} onClose={() => setIsAllocationDrawerOpen(false)}>
+          <Drawer
+            dataTest="AllocationDrawer"
+            isOpen={isAllocationDrawerOpen}
+            onClose={() => setIsAllocationDrawerOpen(false)}
+          >
             <Allocation />
           </Drawer>
         </>

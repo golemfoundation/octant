@@ -7,6 +7,8 @@ import ViewTitle from 'components/shared/ViewTitle/ViewTitle';
 import { MetricsEpochProvider } from 'hooks/helpers/useMetrcisEpoch';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
+import styles from './MetricsView.module.scss';
+
 const MetricsView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: currentEpoch } = useCurrentEpoch();
@@ -16,7 +18,7 @@ const MetricsView = (): ReactElement => {
   }, []);
 
   return (
-    <>
+    <div className={styles.root} data-test="MetricsView">
       {/* Workaround for epoch 0 allocation window (no epoch 0 metrics) */}
       {/* useMetricsEpoch.tsx:19 -> const lastEpoch = currentEpoch! - 1; */}
       {currentEpoch === 1 ? (
@@ -30,7 +32,7 @@ const MetricsView = (): ReactElement => {
           <MetricsGeneral />
         </>
       )}
-    </>
+    </div>
   );
 };
 

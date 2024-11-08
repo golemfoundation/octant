@@ -57,7 +57,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
                 <Button
                   key={key}
                   className={cx(styles.buttonNavigation, isActive && styles.isActive)}
-                  dataTest={`Navbar__Button--${label}`}
+                  dataTest={`Navbar__Button--${key}`}
                   Icon={
                     isBigIcon ? (
                       <Svg classNameSvg={styles.bigIcon} img={icon} size={isTablet ? 3 : 2.4} />
