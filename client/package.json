@@ -74,7 +74,7 @@
     "@babel/preset-react": "^7.24.1",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/client-preset": "^4.2.5",
-    "@synthetixio/synpress": "^3.7.3",
+    "@synthetixio/synpress": "^3.7.2-beta.10",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
