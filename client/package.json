@@ -44,6 +44,7 @@
     "@wagmi/core": "^2.14.1",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
+    "cypress-real-events": "^1.13.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
@@ -73,7 +74,7 @@
     "@babel/preset-react": "^7.24.1",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/client-preset": "^4.2.5",
-    "@synthetixio/synpress": "^3.7.2-beta.10",
+    "@synthetixio/synpress": "^3.7.3",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
@@ -113,9 +114,6 @@
     "vite": "^5.2.11",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html-config": "^1.0.11"
-  },
-  "resolutions": {
-    "**/cypress": "13.8.1"
   },
   "engines": {
     "node": ">=20"
