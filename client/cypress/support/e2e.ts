@@ -7,7 +7,3 @@ Cypress.on('uncaught:exception', () => {
 });
 
 synpressCommandsForMetaMask();
-
-before(() => {
-  cy.visit('/');
-});

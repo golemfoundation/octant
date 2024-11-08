@@ -26,27 +26,28 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.footer' });
   const { isDesktop } = useMediaQuery();
   const newsletterRef = useRef<HTMLDivElement>(null);
+  const dataTestRoot = 'LayoutFooter';
 
   const links = isDesktop
     ? [
-        { label: t('links.website'), link: OCTANT_BUILD_LINK },
-        { label: t('links.docs'), link: OCTANT_DOCS },
-        { label: t('links.blog'), link: BLOG_POST },
-        { label: t('links.discord'), link: DISCORD_LINK },
-        { label: t('links.farcaster'), link: FARCASTER_LINK },
+        { id: 'website', label: t('links.website'), link: OCTANT_BUILD_LINK },
+        { id: 'docs', label: t('links.docs'), link: OCTANT_DOCS },
+        { id: 'blog', label: t('links.blog'), link: BLOG_POST },
+        { id: 'discord', label: t('links.discord'), link: DISCORD_LINK },
+        { id: 'farcaster', label: t('links.farcaster'), link: FARCASTER_LINK },
         // TODO OCT-2097 Bring Twitter/X back.
         // { label: t('links.twitterX'), link: TWITTER_LINK },
-        { label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
-        { label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
-        { label: t('links.termsOfUse'), link: TERMS_OF_USE },
+        { id: 'brandAssets', label: t('links.brandAssets'), link: BRAND_ASSETS_FIGMA_LINK },
+        { id: 'privacyPolicy', label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
+        { id: 'termsOfUse', label: t('links.termsOfUse'), link: TERMS_OF_USE },
       ]
     : [
-        { label: t('links.website'), link: OCTANT_BUILD_LINK },
-        { label: t('links.docs'), link: OCTANT_DOCS },
-        { label: t('links.farcaster'), link: FARCASTER_LINK },
-        { label: t('links.discord'), link: DISCORD_LINK },
-        { label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
-        { label: t('links.termsOfUse'), link: TERMS_OF_USE },
+        { id: 'website', label: t('links.website'), link: OCTANT_BUILD_LINK },
+        { id: 'docs', label: t('links.docs'), link: OCTANT_DOCS },
+        { id: 'farcaster', label: t('links.farcaster'), link: FARCASTER_LINK },
+        { id: 'discord', label: t('links.discord'), link: DISCORD_LINK },
+        { id: 'privacyPolicy', label: t('links.privacyPolicy'), link: PRIVACY_POLICY },
+        { id: 'termsOfUse', label: t('links.termsOfUse'), link: TERMS_OF_USE },
       ];
 
   useLayoutEffect(() => {
@@ -67,16 +68,17 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   }, []);
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test={dataTestRoot}>
       <div className={styles.wrapper}>
         <div className={styles.info}>
-          <Svg img={octantSemiTransparent} size={4.8} />
-          <div className={styles.octantText}>
+          <Svg dataTest={`${dataTestRoot}__Logo`} img={octantSemiTransparent} size={4.8} />
+          <div className={styles.octantText} data-test={`${dataTestRoot}__projectInfoText`}>
             <Trans
               components={[
                 // eslint-disable-next-line jsx-a11y/control-has-associated-label, jsx-a11y/anchor-has-content
                 <a
                   className={styles.golemFoundationLink}
+                  data-test={`${dataTestRoot}__projectInfoText__link`}
                   href={GOLEM_FOUNDATION_LINK}
                   rel="noreferrer"
                   target="_blank"
@@ -87,16 +89,29 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
           </div>
         </div>
         <div className={styles.links}>
-          {links.map(({ link, label }) => (
-            <a key={link} className={styles.link} href={link} rel="noreferrer" target="_blank">
+          {links.map(({ id, link, label }) => (
+            <a
+              key={id}
+              className={styles.link}
+              data-test={`${dataTestRoot}__link--${id}`}
+              href={link}
+              rel="noreferrer"
+              target="_blank"
+            >
               {`→ ${label}`}
             </a>
           ))}
         </div>
       </div>
       <div className={styles.newsletterWrapper}>
-        <div ref={newsletterRef} className={styles.newsletter} />
-        <div className={styles.newsletterText}>{t('newsletterText')}</div>
+        <div
+          ref={newsletterRef}
+          className={styles.newsletter}
+          data-test={`${dataTestRoot}__newsletter`}
+        />
+        <div className={styles.newsletterText} data-test={`${dataTestRoot}__newsletterText`}>
+          {t('newsletterText')}
+        </div>
       </div>
     </div>
   );
