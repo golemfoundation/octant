@@ -2,7 +2,9 @@
 import chaiColors from 'chai-colors';
 
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_ONBOARDING_ALWAYS_VISIBLE,
@@ -12,8 +14,33 @@ import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
+describe('AW IS CLOSED: move time', () => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
+
+  it('allocation window is closed, when it is not, move time', () => {
+    setupAndMoveToPlayground();
+
+    cy.window().then(async win => {
+      moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
+        cy.get('[data-test=PlaygroundView]').should('be.visible');
+        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+        expect(isDecisionWindowOpenAfter).to.be.false;
+      });
+    });
+  });
+});
+
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe(`LayoutTopBar: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`[AW IS CLOSED] LayoutTopBar: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
     });
