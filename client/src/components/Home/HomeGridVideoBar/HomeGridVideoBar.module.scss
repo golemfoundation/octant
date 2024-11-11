@@ -10,6 +10,15 @@
 .constraintsWrapper {
   display: flex;
   overflow: hidden;
+  margin-top: 0.8rem;
+
+  @media #{$tablet-up} {
+    margin-top: 4rem;
+  }
+
+  @media #{$desktop-up} {
+    margin-top: 1.2rem;
+  }
 }
 
 .buttonClose {
@@ -17,4 +26,22 @@
   top: 1.6rem;
   right: 1.6rem;
   background-color: $color-octant-grey6;
+}
+
+.arrows {
+  padding-top: 2.8rem;
+  padding-left: 2.4rem;
+
+  @media #{$tablet-up} {
+    padding-top: 0;
+    padding-left: 1.4rem;
+  }
+}
+
+.arrowLeft {
+  margin-right: 1.6rem;
+
+  @media #{$tablet-up} {
+    margin-right: 0.8rem;
+  }
 }

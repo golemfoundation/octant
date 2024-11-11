@@ -1,0 +1,55 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  cursor: pointer;
+  width: 4rem;
+  height: 4rem;
+  background: $color-octant-grey6;
+  border-radius: $border-radius-10;
+  transition: all $transition-time-5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media #{$tablet-up} {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  svg path {
+    fill: $color-octant-grey5;
+  }
+
+  &.leftArrow {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &.isDisabled {
+    background: $color-octant-grey6;
+
+    svg path {
+      fill: $color-octant-grey1;
+    }
+  }
+
+  &:not(.isDisabled):hover {
+    background: $color-octant-grey8;
+
+    svg path {
+      fill: $color-octant-dark;
+    }
+  }
+
+  &:not(.isDisabled):active {
+    background: $color-octant-grey1;
+
+    svg path {
+      fill: $color-octant-dark;
+    }
+  }
+}

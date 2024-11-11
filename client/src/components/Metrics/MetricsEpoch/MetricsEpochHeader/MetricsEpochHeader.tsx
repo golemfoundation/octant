@@ -1,14 +1,12 @@
-import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsSectionHeader from 'components/Metrics/MetricsSectionHeader';
-import Svg from 'components/ui/Svg';
+import NavigationArrows from 'components/shared/NavigationArrows';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import { arrowRight } from 'svg/misc';
 
 import styles from './MetricsEpochHeader.module.scss';
 
@@ -35,30 +33,14 @@ const MetricsEpochHeader = (): ReactElement => {
           <div className={styles.epochDurationLabel}>{epochDurationLabel}</div>
         )}
       </div>
-      <div className={styles.arrowsWrapper}>
-        <div
-          className={cx(styles.arrow, styles.leftArrow, isLeftArrowDisabled && styles.isDisabled)}
-          onClick={() => {
-            if (isLeftArrowDisabled) {
-              return;
-            }
-            setEpoch(epoch - 1);
-          }}
-        >
-          <Svg img={arrowRight} size={1.4} />
-        </div>
-        <div
-          className={cx(styles.arrow, isRightArrowDisabled && styles.isDisabled)}
-          onClick={() => {
-            if (isRightArrowDisabled) {
-              return;
-            }
-            setEpoch(epoch + 1);
-          }}
-        >
-          <Svg img={arrowRight} size={1.4} />
-        </div>
-      </div>
+      <NavigationArrows
+        className={styles.arrows}
+        classNamePrevButton={styles.arrowLeft}
+        isNextButtonDisabled={isRightArrowDisabled}
+        isPrevButtonDisabled={isLeftArrowDisabled}
+        onClickNextButton={() => setEpoch(epoch + 1)}
+        onClickPrevButton={() => setEpoch(epoch - 1)}
+      />
     </MetricsSectionHeader>
   );
 };

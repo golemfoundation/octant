@@ -3,16 +3,13 @@ import apiService from 'services/apiService';
 export type GetAlbumVideosResponse = {
   name: string;
   player_embed_url: string;
-  user: {
-    name: string;
-  };
 }[];
 
 const vimeoApiEndpoint = 'https://api.vimeo.com';
 const vimeoUserId = 124198022;
 const vimeoAlbumId = 11407049;
 const publicAccessToken = '959f7b9a5a73689d684e0b60e979b6b4';
-const fields = [['name', 'player_embed_url', 'user.name']];
+const fields = [['name', 'player_embed_url']];
 
 export async function vimeoApiGetAlbumVideos(): Promise<GetAlbumVideosResponse> {
   return apiService
