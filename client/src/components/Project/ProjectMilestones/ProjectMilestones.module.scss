@@ -5,7 +5,10 @@ $milestoneReadMoreButtonBackground: 1.5 * $milestoneLineHeight;
 $milestoneReadMoreFadeOutHeight: $milestoneLineHeight + $milestoneParagraphMargin;
 
 .root {
+  display: flex;
+  flex-direction: column;
   padding: 0 3.2rem;
+  background: $color-octant-grey6;
 
   &.isFetching {
     margin-bottom: 1.6rem;
