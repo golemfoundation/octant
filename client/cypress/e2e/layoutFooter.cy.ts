@@ -2,9 +2,9 @@
 import chaiColors from 'chai-colors';
 
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
-import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
+// import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
+// import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_ONBOARDING_ALWAYS_VISIBLE,
