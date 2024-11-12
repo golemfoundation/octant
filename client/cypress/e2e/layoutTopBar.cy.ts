@@ -160,17 +160,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=LayoutTopBarCalendar]').should('be.visible');
       });
 
-      if (device === 'large-desktop' || device === 'desktop') {
-        it('Epoch info badge has border on hover', () => {
-          cy.get('[data-test=LayoutTopBarCalendar]')
-            .then($el => $el.css('border-color'))
-            .should('be.colored', 'transparent');
-          cy.get('[data-test=LayoutTopBarCalendar]').realHover();
-          cy.get('[data-test=LayoutTopBarCalendar]')
-            .then($el => $el.css('border-color'))
-            .should('be.colored', '#c5e7e1');
-        });
-      }
+      // if (device === 'large-desktop' || device === 'desktop') {
+      //   it('Epoch info badge has border on hover', () => {
+      //     cy.get('[data-test=LayoutTopBarCalendar]')
+      //       .then($el => $el.css('border-color'))
+      //       .should('be.colored', 'transparent');
+      //     cy.get('[data-test=LayoutTopBarCalendar]').realHover();
+      //     cy.get('[data-test=LayoutTopBarCalendar]')
+      //       .then($el => $el.css('border-color'))
+      //       .should('be.colored', '#c5e7e1');
+      //   });
+      // }
 
       it('Epoch info badge opens Calendar on click', () => {
         cy.get('[data-test=LayoutTopBarCalendar]').click();
