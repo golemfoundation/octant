@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.55
+      targetRevision: 0.2.68
       chart: octant
       helm:
         parameters:
@@ -33,13 +33,17 @@ spec:
             value: '$NETWORK_NAME'
           - name: 'webClient.hideCurrentProjectsOutsideAW'
             value: 'false'
+          - name: 'webClient.ipfsGateways'
+            value: '$IPFS_GATEWAYS'
+          - name: 'webClient.safeEndpoint'
+            value: 'https://safe-transaction-sepolia.safe.global/'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'
           - name: graphNode.graph.env.RPC_URL
             value: '$BACKEND_RPC_URL'
-          - name: graphNode.graph.env.GRAPHQL_MAX_FIRST
-            value: '100000'
+          - name: graphNode.graph.env.ETHEREUM_REORG_THRESHOLD
+            value: '0'
           - name: graphHealtchecker.replicas
             value: '${GRAPH_HEALTHCHECKER_REPLICAS:-1}'
           - name: subgraph.deploy
