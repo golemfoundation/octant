@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useState, Fragment } from 'react';
+import React, { ReactElement, useState, Fragment, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
 import AppLoader from 'components/shared/AppLoader';
@@ -34,6 +34,8 @@ const App = (): ReactElement => {
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
+
+  useEffect(() => {}, []);
 
   if (isLoading && !isSyncingInProgress) {
     return <AppLoader />;
