@@ -656,18 +656,12 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug(
-            "get_user_rewards_in_upcoming_epoch :",
-            self._flask_client.get(f"/rewards/budget/{address}/upcoming").request,
-        )
+        current_app.logger.debug("get_user_rewards_in_upcoming_epoch :", rv.text)
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug(
-            "get_rewards_budget :",
-            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
-        )
+        current_app.logger.debug("get_rewards_budget :", rv.text)
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
