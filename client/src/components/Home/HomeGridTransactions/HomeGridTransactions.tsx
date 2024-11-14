@@ -51,6 +51,7 @@ const HomeGridTransactions: FC<HomeGridTransactionsProps> = ({ className }) => {
             loader={<TransactionsSkeleton key="history-loader" />}
             loadMore={fetchNextPage}
             pageStart={0}
+            useWindow={false}
           >
             <TransactionsList history={[...(transactionsPendingSorted || []), ...history]} />
           </InfiniteScroll>
