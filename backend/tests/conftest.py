@@ -9,6 +9,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 
+from fastapi.testclient import TestClient
 import gql
 import pytest
 from flask import current_app
@@ -19,6 +20,7 @@ from requests import RequestException
 from web3 import Web3
 
 import logging
+from v2.main import app as fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -414,6 +416,16 @@ def random_string() -> str:
     length_of_string = 6
     characters = string.ascii_letters + string.digits
     return "".join(random.choices(characters, k=length_of_string))
+
+
+@pytest.fixture
+def fastapi_client(deployment) -> TestClient:
+
+    for key in dir(deployment):
+        if key.isupper():
+            os.environ[key] = getattr(deployment, key)
+
+    return TestClient(fastapi_app)
 
 
 @pytest.fixture
