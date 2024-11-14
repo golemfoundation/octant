@@ -423,7 +423,9 @@ def fastapi_client(deployment) -> TestClient:
 
     for key in dir(deployment):
         if key.isupper():
-            os.environ[key] = getattr(deployment, key)
+            value = getattr(deployment, key)
+            if value is not None:
+                os.environ[key] = str(value)
 
     return TestClient(fastapi_app)
 
@@ -668,12 +670,12 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug("get_user_rewards_in_upcoming_epoch :", rv.text)
+        current_app.logger.debug(f"get_user_rewards_in_upcoming_epoch :{rv.text}")
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug("get_rewards_budget :", rv.text)
+        current_app.logger.debug(f"get_rewards_budget :{rv.text}")
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
