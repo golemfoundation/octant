@@ -49,7 +49,12 @@ const HomeGridTransactions: FC<HomeGridTransactionsProps> = ({ className }) => {
             hasMore={hasNextPage}
             initialLoad
             loader={<TransactionsSkeleton key="history-loader" />}
-            loadMore={fetchNextPage}
+            loadMore={() => {
+              if (isFetchingHistory) {
+                return;
+              }
+              fetchNextPage();
+            }}
             pageStart={0}
             useWindow={false}
           >
