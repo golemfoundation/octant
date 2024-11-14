@@ -1,3 +1,4 @@
+from fastapi.testclient import TestClient
 import pytest
 from flask import current_app as app
 
@@ -9,6 +10,7 @@ from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
 @pytest.mark.api
 def test_allocations(
     client: Client,
+    fastapi_client: TestClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
     ua_bob: UserAccount,
@@ -31,7 +33,25 @@ def test_allocations(
     res = client.pending_snapshot()
     assert res["epoch"] > 0
 
-    ua_alice.allocate(1000, alice_proposals)
+    ua_alice_nonce, _ = ua_alice._client.get_allocation_nonce(ua_alice.address)
+    signature = ua_alice._client.sign_operation(ua_alice, 1000, alice_proposals, ua_alice_nonce)
+    rv = fastapi_client.post(
+        "/allocations/allocate",
+        json={
+            "payload": {
+                "allocations": [
+                    {"proposalAddress": address, "amount": 1000}
+                    for address in alice_proposals
+                ],
+                "nonce": ua_alice_nonce,
+            },
+            "userAddress": ua_alice.address,
+            "signature": signature,
+        },
+    )
+    assert rv.status_code == 201
+
+    # ua_alice.allocate(1000, alice_proposals)
     ua_bob.allocate(1000, alice_proposals[:1])
 
     allocations, _ = client.get_epoch_allocations(STARTING_EPOCH)
