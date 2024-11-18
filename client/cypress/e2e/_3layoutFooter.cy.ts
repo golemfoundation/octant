@@ -153,14 +153,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', '_blank');
     });
 
-    // it('Newsletter input is visible', () => {
-    //   cy.get('[data-test=LayoutFooter__newsletter]').should('be.visible');
-    //   cy.get('[data-test=LayoutFooter__newsletter]').children().should('have.length', 2);
-    //   cy.get('[data-test=LayoutFooter__newsletter]').within(() => {
-    //     cy.get('.gh-signup-root').should('be.visible');
-    //   });
-    // });
-
     it('Newsletter text is visible and has correct value', () => {
       cy.get('[data-test=LayoutFooter__newsletterText]').should('be.visible');
       cy.get('[data-test=LayoutFooter__newsletterText]')
