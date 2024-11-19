@@ -34,7 +34,7 @@ def test_allocations(
     assert res["epoch"] > 0
 
     ua_alice_nonce, _ = ua_alice._client.get_allocation_nonce(ua_alice.address)
-    signature = ua_alice._client.sign_operation(ua_alice, 1000, alice_proposals, ua_alice_nonce)
+    signature = ua_alice._client.sign_operation(ua_alice._account, 1000, alice_proposals, ua_alice_nonce)
     rv = fastapi_client.post(
         "/allocations/allocate",
         json={
