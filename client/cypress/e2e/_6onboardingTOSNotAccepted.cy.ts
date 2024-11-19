@@ -22,7 +22,7 @@ import {
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }, index, arr) => {
-  describe(`onboarding (TOS not accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`Onboarding (TOS not accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       beforeSetup();
     });
@@ -72,7 +72,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }, ind
       checkChangeStepsWithArrowKeys(false);
     });
 
-    it('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
+    it('user cannot change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
       checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(false);
     });
 
