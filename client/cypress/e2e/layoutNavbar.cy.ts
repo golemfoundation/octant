@@ -13,7 +13,7 @@ import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
-  describe(`LayoutNavbar: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`[AW IS CLOSED] LayoutNavbar: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
     });
@@ -35,7 +35,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         cy.get('[data-test=LayoutNavbar]').should('be.visible');
       });
 
-      it('LayoutNavbar has correct size na style', () => {
+      it('LayoutNavbar has correct size and style', () => {
         cy.get('[data-test=LayoutNavbar]')
           .invoke('css', 'height')
           .should('eq', isMobile ? '72px' : '104px');
@@ -132,25 +132,63 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       it('Home button redirects to HomeView', () => {
         cy.get('[data-test=LayoutNavbar__Button--home]').click();
         cy.get('[data-test=HomeView]').should('be.visible');
+        cy.get(`[data-test=LayoutNavbar__Button__Svg--home]`).within(() => {
+          cy.get('path')
+            .eq(1)
+            .then($el => $el.css('fill'))
+            .should('be.colored', '#171717');
+        });
       });
 
       it('Projects button redirects to ProjectsView', () => {
         cy.get('[data-test=LayoutNavbar__Button--projects]').click();
+        cy.get(`[data-test=LayoutNavbar__Button__Svg--projects]`).within(() => {
+          cy.get('path').each((el, idx) => {
+            cy.get('path')
+              .eq(idx)
+              .then($el => $el.css('stroke'))
+              .should('be.colored', '#171717');
+          });
+        });
         cy.get('[data-test=ProjectsView]').should('be.visible');
       });
 
       it('Allocate button redirects to AllocationView', () => {
         cy.get('[data-test=LayoutNavbar__Button--allocate]').click();
+        cy.get(`[data-test=LayoutNavbar__Button__Svg--allocate]`).within(() => {
+          cy.get('path').each((el, idx) => {
+            cy.get('path')
+              .eq(idx)
+              .then($el => $el.css('stroke'))
+              .should('be.colored', '#171717');
+          });
+        });
         cy.get('[data-test=AllocationView]').should('be.visible');
       });
 
       it('Metrics button redirects to MetricsView', () => {
         cy.get('[data-test=LayoutNavbar__Button--metrics]').click();
+        cy.get(`[data-test=LayoutNavbar__Button__Svg--metrics]`).within(() => {
+          cy.get('path').each((el, idx) => {
+            cy.get('path')
+              .eq(idx)
+              .then($el => $el.css('stroke'))
+              .should('be.colored', '#171717');
+          });
+        });
         cy.get('[data-test=MetricsView]').should('be.visible');
       });
 
       it('Settings button redirects to SettingsView', () => {
         cy.get('[data-test=LayoutNavbar__Button--settings]').click();
+        cy.get(`[data-test=LayoutNavbar__Button__Svg--settings]`).within(() => {
+          cy.get('path').each((el, idx) => {
+            cy.get('path')
+              .eq(idx)
+              .then($el => $el.css('stroke'))
+              .should('be.colored', '#171717');
+          });
+        });
         cy.get('[data-test=SettingsView]').should('be.visible');
       });
     }
