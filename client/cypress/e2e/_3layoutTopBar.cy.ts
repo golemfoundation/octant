@@ -65,7 +65,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       if (device === 'large-desktop' || device === 'desktop') {
         cy.get('[data-test=LayoutTopBar__link--metrics]').click();
       } else {
-        cy.get(`[data-test=Navbar__Button--metrics]`).click();
+        cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
       }
       cy.get('[data-test=MetricsView]').should('be.visible');
       cy.get('[data-test=LayoutTopBar__Logo]').click();
@@ -227,7 +227,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         if (device === 'large-desktop' || device === 'desktop') {
           cy.get('[data-test=LayoutTopBar__link--metrics]').click();
         } else {
-          cy.get(`[data-test=Navbar__Button--metrics]`).click();
+          cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
         }
         cy.get('[data-test=MetricsView]').should('be.visible');
         cy.get('[data-test=LayoutTopBar__Logo__testnetIndicator]').click();
