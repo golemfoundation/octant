@@ -1031,9 +1031,6 @@ def patch_vault(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
-        "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
-    )
-    monkeypatch.setattr(
         "app.modules.common.crypto.signature.is_contract", MOCK_IS_CONTRACT
     )
     MOCK_IS_CONTRACT.return_value = False
