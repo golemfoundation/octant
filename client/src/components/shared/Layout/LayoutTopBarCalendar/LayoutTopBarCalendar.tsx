@@ -21,7 +21,8 @@ const LayoutTopBarCalendar = (): ReactElement => {
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: epochsStartEndTime } = useEpochsStartEndTime();
+  const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
+    useEpochsStartEndTime();
   const [durationToChangeAWInMinutes, setDurationToChangeAWInMinutes] = useState(0);
   const [showAWAlert, setShowAWAlert] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -69,7 +70,12 @@ const LayoutTopBarCalendar = (): ReactElement => {
   }, [isDecisionWindowOpen, currentEpoch, isMobile, durationToChangeAWInMinutes, showAWAlert]);
 
   useEffect(() => {
-    if (!epochsStartEndTime || isDecisionWindowOpen === undefined) {
+    if (
+      currentEpoch === undefined ||
+      !epochsStartEndTime ||
+      isDecisionWindowOpen === undefined ||
+      epochsStartEndTime.length !== currentEpoch
+    ) {
       return;
     }
 
@@ -103,7 +109,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
       clearInterval(intervalId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [!!epochsStartEndTime, isDecisionWindowOpen]);
+  }, [!!epochsStartEndTime, isDecisionWindowOpen, isFetchingEpochStartEndTime]);
 
   const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 

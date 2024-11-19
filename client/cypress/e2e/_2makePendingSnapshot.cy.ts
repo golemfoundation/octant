@@ -35,6 +35,7 @@ describe('Make pending snapshot', () => {
         });
       });
       cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+      cy.wait(5000);
     });
   });
 });
