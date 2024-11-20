@@ -8,7 +8,7 @@ from flask import current_app as app
 
 from app.context.manager import Context
 from app.exceptions import ExternalApiException, UserNotFound, AddressAlreadyDelegated
-from app.extensions import db
+from app.extensions import db, cache
 from app.infrastructure import database
 from app.infrastructure.external_api.common import retry_request
 from app.infrastructure.external_api.gc_passport.score import (
