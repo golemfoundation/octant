@@ -81,7 +81,7 @@ Object.values(viewports).forEach(
             .click();
           cy.get('[data-test=ModalOnboarding__Button]').click();
           cy.get('[data-test=ModalOnboarding]').should('not.exist');
-          cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
+          cy.get('[data-test=HomeView]').should('be.visible');
         });
       });
 
@@ -89,7 +89,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=ModalOnboarding]').should('be.visible');
         cy.get('[data-test=ModalOnboarding__Button]').click();
         cy.get('[data-test=ModalOnboarding]').should('not.exist');
-        cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
+        cy.get('[data-test=HomeView]').should('be.visible');
       });
 
       it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {
