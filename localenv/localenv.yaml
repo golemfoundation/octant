@@ -26,6 +26,14 @@ services:
       - octant
 
 
+  backend-redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+    networks:
+      - octant
+
+
   backend:
     image: octant/backend:latest
     platform: linux/amd64
