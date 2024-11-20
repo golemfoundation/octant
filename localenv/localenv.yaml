@@ -58,6 +58,9 @@ services:
 
       SABLIER_SEPOLIA_SUBGRAPH_URL: "${SABLIER_SEPOLIA_SUBGRAPH_URL}"
 
+      CACHE_REDIS_HOST: backend-redis
+      CACHE_REDIS_PORT: 6379
+
     depends_on:
       - backend-postgres
       - anvil
