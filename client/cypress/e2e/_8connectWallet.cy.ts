@@ -50,7 +50,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=LayoutTopBar__Button]').click();
       cy.wait(500);
       cy.get('[data-test=ModalLayoutConnectWallet__overflow]').should('exist');
-      cy.get('[data-test=ModalLayoutConnectWallet__overflow]').click();
+      cy.get('[data-test=ModalLayoutConnectWallet__overflow]').click({ force: true });
       cy.wait(500);
       cy.get('[data-test=ModalLayoutConnectWallet]').should('not.exist');
     });
