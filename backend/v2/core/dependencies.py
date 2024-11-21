@@ -57,16 +57,21 @@ def get_database_settings() -> DatabaseSettings:
 def get_sessionmaker(
     settings: Annotated[DatabaseSettings, Depends(get_database_settings)]
 ) -> async_sessionmaker[AsyncSession]:
+    kw = {}
+    if "postgresql" in settings.sqlalchemy_database_uri:
+        kw = {
+            "pool_size": 100,  # Initial pool size (default is 5)
+            "max_overflow": 10,  # Extra connections if pool is exhausted
+            "pool_timeout": 30,  # Timeout before giving up on a connection
+            "pool_recycle": 3600,  # Recycle connections after 1 hour (for long-lived connections)
+            "pool_pre_ping": True,  # Check if the connection is alive before using it
+        }
+
     engine = create_async_engine(
         settings.sqlalchemy_database_uri,
         echo=False,  # Disable SQL query logging (for performance)
-        pool_size=100,  # Initial pool size (default is 5)
-        max_overflow=10,  # Extra connections if pool is exhausted
-        pool_timeout=30,  # Timeout before giving up on a connection
-        pool_recycle=3600,  # Recycle connections after 1 hour (for long-lived connections)
-        pool_pre_ping=True,  # Check if the connection is alive before using it
         future=True,  # Use the future-facing SQLAlchemy 2.0 style
-        # connect_args={"options": "-c timezone=utc"}  # Ensures timezone is UTC
+        **kw,
     )
 
     sessionmaker = async_sessionmaker(
