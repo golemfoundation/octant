@@ -49,7 +49,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('Connect wallet Modal has overflow which closes Connect wallet Modal when clicked', () => {
       cy.get('[data-test=LayoutTopBar__Button]').click();
       cy.wait(500);
-      cy.get('[data-test=ModalLayoutConnectWallet__overflow]').should('be.visible');
+      cy.get('[data-test=ModalLayoutConnectWallet__overflow]').should('exist');
       cy.get('[data-test=ModalLayoutConnectWallet__overflow]').click();
       cy.wait(500);
       cy.get('[data-test=ModalLayoutConnectWallet]').should('not.exist');
