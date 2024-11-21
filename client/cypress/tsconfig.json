@@ -12,5 +12,5 @@
     ],
     "outDir": "./output"
   },
-  "include": ["**/*.*", "../synpress.config.ts", "cypress-real-events"]
+  "include": ["**/*.*", "../synpress.config.ts"]
 }
