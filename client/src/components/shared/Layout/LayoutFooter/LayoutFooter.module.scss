@@ -93,6 +93,21 @@
   }
 }
 
+.newsletterAndLanguageSelector {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.languageSelector {
+  height: 5.28rem;
+
+  @media #{$phone-down} {
+    align-self: flex-start;
+    margin-top: 4rem;
+  }
+}
+
 .newsletterWrapper {
   width: 100%;
   display: flex;

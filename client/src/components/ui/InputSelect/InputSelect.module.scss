@@ -4,7 +4,7 @@
   position: relative;
 
   &.variant-- {
-    &underselect {
+    &belowselect, &topselect {
       width: 20rem;
       height: 4rem;
     }
@@ -19,9 +19,34 @@
   cursor: pointer;
   justify-content: space-between;
 
+  .labelWrapper {
+    display: flex;
+    align-items: center;
+
+    .icon {
+      display: flex;
+      align-items: center;
+      margin-right: 0.8rem;
+
+      &.variant-- {
+        &topselect {
+          stroke: $color-octant-grey5;
+        }
+      }
+    }
+  }
+
   .chevron {
     margin: 0 1.8rem 0 1rem;
     width: 3.6rem;
+
+    &.variant-- {
+      &topselect {
+        path {
+          stroke: $color-octant-grey5;
+        }
+      }
+    }
 
     &.isMenuOpen {
       transform: rotateX(180deg);
@@ -37,22 +62,44 @@
         padding: 0.2rem 0.8rem;
       }
     }
-    &underselect {
+    &belowselect, &topselect {
       $labelPaddingVertical: 0.2rem;
       $labelPaddingHorizontal: 1.6rem;
 
-      font-size: $font-size-12;
       font-weight: $font-weight-semibold;
-      background: $color-octant-grey8;
-      border-radius: $border-radius-16;
-      border: 0.1rem solid transparent;
 
       .label {
         padding: $labelPaddingVertical $labelPaddingHorizontal;
+
+        &.hasIcon {
+          padding-left: 0;
+        }
       }
+    }
+    &belowselect {
+      background: $color-octant-grey8;
+      border-radius: $border-radius-16;
+      border: 0.1rem solid transparent;
+      font-size: $font-size-12;
 
       &:hover {
         border-color: $color-octant-grey2;
+      }
+    }
+    &topselect {
+      color: $color-octant-grey5;
+      font-size: $font-size-14;
+
+      &:hover {
+        color: $color-octant-grey13;
+
+        .icon {
+          stroke: $color-octant-grey13;
+        }
+
+        .chevron path {
+          stroke: $color-octant-grey13;
+        }
       }
     }
   }
@@ -62,7 +109,12 @@
   position: absolute;
 
   @media #{$tablet-down} {
-    @include overlay(100%, 100%);
+    &.isVariantFullWidthOnMobile {
+      @include overlay(100%, 100%, true);
+    }
+    &:not(.isVariantFullWidthOnMobile) {
+      @include overlay(100%, 100%, false);
+    }
   }
 }
 
@@ -72,7 +124,6 @@
   bottom: 0;
   right: 0;
   margin: 0;
-  padding: 2.4rem 0;
   border-radius: $border-radius-16;
   z-index: $z-index-6;
   box-shadow: $box-shadow-1;
@@ -80,19 +131,36 @@
   width: 100%;
   background: $color-white;
 
-  @media #{$desktop-up} {
-    position: absolute;
-    width: 12.8rem;
-    padding: 1.6rem 0;
-    bottom: auto;
+  &.variant-- {
+    &topselect {
+      position: absolute;
+      width: 14.4rem;
+      bottom: 100%;
+      left: 50%;
+      transform: translate(-50%) !important;
+      padding: 0.8rem 0;
+    }
 
+    &overselect, &belowselect {
+      padding: 2.4rem 0;
+    }
+  }
+
+  @media #{$desktop-up} {
     &.variant-- {
+      &overselect, &underselect {
+        position: absolute;
+        width: 12.8rem;
+        padding: 1.6rem 0;
+        bottom: auto;
+      }
+
       &overselect {
         top: -2rem;
         right: -0.73rem;
       }
 
-      &underselect {
+      &belowselect {
         width: 100%;
         top: 5rem;
       }
@@ -128,9 +196,13 @@
   }
 
   @media #{$desktop-up} {
-    font-size: $font-size-12;
-    height: 3.2rem;
-    padding-left: 0;
+    &.variant-- {
+      &belowselect, &overselect {
+        font-size: $font-size-12;
+        height: 3.2rem;
+        padding-left: 0;
+      }
+    }
   }
 
   &:hover {
@@ -138,7 +210,11 @@
   }
 
   &.variant-- {
-    &overselect {
+    &topselect {
+      font-size: $font-size-14;
+    }
+
+    &topselect, &overselect {
       .iconTick {
         left: 2.5rem;
       }
@@ -147,7 +223,7 @@
         justify-content: center;
       }
     }
-    &underselect {
+    &belowselect {
       flex-direction: row-reverse;
       padding: 0 5.6rem;
 
