@@ -49,6 +49,7 @@ def test_allocations(
             },
             "userAddress": ua_alice.address,
             "signature": signature,
+            "isManuallyEdited": False,
         },
     )
     assert rv.status_code == 201
