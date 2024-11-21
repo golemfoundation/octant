@@ -24,6 +24,7 @@ const LayoutConnectWallet: FC = () => {
   }));
   const { connectors, status, connect: onConnectAnyConnector } = useConnect();
   const { connectModalOpen: isOpen } = useConnectModal();
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const browserWalletConnector = connectors.find(
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -114,7 +115,7 @@ const LayoutConnectWallet: FC = () => {
           </BoxRounded>
         )}
       </WalletButton.Custom>
-      {!networkConfig.isTestnet && (
+      {!isTestnet && (
         <WalletButton.Custom wallet="ledger">
           {({ ready: isReady, connect: onConnect }) => (
             <BoxRounded

@@ -8,7 +8,7 @@
       "@synthetixio/synpress/support",
       "cypress-wait-until",
       "@testing-library/cypress",
-      "../src/global"
+      "../global"
     ],
     "outDir": "./output"
   },

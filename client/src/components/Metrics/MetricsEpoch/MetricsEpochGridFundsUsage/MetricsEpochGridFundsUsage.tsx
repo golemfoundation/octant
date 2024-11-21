@@ -72,8 +72,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     communityFund +
     leftover;
 
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
+
   // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
-  const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
+  const numberOfDecimalPlacesToUse = isTestnet ? 10 : 2;
 
   const getFormattedEthValueProps = {
     isUsingHairSpace: true,
