@@ -2,7 +2,9 @@
 import chaiColors from 'chai-colors';
 
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_ONBOARDING_ALWAYS_VISIBLE,
@@ -11,6 +13,31 @@ import {
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
+
+describe('move time - AW IS CLOSED', () => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
+
+  it('allocation window is closed, when it is not, move time', () => {
+    setupAndMoveToPlayground();
+
+    cy.window().then(async win => {
+      moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
+        cy.get('[data-test=PlaygroundView]').should('be.visible');
+        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+        expect(isDecisionWindowOpenAfter).to.be.false;
+      });
+    });
+  });
+});
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`[AW IS CLOSED] LayoutTopBar: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -65,7 +92,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       if (device === 'large-desktop' || device === 'desktop') {
         cy.get('[data-test=LayoutTopBar__link--metrics]').click();
       } else {
-        cy.get(`[data-test=Navbar__Button--metrics]`).click();
+        cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
       }
       cy.get('[data-test=MetricsView]').should('be.visible');
       cy.get('[data-test=LayoutTopBar__Logo]').click();
@@ -227,7 +254,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         if (device === 'large-desktop' || device === 'desktop') {
           cy.get('[data-test=LayoutTopBar__link--metrics]').click();
         } else {
-          cy.get(`[data-test=Navbar__Button--metrics]`).click();
+          cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
         }
         cy.get('[data-test=MetricsView]').should('be.visible');
         cy.get('[data-test=LayoutTopBar__Logo__testnetIndicator]').click();

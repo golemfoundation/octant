@@ -29,6 +29,8 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const tabs = useNavigationTabs();
 
+  const dataTestRoot = 'LayoutNavbar';
+
   useEffect(() => {
     if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
       return;
@@ -45,27 +47,33 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
     <Fragment>
       <div
         className={cx(styles.navigationWrapper, ELEMENT_POSITION_FIXED_CLASSNAME)}
-        data-test="Navbar"
+        data-test={`${dataTestRoot}__wrapper`}
       >
-        <nav className={styles.navigation} id={LAYOUT_NAVBAR_ID}>
+        <nav className={styles.navigation} data-test={dataTestRoot} id={LAYOUT_NAVBAR_ID}>
           <div
             className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}
-            data-test="Navbar__buttons"
+            data-test={`${dataTestRoot}__buttons`}
           >
             {tabs.map(
               ({ key, icon, label, to, isActive, isDisabled = false, isBigIcon = false }) => (
                 <Button
                   key={key}
                   className={cx(styles.buttonNavigation, isActive && styles.isActive)}
-                  dataTest={`Navbar__Button--${key}`}
+                  dataTest={`${dataTestRoot}__Button--${key}`}
                   Icon={
                     isBigIcon ? (
-                      <Svg classNameSvg={styles.bigIcon} img={icon} size={isTablet ? 3 : 2.4} />
+                      <Svg
+                        classNameSvg={styles.bigIcon}
+                        dataTest={`${dataTestRoot}__Button__Svg--${key}`}
+                        img={icon}
+                        size={isTablet ? 3 : 2.4}
+                      />
                     ) : (
                       <Svg
                         classNameSvg={
                           to === ROOT_ROUTES.home.absolute ? styles.octantLogo : undefined
                         }
+                        dataTest={`${dataTestRoot}__Button__Svg--${key}`}
                         img={icon}
                         size={isTablet ? 4 : 3.2}
                       />
@@ -87,7 +95,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
                     <div
                       ref={scope}
                       className={styles.numberOfAllocations}
-                      data-test="Navbar__numberOfAllocations"
+                      data-test={`${dataTestRoot}__numberOfAllocations`}
                     >
                       {allocations.length}
                     </div>
