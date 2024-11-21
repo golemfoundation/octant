@@ -40,7 +40,13 @@ class DatabaseSettings(OctantSettings):
 
     @property
     def sqlalchemy_database_uri(self) -> str:
-        return self.db_uri.replace("postgresql://", "postgresql+asyncpg://")
+        if "postgresql://" in self.db_uri:
+            return self.db_uri.replace("postgresql://", "postgresql+asyncpg://")
+
+        if "sqlite://" in self.db_uri:
+            return self.db_uri.replace("sqlite://", "sqlite+aiosqlite://")
+
+        raise ValueError("Unsupported database URI")
 
 
 def get_database_settings() -> DatabaseSettings:

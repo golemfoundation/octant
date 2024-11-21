@@ -420,6 +420,8 @@ def random_string() -> str:
 
 @pytest.fixture
 def fastapi_client(deployment) -> TestClient:
+    # take SQLALCHEMY_DATABASE_URI and use as DB_URI
+    os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
 
     for key in dir(deployment):
         if key.isupper():
