@@ -422,6 +422,7 @@ def random_string() -> str:
 def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
+    os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
 
     for key in dir(deployment):
         if key.isupper():
