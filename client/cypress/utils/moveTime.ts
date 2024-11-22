@@ -39,9 +39,12 @@ export const mutateAsyncMakeSnapshot = (
     });
   });
 
-const mutateAsyncMoveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Promise<any> =>
+const mutateAsyncMoveToDecisionWindowOpen = (
+  cypressWindow: Cypress.AUTWindow,
+  isLessThan24HoursToChangeAW?: boolean,
+): Promise<any> =>
   new Cypress.Promise(resolve => {
-    cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
+    cypressWindow.mutateAsyncMoveToDecisionWindowOpen(isLessThan24HoursToChangeAW).then(() => {
       resolve(true);
     });
   });
@@ -51,12 +54,17 @@ const waitForLoadersToDisappear = (): Chainable<any> => {
   return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
 };
 
-const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
+const moveToDecisionWindowOpen = (
+  cypressWindow: Cypress.AUTWindow,
+  isLessThan24HoursToChangeAW?: boolean,
+): Chainable<any> => {
   waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
-    return mutateAsyncMoveToDecisionWindowOpen(cypressWindow).then(str => {
-      expect(str).to.eq(true);
-    });
+    return mutateAsyncMoveToDecisionWindowOpen(cypressWindow, isLessThan24HoursToChangeAW).then(
+      str => {
+        expect(str).to.eq(true);
+      },
+    );
   });
   waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -100,7 +108,10 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
  */
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
-  moveTo: 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
+  moveTo:
+    | 'nextEpochDecisionWindowClosed'
+    | 'nextEpochDecisionWindowOpen'
+    | 'nextEpochDecisionWindowOpenLessThan24H',
   connectWalletParams?: ConnectWalletParameters,
 ): Chainable<any> => {
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
@@ -114,8 +125,11 @@ export const moveTime = (
     cy.reload();
   }
 
-  if (moveTo === 'nextEpochDecisionWindowOpen') {
-    moveToDecisionWindowOpen(cypressWindow);
+  if (
+    moveTo === 'nextEpochDecisionWindowOpen' ||
+    moveTo === 'nextEpochDecisionWindowOpenLessThan24H'
+  ) {
+    moveToDecisionWindowOpen(cypressWindow, moveTo === 'nextEpochDecisionWindowOpenLessThan24H');
   } else {
     moveToDecisionWindowOpen(cypressWindow);
     // Reload is needed to get updated data in the app

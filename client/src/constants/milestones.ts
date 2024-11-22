@@ -31,12 +31,14 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-01-01T00:00:00+0100'),
         id: 'e2-snapshot-vote',
+        shouldUseThirdPersonSingularVerb: true,
         label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
         to: new Date('2024-01-05T00:00:00+0100'),
       },
       {
-        from: new Date('2024-01-17T17:00:00+0100'),
+        from: new Date(),
         id: 'e2-allocation-window',
+        shouldUseThirdPersonSingularVerb: true,
         isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-01-31T17:00:00+0100'),
@@ -47,7 +49,7 @@ export default function getMilestones(): Milestone[] {
         label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Three' }),
       },
       {
-        from: new Date(),
+        from: new Date('2024-02-13T17:00:00+0100'),
         href: 'https://octant.fillout.com/t/u4uT8WFzDvus',
         id: 'e3-applications-open',
         label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
@@ -60,6 +62,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-03-18T00:00:00+0100'),
         id: 'e3-snapshot-vote',
+        shouldUseThirdPersonSingularVerb: true,
         label: i18n.t('views.projects.projectsTimelineWidget.snapshotVote'),
         to: new Date('2024-03-22T00:00:00+0100'),
       },
@@ -67,6 +70,7 @@ export default function getMilestones(): Milestone[] {
         // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
         from: new Date('2024-04-16T18:00:00+0200'),
         id: 'e3-allocation-window',
+        shouldUseThirdPersonSingularVerb: true,
         isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         to: new Date('2024-04-30T18:00:00+0200'),

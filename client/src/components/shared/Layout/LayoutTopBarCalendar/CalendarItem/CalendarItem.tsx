@@ -22,6 +22,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
   isAlert,
   durationToChangeAWInMinutes,
 }) => {
+  const dataTestRoot = 'CalendarItem';
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: 'all' });
@@ -70,7 +71,8 @@ const CalendarItem: FC<CalendarItemProps> = ({
         href && styles.hasHref,
         isAlert && styles.isAlert,
       )}
-      data-test="CalendarItem"
+      data-is-active={isActive}
+      data-test={dataTestRoot}
       id={id}
       onMouseDown={e => {
         if (!href) {
@@ -92,23 +94,29 @@ const CalendarItem: FC<CalendarItemProps> = ({
         setInitialClientX(null);
       }}
     >
-      <div className={styles.tile}>
-        <div className={styles.day}>{format(from, 'dd')}</div>
-        <div className={styles.monthShort}>{format(from, 'MMM')}</div>
+      <div className={styles.tile} data-test={`${dataTestRoot}__title`}>
+        <div className={styles.day} data-test={`${dataTestRoot}__title__day`}>
+          {format(from, 'dd')}
+        </div>
+        <div className={styles.monthShort} data-test={`${dataTestRoot}__title__monthShort`}>
+          {format(from, 'MMM')}
+        </div>
       </div>
       <div>
-        <div className={styles.label}>
+        <div className={styles.label} data-test={`${dataTestRoot}__label`}>
           {label}
           {href && (
             <Svg
               classNameSvg={styles.arrowTopRight}
-              dataTest="CalendarItem__Svg--arrowTopRight"
+              data-test={`${dataTestRoot}__Svg--arrowTopRight`}
               img={arrowTopRight}
               size={0.8}
             />
           )}
         </div>
-        <div className={styles.date}>{date}</div>
+        <div className={styles.date} data-test={`${dataTestRoot}__date`}>
+          {date}
+        </div>
       </div>
     </div>
   );

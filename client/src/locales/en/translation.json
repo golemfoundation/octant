@@ -391,7 +391,8 @@
       "hoursShort": "h",
       "minutes_one": "minute",
       "minutes_other": "minutes",
-      "minutesShort": "min"
+      "minutesShort": "min",
+      "calendar": "Calendar"
     },
     "footer": {
       "newsletterText": "Get PGF news and updates from Octant. No spam, ever",

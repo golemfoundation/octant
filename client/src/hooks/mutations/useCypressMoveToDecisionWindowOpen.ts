@@ -5,12 +5,16 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import networkConfig from 'constants/networkConfig';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<boolean, unknown> {
+export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
+  boolean,
+  unknown,
+  any
+> {
   const queryClient = useQueryClient();
   const publicClient = usePublicClient({ chainId: networkConfig.id });
 
   return useMutation({
-    mutationFn: () => {
+    mutationFn: (isLessThan24HoursToChangeAW = false) => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
@@ -42,10 +46,20 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const [block, currentEpochEnd, currentEpoch] = await Promise.all([
+        const currentEpochPropsPromise = queryClient.fetchQuery({
+          queryFn: () =>
+            readContractEpochs({
+              functionName: 'getCurrentEpochProps',
+              publicClient,
+            }),
+          queryKey: QUERY_KEYS.currentEpochProps,
+        });
+
+        const [block, currentEpochEnd, currentEpoch, currentEpochProps] = await Promise.all([
           blockPromise,
           currentEpochEndPromise,
           currentEpochPromise,
+          currentEpochPropsPromise,
         ]);
 
         if (block === undefined || currentEpoch === undefined || currentEpochEnd === undefined) {
@@ -60,7 +74,10 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         const blockTimestamp = Number(block.timestamp);
         const currentEpochEndTimestamp = Number(currentEpochEnd);
 
-        const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
+        const timeToIncrease =
+          currentEpochEndTimestamp -
+          blockTimestamp +
+          (isLessThan24HoursToChangeAW ? Number(currentEpochProps.decisionWindow) - 24 * 3600 : 10); // [s]
         await publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
