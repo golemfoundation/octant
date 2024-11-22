@@ -182,7 +182,7 @@ def mock_gitcoin_passport_fetch_score(*args, **kwargs):
 
 
 def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
-    "Returns structure resembling GP stamps, but only with relevant fields"
+    """Returns structure resembling GP stamps, but only with relevant fields"""
     if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
         return {
             "items": [
@@ -1124,6 +1124,15 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
     monkeypatch.setattr(
         "app.modules.user.antisybil.service.initial.fetch_stamps",
         mock_gitcoin_passport_fetch_stamps,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_guest_list_for_scoring(monkeypatch, alice):
+    MOCK_GUEST_LIST = [alice.address.lower()]
+    monkeypatch.setattr(
+        "app.modules.user.antisybil.core.GUEST_LIST",
+        MOCK_GUEST_LIST,
     )
 
 
