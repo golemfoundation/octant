@@ -584,5 +584,9 @@
     "syncStatus": {
       "information": "Estamos sincronizando las cosas para preparar la <br\/> época, por lo que la aplicación no estará disponible por un <br\/>. Vuelve a visitarnos pronto."
     }
+  },
+  "languageSelector": {
+    "english": "English",
+    "spanish": "Español"
   }
 }
