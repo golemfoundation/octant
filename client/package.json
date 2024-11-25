@@ -29,8 +29,8 @@
     "test": "TZ=UTC jest",
     "type-check": "tsc --noEmit true",
     "sourcemaps:remove": "rimraf dist/**/*.map",
-    "synpress:open": "synpress open --configFile synpress.config.ts",
-    "synpress:run": "synpress run --configFile synpress.config.ts"
+    "synpress:open": "TZ=Europe/Warsaw synpress open --configFile synpress.config.ts",
+    "synpress:run": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
