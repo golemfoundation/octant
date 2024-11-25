@@ -230,6 +230,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2025-01-11T17:00:00+0100'),
       id: 'e6-allocation-window',
+      isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2025-01-25T17:00:00+0100'),
