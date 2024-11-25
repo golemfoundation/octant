@@ -1,9 +1,10 @@
 from flask import current_app as app
 from gql import gql
 
-from app.extensions import gql_octant_factory
+from app.extensions import gql_octant_factory, cache
 
 
+@cache.memoize(timeout=60)
 def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: int):
     query = gql(
         """
@@ -52,6 +53,7 @@ def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: 
     return result
 
 
+@cache.memoize(timeout=60)
 def get_withdrawals_by_address_and_timestamp_range(
     user_address: str, from_timestamp: int, to_timestamp: int
 ):
