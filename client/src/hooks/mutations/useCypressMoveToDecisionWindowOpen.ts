@@ -74,15 +74,20 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         const blockTimestamp = Number(block.timestamp);
         const currentEpochEndTimestamp = Number(currentEpochEnd);
 
-        const timeToIncrease =
-          currentEpochEndTimestamp -
-          blockTimestamp +
-          (isLessThan24HoursToChangeAW ? Number(currentEpochProps.decisionWindow) - 24 * 3600 : 10); // [s]
+        const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
         await publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
         await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+
+        if (isLessThan24HoursToChangeAW) {
+          await publicClient.request({
+            method: 'evm_increaseTime' as any,
+            params: [currentEpochProps.decisionWindow - 12 * 3600] as any,
+          });
+          await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+        }
 
         const currentEpochAfter = await queryClient.fetchQuery({
           queryFn: () =>

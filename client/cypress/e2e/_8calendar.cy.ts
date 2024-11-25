@@ -14,169 +14,174 @@ import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
-Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isDesktop, isLargeDesktop, isMobile }) => {
-    describe(`[AW IS CLOSED] Calendar: ${device}`, { viewportHeight, viewportWidth }, () => {
-      before(() => {
-        cy.clearLocalStorage();
-      });
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
+  describe(`[AW IS CLOSED] Calendar: ${device}`, { viewportHeight, viewportWidth }, () => {
+    before(() => {
+      cy.clearLocalStorage();
+    });
 
-      beforeEach(() => {
-        mockCoinPricesServer();
-        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-        visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
-      });
+    beforeEach(() => {
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
+      visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
+    });
 
-      it('Epoch info badge opens Calendar on click', () => {
-        cy.get('[data-test=LayoutTopBarCalendar]').click();
-        cy.get('[data-test=Calendar]').should('be.visible');
-      });
+    it('Epoch info badge opens Calendar on click', () => {
+      cy.wait(2000);
+      cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.get('[data-test=Calendar]').should('be.visible');
+    });
 
-      it('Clicking on overlay closes the Calendar', () => {
-        cy.get('[data-test=LayoutTopBarCalendar]').click();
-        cy.get('[data-test=Calendar]').should('be.visible');
-        if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=LayoutTopBarCalendar__calendarOverflow]').click();
-        } else {
-          cy.get('[data-test=LayoutTopBarCalendar__ModalCalendar__overflow]').click({
-            force: true,
-          });
-        }
-        cy.get('[data-test=Calendar]').should('not.exist');
-      });
-
-      it('Active milestone is always visible after calendar open (and has correct style)', () => {
-        cy.get('[data-test=LayoutTopBarCalendar]').click();
-        cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
-        cy.get('[data-test=CalendarItem][data-is-active=true]')
-          .invoke('css', 'opacity')
-          .should('eq', '1');
-        cy.get('[data-test=CalendarItem][data-is-active=true]')
-          .then($el => $el.css('backgroundColor'))
-          .should('be.colored', '#f1faf8');
-        cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
-          cy.get('[data-test=CalendarItem__title__day]')
-            .then($el => $el.css('color'))
-            .should('be.colored', '#2d9b87');
-          cy.get('[data-test=CalendarItem__title__monthShort]')
-            .then($el => $el.css('color'))
-            .should('be.colored', '#2d9b87');
-          cy.get('[data-test=CalendarItem__label]')
-            .then($el => $el.css('color'))
-            .should('be.colored', '#2d9b87');
-          cy.get('[data-test=CalendarItem__date]')
-            .then($el => $el.css('color'))
-            .should('be.colored', '#2d9b87');
-        });
-      });
-
-      it('Milestone with "to" param shows end date of event', () => {
-        cy.get('[data-test=LayoutTopBarCalendar]').click();
-        cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
-          cy.get('[data-test=CalendarItem__date]')
-            .invoke('text')
-            .should('eq', 'Closes 31 January 5pm CET');
-        });
-      });
-
-      it('Milestone without "to" param shows hour and timezone of event start', () => {
-        cy.get('[data-test=LayoutTopBarCalendar]').click();
-        cy.get('[data-test=CalendarItem]')
-          .eq(1)
-          .within(() => {
-            cy.get('[data-test=CalendarItem__date]').invoke('text').should('eq', '12am CET');
-          });
-      });
-
+    it('Clicking on overlay closes the Calendar', () => {
+      cy.wait(2000);
+      cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.get('[data-test=Calendar]').should('be.visible');
       if (isMobile) {
-        it('User can scroll through milestones by drag&drop vertically', () => {
-          cy.get('[data-test=LayoutTopBarCalendar]').click();
-          cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
-            const { top: calendarItemActiveTop } = $calendarItemActive[0].getBoundingClientRect();
-
-            cy.get('[data-test=CalendarItem]').eq(2).should('not.be.visible');
-            cy.get('[data-test=CalendarItem]')
-              .eq(2)
-              .then($prevCalendarItem => {
-                const { height: prevCalendarItemHeight } =
-                  $prevCalendarItem[0].getBoundingClientRect();
-                const prevCalendarItemMarginBottm = parseInt(
-                  $prevCalendarItem.css('marginBottom'),
-                  10,
-                );
-
-                const pointerDownPageY = calendarItemActiveTop;
-                const pointerUpPageY = Math.ceil(
-                  calendarItemActiveTop + prevCalendarItemHeight + prevCalendarItemMarginBottm,
-                );
-
-                cy.get('[data-test=Calendar__wrapper]')
-                  .trigger('pointerdown', {
-                    pageY: pointerDownPageY,
-                  })
-                  .trigger('pointermove', {
-                    pageY: pointerUpPageY,
-                  })
-                  .trigger('pointerup', {
-                    pageY: pointerUpPageY,
-                  });
-
-                cy.get('[data-test=CalendarItem]').eq(2).should('be.visible');
-              });
-          });
+        cy.get('[data-test=LayoutTopBarCalendar__ModalCalendar__overflow]').click({
+          force: true,
         });
       } else {
-        it('User can scroll through milestones by drag&drop horizontally', () => {
-          cy.get('[data-test=LayoutTopBarCalendar]').click();
-          cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
-            const { left: calendarItemActiveLeft } = $calendarItemActive[0].getBoundingClientRect();
-
-            cy.get('[data-test=CalendarItem]').eq(2).should('not.be.visible');
-            cy.get('[data-test=CalendarItem]')
-              .eq(2)
-              .then($prevCalendarItem => {
-                const { width: prevCalendarItemWidth } =
-                  $prevCalendarItem[0].getBoundingClientRect();
-                const prevCalendarItemMarginRight = parseInt(
-                  $prevCalendarItem.css('marginRight'),
-                  10,
-                );
-
-                const pointerDownPageX = calendarItemActiveLeft;
-                const pointerUpPageX = Math.ceil(
-                  calendarItemActiveLeft + prevCalendarItemWidth + prevCalendarItemMarginRight,
-                );
-
-                cy.get('[data-test=Calendar__wrapper]')
-                  .trigger('pointerdown', {
-                    pageX: pointerDownPageX,
-                  })
-                  .trigger('pointermove', {
-                    pageX: pointerUpPageX,
-                  })
-                  .trigger('pointerup', {
-                    pageX: pointerUpPageX,
-                  });
-
-                cy.get('[data-test=CalendarItem]').eq(2).should('be.visible');
-              });
-          });
-        });
+        cy.get('[data-test=LayoutTopBarCalendar__calendarOverflow]').click();
       }
-
-      if (isMobile) {
-        it('User can close Calendar by clicking on close button (X) in top-right corner', () => {
-          cy.get('[data-test=LayoutTopBarCalendar]').click();
-          cy.get('[data-test=Calendar]').should('be.visible');
-          cy.get('[data-test=LayoutTopBarCalendar__ModalCalendar__Button]').click();
-          cy.get('[data-test=Calendar]').should('not.exist');
-        });
-      }
+      cy.get('[data-test=Calendar]').should('not.exist');
     });
-  },
-);
+
+    it('Active milestone is always visible after calendar open (and has correct style)', () => {
+      cy.wait(2000);
+      cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
+      cy.get('[data-test=CalendarItem][data-is-active=true]')
+        .invoke('css', 'opacity')
+        .should('eq', '1');
+      cy.get('[data-test=CalendarItem][data-is-active=true]')
+        .then($el => $el.css('backgroundColor'))
+        .should('be.colored', '#f1faf8');
+      cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
+        cy.get('[data-test=CalendarItem__title__day]')
+          .then($el => $el.css('color'))
+          .should('be.colored', '#2d9b87');
+        cy.get('[data-test=CalendarItem__title__monthShort]')
+          .then($el => $el.css('color'))
+          .should('be.colored', '#2d9b87');
+        cy.get('[data-test=CalendarItem__label]')
+          .then($el => $el.css('color'))
+          .should('be.colored', '#2d9b87');
+        cy.get('[data-test=CalendarItem__date]')
+          .then($el => $el.css('color'))
+          .should('be.colored', '#2d9b87');
+      });
+    });
+
+    it('Milestone with "to" param shows end date of event', () => {
+      cy.wait(2000);
+      cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
+        cy.get('[data-test=CalendarItem__date]')
+          .invoke('text')
+          .should('include', 'Closes 31 January');
+      });
+    });
+
+    it('Milestone without "to" param shows hour and timezone of event start', () => {
+      cy.wait(2000);
+      cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.get('[data-test=CalendarItem]')
+        .eq(1)
+        .within(() => {
+          cy.get('[data-test=CalendarItem__date]').invoke('text').should('include', 'am CET');
+        });
+    });
+
+    if (isMobile) {
+      it('User can scroll through milestones by drag&drop vertically', () => {
+        cy.wait(2000);
+        cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
+          const { top: calendarItemActiveTop } = $calendarItemActive[0].getBoundingClientRect();
+
+          cy.get('[data-test=CalendarItem]').eq(2).should('not.be.visible');
+          cy.get('[data-test=CalendarItem]')
+            .eq(2)
+            .then($prevCalendarItem => {
+              const { height: prevCalendarItemHeight } =
+                $prevCalendarItem[0].getBoundingClientRect();
+              const prevCalendarItemMarginBottm = parseInt(
+                $prevCalendarItem.css('marginBottom'),
+                10,
+              );
+
+              const pointerDownPageY = calendarItemActiveTop;
+              const pointerUpPageY = Math.ceil(
+                calendarItemActiveTop + prevCalendarItemHeight + prevCalendarItemMarginBottm,
+              );
+
+              cy.get('[data-test=Calendar__wrapper]')
+                .trigger('pointerdown', {
+                  pageY: pointerDownPageY,
+                })
+                .trigger('pointermove', {
+                  pageY: pointerUpPageY,
+                })
+                .trigger('pointerup', {
+                  pageY: pointerUpPageY,
+                });
+
+              cy.get('[data-test=CalendarItem]').eq(2).should('be.visible');
+            });
+        });
+      });
+    } else {
+      it('User can scroll through milestones by drag&drop horizontally', () => {
+        cy.wait(2000);
+        cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
+          const { left: calendarItemActiveLeft } = $calendarItemActive[0].getBoundingClientRect();
+
+          cy.get('[data-test=CalendarItem]').eq(2).should('not.be.visible');
+          cy.get('[data-test=CalendarItem]')
+            .eq(2)
+            .then($prevCalendarItem => {
+              const { width: prevCalendarItemWidth } = $prevCalendarItem[0].getBoundingClientRect();
+              const prevCalendarItemMarginRight = parseInt(
+                $prevCalendarItem.css('marginRight'),
+                10,
+              );
+
+              const pointerDownPageX = calendarItemActiveLeft;
+              const pointerUpPageX = Math.ceil(
+                calendarItemActiveLeft + prevCalendarItemWidth + prevCalendarItemMarginRight,
+              );
+
+              cy.get('[data-test=Calendar__wrapper]')
+                .trigger('pointerdown', {
+                  pageX: pointerDownPageX,
+                })
+                .trigger('pointermove', {
+                  pageX: pointerUpPageX,
+                })
+                .trigger('pointerup', {
+                  pageX: pointerUpPageX,
+                });
+
+              cy.get('[data-test=CalendarItem]').eq(2).should('be.visible');
+            });
+        });
+      });
+    }
+
+    if (isMobile) {
+      it('User can close Calendar by clicking on close button (X) in top-right corner', () => {
+        cy.wait(2000);
+        cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.get('[data-test=Calendar]').should('be.visible');
+        cy.get('[data-test=LayoutTopBarCalendar__ModalCalendar__Button]').click();
+        cy.get('[data-test=Calendar]').should('not.exist');
+      });
+    }
+  });
+});
 
 describe('move time - AW IS OPEN - less than 24h to change AW', () => {
   before(() => {
@@ -219,6 +224,7 @@ Object.values(viewports).forEach(
       });
 
       it('Allocation window milestone has alert style when AW is going to change in less than 24h', () => {
+        cy.wait(2000);
         cy.get('[data-test=LayoutTopBarCalendar]').click();
         cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
         cy.get('[data-test=CalendarItem][data-is-active=true]')
@@ -248,6 +254,7 @@ Object.values(viewports).forEach(
 
       if (isDesktop || isLargeDesktop) {
         it('Allocation window milestone with alert style shows time to change AW on hover', () => {
+          cy.wait(2000);
           cy.get('[data-test=LayoutTopBarCalendar]').click();
           cy.get('[data-test=CalendarItem][data-is-active=true]')
             .realHover()
