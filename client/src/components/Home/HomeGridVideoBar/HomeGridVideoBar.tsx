@@ -96,6 +96,7 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
   return (
     <GridTile
       className={className}
+      dataTest="HomeGridVideoBar"
       title={t('learnHowToUseOctant')}
       titleSuffix={
         <>
