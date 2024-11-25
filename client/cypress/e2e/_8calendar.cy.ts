@@ -25,12 +25,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
+      const now = Date.UTC(2024, 2, 19, 9, 30, 0, 0);
+      cy.clock(now, ['Date']);
       visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
     });
 
     it('Epoch info badge opens Calendar on click', () => {
-      cy.wait(2000);
       cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.wait(2000);
       cy.get('[data-test=Calendar]').should('be.visible');
     });
 
@@ -48,9 +50,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       cy.get('[data-test=Calendar]').should('not.exist');
     });
 
-    it('Active milestone is always visible after calendar open (and has correct style)', () => {
-      cy.wait(2000);
+    it('Active milestone (e3-snapshot-vote) is always visible after calendar open (and has correct style)', () => {
       cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.wait(2000);
       cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
       cy.get('[data-test=CalendarItem][data-is-active=true]')
         .invoke('css', 'opacity')
@@ -65,6 +67,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         cy.get('[data-test=CalendarItem__title__monthShort]')
           .then($el => $el.css('color'))
           .should('be.colored', '#2d9b87');
+        cy.get('[data-test=CalendarItem__label]').invoke('text').should('eq', 'Snapshot vote');
         cy.get('[data-test=CalendarItem__label]')
           .then($el => $el.css('color'))
           .should('be.colored', '#2d9b87');
@@ -74,30 +77,30 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       });
     });
 
-    it('Milestone with "to" param shows end date of event', () => {
-      cy.wait(2000);
+    it('Milestone (e3-snapshot-vote) with "to" param shows end date of event', () => {
       cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.wait(2000);
       cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
         cy.get('[data-test=CalendarItem__date]')
           .invoke('text')
-          .should('include', 'Closes 31 January');
+          .should('eq', 'Closes 22 March 12am CET');
       });
     });
 
-    it('Milestone without "to" param shows hour and timezone of event start', () => {
-      cy.wait(2000);
+    it('Milestone (e3-project-updates-close) without "to" param shows hour and timezone of event start', () => {
       cy.get('[data-test=LayoutTopBarCalendar]').click();
+      cy.wait(2000);
       cy.get('[data-test=CalendarItem]')
-        .eq(1)
+        .eq(2)
         .within(() => {
-          cy.get('[data-test=CalendarItem__date]').invoke('text').should('include', 'am CET');
+          cy.get('[data-test=CalendarItem__date]').invoke('text').should('eq', '12am CET');
         });
     });
 
     if (isMobile) {
       it('User can scroll through milestones by drag&drop vertically', () => {
-        cy.wait(2000);
         cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.wait(2000);
         cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
           const { top: calendarItemActiveTop } = $calendarItemActive[0].getBoundingClientRect();
 
@@ -134,8 +137,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       });
     } else {
       it('User can scroll through milestones by drag&drop horizontally', () => {
-        cy.wait(2000);
         cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.wait(2000);
         cy.get('[data-test=CalendarItem][data-is-active=true]').then($calendarItemActive => {
           const { left: calendarItemActiveLeft } = $calendarItemActive[0].getBoundingClientRect();
 
@@ -160,9 +163,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
                 })
                 .trigger('pointermove', {
                   pageX: pointerUpPageX,
-                })
-                .trigger('pointerup', {
-                  pageX: pointerUpPageX,
                 });
 
               cy.get('[data-test=CalendarItem]').eq(2).should('be.visible');
@@ -173,8 +173,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
 
     if (isMobile) {
       it('User can close Calendar by clicking on close button (X) in top-right corner', () => {
-        cy.wait(2000);
         cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.wait(2000);
         cy.get('[data-test=Calendar]').should('be.visible');
         cy.get('[data-test=LayoutTopBarCalendar__ModalCalendar__Button]').click();
         cy.get('[data-test=Calendar]').should('not.exist');
@@ -224,8 +224,8 @@ Object.values(viewports).forEach(
       });
 
       it('Allocation window milestone has alert style when AW is going to change in less than 24h', () => {
-        cy.wait(2000);
         cy.get('[data-test=LayoutTopBarCalendar]').click();
+        cy.wait(2000);
         cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
         cy.get('[data-test=CalendarItem][data-is-active=true]')
           .invoke('css', 'opacity')
@@ -254,8 +254,8 @@ Object.values(viewports).forEach(
 
       if (isDesktop || isLargeDesktop) {
         it('Allocation window milestone with alert style shows time to change AW on hover', () => {
-          cy.wait(2000);
           cy.get('[data-test=LayoutTopBarCalendar]').click();
+          cy.wait(2000);
           cy.get('[data-test=CalendarItem][data-is-active=true]')
             .realHover()
             .then($el => $el.css('backgroundColor'))
