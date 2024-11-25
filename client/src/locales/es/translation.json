@@ -563,8 +563,8 @@
         "randomized": "Aleatorizado",
         "alphabeticalAscending": "A -> Z",
         "alphabeticalDescending": "Z -> A",
-        "totalsDescending": "Totales de mayor a menor",
-        "totalsAscending": "Total bajo a alto",
+        "totalsDescending": "Total mayor a menor",
+        "totalsAscending": "Total menor a mayor",
         "donorsDescending": "Donantes de mayor a menor",
         "donorsAscending": "De menos a más donantes"
       }
