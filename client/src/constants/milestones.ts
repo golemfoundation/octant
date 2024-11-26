@@ -75,12 +75,12 @@ export default function getMilestones(): Milestone[] {
         to: new Date('2024-06-21T00:00:00+0200'),
       },
       {
-        from: new Date('2024-07-15T18:00:00+0200'),
+        from: new Date(new Date().getTime() + 260 * 24 * 60 * 60 * 1000),
         id: 'e4-allocation-window',
         isAllocationWindowMilestone: true,
         label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
         shouldUseThirdPersonSingularVerb: true,
-        to: new Date('2024-07-29T18:00:00+0200'),
+        to: new Date(new Date().getTime() + 284 * 24 * 60 * 60 * 1000),
       },
       {
         from: new Date('2024-07-15T18:00:00+0200'),

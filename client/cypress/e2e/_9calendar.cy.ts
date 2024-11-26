@@ -193,7 +193,7 @@ describe('move time - AW IS OPEN - less than 24h to change AW', () => {
     cy.setupMetamask();
   });
 
-  it('allocation window is closed, when it is not, move time', () => {
+  it('allocation window is open, when it is not, move time', () => {
     setupAndMoveToPlayground();
 
     cy.window().then(async win => {
