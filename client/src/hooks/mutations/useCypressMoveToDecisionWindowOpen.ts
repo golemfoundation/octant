@@ -5,16 +5,12 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import networkConfig from 'constants/networkConfig';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
-  boolean,
-  unknown,
-  any
-> {
+export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<boolean, unknown> {
   const queryClient = useQueryClient();
   const publicClient = usePublicClient({ chainId: networkConfig.id });
 
   return useMutation({
-    mutationFn: (isLessThan24HoursToChangeAW = false) => {
+    mutationFn: () => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
@@ -46,20 +42,10 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const currentEpochPropsPromise = queryClient.fetchQuery({
-          queryFn: () =>
-            readContractEpochs({
-              functionName: 'getCurrentEpochProps',
-              publicClient,
-            }),
-          queryKey: QUERY_KEYS.currentEpochProps,
-        });
-
-        const [block, currentEpochEnd, currentEpoch, currentEpochProps] = await Promise.all([
+        const [block, currentEpochEnd, currentEpoch] = await Promise.all([
           blockPromise,
           currentEpochEndPromise,
           currentEpochPromise,
-          currentEpochPropsPromise,
         ]);
 
         if (block === undefined || currentEpoch === undefined || currentEpochEnd === undefined) {
@@ -80,14 +66,6 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
           params: [timeToIncrease] as any,
         });
         await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
-
-        if (isLessThan24HoursToChangeAW) {
-          await publicClient.request({
-            method: 'evm_increaseTime' as any,
-            params: [Number(currentEpochProps.decisionWindow) - 12 * 3600] as any,
-          });
-          await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
-        }
 
         const currentEpochAfter = await queryClient.fetchQuery({
           queryFn: () =>

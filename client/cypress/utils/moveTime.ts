@@ -108,10 +108,7 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
  */
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
-  moveTo:
-    | 'nextEpochDecisionWindowClosed'
-    | 'nextEpochDecisionWindowOpen'
-    | 'nextEpochDecisionWindowOpenLessThan24H',
+  moveTo: 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
   connectWalletParams?: ConnectWalletParameters,
 ): Chainable<any> => {
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
@@ -125,11 +122,8 @@ export const moveTime = (
     cy.reload();
   }
 
-  if (
-    moveTo === 'nextEpochDecisionWindowOpen' ||
-    moveTo === 'nextEpochDecisionWindowOpenLessThan24H'
-  ) {
-    moveToDecisionWindowOpen(cypressWindow, moveTo === 'nextEpochDecisionWindowOpenLessThan24H');
+  if (moveTo === 'nextEpochDecisionWindowOpen') {
+    moveToDecisionWindowOpen(cypressWindow);
   } else {
     moveToDecisionWindowOpen(cypressWindow);
     // Reload is needed to get updated data in the app
