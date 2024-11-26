@@ -13,24 +13,24 @@ type Viewports = {
 };
 
 const viewports: Viewports = {
-  desktop: {
-    device: 'desktop',
-    isDesktop: true,
-    isLargeDesktop: false,
-    isMobile: false,
-    isTablet: false,
-    viewportHeight: 720,
-    viewportWidth: 1280,
-  },
-  largeDesktop: {
-    device: 'large-desktop',
-    isDesktop: true,
-    isLargeDesktop: true,
-    isMobile: false,
-    isTablet: false,
-    viewportHeight: 1080,
-    viewportWidth: 1920,
-  },
+  // desktop: {
+  //   device: 'desktop',
+  //   isDesktop: true,
+  //   isLargeDesktop: false,
+  //   isMobile: false,
+  //   isTablet: false,
+  //   viewportHeight: 720,
+  //   viewportWidth: 1280,
+  // },
+  // largeDesktop: {
+  //   device: 'large-desktop',
+  //   isDesktop: true,
+  //   isLargeDesktop: true,
+  //   isMobile: false,
+  //   isTablet: false,
+  //   viewportHeight: 1080,
+  //   viewportWidth: 1920,
+  // },
   mobile: {
     device: 'mobile',
     isDesktop: false,
@@ -40,15 +40,15 @@ const viewports: Viewports = {
     viewportHeight: 844,
     viewportWidth: 390,
   },
-  tablet: {
-    device: 'tablet',
-    isDesktop: false,
-    isLargeDesktop: false,
-    isMobile: false,
-    isTablet: true,
-    viewportHeight: 1106,
-    viewportWidth: 755,
-  },
+  // tablet: {
+  //   device: 'tablet',
+  //   isDesktop: false,
+  //   isLargeDesktop: false,
+  //   isMobile: false,
+  //   isTablet: true,
+  //   viewportHeight: 1106,
+  //   viewportWidth: 755,
+  // },
 };
 
 export default viewports;

@@ -228,7 +228,7 @@ Object.values(viewports).forEach(
       it('Allocation window milestone has alert style when AW is going to change in less than 24h', () => {
         cy.get('[data-test=LayoutTopBarCalendar]').click();
         cy.wait(2000);
-        cy.get('[data-test=Calendar__wrapper]').focus();
+        cy.get('[data-test=Calendar__wrapper]').click();
         cy.get('[data-test=CalendarItem][data-is-active=true]').should('be.visible');
         cy.get('[data-test=CalendarItem][data-is-active=true]')
           .invoke('css', 'opacity')
