@@ -84,7 +84,7 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         if (isLessThan24HoursToChangeAW) {
           await publicClient.request({
             method: 'evm_increaseTime' as any,
-            params: [currentEpochProps.decisionWindow - 12 * 3600] as any,
+            params: [Number(currentEpochProps.decisionWindow) - 12 * 3600] as any,
           });
           await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
         }
