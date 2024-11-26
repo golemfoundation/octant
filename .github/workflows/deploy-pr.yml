@@ -39,8 +39,8 @@ jobs:
       vault-confirm-withdrawals-enabled: true
       glm-claim-enabled: true
       anvil-block-time: 5
-      decision-window: 1209600
-      epoch-duration: 7776000
+      decision-window: 1800
+      epoch-duration: 3600
       ipfs-gateways: 'https://ipfs.octant.wildland.dev/ipfs/'
     secrets: inherit
 
