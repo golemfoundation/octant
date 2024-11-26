@@ -20,6 +20,14 @@
     }
   }
 
+  &:last-child {
+    margin-bottom: 0.2rem;
+
+    @media #{$tablet-up} {
+      margin-bottom: 0;
+    }
+  }
+
   &.hasHref {
     cursor: pointer;
 
