@@ -17,6 +17,7 @@ import { calendar } from 'svg/misc';
 import styles from './LayoutTopBarCalendar.module.scss';
 
 const LayoutTopBarCalendar = (): ReactElement => {
+  const dataTestRoot = 'LayoutTopBarCalendar';
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -117,7 +118,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
     <>
       <div
         className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
-        data-test="LayoutTopBarCalendar"
+        data-test={dataTestRoot}
         onClick={() => setIsCalendarOpen(true)}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
@@ -133,6 +134,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
                   opacity: 1,
                 }}
                 className={cx(styles.overflow, styles.isOpen)}
+                data-test={`${dataTestRoot}__calendarOverflow`}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 onClick={() => setIsCalendarOpen(false)}
@@ -141,6 +143,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
                 key="desktopCalendarWrapper"
                 animate={{ opacity: 1, top: 72 }}
                 className={styles.desktopCalendarWrapper}
+                data-test={`${dataTestRoot}__calendarWrapper`}
                 exit={{ opacity: 0 }}
                 initial={{ left: '50%', opacity: 0, top: 64, x: '-50%' }}
               >
@@ -152,7 +155,8 @@ const LayoutTopBarCalendar = (): ReactElement => {
         document.body,
       )}
       <Modal
-        header="Calendar"
+        dataTest={`${dataTestRoot}__ModalCalendar`}
+        header={t('calendar')}
         isOpen={isMobile && isCalendarOpen}
         onClosePanel={() => setIsCalendarOpen(false)}
       >
