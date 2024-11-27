@@ -39,12 +39,9 @@ export const mutateAsyncMakeSnapshot = (
     });
   });
 
-const mutateAsyncMoveToDecisionWindowOpen = (
-  cypressWindow: Cypress.AUTWindow,
-  isLessThan24HoursToChangeAW?: boolean,
-): Promise<any> =>
+const mutateAsyncMoveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Promise<any> =>
   new Cypress.Promise(resolve => {
-    cypressWindow.mutateAsyncMoveToDecisionWindowOpen(isLessThan24HoursToChangeAW).then(() => {
+    cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
       resolve(true);
     });
   });
@@ -54,17 +51,12 @@ const waitForLoadersToDisappear = (): Chainable<any> => {
   return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
 };
 
-const moveToDecisionWindowOpen = (
-  cypressWindow: Cypress.AUTWindow,
-  isLessThan24HoursToChangeAW?: boolean,
-): Chainable<any> => {
+const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
   waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
-    return mutateAsyncMoveToDecisionWindowOpen(cypressWindow, isLessThan24HoursToChangeAW).then(
-      str => {
-        expect(str).to.eq(true);
-      },
-    );
+    return mutateAsyncMoveToDecisionWindowOpen(cypressWindow).then(str => {
+      expect(str).to.eq(true);
+    });
   });
   waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
