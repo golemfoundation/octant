@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-// import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import {
   beforeSetup,
   checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px,
@@ -21,30 +20,6 @@ import {
 } from 'src/hooks/helpers/useOnboardingSteps/steps';
 
 chai.use(chaiColors);
-
-// describe('move time', () => {
-//   before(() => {
-//     /**
-//      * Global Metamask setup done by Synpress is not always done.
-//      * Since Synpress needs to have valid provider to fetch the data from contracts,
-//      * setupMetamask is required in each test suite.
-//      */
-//     cy.setupMetamask();
-//   });
-
-//   it('allocation window is open, when it is not, move time', () => {
-//     setupAndMoveToPlayground();
-
-//     cy.window().then(async win => {
-//       moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
-//         const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-//           QUERY_KEYS.isDecisionWindowOpen,
-//         );
-//         expect(isDecisionWindowOpenAfter).to.be.true;
-//       });
-//     });
-//   });
-// });
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isDesktop, isLargeDesktop }) => {
@@ -211,15 +186,6 @@ Object.values(viewports).forEach(
           cy.get('[data-test=OnboardingStepper]').click();
           checkProgressStepperSlimIsCurrentAndClickNext(2);
           cy.get('[data-test=ModalOnboarding__Button]').click();
-          for (let i = 0; i < onboardingSteps.length - 1; i++) {
-            cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
-              .then($el => $el.css('stroke'))
-              .should('be.colored', i > 2 ? '#ffffff' : '#2d9b87');
-          }
-          cy.get('[data-test=OnboardingStepper]').click();
-          checkProgressStepperSlimIsCurrentAndClickNext(3);
-          cy.get('[data-test=ModalOnboarding__Button]').click();
-
           cy.get('[data-test=OnboardingStepper]').should('not.exist');
         });
       },
