@@ -253,6 +253,10 @@ Object.values(viewports).forEach(
       it('"Always show onboarding" option toggle works', () => {
         connectWallet({ isPatronModeEnabled: false });
 
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=LayoutTopBar__settingsButton]').click({ force: true });
+        }
+
         cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check({ force: true });
         cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
         cy.getAllLocalStorage().then(() => {
@@ -289,6 +293,8 @@ Object.values(viewports).forEach(
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
         });
+
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
     });
   },
