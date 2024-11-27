@@ -14,7 +14,7 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
-    describe(`[AW IS CLOSED] LayoutFooter: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS OPEN] LayoutFooter: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         cy.clearLocalStorage();
       });
@@ -40,7 +40,7 @@ Object.values(viewports).forEach(
         if (isMobile || isTablet) {
           cy.get('[data-test=HomeRewards__Tooltip--rewardsRate]').click();
         } else {
-          cy.get('[data-test=HomeRewards__Tooltip--rewardsRate]').realHover();
+          cy.get('[data-test=HomeRewards__Tooltip--rewardsRate]').trigger('mouseover');
         }
 
         cy.get('[data-test=HomeRewards__Tooltip--rewardsRate__content]').should('exist');
