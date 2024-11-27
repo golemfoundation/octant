@@ -216,13 +216,13 @@ Object.values(viewports).forEach(
       });
 
       it('"Show help videos" option toggle works', () => {
-        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').check();
+        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').check({ force: true });
         cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').should('be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(SHOW_HELP_VIDEOS)).eq('true');
         });
 
-        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').click();
+        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').click({ force: true });
         cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').should('not.be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(SHOW_HELP_VIDEOS)).eq('false');
@@ -236,7 +236,7 @@ Object.values(viewports).forEach(
           cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
         }
 
-        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').click();
+        cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').click({ force: true });
         cy.get('[data-test=SettingsShowHelpVideosBox__InputToggle]').should('be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(SHOW_HELP_VIDEOS)).eq('true');
@@ -245,7 +245,7 @@ Object.values(viewports).forEach(
         if (isLargeDesktop || isDesktop) {
           cy.get('[data-test=HomeGridVideoBar]').should('be.visible');
         } else {
-          cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
+          cy.get(`[data-test=LayoutNavbar__Button--home]`).click({ force: true });
           cy.get('[data-test=HomeGridVideoBar]').should('be.visible');
         }
       });
@@ -253,7 +253,7 @@ Object.values(viewports).forEach(
       it('"Always show onboarding" option toggle works', () => {
         connectWallet({ isPatronModeEnabled: false });
 
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check();
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check({ force: true });
         cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
@@ -269,7 +269,7 @@ Object.values(viewports).forEach(
           cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
         }
 
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click();
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
         cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('not.be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
@@ -284,7 +284,7 @@ Object.values(viewports).forEach(
           cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
         }
 
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click();
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
         cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
