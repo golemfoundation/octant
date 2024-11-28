@@ -25,7 +25,7 @@ const MetricsView = (): ReactElement => {
         t('epoch1Info')
       ) : (
         <>
-          <ViewTitle>{t('exploreTheData')}</ViewTitle>
+          <ViewTitle dataTest="MetricsView__title">{t('exploreTheData')}</ViewTitle>
           <MetricsEpochProvider>
             <MetricsEpoch />
           </MetricsEpochProvider>
