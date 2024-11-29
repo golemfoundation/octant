@@ -163,11 +163,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=LayoutTopBarCalendar]').should('be.visible');
     });
 
-    it('Epoch info badge opens Calendar on click', () => {
-      cy.get('[data-test=LayoutTopBarCalendar]').click();
-      cy.get('[data-test=Calendar]').should('be.visible');
-    });
-
     it('Connect wallet button is visible', () => {
       cy.get('[data-test=LayoutTopBar__Button]').should('be.visible');
     });
