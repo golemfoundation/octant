@@ -71,6 +71,7 @@ Object.values(viewports).forEach(
         });
 
         it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {
+          cy.wait(2000);
           cy.get('[data-test=ModalOnboarding__Button]').click();
           if (isLargeDesktop || isDesktop) {
             cy.get('[data-test=LayoutTopBar__settingsButton]').click();
@@ -86,6 +87,7 @@ Object.values(viewports).forEach(
         });
 
         it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
+          cy.wait(2000);
           cy.get('[data-test=ModalOnboarding__Button]').click();
           if (isLargeDesktop || isDesktop) {
             cy.get('[data-test=LayoutTopBar__settingsButton]').click();
