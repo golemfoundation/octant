@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from pydantic import TypeAdapter
 
 from app.infrastructure.database.models import Allocation
 from app.infrastructure.database.models import AllocationRequest as AllocationRequestDB
@@ -11,7 +12,8 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
 from v2.allocations.schemas import (
     AllocationWithUserUQScore,
-    ProjectDonation,
+    ProjectAllocationV1,
+    ProjectDonationV1,
     UserAllocationRequest,
 )
 from v2.core.types import Address
@@ -57,10 +59,10 @@ async def get_allocations_with_user_uqs(
 
     return [
         AllocationWithUserUQScore(
-            projectAddress=project_address,
+            project_address=project_address,
             amount=amount,
-            userAddress=user_address,
-            userUqScore=Decimal(uq_score),
+            user_address=user_address,
+            user_uq_score=Decimal(uq_score),
         )
         for project_address, amount, user_address, uq_score in rows
     ]
@@ -140,21 +142,72 @@ async def get_last_allocation_request_nonce(
     if user is None:
         return None
 
-    return await session.scalar(
+    result = await session.scalar(
         select(func.max(AllocationRequestDB.nonce)).filter(
             AllocationRequestDB.user_id == user.id
         )
     )
+
+    if result is None:
+        return None
+
+    return result
+
+
+async def get_all_allocations_for_epoch(
+    session: AsyncSession,
+    epoch_number: int,
+    include_zero_allocations: bool = False,
+) -> list[ProjectDonationV1]:
+    """Get all allocations for a given epoch."""
+
+    query = (
+        select(Allocation)
+        .options(joinedload(Allocation.user))
+        .filter(Allocation.epoch == epoch_number)
+        .filter(Allocation.deleted_at.is_(None))
+    )
+
+    if not include_zero_allocations:
+        query = query.filter(Allocation.amount > 0)
+
+    results = await session.scalars(query)
+
+    return [
+        ProjectDonationV1(
+            amount=a.amount,
+            donor_address=a.user.address,
+            project_address=a.project_address,
+        )
+        for a in results
+    ]
+
+
+async def get_donors_for_epoch(
+    session: AsyncSession,
+    epoch_number: int,
+) -> list[Address]:
+    """Get all donors for a given epoch."""
+
+    results = await session.scalars(
+        select(User.address)
+        .join(Allocation, Allocation.user_id == User.id)
+        .filter(Allocation.epoch == epoch_number)
+        .filter(Allocation.deleted_at.is_(None))
+        .distinct()
+    )
+
+    return TypeAdapter(list[Address]).validate_python(results.all())
 
 
 async def get_donations_by_project(
     session: AsyncSession,
     project_address: str,
     epoch_number: int,
-) -> list[ProjectDonation]:
+) -> list[ProjectAllocationV1]:
     """Get all donations for a project in a given epoch."""
 
-    result = await session.execute(
+    results = await session.scalars(
         select(Allocation)
         .options(joinedload(Allocation.user))
         .filter(Allocation.project_address == project_address)
@@ -162,13 +215,55 @@ async def get_donations_by_project(
         .filter(Allocation.deleted_at.is_(None))
     )
 
-    allocations = result.scalars().all()
+    return [
+        ProjectAllocationV1(
+            address=a.user.address,
+            amount=a.amount,
+        )
+        for a in results
+    ]
+
+
+async def get_allocations_by_user(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> list[ProjectAllocationV1]:
+    """Get all allocations for a user in a given epoch."""
+
+    results = await session.scalars(
+        select(Allocation)
+        .join(User, Allocation.user_id == User.id)
+        .filter(
+            Allocation.epoch == epoch_number,
+            Allocation.deleted_at.is_(None),
+            User.address == user_address,
+        )
+    )
 
     return [
-        ProjectDonation(
+        ProjectAllocationV1(
+            address=a.project_address,
             amount=a.amount,
-            donorAddress=a.user.address,
-            projectAddress=a.project_address,
         )
-        for a in allocations
+        for a in results
     ]
+
+
+async def get_last_allocation_request(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> AllocationRequestDB | None:
+    """Get the last allocation request for a user in a given epoch."""
+
+    user = await get_user_by_address(session, user_address)
+    if user is None:
+        return None
+
+    return await session.scalar(
+        select(AllocationRequestDB)
+        .filter(AllocationRequestDB.user_id == user.id)
+        .filter(AllocationRequestDB.epoch == epoch_number)
+        .order_by(AllocationRequestDB.nonce.desc())
+    )
