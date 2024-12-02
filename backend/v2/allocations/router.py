@@ -95,7 +95,7 @@ async def simulate_allocation_v1(
     pass
 
 
-@api.get("/projects/{project_address}/epoch/{epoch_number}")
+@api.get("/project/{project_address}/epoch/{epoch_number}")
 async def get_project_allocations_for_epoch_v1(
     session: GetSession, project_address: Address, epoch_number: int
 ) -> list[ProjectAllocationV1]:

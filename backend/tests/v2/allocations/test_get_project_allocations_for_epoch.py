@@ -18,7 +18,7 @@ async def test_returns_empty_list_when_no_allocations(
     project_address = "0x433485B5951f250cEFDCbf197Cb0F60fdBE55513"
 
     async with fast_client as client:
-        resp = await client.get(f"allocations/projects/{project_address}/epoch/1")
+        resp = await client.get(f"allocations/project/{project_address}/epoch/1")
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == []
 
@@ -41,7 +41,7 @@ async def test_returns_allocations_when_they_exist(
     await fast_session.commit()
 
     async with fast_client as client:
-        resp = await client.get(f"allocations/projects/{project_address}/epoch/1")
+        resp = await client.get(f"allocations/project/{project_address}/epoch/1")
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == [
             {"amount": str(a_alloc1.amount), "address": alice.address},
@@ -49,13 +49,13 @@ async def test_returns_allocations_when_they_exist(
         ]
 
         # Allocations for epoch 2
-        resp = await client.get(f"allocations/projects/{project_address}/epoch/2")
+        resp = await client.get(f"allocations/project/{project_address}/epoch/2")
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == [
             {"amount": str(a_alloc2.amount), "address": alice.address},
         ]
 
         # No allocations for epoch 3
-        resp = await client.get(f"allocations/projects/{project_address}/epoch/3")
+        resp = await client.get(f"allocations/project/{project_address}/epoch/3")
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == []
