@@ -112,14 +112,6 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
         </div>
       </div>
       <div className={styles.newsletterWrapper}>
-        <div
-          ref={newsletterRef}
-          className={styles.newsletter}
-          data-test={`${dataTestRoot}__newsletter`}
-        />
-        <div className={styles.newsletterText} data-test={`${dataTestRoot}__newsletterText`}>
-          {t('newsletterText')}
-        </div>
         <div className={styles.newsletterAndLanguageSelector}>
           <div className={styles.newsletterWrapper}>
             <div ref={newsletterRef} className={styles.newsletter} />
