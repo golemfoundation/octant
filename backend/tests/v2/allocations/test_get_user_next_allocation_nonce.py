@@ -6,7 +6,7 @@ from fastapi import status
 from tests.v2.utils import FakeAllocationRequest, FakeUser
 
 
-"""Test cases for the GET /allocations/users/{user_id}/allocation_nonce endpoint"""
+"""Test cases for the GET /allocations/users/{user_address}/allocation_nonce endpoint"""
 
 
 @pytest.mark.asyncio
