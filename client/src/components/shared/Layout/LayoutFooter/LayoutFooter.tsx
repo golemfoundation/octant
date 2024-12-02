@@ -1,8 +1,8 @@
 import cx from 'classnames';
-import React, { FC, memo, ReactElement, useLayoutEffect, useRef } from 'react';
+import React, { FC, memo, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import LanguageSelector from 'components/shared/LanguageSelector';
+import LanguageSelectorWrapped from 'components/shared/Layout/LanguageSelectorWrapped';
 import Svg from 'components/ui/Svg';
 import {
   BLOG_POST,
@@ -22,12 +22,6 @@ import { octantSemiTransparent } from 'svg/logo';
 
 import styles from './LayoutFooter.module.scss';
 import LayoutFooterProps from './types';
-
-const LanguageSelectorWrapped = (): ReactElement => (
-  <div className={styles.languageSelector}>
-    <LanguageSelector />
-  </div>
-);
 
 const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.footer' });
