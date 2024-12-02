@@ -1,4 +1,3 @@
-import { TFunction } from 'i18next';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,21 +8,19 @@ import { earth } from 'svg/misc';
 
 import styles from './LanguageSelector.module.scss';
 
-const getLanguageOptions = (t: TFunction): Option[] => [
-  {
-    label: t('languageSelector.english'),
-    value: 'en-EN',
-  },
-  {
-    label: t('languageSelector.spanish'),
-    value: 'es-Es',
-  },
-];
-
 const LanguageSelector = (): ReactElement => {
   const { t, i18n } = useTranslation('translation');
 
-  const languageOptions = getLanguageOptions(t);
+  const languageOptions: Option[] = [
+    {
+      label: t('languageSelector.english'),
+      value: 'en-EN',
+    },
+    {
+      label: t('languageSelector.spanish'),
+      value: 'es-Es',
+    },
+  ];
 
   return (
     <InputSelect
