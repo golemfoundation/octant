@@ -84,15 +84,15 @@ async def get_all_allocations_for_epoch_v1(
     return EpochAllocationsResponseV1(allocations=donations)
 
 
-@api.post("/leverage/{user_address}")
-async def simulate_allocation_v1(
-    user_address: Address, payload: SimulateAllocationPayloadV1
-) -> None:
-    """
-    Simulates an allocation and get the expected leverage, threshold and matched rewards.
-    """
-    # TODO: implement
-    pass
+# @api.post("/leverage/{user_address}")
+# async def simulate_allocation_v1(
+#     user_address: Address, payload: SimulateAllocationPayloadV1
+# ) -> None:
+#     """
+#     Simulates an allocation and get the expected leverage, threshold and matched rewards.
+#     """
+#     # TODO: implement
+#     pass
 
 
 @api.get("/project/{project_address}/epoch/{epoch_number}")
