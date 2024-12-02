@@ -169,7 +169,7 @@ async def get_all_allocations_for_epoch(
     )
 
     if not include_zero_allocations:
-        query = query.filter(Allocation.amount > 0)
+        query = query.filter(Allocation.amount != "0")
 
     results = await session.scalars(query)
 
