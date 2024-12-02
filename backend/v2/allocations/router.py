@@ -15,7 +15,6 @@ from v2.allocations.schemas import (
     EpochAllocationsResponseV1,
     EpochDonorsResponseV1,
     ProjectAllocationV1,
-    SimulateAllocationPayloadV1,
     UserAllocationNonceV1,
     UserAllocationRequest,
     UserAllocationRequestV1,
