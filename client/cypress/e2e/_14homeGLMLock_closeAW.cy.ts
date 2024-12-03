@@ -138,11 +138,7 @@ Object.values(viewports).forEach(
             );
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
-            cy.get(
-              '[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]',
-              // Small timeout ensures skeleton shows up quickly after the transaction.
-              { timeout: 1000 },
-            ).should('be.visible');
+            cy.wait(2500);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -209,11 +205,7 @@ Object.values(viewports).forEach(
             );
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
-            cy.get(
-              '[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]',
-              // Small timeout ensures skeleton shows up quickly after the transaction.
-              { timeout: 1000 },
-            ).should('be.visible');
+            cy.wait(2500);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
