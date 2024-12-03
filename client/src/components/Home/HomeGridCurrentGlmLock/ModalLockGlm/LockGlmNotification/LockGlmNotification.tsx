@@ -47,7 +47,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
   return (
     <BoxRounded
       className={className}
-      dataTest={`GlmLockNotification--${type}`}
+      dataTest={`LockGlmNotification--${type}`}
       hasPadding={false}
       isGrey
       isVertical

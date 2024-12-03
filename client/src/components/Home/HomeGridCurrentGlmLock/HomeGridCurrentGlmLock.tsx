@@ -56,6 +56,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
+            dataTest="HomeGridCurrentGlmLock--current"
             isFetching={
               isFetchingDepositValue ||
               isFetchingUserRaffleWinnings ||
@@ -97,6 +98,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
           />
           <Button
             className={styles.lockGlmButton}
+            dataTest="HomeGridCurrentGlmLock__Button"
             isDisabled={!isConnected}
             isHigh
             onClick={() => setIsModalLockGlmOpen(true)}
