@@ -3,21 +3,21 @@ import chaiColors from 'chai-colors';
 
 import {
   beforeSetup,
-  checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px,
-  checkChangeStepsByClickingEdgeOfTheScreenUpTo25px,
-  checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px,
-  checkChangeStepsBySwipingOnScreenDifferenceMoreThanOrEqual5px,
-  checkChangeStepsWithArrowKeys,
+  //   checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px,
+  //   checkChangeStepsByClickingEdgeOfTheScreenUpTo25px,
+  //   checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px,
+  //   checkChangeStepsBySwipingOnScreenDifferenceMoreThanOrEqual5px,
+  //   checkChangeStepsWithArrowKeys,
   checkCurrentElement,
-  checkProgressStepperSlimIsCurrentAndClickNext,
+  //   checkProgressStepperSlimIsCurrentAndClickNext,
   connectWalletOnboarding,
 } from 'cypress/utils/onboarding';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
-import {
-  getStepsDecisionWindowClosed,
-  getStepsDecisionWindowOpen,
-} from 'src/hooks/helpers/useOnboardingSteps/steps';
+// import { QUERY_KEYS } from 'src/api/queryKeys';
+// import {
+//   getStepsDecisionWindowClosed,
+//   getStepsDecisionWindowOpen,
+// } from 'src/hooks/helpers/useOnboardingSteps/steps';
 
 chai.use(chaiColors);
 
