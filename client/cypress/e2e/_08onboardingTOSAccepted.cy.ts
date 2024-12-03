@@ -79,6 +79,8 @@ Object.values(viewports).forEach(
             cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
           }
           cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
+          cy.get('[data-test=ModalOnboarding]').should('be.visible');
+          cy.get('[data-test=ModalOnboarding__Button]').click();
           cy.reload();
           // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
           cy.disconnectMetamaskWalletFromAllDapps();
