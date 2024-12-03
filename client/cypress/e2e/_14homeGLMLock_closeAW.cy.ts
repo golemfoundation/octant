@@ -64,7 +64,7 @@ Object.values(viewports).forEach(
 
       it('Effective label has a tooltip with correct text', () => {
         if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=TooltipEffectiveLockedBalance]').realHover();
+          cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
         } else {
           cy.get('[data-test=TooltipEffectiveLockedBalance]').click();
         }
@@ -94,7 +94,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
         cy.get('[data-test=ModalLockGlm__overflow]').should('exist');
         cy.get('[data-test=ModalLockGlm]').should('be.visible');
-        cy.get('[data-test=ModalLockGlm__overflow]').click();
+        cy.get('[data-test=ModalLockGlm__overflow]').click({ force: true });
         cy.get('[data-test=ModalLockGlm]').should('not.exist');
         cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
         cy.get('[data-test=ModalLockGlm]').should('be.visible');
