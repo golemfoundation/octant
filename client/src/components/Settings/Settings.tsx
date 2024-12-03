@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -12,16 +12,18 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
 import styles from './Settings.module.scss';
 import SettingsShowHelpVideosBox from './SettingsShowHelpVideosBox';
+import SettingsProps from './types';
 
-const Settings = (): ReactElement => {
+const Settings: FC<SettingsProps> = ({ dataTest }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.settings' });
   const { isConnected } = useAccount();
 
   const { data: isPatronMode } = useIsPatronMode();
   const isProjectAdminMode = useIsProjectAdminMode();
+  const dataTestRoot = dataTest ?? 'Settings';
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTestRoot}>
       <div className={styles.title}>{t('title')}</div>
       <div className={styles.boxesWrapper}>
         {!isProjectAdminMode && (

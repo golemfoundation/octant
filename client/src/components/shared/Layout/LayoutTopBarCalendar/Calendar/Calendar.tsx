@@ -12,6 +12,7 @@ import CalendarProps from './types';
 let isInitialResizeDone = false;
 
 const Calendar: FC<CalendarProps> = ({ showAWAlert, durationToChangeAWInMinutes }) => {
+  const dataTestRoot = 'Calendar';
   const constraintsRef = useRef<HTMLDivElement>(null);
   const milestonesWrapperRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useMediaQuery();
@@ -97,11 +98,12 @@ const Calendar: FC<CalendarProps> = ({ showAWAlert, durationToChangeAWInMinutes 
   }, []);
 
   return (
-    <motion.div className={styles.root} data-test="Calendar">
+    <motion.div className={styles.root} data-test={dataTestRoot}>
       <div ref={constraintsRef} className={styles.constraintsWrapper}>
         <motion.div
           ref={milestonesWrapperRef}
           className={styles.milestonesWrapper}
+          data-test={`${dataTestRoot}__wrapper`}
           drag={isMobile ? 'y' : 'x'}
           dragConstraints={constraintsRef}
           style={isMobile ? { y } : { x }}

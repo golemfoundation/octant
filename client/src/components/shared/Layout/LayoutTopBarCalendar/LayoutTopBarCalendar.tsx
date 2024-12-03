@@ -17,11 +17,13 @@ import { calendar } from 'svg/misc';
 import styles from './LayoutTopBarCalendar.module.scss';
 
 const LayoutTopBarCalendar = (): ReactElement => {
+  const dataTestRoot = 'LayoutTopBarCalendar';
   const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: epochsStartEndTime } = useEpochsStartEndTime();
+  const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
+    useEpochsStartEndTime();
   const [durationToChangeAWInMinutes, setDurationToChangeAWInMinutes] = useState(0);
   const [showAWAlert, setShowAWAlert] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -69,7 +71,12 @@ const LayoutTopBarCalendar = (): ReactElement => {
   }, [isDecisionWindowOpen, currentEpoch, isMobile, durationToChangeAWInMinutes, showAWAlert]);
 
   useEffect(() => {
-    if (!epochsStartEndTime || isDecisionWindowOpen === undefined) {
+    if (
+      currentEpoch === undefined ||
+      !epochsStartEndTime ||
+      isDecisionWindowOpen === undefined ||
+      epochsStartEndTime.length !== currentEpoch
+    ) {
       return;
     }
 
@@ -103,7 +110,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
       clearInterval(intervalId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [!!epochsStartEndTime, isDecisionWindowOpen]);
+  }, [!!epochsStartEndTime, isDecisionWindowOpen, isFetchingEpochStartEndTime]);
 
   const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 
@@ -111,6 +118,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
     <>
       <div
         className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
+        data-test={dataTestRoot}
         onClick={() => setIsCalendarOpen(true)}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
@@ -126,6 +134,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
                   opacity: 1,
                 }}
                 className={cx(styles.overflow, styles.isOpen)}
+                data-test={`${dataTestRoot}__calendarOverflow`}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 onClick={() => setIsCalendarOpen(false)}
@@ -134,6 +143,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
                 key="desktopCalendarWrapper"
                 animate={{ opacity: 1, top: 72 }}
                 className={styles.desktopCalendarWrapper}
+                data-test={`${dataTestRoot}__calendarWrapper`}
                 exit={{ opacity: 0 }}
                 initial={{ left: '50%', opacity: 0, top: 64, x: '-50%' }}
               >
@@ -145,7 +155,8 @@ const LayoutTopBarCalendar = (): ReactElement => {
         document.body,
       )}
       <Modal
-        header="Calendar"
+        dataTest={`${dataTestRoot}__ModalCalendar`}
+        header={t('calendar')}
         isOpen={isMobile && isCalendarOpen}
         onClosePanel={() => setIsCalendarOpen(false)}
       >

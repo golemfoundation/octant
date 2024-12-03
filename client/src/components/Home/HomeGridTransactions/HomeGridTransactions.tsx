@@ -40,7 +40,7 @@ const HomeGridTransactions: FC<HomeGridTransactionsProps> = ({ className }) => {
   );
 
   return (
-    <GridTile className={className} title={t('transactions')}>
+    <GridTile className={className} dataTest="HomeGridTransactions" title={t('transactions')}>
       <div className={styles.root}>
         {showLoader ? (
           <TransactionsSkeleton />

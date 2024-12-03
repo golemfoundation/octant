@@ -12,7 +12,7 @@ export const GLM_USD = 0.260878;
 
 export const loadersShouldNotExist = (): Chainable<any> => {
   cy.get('[data-test*=AppLoader]').should('not.exist');
-  return cy.get('[data-test=MainLayout__Loader]').should('not.exist');
+  return cy.get('[data-test=Layout__Loader]').should('not.exist');
 };
 
 export const checkLocationWithLoader = (url: string): Chainable<any> => {
@@ -80,7 +80,7 @@ export const connectWallet = ({
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
-  cy.get('[data-test=MainLayout__Button--connect]').click();
+  cy.get('[data-test=LayoutTopBar__Button]').click();
   cy.wait(500);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();

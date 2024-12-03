@@ -8,7 +8,7 @@ import path from 'path';
 export default defineConfig({
   e2e: {
     baseUrl: process.env.OCTANT_BASE_URL || 'http://localhost:5173',
-    defaultCommandTimeout: 120 * 1000,
+    defaultCommandTimeout: 240 * 1000,
     setupNodeEvents(on, config) {
       // eslint-disable-next-line no-param-reassign
       config.env = { ...config.env, CI: process.env.CI };
@@ -29,7 +29,8 @@ export default defineConfig({
     },
     supportFile: 'cypress/support/index.ts',
   },
-  numTestsKeptInMemory: 4,
+  experimentalMemoryManagement: true,
+  numTestsKeptInMemory: 2,
   video: true,
   viewportHeight: 1080,
   viewportWidth: 1920,

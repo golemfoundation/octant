@@ -68,9 +68,5 @@ $circleDiameter: 5.6rem;
 }
 
 .tooltipWrapper {
-  position: absolute;
-  width: $circleDiameter;
-  height: $circleDiameter;
-  bottom: 4.8rem !important;
-  right: 4.8rem !important;
+  pointer-events: initial;
 }

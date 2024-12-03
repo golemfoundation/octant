@@ -29,8 +29,8 @@
     "test": "TZ=UTC jest",
     "type-check": "tsc --noEmit true",
     "sourcemaps:remove": "rimraf dist/**/*.map",
-    "synpress:open": "synpress open --configFile synpress.config.ts",
-    "synpress:run": "synpress run --configFile synpress.config.ts"
+    "synpress:open": "TZ=Europe/Warsaw synpress open --configFile synpress.config.ts",
+    "synpress:run": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
@@ -44,6 +44,7 @@
     "@wagmi/core": "^2.14.1",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
+    "cypress-real-events": "^1.13.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",

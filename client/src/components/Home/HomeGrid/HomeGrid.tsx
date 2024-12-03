@@ -22,6 +22,7 @@ const HomeGrid = (): ReactNode => {
   const { isLargeDesktop, isDesktop, isMobile, isTablet } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
+  const dataTestRoot = 'HomeGrid';
 
   const { showHelpVideos } = useSettingsStore(state => ({
     showHelpVideos: state.data.showHelpVideos,
@@ -39,12 +40,14 @@ const HomeGrid = (): ReactNode => {
     (isPatronMode && !showHelpVideos && (isLargeDesktop || isTablet));
 
   return (
-    <Grid>
+    <Grid dataTest={dataTestRoot}>
       {!isProjectAdminMode && <HomeGridCurrentGlmLock className={styles.gridTile} />}
       {!isProjectAdminMode && !isPatronMode && <HomeGridDonations className={styles.gridTile} />}
       {!isPatronMode && <HomeGridPersonalAllocation className={styles.gridTile} />}
       {!isProjectAdminMode && <HomeGridUQScore className={styles.gridTile} />}
-      {showDivider1 && <HomeGridDivider className={styles.divider1} />}
+      {showDivider1 && (
+        <HomeGridDivider className={styles.divider1} dataTest={`${dataTestRoot}__divider--1`} />
+      )}
       {showHelpVideos && (
         <HomeGridVideoBar
           className={cx(
@@ -55,7 +58,9 @@ const HomeGrid = (): ReactNode => {
           )}
         />
       )}
-      {showDivider2 && <HomeGridDivider className={styles.divider2} />}
+      {showDivider2 && (
+        <HomeGridDivider className={styles.divider2} dataTest={`${dataTestRoot}__divider--2`} />
+      )}
       <HomeGridTransactions
         className={cx(
           styles.gridTile,

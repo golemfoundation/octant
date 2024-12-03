@@ -48,6 +48,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
   return (
     <GridTile
       className={className}
+      dataTest="HomeGridDonations"
       showTitleDivider={!areAllocationsEmpty}
       title={
         <div className={styles.titleWrapper}>

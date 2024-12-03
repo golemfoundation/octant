@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -47,14 +47,14 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './Allocation.module.scss';
 import AllocationSliderBox from './AllocationSliderBox';
-import { AllocationValue, AllocationValues, PercentageProportions } from './types';
+import AllocationProps, { AllocationValue, AllocationValues, PercentageProportions } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithRewards,
   getAllocationValuesAfterManualChange,
 } from './utils';
 
-const Allocation = (): ReactElement => {
+const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const { isConnected } = useAccount();
   const keyPrefix = 'components.allocation';
   const { t } = useTranslation('translation', { keyPrefix });
@@ -99,6 +99,8 @@ const Allocation = (): ReactElement => {
       value: formatUnitsBigInt(element.value),
     })),
   };
+
+  const dataTestRoot = dataTest ?? 'Allocation';
 
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -585,7 +587,7 @@ const Allocation = (): ReactElement => {
   }, [allocations.length, isMobile, isTablet]);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTestRoot}>
       <div className={styles.title}>{t('allocateRewards')}</div>
       <div
         ref={boxesWrapperRef}
