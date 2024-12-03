@@ -8,7 +8,11 @@ from pydantic.functional_validators import AfterValidator
 
 
 class OctantModel(BaseModel):
-    model_config = ConfigDict(frozen=True, alias_generator=to_camel)
+    model_config = ConfigDict(
+        frozen=True,
+        alias_generator=to_camel,
+        populate_by_name=True,
+    )
 
 
 # Address is a checksummed Ethereum address.

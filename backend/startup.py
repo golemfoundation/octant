@@ -1,7 +1,7 @@
 import os
 from fastapi import Request
 from fastapi.middleware.wsgi import WSGIMiddleware
-
+from fastapi.routing import Match
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -63,8 +63,10 @@ class PathCheckMiddleware(BaseHTTPMiddleware):
         path = request.url.path
 
         for route in fastapi_app.routes:
-            if path == route.path:
-                # If path exists, proceed with the request
+            match, _ = route.matches(
+                {"type": "http", "path": path, "method": request.method}
+            )
+            if match != Match.NONE:
                 return await call_next(request)
 
         # If path does not exist, modify the request to forward to the Flask app

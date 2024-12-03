@@ -72,10 +72,10 @@ async def allocate(
     # Calculate leverage by simulating the allocation
     new_allocations = [
         AllocationWithUserUQScore(
-            projectAddress=a.project_address,
+            project_address=a.project_address,
             amount=a.amount,
-            userAddress=request.user_address,
-            userUqScore=user_uq_score,
+            user_address=request.user_address,
+            user_uq_score=user_uq_score,
         )
         for a in request.allocations
     ]

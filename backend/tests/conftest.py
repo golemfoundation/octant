@@ -9,6 +9,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 
+from fastapi.testclient import TestClient
 import gql
 import pytest
 from flask import current_app
@@ -19,6 +20,7 @@ from requests import RequestException
 from web3 import Web3
 
 import logging
+from v2.main import app as fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -417,6 +419,21 @@ def random_string() -> str:
 
 
 @pytest.fixture
+def fastapi_client(deployment) -> TestClient:
+    # take SQLALCHEMY_DATABASE_URI and use as DB_URI
+    os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
+    os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
+
+    for key in dir(deployment):
+        if key.isupper():
+            value = getattr(deployment, key)
+            if value is not None:
+                os.environ[key] = str(value)
+
+    return TestClient(fastapi_app)
+
+
+@pytest.fixture
 def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
     _app = create_app(deployment)
@@ -656,12 +673,12 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug("get_user_rewards_in_upcoming_epoch :", rv.text)
+        current_app.logger.debug(f"get_user_rewards_in_upcoming_epoch :{rv.text}")
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug("get_rewards_budget :", rv.text)
+        current_app.logger.debug(f"get_rewards_budget :{rv.text}")
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
