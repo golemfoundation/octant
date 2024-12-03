@@ -84,6 +84,7 @@ Object.values(viewports).forEach(
           cy.reload();
           // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
           cy.disconnectMetamaskWalletFromAllDapps();
+          cy.reload();
           connectWalletOnboarding();
           cy.get('[data-test=ModalOnboarding]').should('be.visible');
         });
