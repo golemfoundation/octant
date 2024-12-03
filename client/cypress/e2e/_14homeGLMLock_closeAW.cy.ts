@@ -168,7 +168,7 @@ Object.values(viewports).forEach(
               .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
-            cy.get('[data-test=ModalTransactionDetails]').should('not.be.visible');
+            cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
           });
       });
 
@@ -235,7 +235,7 @@ Object.values(viewports).forEach(
               .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
-            cy.get('[data-test=ModalTransactionDetails]').should('not.be.visible');
+            cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
 
             // Change main value to FIAT
             if (isLargeDesktop || isDesktop) {
