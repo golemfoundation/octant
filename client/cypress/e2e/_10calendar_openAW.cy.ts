@@ -79,7 +79,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       cy.get('[data-test=CalendarItem][data-is-active=true]').within(() => {
         cy.get('[data-test=CalendarItem__date]')
           .invoke('text')
-          .should('eq', 'Closes 22 March 12am CET');
+          .should('eq', 'Closes 22 March 12am');
       });
     });
 
@@ -88,7 +88,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       cy.get('[data-test=CalendarItem]')
         .eq(2)
         .within(() => {
-          cy.get('[data-test=CalendarItem__date]').invoke('text').should('eq', '12am CET');
+          cy.get('[data-test=CalendarItem__date]').invoke('text').should('eq', '12am');
         });
     });
 
