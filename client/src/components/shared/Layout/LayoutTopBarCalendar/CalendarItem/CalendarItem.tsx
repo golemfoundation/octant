@@ -31,7 +31,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
 
   const date = useMemo(() => {
     if (to) {
-      let dateFormat = `${format(to, 'dd MMMM haaa')} CET`;
+      let dateFormat = format(to, 'dd MMMM haaa');
 
       if (isAlert && isHovered) {
         const durationToChangeAWInHours = Math.floor(durationToChangeAWInMinutes / 60);
@@ -50,7 +50,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
       return `${i18n.t('common.close')} ${dateFormat}`;
     }
 
-    return `${format(from, 'haaa')} CET`;
+    return format(from, 'haaa');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // eslint-disable-next-line react-hooks/exhaustive-deps

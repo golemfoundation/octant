@@ -24,7 +24,9 @@ const Settings: FC<SettingsProps> = ({ dataTest }) => {
 
   return (
     <div className={styles.root} data-test={dataTestRoot}>
-      <div className={styles.title}>{t('title')}</div>
+      <div className={styles.title} data-test={`${dataTestRoot}__title`}>
+        {t('title')}
+      </div>
       <div className={styles.boxesWrapper}>
         {!isProjectAdminMode && (
           <div className={styles.mainInfoBoxWrapper}>

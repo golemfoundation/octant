@@ -1,8 +1,3 @@
-// TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
-// import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
-
-import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-
 import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
@@ -28,14 +23,6 @@ export const visitWithLoader = (
 ): Chainable<any> => {
   cy.visit(urlEnter, visitOptions);
   return checkLocationWithLoader(urlEnd || urlEnter);
-};
-
-export const navigateWithCheck = (urlEnter: string): Chainable<any> => {
-  // TODO: https://linear.app/golemfoundation/issue/OCT-1891/e2e-layout
-  // const { label } = navigationTabs.find(({ to }) => to === urlEnter)!;
-  const label = 'Home';
-  cy.get(`[data-test=Navbar__Button--${label}]`).click();
-  return checkLocationWithLoader(urlEnter);
 };
 
 export const mockCoinPricesServer = (): Chainable<any> => {
@@ -105,16 +92,4 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   });
 
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
-};
-
-export const changeMainValueToCrypto = (endUrl: string): Chainable<any> => {
-  navigateWithCheck(ROOT_ROUTES.settings.absolute);
-  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
-  return navigateWithCheck(endUrl);
-};
-
-export const changeMainValueToFiat = (endUrl: string): Chainable<any> => {
-  navigateWithCheck(ROOT_ROUTES.settings.absolute);
-  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-  return navigateWithCheck(endUrl);
 };

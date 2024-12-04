@@ -9,6 +9,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 
+from fastapi.testclient import TestClient
 import gql
 import pytest
 from flask import current_app
@@ -19,6 +20,7 @@ from requests import RequestException
 from web3 import Web3
 
 import logging
+from v2.main import app as fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -182,7 +184,7 @@ def mock_gitcoin_passport_fetch_score(*args, **kwargs):
 
 
 def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
-    "Returns structure resembling GP stamps, but only with relevant fields"
+    """Returns structure resembling GP stamps, but only with relevant fields"""
     if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
         return {
             "items": [
@@ -414,6 +416,21 @@ def random_string() -> str:
     length_of_string = 6
     characters = string.ascii_letters + string.digits
     return "".join(random.choices(characters, k=length_of_string))
+
+
+@pytest.fixture
+def fastapi_client(deployment) -> TestClient:
+    # take SQLALCHEMY_DATABASE_URI and use as DB_URI
+    os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
+    os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
+
+    for key in dir(deployment):
+        if key.isupper():
+            value = getattr(deployment, key)
+            if value is not None:
+                os.environ[key] = str(value)
+
+    return TestClient(fastapi_app)
 
 
 @pytest.fixture
@@ -656,18 +673,12 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug(
-            "get_user_rewards_in_upcoming_epoch :",
-            self._flask_client.get(f"/rewards/budget/{address}/upcoming").request,
-        )
+        current_app.logger.debug(f"get_user_rewards_in_upcoming_epoch :{rv.text}")
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug(
-            "get_rewards_budget :",
-            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
-        )
+        current_app.logger.debug(f"get_rewards_budget :{rv.text}")
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
@@ -1037,9 +1048,6 @@ def patch_vault(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
-        "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
-    )
-    monkeypatch.setattr(
         "app.modules.common.crypto.signature.is_contract", MOCK_IS_CONTRACT
     )
     MOCK_IS_CONTRACT.return_value = False
@@ -1133,6 +1141,15 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
     monkeypatch.setattr(
         "app.modules.user.antisybil.service.initial.fetch_stamps",
         mock_gitcoin_passport_fetch_stamps,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_guest_list_for_scoring(monkeypatch, alice):
+    MOCK_GUEST_LIST = [alice.address.lower()]
+    monkeypatch.setattr(
+        "app.modules.user.antisybil.core.GUEST_LIST",
+        MOCK_GUEST_LIST,
     )
 
 
