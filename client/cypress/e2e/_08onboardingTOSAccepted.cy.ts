@@ -71,6 +71,7 @@ Object.values(viewports).forEach(
         });
 
         it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {
+          cy.wait(2000);
           cy.get('[data-test=ModalOnboarding__Button]').click();
           if (isLargeDesktop || isDesktop) {
             cy.get('[data-test=LayoutTopBar__settingsButton]').click();
@@ -78,14 +79,18 @@ Object.values(viewports).forEach(
             cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
           }
           cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
+          cy.get('[data-test=ModalOnboarding]').should('be.visible');
+          cy.get('[data-test=ModalOnboarding__Button]').click();
           cy.reload();
           // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
           cy.disconnectMetamaskWalletFromAllDapps();
+          cy.reload();
           connectWalletOnboarding();
           cy.get('[data-test=ModalOnboarding]').should('be.visible');
         });
 
         it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
+          cy.wait(2000);
           cy.get('[data-test=ModalOnboarding__Button]').click();
           if (isLargeDesktop || isDesktop) {
             cy.get('[data-test=LayoutTopBar__settingsButton]').click();

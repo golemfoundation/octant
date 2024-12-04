@@ -57,7 +57,8 @@ def _has_guest_stamp_applied_by_gp(score: GPStamps) -> bool:
 
 
 def _apply_gtc_staking_stamp_nullification(score: int, stamps: GPStamps) -> int:
-    "Take score and stamps as returned by Passport and remove score associated with GTC staking"
+    """Take score and stamps as returned by Passport and remove score associated with GTC staking"""
+
     delta = 0
     all_stamps = json.loads(stamps.stamps)
     providers = [_get_provider(stamp) for stamp in all_stamps]
