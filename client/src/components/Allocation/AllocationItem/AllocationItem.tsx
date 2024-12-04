@@ -253,6 +253,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       )}
       <motion.div
         ref={ref}
+        data-test="AlloocationItem__draggableContainer"
         drag={isInputFocused ? false : 'x'}
         dragConstraints={{ left: constraints[0], right: constraints[1] }}
         dragElastic={false}
