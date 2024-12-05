@@ -95,9 +95,8 @@ Object.values(viewports).forEach(
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
           .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]').click({
-          force: true,
-        });
+        cy.get('[data-test=Layout__body]').scrollIntoView();
+        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]').click();
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
           .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
@@ -113,13 +112,10 @@ Object.values(viewports).forEach(
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
           .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click({
-          force: true,
-        });
+        cy.get('[data-test=Layout__body]').scrollIntoView();
+        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.wait(1000);
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click({
-          force: true,
-        });
+        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
           .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
@@ -129,9 +125,8 @@ Object.values(viewports).forEach(
         cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrowSvg] path')
           .then($el => $el.css('fill'))
           .should('be.colored', '#ebebeb');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click({
-          force: true,
-        });
+        cy.get('[data-test=Layout__body]').scrollIntoView();
+        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
           .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
