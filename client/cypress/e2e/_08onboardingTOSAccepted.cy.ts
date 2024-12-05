@@ -82,10 +82,7 @@ Object.values(viewports).forEach(
           cy.get('[data-test=ModalOnboarding]').should('be.visible');
           cy.get('[data-test=ModalOnboarding__Button]').click();
           cy.reload();
-          // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
-          cy.disconnectMetamaskWalletFromAllDapps();
-          cy.reload();
-          connectWalletOnboarding();
+          cy.wait(1000);
           cy.get('[data-test=ModalOnboarding]').should('be.visible');
         });
 

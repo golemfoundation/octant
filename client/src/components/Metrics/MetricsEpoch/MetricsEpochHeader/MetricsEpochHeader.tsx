@@ -11,6 +11,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import styles from './MetricsEpochHeader.module.scss';
 
 const MetricsEpochHeader = (): ReactElement => {
+  const dataTestRoot = 'MetricsEpochHeader';
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { isDesktop } = useMediaQuery();
   const { epoch, lastEpoch, setEpoch } = useMetricsEpoch();
@@ -24,18 +25,24 @@ const MetricsEpochHeader = (): ReactElement => {
 
   return (
     <MetricsSectionHeader
+      dataTest={dataTestRoot}
       title={t(isDesktop ? 'epochAllocationWindow' : 'epochAllocation', { epoch })}
     >
       <div className={styles.epochInfo}>
         {isCurrentOpenEpoch ? (
-          <div className={styles.badge}>{t('open')}</div>
+          <div className={styles.badge} data-test={`${dataTestRoot}__openBadge`}>
+            {t('open')}
+          </div>
         ) : (
-          <div className={styles.epochDurationLabel}>{epochDurationLabel}</div>
+          <div className={styles.epochDurationLabel} data-test={`${dataTestRoot}__epochDuration`}>
+            {epochDurationLabel}
+          </div>
         )}
       </div>
       <NavigationArrows
         className={styles.arrows}
         classNamePrevButton={styles.arrowLeft}
+        dataTest={`${dataTestRoot}__NavigationArrows`}
         isNextButtonDisabled={isRightArrowDisabled}
         isPrevButtonDisabled={isLeftArrowDisabled}
         onClickNextButton={() => setEpoch(epoch + 1)}

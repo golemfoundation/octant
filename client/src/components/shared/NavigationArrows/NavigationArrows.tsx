@@ -15,9 +15,10 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
   className,
   classNameNextButton,
   classNamePrevButton,
+  dataTest = 'NavigationArrows',
 }) => {
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test={dataTest}>
       <div
         className={cx(
           styles.arrow,
@@ -25,6 +26,7 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
           isPrevButtonDisabled && styles.isDisabled,
           classNamePrevButton,
         )}
+        data-test={`${dataTest}__leftArrow`}
         onClick={() => {
           if (isPrevButtonDisabled) {
             return;
@@ -32,10 +34,11 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
           onClickPrevButton();
         }}
       >
-        <Svg img={arrowRight} size={1.4} />
+        <Svg dataTest={`${dataTest}__leftArrowSvg`} img={arrowRight} size={1.4} />
       </div>
       <div
         className={cx(styles.arrow, isNextButtonDisabled && styles.isDisabled, classNameNextButton)}
+        data-test={`${dataTest}__rightArrow`}
         onClick={() => {
           if (isNextButtonDisabled) {
             return;
@@ -43,7 +46,7 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
           onClickNextButton();
         }}
       >
-        <Svg img={arrowRight} size={1.4} />
+        <Svg dataTest={`${dataTest}__rightArrowSvg`} img={arrowRight} size={1.4} />
       </div>
     </div>
   );
