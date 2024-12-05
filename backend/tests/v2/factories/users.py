@@ -12,6 +12,7 @@ from v2.core.types import Address
 class UserFactory(AsyncSQLAlchemyFactory):
     class Meta:
         model = User
+        sqlalchemy_session_persistence = "commit"
 
     address = LazyAttribute(generate_random_eip55_address)
 

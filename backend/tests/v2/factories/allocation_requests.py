@@ -14,6 +14,7 @@ from v2.core.types import Address
 class AllocationRequestFactory(AsyncSQLAlchemyFactory):
     class Meta:
         model = AllocationRequest
+        sqlalchemy_session_persistence = "commit"
 
     user_id = None
     epoch = None

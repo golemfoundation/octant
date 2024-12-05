@@ -3,6 +3,8 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import status
+
+from tests.v2.factories import FactoriesAggregator
 from tests.v2.utils import FakeUser, FakeAllocation
 
 """Test cases for the GET /allocations/epoch/{epoch_number} endpoint"""
@@ -22,24 +24,33 @@ async def test_returns_empty_list_when_no_allocations(
 
 @pytest.mark.asyncio
 async def test_returns_allocations_when_they_exist(
-    fast_client: AsyncClient, fast_session: AsyncSession
+    fast_client: AsyncClient, factories: FactoriesAggregator
 ):
     """Should return allocations when they exist"""
 
     # Given: donors with allocations
-    alice = await FakeUser.GetAlice(fast_session)
-    a_alloc1 = await FakeAllocation.of_(fast_session, alice, 1)
-    a_alloc2 = await FakeAllocation.of_(fast_session, alice, 2)
-    a_alloc3 = await FakeAllocation.of_(fast_session, alice, 3)
+    # alice = await FakeUser.GetAlice(fast_session)
+    alice = await factories.users.get_alice()
+    a_alloc1 = await factories.allocations.create(user=alice, epoch=1)
+    a_alloc2 = await factories.allocations.create(user=alice, epoch=2)
+    a_alloc3 = await factories.allocations.create(user=alice, epoch=3)
+    # a_alloc1 = await FakeAllocation.of_(fast_session, alice, 1)
+    # a_alloc2 = await FakeAllocation.of_(fast_session, alice, 2)
+    # a_alloc3 = await FakeAllocation.of_(fast_session, alice, 3)
 
-    bob = await FakeUser.GetBob(fast_session)
-    b_alloc1 = await FakeAllocation.of_(fast_session, bob, 1)
-    b_alloc2 = await FakeAllocation.of_(fast_session, bob, 2)
+    # bob = await FakeUser.GetBob(fast_session)
+    bob = await factories.users.get_bob()
+    b_alloc1 = await factories.allocations.create(user=bob, epoch=1)
+    b_alloc2 = await factories.allocations.create(user=bob, epoch=2)
+    # b_alloc1 = await FakeAllocation.of_(fast_session, bob, 1)
+    # b_alloc2 = await FakeAllocation.of_(fast_session, bob, 2)
 
-    charlie = await FakeUser.GetCharlie(fast_session)
-    c_alloc1 = await FakeAllocation.of_(fast_session, charlie, 1)
+    # charlie = await FakeUser.GetCharlie(fast_session)
+    charlie = await factories.users.get_charlie()
+    c_alloc1 = await factories.allocations.create(user=charlie, epoch=1)
+    # c_alloc1 = await FakeAllocation.of_(fast_session, charlie, 1)
 
-    await fast_session.commit()
+    # await fast_session.commit()
 
     async with fast_client as client:
         # Allocations for epoch 1

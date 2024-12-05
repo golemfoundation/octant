@@ -13,6 +13,7 @@ from v2.core.types import Address, BigInteger
 class AllocationFactory(AsyncSQLAlchemyFactory):
     class Meta:
         model = Allocation
+        sqlalchemy_session_persistence = "commit"
 
     user_id = None
     epoch = None
@@ -24,7 +25,7 @@ class AllocationFactory(AsyncSQLAlchemyFactory):
 class AllocationFactorySet(FactorySetBase):
     _factories = {"allocation": AllocationFactory}
 
-    async def create_allocation(
+    async def create(
         self,
         user: User | Address,
         project_address: Address,
