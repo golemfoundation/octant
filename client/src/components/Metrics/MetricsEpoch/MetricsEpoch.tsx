@@ -35,6 +35,7 @@ import useLockedsData from 'hooks/subgraph/useLockedsData';
 import styles from './MetricsEpoch.module.scss';
 
 const MetricsEpoch = (): ReactElement => {
+  const dataTestRoot = 'MetricsEpoch';
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingCurrentEpochProps } = useCurrentEpochProps();
@@ -91,9 +92,9 @@ const MetricsEpoch = (): ReactElement => {
     isFetchingEpochPatrons;
 
   return (
-    <div className={styles.root} id={METRICS_EPOCH_ID}>
+    <div className={styles.root} data-test={dataTestRoot} id={METRICS_EPOCH_ID}>
       <MetricsEpochHeader />
-      <MetricsGrid className={styles.grid} dataTest="MetricsEpoch__MetricsGrid">
+      <MetricsGrid className={styles.grid} dataTest={`${dataTestRoot}__MetricsGrid`}>
         <MetricsEpochGridTopProjects className={styles.topProjects} isLoading={isLoading} />
         <MetricsEpochGridFundsUsage
           className={styles.fundsUsage}

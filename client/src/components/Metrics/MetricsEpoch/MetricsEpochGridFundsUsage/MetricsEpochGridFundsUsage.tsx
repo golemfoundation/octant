@@ -19,6 +19,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   totalUserDonationsWithPatronRewards,
   unusedRewards,
 }) => {
+  const dataTestRoot = 'MetricsEpochGridFundsUsage';
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
   const { data: epochInfo } = useEpochInfo(epoch);
@@ -160,7 +161,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   return (
     <MetricsGridTile
       className={cx(styles.root, className)}
-      dataTest="MetricsEpochGridFundsUsage"
+      dataTest={dataTestRoot}
       groups={[
         {
           children: (
@@ -174,7 +175,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
                 </div>
                 <div
                   className={cx(styles.value, isLoading && styles.isLoading)}
-                  data-test="MetricsEpochGridFundsUsage__total"
+                  data-test={`${dataTestRoot}__total`}
                 >
                   {!isLoading &&
                     getValuesToDisplay({
