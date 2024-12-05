@@ -100,7 +100,11 @@ Object.values(viewports).forEach(
       });
 
       it('User sees info about locking GLM to earn rewards when there are no projects added to allocation', () => {
-        cy.get('[data-test=Allocation__emptyState]').should('be.visible');
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=Allocation__emptyState]').should('be.visible');
+        } else {
+          cy.get('[data-test=AllocationView__emptyState]').should('be.visible');
+        }
       });
 
       it('User can add and remove projects from allocation ', () => {
