@@ -15,6 +15,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   isLocked,
   isManuallyEdited,
 }) => {
+  const dataTestRoot = 'AllocationRewardsBox';
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
@@ -58,9 +59,15 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   }, [isDecisionWindowOpen, individualReward, upcomingBudget]);
 
   return (
-    <div className={cx(styles.root, isManuallyEdited && styles.isManuallyEdited)}>
+    <div
+      className={cx(styles.root, isManuallyEdited && styles.isManuallyEdited)}
+      data-test={dataTestRoot}
+    >
       <div>
-        <div className={cx(styles.value, (isDisabled || isLocked) && styles.isGrey)}>
+        <div
+          className={cx(styles.value, (isDisabled || isLocked) && styles.isGrey)}
+          data-test={`${dataTestRoot}__value`}
+        >
           {
             getValuesToDisplay({
               cryptoCurrency: 'ethereum',
@@ -70,7 +77,9 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
             }).primary
           }
         </div>
-        <div className={styles.label}>{subtitle}</div>
+        <div className={styles.label} data-test={`${dataTestRoot}__subtitle`}>
+          {subtitle}
+        </div>
       </div>
       {isManuallyEdited && <div className={styles.manuallyEditedLabel}>{t('manual')}</div>}
     </div>
