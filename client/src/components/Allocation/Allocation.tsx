@@ -614,7 +614,11 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
           />
         )}
         {!allocations.length && currentView === 'edit' && (
-          <div ref={allocationEmptyStateRef} className={styles.emptyState}>
+          <div
+            ref={allocationEmptyStateRef}
+            className={styles.emptyState}
+            data-test={`${dataTestRoot}__emptyState`}
+          >
             {isEmptyStateImageVisible && (
               <Img className={styles.emptyStateImage} src="/images/window-with-dog.webp" />
             )}
