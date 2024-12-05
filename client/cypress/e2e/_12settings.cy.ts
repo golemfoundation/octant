@@ -263,7 +263,6 @@ Object.values(viewports).forEach(
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
         });
         cy.reload();
-
         cy.get('[data-test=ModalOnboarding]').should('be.visible');
         cy.get('[data-test=ModalOnboarding__Button]').click();
 
@@ -278,7 +277,6 @@ Object.values(viewports).forEach(
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
         });
-
         cy.reload();
         cy.get('[data-test=ModalOnboarding]').should('not.exist');
 
