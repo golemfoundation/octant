@@ -5,6 +5,7 @@ from tests.v2.factories.allocations import AllocationFactorySet
 from tests.v2.factories.users import UserFactorySet
 from dataclasses import dataclass
 
+
 @dataclass
 class FactoriesAggregator:
     """
@@ -20,7 +21,6 @@ class FactoriesAggregator:
     users: UserFactorySet
     allocation_requests: AllocationRequestFactorySet
     allocations: AllocationFactorySet
-
 
     def __init__(self, fast_session: AsyncSession):
         """

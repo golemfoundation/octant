@@ -34,22 +34,29 @@ class AllocationRequestFactorySet(FactorySetBase):
         self,
         user: User | Address,
         epoch: int,
-        nonce: int,
-        signature: str,
         is_manually_edited: bool,
+        nonce: int | None = None,
+        signature: str | None = None,
         leverage: float | None = None,
     ) -> AllocationRequest:
         if not isinstance(user, User):
             user = await UserFactorySet(self.session).get_or_create(user)
 
-        allocation_request = await AllocationRequestFactory.create(
-            user_id=user.id,
-            epoch=epoch,
-            nonce=nonce,
-            signature=signature,
-            leverage=leverage,
-            is_manually_edited=is_manually_edited,
-        )
+        factory_kwargs = {
+            "user_id": user.id,
+            "epoch": epoch,
+            "is_manually_edited": is_manually_edited,
+        }
 
-        self.session.add(allocation_request)
+        if nonce is not None:
+            factory_kwargs["nonce"] = nonce
+
+        if signature is not None:
+            factory_kwargs["signature"] = signature
+
+        if leverage is not None:
+            factory_kwargs["leverage"] = leverage
+
+        allocation_request = await AllocationRequestFactory.create(**factory_kwargs)
+
         return allocation_request

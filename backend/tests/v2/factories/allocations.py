@@ -28,16 +28,24 @@ class AllocationFactorySet(FactorySetBase):
     async def create(
         self,
         user: User | Address,
-        project_address: Address,
-        amount: BigInteger,
         epoch: int,
-    ):
+        amount: BigInteger | None = None,
+        project_address: Address | None = None,
+    ) -> Allocation:
         if not isinstance(user, User):
             user = await UserFactorySet(self.session).get_or_create(user)
 
-        return await AllocationFactory.create(
-            user_id=user.id,
-            project_address=project_address,
-            amount=amount,
-            epoch=epoch,
-        )
+        factory_kwargs = {
+            "user_id": user.id,
+            "epoch": epoch,
+        }
+
+        if project_address is not None:
+            factory_kwargs["project_address"] = project_address
+
+        if amount is not None:
+            factory_kwargs["amount"] = amount
+
+        allocation = await AllocationFactory.create(**factory_kwargs)
+
+        return allocation
