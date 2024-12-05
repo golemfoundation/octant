@@ -4,8 +4,9 @@ from httpx import ASGITransport, AsyncClient
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from pytest_asyncio import fixture
+import pytest_asyncio
 
+from tests.v2.factories import FactoriesAggregator
 from v2.core.dependencies import get_sessionmaker
 from v2.main import app as fastapi_app
 from app.extensions import db
@@ -21,7 +22,7 @@ def fast_client(fast_app: FastAPI) -> AsyncClient:
     return AsyncClient(transport=ASGITransport(app=fast_app), base_url="http://test")
 
 
-@fixture
+@pytest_asyncio.fixture
 async def fast_session(
     fast_app: FastAPI,
 ) -> AsyncGenerator[AsyncSession, None]:
@@ -49,3 +50,8 @@ async def fast_session(
     # drop the tables
     async with engine.begin() as conn:
         await conn.run_sync(db.metadata.drop_all)
+
+
+@pytest_asyncio.fixture
+async def factories(fast_session: AsyncSession):
+    return FactoriesAggregator(fast_session)
