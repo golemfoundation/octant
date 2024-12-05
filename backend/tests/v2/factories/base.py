@@ -54,6 +54,8 @@ class FactorySetBase:
         Args:
             fast_session: An SQLAlchemy session or database connection to associate with the factories.
         """
+        self.session = fast_session
+
         for attr_name, factory_cls in self._factories.items():
             factory_cls._meta.sqlalchemy_session = fast_session
             setattr(self, attr_name, factory_cls)
