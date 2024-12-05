@@ -115,6 +115,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=Layout__body]').scrollIntoView();
         cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.wait(1000);
+        cy.get('[data-test=Layout__body]').scrollIntoView();
         cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.get('[data-test=MetricsEpochHeader__title]')
           .invoke('text')
