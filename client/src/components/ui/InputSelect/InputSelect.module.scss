@@ -148,7 +148,7 @@
 
   @media #{$desktop-up} {
     &.variant-- {
-      &overselect, &underselect {
+      &overselect, &belowselect {
         position: absolute;
         width: 12.8rem;
         padding: 1.6rem 0;
