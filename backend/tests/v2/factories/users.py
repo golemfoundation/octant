@@ -14,7 +14,7 @@ class UserFactory(AsyncSQLAlchemyFactory):
         model = User
         sqlalchemy_session_persistence = "commit"
 
-    address = LazyAttribute(generate_random_eip55_address)
+    address = LazyAttribute(lambda _: generate_random_eip55_address())
 
 
 class UserFactorySet(FactorySetBase):
@@ -32,15 +32,19 @@ class UserFactorySet(FactorySetBase):
 
     async def get_or_create(self, address: Address) -> User:
         user = await self.session.scalar(select(User).filter(User.address == address))
+
+        users = await self.session.scalars(select(User))
+        print(list(users), "XXXXXX", flush=True)
+
         if not user:
             user = await self.create_user(address=address)
         return user
 
-    async def get_alice(self) -> User:
+    async def get_or_create_alice(self) -> User:
         return await self.get_or_create(ALICE_ADDRESS)
 
-    async def get_bob(self) -> User:
+    async def get_or_create_bob(self) -> User:
         return await self.get_or_create(BOB_ADDRESS)
 
-    async def get_charlie(self) -> User:
+    async def get_or_create_charlie(self) -> User:
         return await self.get_or_create(CHARLIE_ADDRESS)

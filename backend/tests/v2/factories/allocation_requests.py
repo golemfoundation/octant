@@ -2,7 +2,7 @@ import random
 import string
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
-from factory import Sequence, LazyAttribute
+from factory import Sequence, LazyAttribute, sequence
 
 from app.infrastructure.database.models import AllocationRequest, User
 from tests.v2.factories.base import FactorySetBase
@@ -19,7 +19,6 @@ class AllocationRequestFactory(AsyncSQLAlchemyFactory):
     user_id = None
     epoch = None
     nonce = Sequence(lambda n: n + 1)
-    project_address = LazyAttribute(generate_random_eip55_address)
     signature = LazyAttribute(
         lambda _: "0x" + "".join(random.choices(string.hexdigits, k=64))
     )  # must reflect the real signature when allocating
@@ -30,7 +29,7 @@ class AllocationRequestFactory(AsyncSQLAlchemyFactory):
 class AllocationRequestFactorySet(FactorySetBase):
     _factories = {"allocation_request": AllocationRequestFactory}
 
-    async def create_allocation_request(
+    async def create(
         self,
         user: User | Address,
         epoch: int,

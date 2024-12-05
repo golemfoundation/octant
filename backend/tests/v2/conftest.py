@@ -22,7 +22,7 @@ def fast_client(fast_app: FastAPI) -> AsyncClient:
     return AsyncClient(transport=ASGITransport(app=fast_app), base_url="http://test")
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="function")
 async def fast_session(
     fast_app: FastAPI,
 ) -> AsyncGenerator[AsyncSession, None]:
@@ -52,6 +52,6 @@ async def fast_session(
         await conn.run_sync(db.metadata.drop_all)
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="function")
 async def factories(fast_session: AsyncSession) -> FactoriesAggregator:
     return FactoriesAggregator(fast_session)

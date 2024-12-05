@@ -26,7 +26,6 @@ class FactoriesAggregator:
         """
         Initialize the FactoriesAggregator instance.
         """
-
         self.users = UserFactorySet(fast_session)
         self.allocation_requests = AllocationRequestFactorySet(fast_session)
         self.allocations = AllocationFactorySet(fast_session)
