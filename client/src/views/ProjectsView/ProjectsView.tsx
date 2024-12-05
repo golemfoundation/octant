@@ -243,7 +243,7 @@ const ProjectsView = (): ReactElement => {
               : orderOptionsTranslated.filter(element => element.value !== 'randomized')
           }
           selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
-          variant="underselect"
+          variant="belowselect"
         />
       </div>
       {searchQuery === '' && !areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
