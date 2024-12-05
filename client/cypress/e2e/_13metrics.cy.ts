@@ -65,7 +65,7 @@ Object.values(viewports).forEach(
           .should('eq', 'uppercase');
       });
 
-      it('User is able to change epoch via arrow buttons', () => {
+      it('User is able to change epoch via arrow buttons', { scrollBehavior: false }, () => {
         cy.get('[data-test=MetricsEpochHeader__NavigationArrows]').should('be.visible');
         cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
         cy.get('[data-test=MetricsEpochHeader__title]')
@@ -85,53 +85,56 @@ Object.values(viewports).forEach(
         cy.get('[data-test=MetricsEpochHeader__epochDuration]').should('be.visible');
       });
 
-      it('Next arrow button is disabled when there is no more next epochs', () => {
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]')
-          .then($el => $el.css('backgroundColor'))
-          .should('be.colored', '#fafafa');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrowSvg] path')
-          .then($el => $el.css('fill'))
-          .should('be.colored', '#ebebeb');
-        cy.get('[data-test=MetricsEpochHeader__title]')
-          .invoke('text')
-          .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
-        cy.get('[data-test=Layout__body]').scrollIntoView();
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]').click();
-        cy.get('[data-test=MetricsEpochHeader__title]')
-          .invoke('text')
-          .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
-      });
+      it(
+        'Next arrow button is disabled when there is no more next epochs',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]')
+            .then($el => $el.css('backgroundColor'))
+            .should('be.colored', '#fafafa');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrowSvg] path')
+            .then($el => $el.css('fill'))
+            .should('be.colored', '#ebebeb');
+          cy.get('[data-test=MetricsEpochHeader__title]')
+            .invoke('text')
+            .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__rightArrow]').click();
+          cy.get('[data-test=MetricsEpochHeader__title]')
+            .invoke('text')
+            .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
+        },
+      );
 
-      it('Prev arrow button is disabled when there is no more prev epochs ', () => {
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]')
-          .then($el => $el.css('backgroundColor'))
-          .should('be.colored', '#fafafa');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrowSvg] path')
-          .then($el => $el.css('fill'))
-          .should('be.colored', '#9ea39e');
-        cy.get('[data-test=MetricsEpochHeader__title]')
-          .invoke('text')
-          .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
-        cy.get('[data-test=Layout__body]').scrollIntoView();
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
-        cy.wait(1000);
-        cy.get('[data-test=Layout__body]').scrollIntoView();
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
-        cy.get('[data-test=MetricsEpochHeader__title]')
-          .invoke('text')
-          .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]')
-          .then($el => $el.css('backgroundColor'))
-          .should('be.colored', '#fafafa');
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrowSvg] path')
-          .then($el => $el.css('fill'))
-          .should('be.colored', '#ebebeb');
-        cy.get('[data-test=Layout__body]').scrollIntoView();
-        cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
-        cy.get('[data-test=MetricsEpochHeader__title]')
-          .invoke('text')
-          .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
-      });
+      it(
+        'Prev arrow button is disabled when there is no more prev epochs ',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]')
+            .then($el => $el.css('backgroundColor'))
+            .should('be.colored', '#fafafa');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrowSvg] path')
+            .then($el => $el.css('fill'))
+            .should('be.colored', '#9ea39e');
+          cy.get('[data-test=MetricsEpochHeader__title]')
+            .invoke('text')
+            .should('eq', isMobile || isTablet ? 'E3 Allocation' : 'Epoch 3 Allocation Window');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
+          cy.get('[data-test=MetricsEpochHeader__title]')
+            .invoke('text')
+            .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]')
+            .then($el => $el.css('backgroundColor'))
+            .should('be.colored', '#fafafa');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrowSvg] path')
+            .then($el => $el.css('fill'))
+            .should('be.colored', '#ebebeb');
+          cy.get('[data-test=MetricsEpochHeader__NavigationArrows__leftArrow]').click();
+          cy.get('[data-test=MetricsEpochHeader__title]')
+            .invoke('text')
+            .should('eq', isMobile || isTablet ? 'E1 Allocation' : 'Epoch 1 Allocation Window');
+        },
+      );
 
       it('All tiles in "Epoch" section are visible in correct order', () => {
         const metricsEpochGridTilesDataTest = [
