@@ -15,7 +15,6 @@ class AllocationRequestFactory(AsyncSQLAlchemyFactory):
         model = AllocationRequest
         sqlalchemy_session_persistence = "commit"
 
-
     user_id = None
     epoch = None
     nonce = Sequence(lambda n: n + 1)

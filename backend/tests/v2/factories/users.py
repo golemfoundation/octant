@@ -20,7 +20,7 @@ class UserFactory(AsyncSQLAlchemyFactory):
 class UserFactorySet(FactorySetBase):
     _factories = {"user": UserFactory}
 
-    async def create_user(self, address: Address) -> User:
+    async def create(self, address: Address) -> User:
         factory_kwargs = {}
 
         if address is not None:
@@ -33,11 +33,8 @@ class UserFactorySet(FactorySetBase):
     async def get_or_create(self, address: Address) -> User:
         user = await self.session.scalar(select(User).filter(User.address == address))
 
-        users = await self.session.scalars(select(User))
-        print(list(users), "XXXXXX", flush=True)
-
         if not user:
-            user = await self.create_user(address=address)
+            user = await self.create(address=address)
         return user
 
     async def get_or_create_alice(self) -> User:
