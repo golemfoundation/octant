@@ -145,6 +145,7 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(2500);
+            cy.reload();
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -220,6 +221,7 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(2500);
+            cy.reload();
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
