@@ -44,10 +44,6 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      after(() => {
-        cy.disconnectMetamaskWalletFromAllDapps();
-      });
-
       // it('Title is visible and has correct text', () => {
       //   cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
       //   cy.get('[data-test=HomeGridCurrentGlmLock__title]')
@@ -184,6 +180,7 @@ Object.values(viewports).forEach(
             // cy.get('[data-test=ModalTransactionDetails__Button]').click();
             // cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
           });
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('Wallet connected: Unlock 1 GLM', { scrollBehavior: false }, () => {
@@ -292,6 +289,7 @@ Object.values(viewports).forEach(
             //   cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             // }
           });
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
     });
   },
