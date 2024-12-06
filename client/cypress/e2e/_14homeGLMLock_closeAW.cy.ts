@@ -100,6 +100,9 @@ Object.values(viewports).forEach(
       it('Wallet connected: Lock 1 GLM', () => {
         connectWallet({ isPatronModeEnabled: false });
 
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]', {
+          timeout: 60000,
+        }).should('not.exist');
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -171,6 +174,10 @@ Object.values(viewports).forEach(
 
       it('Wallet connected: Unlock 1 GLM', () => {
         connectWallet({ isPatronModeEnabled: false });
+
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]', {
+          timeout: 60000,
+        }).should('not.exist');
 
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
