@@ -5,7 +5,6 @@ from factory import Sequence, LazyAttribute
 
 from app.infrastructure.database.models import Allocation, User
 from tests.v2.factories import AllocationRequestFactorySet
-from tests.v2.factories.allocation_requests import AllocationRequestFactory
 from tests.v2.factories.base import FactorySetBase
 from tests.v2.factories.helpers import generate_random_eip55_address
 from tests.v2.factories.users import UserFactorySet
@@ -38,7 +37,9 @@ class AllocationFactorySet(FactorySetBase):
         if not isinstance(user, User):
             user = await UserFactorySet(self.session).get_or_create(user)
 
-        await AllocationRequestFactorySet(self.session).create(user, epoch, False, nonce=nonce) # every allocation has a corresponding allocation request
+        await AllocationRequestFactorySet(self.session).create(
+            user, epoch, False, nonce=nonce
+        )  # every allocation has a corresponding allocation request
 
         factory_kwargs = {
             "user_id": user.id,

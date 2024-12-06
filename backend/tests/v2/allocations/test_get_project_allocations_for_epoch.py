@@ -1,11 +1,9 @@
 import pytest
+from fastapi import status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi import status
-from tests.v2.utils import FakeUser, FakeAllocation
 from tests.v2.factories import FactoriesAggregator
-
 
 """Test cases for the GET /allocations/projects/{project_address}/epoch/{epoch_number} endpoint"""
 
@@ -34,11 +32,17 @@ async def test_returns_allocations_when_they_exist(
     project_address = "0x433485B5951f250cEFDCbf197Cb0F60fdBE55513"
 
     alice = await factories.users.get_or_create_alice()
-    a_alloc1 = await factories.allocations.create(user=alice, epoch=1, project_address=project_address)
-    a_alloc2 = await factories.allocations.create(user=alice, epoch=2, project_address=project_address)
+    a_alloc1 = await factories.allocations.create(
+        user=alice, epoch=1, project_address=project_address
+    )
+    a_alloc2 = await factories.allocations.create(
+        user=alice, epoch=2, project_address=project_address
+    )
 
     bob = await factories.users.get_or_create_bob()
-    b_alloc1 = await factories.allocations.create(user=bob, epoch=1, project_address=project_address)
+    b_alloc1 = await factories.allocations.create(
+        user=bob, epoch=1, project_address=project_address
+    )
 
     async with fast_client as client:
         resp = await client.get(f"allocations/project/{project_address}/epoch/1")

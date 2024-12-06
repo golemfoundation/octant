@@ -1,11 +1,8 @@
 import pytest
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from fastapi import status
-from tests.v2.utils import FakeAllocation, FakeAllocationRequest, FakeUser
-from tests.v2.factories import FactoriesAggregator
+from httpx import AsyncClient
 
+from tests.v2.factories import FactoriesAggregator
 
 """Test cases for the GET /allocations/user/{user_address}/epoch/{epoch_number} endpoint"""
 
@@ -39,7 +36,9 @@ async def test_returns_nonce_when_allocations_exist(
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == {"allocations": [], "isManuallyEdited": None}
 
-        a_alloc_1 = await factories.allocations.create(user=alice, epoch=1, project_address=project_1)
+        a_alloc_1 = await factories.allocations.create(
+            user=alice, epoch=1, project_address=project_1
+        )
 
         resp = await client.get(f"allocations/user/{alice.address}/epoch/1")
         assert resp.status_code == status.HTTP_200_OK
@@ -48,7 +47,9 @@ async def test_returns_nonce_when_allocations_exist(
             "isManuallyEdited": False,
         }
 
-        a_alloc_2 = await factories.allocations.create(user=alice, epoch=1, project_address=project_2)
+        a_alloc_2 = await factories.allocations.create(
+            user=alice, epoch=1, project_address=project_2
+        )
 
         resp = await client.get(f"allocations/user/{alice.address}/epoch/1")
         assert resp.status_code == status.HTTP_200_OK

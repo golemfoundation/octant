@@ -110,7 +110,9 @@ async def test_returns_zero_allocations_when_include_zero_allocations_is_true(
     alice = await factories.users.get_or_create_alice()
     # For testing purposes, we set the amount to 0 of one of the allocations
     a_alloc1 = await factories.allocations.create(alice, epoch=1, amount=0)
-    a_alloc2 = await factories.allocations.create(alice, epoch=1)  # This will have random amount
+    a_alloc2 = await factories.allocations.create(
+        alice, epoch=1
+    )  # This will have random amount
 
     async with fast_client as client:
         resp = await client.get(

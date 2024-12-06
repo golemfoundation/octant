@@ -1,12 +1,11 @@
 from datetime import datetime
+
 import pytest
+from fastapi import status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi import status
-from tests.v2.utils import FakeUser, FakeAllocation
 from tests.v2.factories import FactoriesAggregator
-
 
 """Test cases for the GET /allocations/donors/{epoch_number} (get_donors_for_epoch_v1) endpoint"""
 

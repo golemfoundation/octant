@@ -2,11 +2,10 @@ import random
 import string
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
-from factory import Sequence, LazyAttribute, sequence
+from factory import Sequence, LazyAttribute
 
 from app.infrastructure.database.models import AllocationRequest, User
 from tests.v2.factories.base import FactorySetBase
-from tests.v2.factories.helpers import generate_random_eip55_address
 from tests.v2.factories.users import UserFactorySet
 from v2.core.types import Address
 
