@@ -6,7 +6,6 @@ from factory import Sequence, LazyAttribute
 
 from app.infrastructure.database.models import AllocationRequest, User
 from tests.v2.factories.base import FactorySetBase
-from tests.v2.factories.helpers import generate_random_eip55_address
 from tests.v2.factories.users import UserFactorySet
 from v2.core.types import Address
 
@@ -14,11 +13,11 @@ from v2.core.types import Address
 class AllocationRequestFactory(AsyncSQLAlchemyFactory):
     class Meta:
         model = AllocationRequest
+        sqlalchemy_session_persistence = "commit"
 
     user_id = None
     epoch = None
     nonce = Sequence(lambda n: n + 1)
-    project_address = LazyAttribute(generate_random_eip55_address)
     signature = LazyAttribute(
         lambda _: "0x" + "".join(random.choices(string.hexdigits, k=64))
     )  # must reflect the real signature when allocating
@@ -29,26 +28,33 @@ class AllocationRequestFactory(AsyncSQLAlchemyFactory):
 class AllocationRequestFactorySet(FactorySetBase):
     _factories = {"allocation_request": AllocationRequestFactory}
 
-    async def create_allocation_request(
+    async def create(
         self,
         user: User | Address,
         epoch: int,
-        nonce: int,
-        signature: str,
         is_manually_edited: bool,
+        nonce: int | None = None,
+        signature: str | None = None,
         leverage: float | None = None,
     ) -> AllocationRequest:
         if not isinstance(user, User):
             user = await UserFactorySet(self.session).get_or_create(user)
 
-        allocation_request = await AllocationRequestFactory.create(
-            user_id=user.id,
-            epoch=epoch,
-            nonce=nonce,
-            signature=signature,
-            leverage=leverage,
-            is_manually_edited=is_manually_edited,
-        )
+        factory_kwargs = {
+            "user_id": user.id,
+            "epoch": epoch,
+            "is_manually_edited": is_manually_edited,
+        }
 
-        self.session.add(allocation_request)
+        if nonce is not None:
+            factory_kwargs["nonce"] = nonce
+
+        if signature is not None:
+            factory_kwargs["signature"] = signature
+
+        if leverage is not None:
+            factory_kwargs["leverage"] = leverage
+
+        allocation_request = await AllocationRequestFactory.create(**factory_kwargs)
+
         return allocation_request
