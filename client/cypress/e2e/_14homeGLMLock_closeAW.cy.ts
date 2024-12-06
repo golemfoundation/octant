@@ -123,12 +123,13 @@ Object.values(viewports).forEach(
             );
             cy.confirmMetamaskPermissionToSpend({
               spendLimit: '99999999999999999999',
+              shouldWaitForPopupClosure: true,
             });
             // Workaround for two notifications during first transaction.
             // 1. Allow the third party to spend TKN from your current balance.
             // 2. Confirm permission to spend
             if (Cypress.env('CI') === 'true' && idx === 0) {
-              cy.wait(1000);
+              cy.wait(10000);
               cy.confirmMetamaskPermissionToSpend({
                 spendLimit: '99999999999999999999',
               });
