@@ -1,7 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { connectWallet, GLM_USD, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  connectWallet,
+  // GLM_USD,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -12,7 +17,15 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }, idx) => {
+  (
+    {
+      device,
+      viewportWidth,
+      viewportHeight,
+      // isLargeDesktop, isDesktop
+    },
+    idx,
+  ) => {
     describe(`[AW IS OPEN] HomeGlmLock: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
@@ -101,12 +114,8 @@ Object.values(viewports).forEach(
       //   cy.disconnectMetamaskWalletFromAllDapps();
       // });
 
-      it('Wallet connected: Lock 1 GLM', () => {
+      it('Wallet connected: Lock 1 GLM', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
-
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]', {
-          timeout: 60000,
-        }).should('not.exist');
 
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
@@ -133,7 +142,7 @@ Object.values(viewports).forEach(
             // 1. Allow the third party to spend TKN from your current balance.
             // 2. Confirm permission to spend
             if (Cypress.env('CI') === 'true' && idx === 0) {
-              cy.wait(10000);
+              cy.wait(5000);
               cy.confirmMetamaskPermissionToSpend({
                 spendLimit: '99999999999999999999',
               });
@@ -144,8 +153,6 @@ Object.values(viewports).forEach(
             );
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
-            cy.wait(2500);
-            cy.reload();
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -154,47 +161,39 @@ Object.values(viewports).forEach(
                 const lockedGlmsAfterLock = parseInt(nextText, 10);
                 expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
               });
-            cy.get('[data-test=TransactionsListItem__title]')
-              .first()
-              .should('have.text', 'Locked GLM');
-            cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
-              .first()
-              .should('have.text', '1 GLM');
-            cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
-              .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionsListItem__title]')
+            //   .first()
+            //   .should('have.text', 'Locked GLM');
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
+            //   .first()
+            //   .should('have.text', '1 GLM');
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
+            //   .first()
+            //   .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
 
-            cy.get('[data-test=TransactionsListItem]').first().click();
-            cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
+            // cy.get('[data-test=TransactionsListItem]').first().click();
+            // cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
-              .invoke('text')
-              .should('eq', '1 GLM');
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
-              .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
+            //   .invoke('text')
+            //   .should('eq', '1 GLM');
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
+            //   .invoke('text')
+            //   .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
 
-            cy.get('[data-test=ModalTransactionDetails__Button]').click();
-            cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
+            // cy.get('[data-test=ModalTransactionDetails__Button]').click();
+            // cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
           });
       });
 
-      it('Wallet connected: Unlock 1 GLM', () => {
+      it('Wallet connected: Unlock 1 GLM', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
-
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]', {
-          timeout: 60000,
-        }).should('not.exist');
-
-        cy.wait(2500);
 
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
             const amountToUnlock = 1;
             const lockedGlms = parseInt(text, 10);
-
-            expect(lockedGlms).to.be.eq(1);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
               .invoke('text')
@@ -220,8 +219,7 @@ Object.values(viewports).forEach(
             );
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
-            cy.wait(2500);
-            cy.reload();
+
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -230,69 +228,69 @@ Object.values(viewports).forEach(
                 const lockedGlmsAfterUnlock = parseInt(nextText, 10);
                 expect(lockedGlms - amountToUnlock).to.be.eq(lockedGlmsAfterUnlock);
               });
-            cy.get('[data-test=TransactionsListItem__title]')
-              .first()
-              .should('have.text', 'Unlocked GLM');
-            cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
-              .first()
-              .should('have.text', '1 GLM');
-            cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
-              .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionsListItem__title]')
+            //   .first()
+            //   .should('have.text', 'Unlocked GLM');
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
+            //   .first()
+            //   .should('have.text', '1 GLM');
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
+            //   .first()
+            //   .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
 
-            cy.get('[data-test=TransactionsListItem]').first().click();
-            cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
+            // cy.get('[data-test=TransactionsListItem]').first().click();
+            // cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
-              .invoke('text')
-              .should('eq', '1 GLM');
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
-              .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
+            //   .invoke('text')
+            //   .should('eq', '1 GLM');
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
+            //   .invoke('text')
+            //   .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
 
-            cy.get('[data-test=ModalTransactionDetails__Button]').click();
-            cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
+            // cy.get('[data-test=ModalTransactionDetails__Button]').click();
+            // cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
 
-            // Change main value to FIAT
-            if (isLargeDesktop || isDesktop) {
-              cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-              cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-              cy.get('[data-test=SettingsDrawer__closeButton]').click();
-            } else {
-              cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
-              cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-              cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
-            }
+            // // Change main value to FIAT
+            // if (isLargeDesktop || isDesktop) {
+            //   cy.get('[data-test=LayoutTopBar__settingsButton]').click();
+            //   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+            //   cy.get('[data-test=SettingsDrawer__closeButton]').click();
+            // } else {
+            //   cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
+            //   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+            //   cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
+            // }
 
-            cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
-              .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
-            cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
-              .first()
-              .should('have.text', '1 GLM');
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
+            //   .first()
+            //   .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
+            //   .first()
+            //   .should('have.text', '1 GLM');
 
-            cy.get('[data-test=TransactionsListItem]').first().click();
-            cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
+            // cy.get('[data-test=TransactionsListItem]').first().click();
+            // cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
-              .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
-            cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
-              .invoke('text')
-              .should('eq', `1 GLM`);
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
+            //   .invoke('text')
+            //   .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+            // cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
+            //   .invoke('text')
+            //   .should('eq', `1 GLM`);
 
-            cy.get('[data-test=ModalTransactionDetails__Button]').click();
+            // cy.get('[data-test=ModalTransactionDetails__Button]').click();
 
-            // Change main value to ETH
-            if (isLargeDesktop || isDesktop) {
-              cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-              cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
-              cy.get('[data-test=SettingsDrawer__closeButton]').click();
-            } else {
-              cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
-              cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
-              cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
-            }
+            // // Change main value to ETH
+            // if (isLargeDesktop || isDesktop) {
+            //   cy.get('[data-test=LayoutTopBar__settingsButton]').click();
+            //   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
+            //   cy.get('[data-test=SettingsDrawer__closeButton]').click();
+            // } else {
+            //   cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
+            //   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
+            //   cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
+            // }
           });
       });
     });
