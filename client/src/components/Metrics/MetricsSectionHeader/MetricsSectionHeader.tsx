@@ -10,7 +10,9 @@ const MetricsSectionHeader: FC<MetricsSectionHeaderProps> = ({
 }) => {
   return (
     <div className={styles.root} data-test={dataTest}>
-      <div className={styles.title}>{title}</div>
+      <div className={styles.title} data-test={`${dataTest}__title`}>
+        {title}
+      </div>
       {children}
     </div>
   );

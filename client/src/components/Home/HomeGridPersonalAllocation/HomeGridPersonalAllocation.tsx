@@ -48,6 +48,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
     <>
       <GridTile
         className={className}
+        dataTest="HomeGridPersonalAllocation"
         title={isProjectAdminMode ? t('yourFunds') : i18n.t('common.personalAllocation')}
       >
         <div className={styles.root}>

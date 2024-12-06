@@ -21,7 +21,7 @@ const MetricsEpochDonationsProgressBar: FC<MetricsEpochDonationsProgressBarProps
     : (100 - donationsValue).toFixed(2).replace(dotAndZeroes, '');
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="MetricsEpochDonationsProgressBar">
       <ProgressBar
         className={styles.progressBar}
         progressPercentage={donationsValue}

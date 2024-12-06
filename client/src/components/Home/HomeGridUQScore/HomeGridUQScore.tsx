@@ -244,6 +244,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
     <>
       <GridTile
         className={className}
+        dataTest="HomeGridUQScore"
         title={t('yourUniquenessScore')}
         titleSuffix={
           <Button

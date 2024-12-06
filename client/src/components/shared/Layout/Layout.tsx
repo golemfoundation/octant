@@ -22,13 +22,14 @@ import LayoutProps from './types';
 
 const Layout: FC<LayoutProps> = ({
   children,
-  dataTest,
   navigationBottomSuffix,
   isLoading,
   isNavigationVisible = true,
   classNameBody,
   isSyncingInProgress,
 }) => {
+  const dataTestRoot = 'Layout';
+
   const { isMobile, isDesktop } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
@@ -38,6 +39,7 @@ const Layout: FC<LayoutProps> = ({
   const scrollRef = useRef(window.scrollY);
   const lastScrollYUpRef = useRef(0);
   const { pathname } = useLocation();
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const isProjectView = pathname.includes(`${ROOT_ROUTES.project.absolute}/`);
 
@@ -65,16 +67,18 @@ const Layout: FC<LayoutProps> = ({
       if (e.target.body.className === 'bodyFixed' || window.scrollY < 0) {
         return;
       }
-      const { offsetTop, clientHeight } = topBarWrapperEl;
+      const { offsetTop, offsetHeight } = topBarWrapperEl;
 
       if (window.scrollY > scrollRef.current) {
         topBarWrapperEl.style.position = 'absolute';
-        if (window.scrollY < lastScrollYUpRef.current + clientHeight) {
+        if (window.scrollY < lastScrollYUpRef.current + offsetHeight) {
           topBarWrapperEl.style.top = `${lastScrollYUpRef.current}px`;
-        } else if (window.scrollY >= clientHeight) {
-          topBarWrapperEl.style.top = `${window.scrollY - clientHeight}px`;
+        } else if (window.scrollY >= offsetHeight) {
+          topBarWrapperEl.style.visibility = 'hidden';
+          topBarWrapperEl.style.top = `${window.scrollY - offsetHeight}px`;
         }
       } else {
+        topBarWrapperEl.style.visibility = 'visible';
         lastScrollYUpRef.current = window.scrollY;
         if (window.scrollY <= offsetTop) {
           topBarWrapperEl.style.top = '0px';
@@ -108,7 +112,7 @@ const Layout: FC<LayoutProps> = ({
       <div
         ref={ref}
         className={cx(styles.root, isProjectView && styles.isProjectView)}
-        data-test={dataTest}
+        data-test={dataTestRoot}
       >
         <div
           ref={topBarWrapperRef}
@@ -116,8 +120,9 @@ const Layout: FC<LayoutProps> = ({
             styles.topBarWrapper,
             isProjectAdminMode && styles.isProjectAdminMode,
             isPatronMode && styles.isPatronMode,
-            networkConfig.isTestnet && styles.isTestnet,
+            isTestnet && styles.isTestnet,
           )}
+          data-test={`${dataTestRoot}__topBarWrapper`}
         >
           <LayoutTopBar className={styles.section} />
         </div>

@@ -10,10 +10,12 @@ import { cross } from 'svg/misc';
 import styles from './Drawer.module.scss';
 import DrawerProps from './types';
 
-const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose }) =>
+const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose, dataTest = 'Drawer' }) =>
   createPortal(
     <Fragment>
-      {isOpen && <div className={styles.overlay} onClick={onClose} />}
+      {isOpen && (
+        <div className={styles.overlay} data-test={`${dataTest}__overlay`} onClick={onClose} />
+      )}
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -21,12 +23,14 @@ const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose }) =>
               x: '0',
             }}
             className={styles.root}
+            data-test={dataTest}
             exit={{ x: '100%' }}
             initial={{ x: '100%' }}
             transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
           >
             <Button
               className={styles.buttonClose}
+              dataTest={`${dataTest}__closeButton`}
               Icon={<Svg img={cross} size={1} />}
               onClick={onClose}
               variant="iconOnly"

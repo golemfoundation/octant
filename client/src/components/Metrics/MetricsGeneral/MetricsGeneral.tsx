@@ -19,6 +19,7 @@ import useSettingsStore from 'store/settings/store';
 import styles from './MetricsGeneral.module.scss';
 
 const MetricsGeneral = (): ReactElement => {
+  const dataTestRoot = 'MetricsGeneral';
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const {
     data: { displayCurrency },
@@ -43,9 +44,9 @@ const MetricsGeneral = (): ReactElement => {
     isFetchingProjectsEpoch;
 
   return (
-    <div className={styles.root} id={METRICS_GENERAL_ID}>
-      <MetricsSectionHeader title={t('generalMetrics')} />
-      <MetricsGrid className={styles.grid} dataTest="MetricsGeneral__MetricsGrid">
+    <div className={styles.root} data-test={dataTestRoot} id={METRICS_GENERAL_ID}>
+      <MetricsSectionHeader dataTest={`${dataTestRoot}__header`} title={t('generalMetrics')} />
+      <MetricsGrid className={styles.grid} dataTest={`${dataTestRoot}__MetricsGrid`}>
         <MetricsGeneralGridCumulativeGlmLocked />
         <MetricsGeneralGridWalletsWithGlmLocked />
         <MetricsGeneralGridTotalGlmLockedAndTotalSupply isLoading={isLoading} />

@@ -37,6 +37,7 @@ const HomeRewards = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: rewardsRate, isFetching: isFetchingRewardsRate } = useRewardsRate(currentEpoch!);
+  const dataTestRoot = 'HomeRewards';
 
   const { isMobile } = useMediaQuery();
 
@@ -165,7 +166,7 @@ const HomeRewards = (): ReactElement => {
   ];
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTestRoot}>
       {tiles.map(({ label, value, key, isLoadingValue, tooltipText }) => (
         <div key={key} className={styles.tile}>
           <div className={styles.label}>
@@ -173,6 +174,7 @@ const HomeRewards = (): ReactElement => {
             {!isProjectAdminMode && !isPatronMode && tooltipText && (
               <Tooltip
                 className={styles.tooltipBox}
+                dataTest={`${dataTestRoot}__Tooltip--rewardsRate`}
                 position="custom"
                 text={tooltipText}
                 tooltipClassName={styles.tooltip}

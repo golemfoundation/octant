@@ -33,6 +33,7 @@ export type Env = {
   jsonRpcEndpoint?: string;
   network: 'Local' | 'Mainnet' | 'Sepolia';
   safeEndpoint: string;
+  sentryAuthToken: string;
   serverEndpoint: string;
   subgraphAddress: string;
   walletConnectProjectId: string;

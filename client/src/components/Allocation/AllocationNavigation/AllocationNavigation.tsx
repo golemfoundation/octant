@@ -19,6 +19,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   onResetValues,
   isWaitingForAllMultisigSignatures,
 }) => {
+  const dataTestRoot = 'AllocationNavigation';
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
   });
@@ -83,15 +84,17 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   }, []);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTestRoot}>
       <Button
         className={styles.button}
+        dataTest={`${dataTestRoot}__resetButton`}
         isDisabled={isLeftButtonDisabled || areButtonsDisabled}
         label={t('reset')}
         onClick={onResetValues}
       />
       <Button
         className={styles.button}
+        dataTest={`${dataTestRoot}__ctaButton`}
         isDisabled={isLoading || areButtonsDisabled}
         label={nextButtonLabel}
         onClick={currentView === 'edit' ? onAllocate : () => setCurrentView('edit')}
