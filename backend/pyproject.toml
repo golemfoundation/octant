@@ -37,6 +37,7 @@ uvicorn = {extras = ["standard"], version = "^0.31.0"}
 asyncpg = "^0.29.0"
 uvloop = "^0.20.0"
 python-socketio = "^5.11.4"
+async-factory-boy = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
