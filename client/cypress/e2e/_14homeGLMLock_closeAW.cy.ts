@@ -103,6 +103,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=HomeGridCurrentGlmLock--current__DoubleValueSkeleton]', {
           timeout: 60000,
         }).should('not.exist');
+
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -114,6 +115,7 @@ Object.values(viewports).forEach(
               .clear()
               .type(`${amountToLock}`);
             cy.get('[data-test=LockGlmTabs__Button]').should('have.text', 'Lock');
+            cy.wait(5000);
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.get('[data-test=LockGlmTabs__Button]').should(
               'have.text',
