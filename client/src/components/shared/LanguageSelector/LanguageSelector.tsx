@@ -2,8 +2,8 @@ import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import InputSelect from 'components/ui/InputSelect';
-import { Option } from 'components/ui/InputSelect/types';
 import Svg from 'components/ui/Svg';
+import { getLanguageOptions } from 'i18n/languages';
 import { earth } from 'svg/misc';
 
 import styles from './LanguageSelector.module.scss';
@@ -11,16 +11,7 @@ import styles from './LanguageSelector.module.scss';
 const LanguageSelector = (): ReactElement => {
   const { t, i18n } = useTranslation('translation');
 
-  const languageOptions: Option[] = [
-    {
-      label: t('languageSelector.english'),
-      value: 'en-EN',
-    },
-    {
-      label: t('languageSelector.spanish'),
-      value: 'es-Es',
-    },
-  ];
+  const languageOptions = getLanguageOptions(t);
 
   return (
     <InputSelect
