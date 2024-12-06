@@ -124,6 +124,8 @@ Object.values(viewports).forEach(
           cy.get('[data-test=LayoutNavbar__Button--allocate]').click();
         }
 
+        cy.wait(1000);
+
         cy.get('[data-test=AllocationItem]').should('have.length', 3);
 
         cy.get('[data-test=AllocationItem]')

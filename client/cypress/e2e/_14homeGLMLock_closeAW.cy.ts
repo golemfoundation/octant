@@ -24,16 +24,11 @@ Object.values(viewports).forEach(
       });
 
       beforeEach(() => {
-        cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.home.absolute);
-      });
-
-      after(() => {
-        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('Title is visible and has correct text', () => {
@@ -99,6 +94,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=ModalLockGlm]').should('be.visible');
         cy.get('[data-test=ModalLockGlm__Button]').click();
         cy.get('[data-test=ModalLockGlm]').should('not.exist');
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('Wallet connected: Lock 1 GLM', () => {
@@ -170,6 +166,7 @@ Object.values(viewports).forEach(
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
             cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
           });
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('Wallet connected: Unlock 1 GLM', () => {
@@ -278,6 +275,7 @@ Object.values(viewports).forEach(
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             }
           });
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
     });
   },
