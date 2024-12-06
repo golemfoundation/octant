@@ -19,7 +19,7 @@ const TransactionLabel: FC<TransactionLabelProps> = ({ isFinalized, isMultisig }
     }
     return i18n.t('common.pending');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFinalized, isMultisig]);
+  }, [isFinalized, isMultisig, i18n.language]);
 
   return <div className={cx(styles.root, isFinalized && styles.isFinalized)}>{label}</div>;
 };

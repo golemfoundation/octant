@@ -23,17 +23,17 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
     keyPrefix,
   });
 
-  const label = useMemo(() => {
+  const labelKey = useMemo(() => {
     if (type === 'info' && currentMode === 'lock' && !isLockingApproved) {
-      return t('info.lock.notApproved.label');
+      return `${keyPrefix}.info.lock.notApproved.label`;
     }
     if (type === 'success' && currentMode === 'lock') {
-      return t('success.labelLocked');
+      return `${keyPrefix}.success.labelLocked`;
     }
     if (type === 'success' && currentMode === 'unlock') {
-      return t('success.labelUnlocked');
+      return `${keyPrefix}.success.labelUnlocked`;
     }
-  }, [t, currentMode, type, isLockingApproved]);
+  }, [currentMode, type, isLockingApproved]);
 
   const text = useMemo(() => {
     if (type === 'success') {
@@ -55,7 +55,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
       <div className={styles.notification}>
         <Svg img={type === 'success' ? checkMark : notificationIconWarning} size={3.2} />
         <div className={styles.info}>
-          {label && <div className={styles.label}>{label}</div>}
+          {labelKey && <div className={styles.label}>{t(labelKey)}</div>}
           {text && (
             <div className={styles.text}>
               <Trans

@@ -11,7 +11,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import styles from './HomeView.module.scss';
 
 const HomeView = (): ReactElement => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.home' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.home' });
   const { isMobile } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -24,7 +24,8 @@ const HomeView = (): ReactElement => {
       return t('title.isDecisionWindowOpenTrue.desktop', { epoch: currentEpoch! - 1 });
     }
     return t('title.isDecisionWindowOpenFalse', { epoch: currentEpoch });
-  }, [currentEpoch, t, isMobile, isDecisionWindowOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEpoch, t, isMobile, isDecisionWindowOpen, i18n.language]);
 
   return (
     <div className={styles.root} data-test="HomeView">

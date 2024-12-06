@@ -31,7 +31,7 @@ import LayoutTopBarProps from './types';
 
 const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const dataTestRoot = 'LayoutTopBar';
-  const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
@@ -73,7 +73,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
 
     return truncateEthAddress(address!, isMobile);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isConnected, isMobile, isProjectAdminMode, isPatronMode]);
+  }, [address, isConnected, isMobile, isProjectAdminMode, isPatronMode, i18n.language]);
 
   const onLogoClick = () => {
     if (pathname === ROOT_ROUTES.home.absolute) {

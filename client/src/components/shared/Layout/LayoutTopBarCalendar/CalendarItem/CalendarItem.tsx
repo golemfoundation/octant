@@ -58,6 +58,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
     isHovered,
     durationToChangeAWInMinutes,
     shouldUseThirdPersonSingularVerb,
+    i18n.language,
   ]);
 
   return (

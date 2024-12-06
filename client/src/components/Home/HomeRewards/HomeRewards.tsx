@@ -106,7 +106,7 @@ const HomeRewards = (): ReactElement => {
     }
     return t('currentRewards');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProjectAdminMode, isMobile]);
+  }, [isProjectAdminMode, isMobile, i18n.language]);
 
   const totalRewardsLabel = useMemo(() => {
     if (isProjectAdminMode) {
@@ -117,7 +117,7 @@ const HomeRewards = (): ReactElement => {
     }
     return t('totalRewards');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProjectAdminMode, isMobile]);
+  }, [isProjectAdminMode, isMobile, i18n.language]);
 
   const rewardsRateLabel = useMemo(() => {
     if (isProjectAdminMode || isPatronMode) {
@@ -128,7 +128,7 @@ const HomeRewards = (): ReactElement => {
     }
     return t('rewardsRate');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProjectAdminMode, isMobile, isPatronMode]);
+  }, [isProjectAdminMode, isMobile, isPatronMode, i18n.language]);
 
   const tiles = [
     {
