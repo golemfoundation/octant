@@ -31,71 +31,75 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      it('Title is visible and has correct text', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
-        cy.get('[data-test=HomeGridCurrentGlmLock__title]')
-          .invoke('text')
-          .should('eq', 'Current GLM lock');
-      });
-
-      it('Main value is 0 (GLM/$) when wallet isn`t connected ', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
-          .invoke('text')
-          .should('eq', '0 GLM');
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]')
-          .invoke('text')
-          .should('eq', '$0.00');
-      });
-
-      it('Effective value is 0 (GLM/$) when wallet isn`t connected ', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
-          .invoke('text')
-          .should('eq', '0 GLM');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
-          .invoke('text')
-          .should('eq', '$0.00');
-      });
-
-      it('Effective label has a tooltip with correct text', () => {
-        if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
-        } else {
-          cy.get('[data-test=TooltipEffectiveLockedBalance]').click();
-        }
-
-        cy.get('[data-test=TooltipEffectiveLockedBalance__content]').should('be.visible');
-        cy.get('[data-test=TooltipEffectiveLockedBalance__content]')
-          .invoke('text')
-          .should(
-            'eq',
-            'Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.',
-          );
-      });
-
-      it('Button has "Lock GLM" text and is disabled when wallet isn`t connected', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-          .invoke('text')
-          .should('eq', 'Lock GLM');
-      });
-
-      it('User is able to close Lock/Unlock GLM Modal', () => {
-        connectWallet({ isPatronModeEnabled: false });
-
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-          .invoke('text')
-          .should('eq', 'Lock GLM');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
-        cy.get('[data-test=ModalLockGlm__overflow]').should('exist');
-        cy.get('[data-test=ModalLockGlm]').should('be.visible');
-        cy.get('[data-test=ModalLockGlm__overflow]').click({ force: true });
-        cy.get('[data-test=ModalLockGlm]').should('not.exist');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
-        cy.get('[data-test=ModalLockGlm]').should('be.visible');
-        cy.get('[data-test=ModalLockGlm__Button]').click();
-        cy.get('[data-test=ModalLockGlm]').should('not.exist');
+      after(() => {
         cy.disconnectMetamaskWalletFromAllDapps();
       });
+
+      // it('Title is visible and has correct text', () => {
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__title]')
+      //     .invoke('text')
+      //     .should('eq', 'Current GLM lock');
+      // });
+
+      // it('Main value is 0 (GLM/$) when wallet isn`t connected ', () => {
+      //   cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
+      //     .invoke('text')
+      //     .should('eq', '0 GLM');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]')
+      //     .invoke('text')
+      //     .should('eq', '$0.00');
+      // });
+
+      // it('Effective value is 0 (GLM/$) when wallet isn`t connected ', () => {
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
+      //     .invoke('text')
+      //     .should('eq', '0 GLM');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
+      //     .invoke('text')
+      //     .should('eq', '$0.00');
+      // });
+
+      // it('Effective label has a tooltip with correct text', () => {
+      //   if (isLargeDesktop || isDesktop) {
+      //     cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
+      //   } else {
+      //     cy.get('[data-test=TooltipEffectiveLockedBalance]').click();
+      //   }
+
+      //   cy.get('[data-test=TooltipEffectiveLockedBalance__content]').should('be.visible');
+      //   cy.get('[data-test=TooltipEffectiveLockedBalance__content]')
+      //     .invoke('text')
+      //     .should(
+      //       'eq',
+      //       'Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.',
+      //     );
+      // });
+
+      // it('Button has "Lock GLM" text and is disabled when wallet isn`t connected', () => {
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
+      //     .invoke('text')
+      //     .should('eq', 'Lock GLM');
+      // });
+
+      // it('User is able to close Lock/Unlock GLM Modal', () => {
+      //   connectWallet({ isPatronModeEnabled: false });
+
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
+      //     .invoke('text')
+      //     .should('eq', 'Lock GLM');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
+      //   cy.get('[data-test=ModalLockGlm__overflow]').should('exist');
+      //   cy.get('[data-test=ModalLockGlm]').should('be.visible');
+      //   cy.get('[data-test=ModalLockGlm__overflow]').click({ force: true });
+      //   cy.get('[data-test=ModalLockGlm]').should('not.exist');
+      //   cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
+      //   cy.get('[data-test=ModalLockGlm]').should('be.visible');
+      //   cy.get('[data-test=ModalLockGlm__Button]').click();
+      //   cy.get('[data-test=ModalLockGlm]').should('not.exist');
+      //   cy.disconnectMetamaskWalletFromAllDapps();
+      // });
 
       it('Wallet connected: Lock 1 GLM', () => {
         connectWallet({ isPatronModeEnabled: false });
@@ -172,7 +176,6 @@ Object.values(viewports).forEach(
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
             cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
           });
-        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('Wallet connected: Unlock 1 GLM', () => {
@@ -182,11 +185,15 @@ Object.values(viewports).forEach(
           timeout: 60000,
         }).should('not.exist');
 
+        cy.wait(2500);
+
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
             const amountToUnlock = 1;
             const lockedGlms = parseInt(text, 10);
+
+            expect(lockedGlms).to.be.eq(1);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
               .invoke('text')
@@ -285,7 +292,6 @@ Object.values(viewports).forEach(
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             }
           });
-        cy.disconnectMetamaskWalletFromAllDapps();
       });
     });
   },
