@@ -123,7 +123,6 @@ Object.values(viewports).forEach(
         } else {
           cy.get('[data-test=LayoutNavbar__Button--allocate]').click();
         }
-
         cy.wait(1000);
 
         cy.get('[data-test=AllocationItem]').should('have.length', 3);
@@ -144,6 +143,8 @@ Object.values(viewports).forEach(
               .trigger('pointerup', {
                 pageX: allocationItemLeft - 100,
               });
+
+            cy.wait(1000);
 
             cy.get('[data-test=AllocationItem__removeButton]').eq(0).should('be.visible');
             cy.get('[data-test=AllocationItem__removeButton]').eq(0).click();
