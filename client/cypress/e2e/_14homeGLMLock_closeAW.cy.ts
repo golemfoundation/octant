@@ -241,7 +241,7 @@ Object.values(viewports).forEach(
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
               cy.get('[data-test=SettingsDrawer__closeButton]').click();
             } else {
-              cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
+              cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             }
@@ -271,7 +271,7 @@ Object.values(viewports).forEach(
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
               cy.get('[data-test=SettingsDrawer__closeButton]').click();
             } else {
-              cy.get(`[data-test=LayoutNavbar__Button--metrics]`).click();
+              cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             }
