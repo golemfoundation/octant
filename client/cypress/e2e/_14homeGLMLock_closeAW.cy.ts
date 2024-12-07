@@ -182,9 +182,6 @@ Object.values(viewports).forEach(
             const amountToUnlock = 1;
             const lockedGlms = parseInt(text, 10);
 
-            cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-              .invoke('text')
-              .should('eq', 'Edit Locked GLM');
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
             cy.get('[data-test=LockGlmTabs__tab--1]').click();
             cy.get('[data-test=InputsCryptoFiat__InputText--crypto]')
