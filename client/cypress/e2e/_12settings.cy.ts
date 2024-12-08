@@ -47,6 +47,7 @@ Object.values(viewports).forEach(
         });
 
         it('if user resize viewport from large-desktop/desktop to tablet/mobile settings drawer will hide and current view will change to Settings view.', () => {
+          cy.wait(1000);
           // mobile
           cy.viewport(viewports.mobile.viewportWidth, viewports.mobile.viewportHeight);
           cy.get('[data-test=SettingsDrawer]').should('not.exist');
@@ -60,6 +61,7 @@ Object.values(viewports).forEach(
         });
 
         it('If user resize viewport from large-desktop/desktop to tablet/mobile when settings drawer was open and then change view and resize again to large/desktop settings drawer won`t be visible.', () => {
+          cy.wait(1000);
           // mobile
           cy.viewport(viewports.mobile.viewportWidth, viewports.mobile.viewportHeight);
           cy.get('[data-test=LayoutNavbar__Button--projects]').click();
@@ -90,6 +92,7 @@ Object.values(viewports).forEach(
         });
 
         it('if user resize viewport from tablet/mobile to large-desktop/desktop settings view will change to the last opened or Home view and Settings drawer will be visible.', () => {
+          cy.wait(1000);
           // desktop
           cy.viewport(viewports.desktop.viewportWidth, viewports.desktop.viewportHeight);
           cy.get('[data-test=SettingsDrawer]').should('be.visible');
