@@ -63,7 +63,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const buttonWalletText = useMemo(() => {
-    if (!isConnected) {
+    if (!isConnected || !address) {
       return !isMobile ? t('connectWallet') : t('connect');
     }
 

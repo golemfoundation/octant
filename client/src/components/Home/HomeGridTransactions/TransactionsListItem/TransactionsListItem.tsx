@@ -13,6 +13,7 @@ import styles from './TransactionsListItem.module.scss';
 import TransactionsListItemProps from './types';
 
 const TransactionsListItem: FC<TransactionsListItemProps> = ({ ...props }) => {
+  const dataTestRoot = 'TransactionsListItem';
   const { type, eventData, isFinalized = true, timestamp, isMultisig = false } = props;
   const { amount } = eventData;
   const { i18n, t } = useTranslation('translation', {
@@ -53,12 +54,12 @@ const TransactionsListItem: FC<TransactionsListItemProps> = ({ ...props }) => {
       <BoxRounded
         childrenWrapperClassName={styles.child}
         className={styles.box}
-        dataTest="HistoryItem"
+        dataTest={dataTestRoot}
         hasPadding={false}
         onClick={() => setIsModalOpen(true)}
       >
         <div className={styles.titleAndSubtitle}>
-          <div className={styles.title} data-test="HistoryItem__title">
+          <div className={styles.title} data-test={`${dataTestRoot}__title`}>
             {title}
           </div>
           {type === 'patron_mode_donation' ? (
@@ -78,7 +79,7 @@ const TransactionsListItem: FC<TransactionsListItemProps> = ({ ...props }) => {
               ? 'ethereum'
               : 'golem'
           }
-          dataTest="HistoryItem__DoubleValue"
+          dataTest={`${dataTestRoot}__DoubleValue`}
           isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
           showCryptoSuffix
           textAlignment="right"

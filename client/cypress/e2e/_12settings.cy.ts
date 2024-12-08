@@ -195,11 +195,11 @@ Object.values(viewports).forEach(
           }
 
           if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
-            cy.get('[data-test=HomeGridCurrentGlmLock__DoubleValue__secondary]').contains(
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]').contains(
               FIAT_CURRENCIES_SYMBOLS[displayCurrency],
             );
           } else {
-            cy.get('[data-test=HomeGridCurrentGlmLock__DoubleValue__secondary]').contains(
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]').contains(
               displayCurrencyToUppercase,
             );
           }
@@ -263,7 +263,6 @@ Object.values(viewports).forEach(
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
         });
         cy.reload();
-
         cy.get('[data-test=ModalOnboarding]').should('be.visible');
         cy.get('[data-test=ModalOnboarding__Button]').click();
 
@@ -278,7 +277,6 @@ Object.values(viewports).forEach(
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
         });
-
         cy.reload();
         cy.get('[data-test=ModalOnboarding]').should('not.exist');
 

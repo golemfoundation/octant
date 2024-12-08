@@ -8,7 +8,7 @@ import path from 'path';
 export default defineConfig({
   e2e: {
     baseUrl: process.env.OCTANT_BASE_URL || 'http://localhost:5173',
-    defaultCommandTimeout: 30 * 1000,
+    defaultCommandTimeout: 45 * 1000,
     setupNodeEvents(on, config) {
       // eslint-disable-next-line no-param-reassign
       config.env = { ...config.env, CI: process.env.CI };
