@@ -98,14 +98,14 @@ Object.values(viewports).forEach(
         cy.disconnectMetamaskWalletFromAllDapps();
       });
 
-      it('Wallet connected: Lock 1 GLM', () => {
+      it('Wallet connected: Lock 100 GLM', () => {
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
-            const amountToLock = 1;
+            const amountToLock = 100;
             const lockedGlms = parseInt(text, 10);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
@@ -151,20 +151,20 @@ Object.values(viewports).forEach(
               .should('have.text', 'Locked GLM');
             cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
               .first()
-              .should('have.text', '1 GLM');
+              .should('have.text', `${amountToLock} GLM`);
             cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
               .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('have.text', `$${(amountToLock * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=TransactionsListItem]').first().click();
             cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
               .invoke('text')
-              .should('eq', '1 GLM');
+              .should('eq', `${amountToLock} GLM`);
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
               .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('eq', `$${(amountToLock * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
             cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
@@ -217,20 +217,20 @@ Object.values(viewports).forEach(
               .should('have.text', 'Unlocked GLM');
             cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
               .first()
-              .should('have.text', '1 GLM');
+              .should('have.text', `${amountToUnlock} GLM`);
             cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
               .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('have.text', `$${(amountToUnlock * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=TransactionsListItem]').first().click();
             cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
               .invoke('text')
-              .should('eq', '1 GLM');
+              .should('eq', `${amountToUnlock} GLM`);
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
               .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('eq', `$${(amountToUnlock * GLM_USD).toFixed(2)}`);
 
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
             cy.get('[data-test=ModalTransactionDetails]').should('not.exist');
@@ -248,20 +248,20 @@ Object.values(viewports).forEach(
 
             cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
               .first()
-              .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('have.text', `$${(amountToUnlock * GLM_USD).toFixed(2)}`);
             cy.get('[data-test=TransactionsListItem__DoubleValue__secondary]')
               .first()
-              .should('have.text', '1 GLM');
+              .should('have.text', `${amountToUnlock} GLM`);
 
             cy.get('[data-test=TransactionsListItem]').first().click();
             cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
 
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__primary]')
               .invoke('text')
-              .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+              .should('eq', `$${(amountToUnlock * GLM_USD).toFixed(2)}`);
             cy.get('[data-test=TransactionDetailsRest__amount__DoubleValue__secondary]')
               .invoke('text')
-              .should('eq', `1 GLM`);
+              .should('eq', `${amountToUnlock} GLM`);
 
             cy.get('[data-test=ModalTransactionDetails__Button]').click();
 
