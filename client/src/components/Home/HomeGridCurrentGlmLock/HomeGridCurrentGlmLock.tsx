@@ -49,12 +49,14 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
       <GridTile
         className={className}
         classNameTitleWrapper={didUserWinAnyRaffles ? styles.didUserWinAnyRaffles : ''}
+        dataTest="HomeGridCurrentGlmLock"
         title={t('currentGlmLock')}
         titleSuffix={<RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
       >
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
+            dataTest="HomeGridCurrentGlmLock__DoubleValue"
             isFetching={
               isFetchingDepositValue ||
               isFetchingUserRaffleWinnings ||

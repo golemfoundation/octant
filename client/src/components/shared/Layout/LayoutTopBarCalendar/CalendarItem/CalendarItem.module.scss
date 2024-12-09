@@ -9,13 +9,21 @@
   justify-content: left;
   opacity: 0.5;
   transition: opacity $transition-time-1;
-  min-width: 21.6rem;
+  min-width: 23rem;
 
   &:not(:last-child) {
     margin-bottom: 1.6rem;
 
     @media #{$tablet-up} {
       margin-right: 1.6rem;
+      margin-bottom: 0;
+    }
+  }
+
+  &:last-child {
+    margin-bottom: 0.2rem;
+
+    @media #{$tablet-up} {
       margin-bottom: 0;
     }
   }

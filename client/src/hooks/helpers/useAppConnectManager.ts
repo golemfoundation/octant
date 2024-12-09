@@ -42,6 +42,7 @@ export default function useAppConnectManager(
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
+  const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const [isTimeDifferenceBelowZero, setIsTimeDifferenceBelowZero] = useState(false);
   const isSyncingInProgress =
@@ -115,7 +116,7 @@ export default function useAppConnectManager(
     if (!toastService.isToastVisible('changeNetwork') && chainId !== networkConfig.id) {
       toastService.showToast({
         message: t('message', {
-          isTestnet: networkConfig.isTestnet ? ' testnet' : '',
+          isTestnet: isTestnet ? ' testnet' : '',
           networkName: networkConfig.name,
         }),
         name: 'changeNetwork',

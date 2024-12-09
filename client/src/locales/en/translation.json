@@ -391,7 +391,8 @@
       "hoursShort": "h",
       "minutes_one": "minute",
       "minutes_other": "minutes",
-      "minutesShort": "min"
+      "minutesShort": "min",
+      "calendar": "Calendar"
     },
     "footer": {
       "newsletterText": "Get PGF news and updates from Octant. No spam, ever",
@@ -563,7 +564,7 @@
         "randomized": "Randomised",
         "alphabeticalAscending": "A -> Z",
         "alphabeticalDescending": "Z -> A",
-        "totalsDescending": "Totals high to low",
+        "totalsDescending": "Total high to low",
         "totalsAscending": "Total low to high",
         "donorsDescending": "Donors most to least",
         "donorsAscending": "Donors least to most"

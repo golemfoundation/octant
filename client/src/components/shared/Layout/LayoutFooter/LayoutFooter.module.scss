@@ -111,9 +111,12 @@
     width: 100%;
     margin-right: auto;
     max-width: 32.6rem;
+    min-width: 32.6rem;
+    min-height: 5.3rem;
 
     @media #{$tablet-up} {
       max-width: 35.2rem;
+      min-width: 35.2rem;
     }
   }
 

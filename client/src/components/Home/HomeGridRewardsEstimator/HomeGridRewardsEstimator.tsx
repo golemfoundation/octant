@@ -111,6 +111,7 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
   return (
     <GridTile
       className={className}
+      dataTest="HomeGridRewardsEstimator"
       title={t('rewardsEstimator')}
       titleSuffix={
         <HomeGridRewardsEstimatorUqSelector

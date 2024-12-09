@@ -19,6 +19,7 @@ const SettingsMainInfoBox = (): ReactNode => {
     <BoxRounded
       alignment="left"
       className={styles.root}
+      dataTest="SettingsMainInfoBox"
       hasPadding={false}
       isVertical
       textAlign="left"
