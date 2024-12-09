@@ -24,7 +24,7 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }) => {
-    describe(`[AW IS OPEN] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS CLOSED] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         cy.clearLocalStorage();
         beforeSetup();
@@ -32,6 +32,7 @@ Object.values(viewports).forEach(
 
       beforeEach(() => {
         mockCoinPricesServer();
+        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(
@@ -47,6 +48,7 @@ Object.values(viewports).forEach(
         });
 
         it('if user resize viewport from large-desktop/desktop to tablet/mobile settings drawer will hide and current view will change to Settings view.', () => {
+          cy.wait(1000);
           // mobile
           cy.viewport(viewports.mobile.viewportWidth, viewports.mobile.viewportHeight);
           cy.get('[data-test=SettingsDrawer]').should('not.exist');
@@ -60,6 +62,7 @@ Object.values(viewports).forEach(
         });
 
         it('If user resize viewport from large-desktop/desktop to tablet/mobile when settings drawer was open and then change view and resize again to large/desktop settings drawer won`t be visible.', () => {
+          cy.wait(1000);
           // mobile
           cy.viewport(viewports.mobile.viewportWidth, viewports.mobile.viewportHeight);
           cy.get('[data-test=LayoutNavbar__Button--projects]').click();
@@ -90,6 +93,7 @@ Object.values(viewports).forEach(
         });
 
         it('if user resize viewport from tablet/mobile to large-desktop/desktop settings view will change to the last opened or Home view and Settings drawer will be visible.', () => {
+          cy.wait(1000);
           // desktop
           cy.viewport(viewports.desktop.viewportWidth, viewports.desktop.viewportHeight);
           cy.get('[data-test=SettingsDrawer]').should('be.visible');
@@ -195,11 +199,11 @@ Object.values(viewports).forEach(
           }
 
           if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
-            cy.get('[data-test=HomeGridCurrentGlmLock__DoubleValue__secondary]').contains(
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]').contains(
               FIAT_CURRENCIES_SYMBOLS[displayCurrency],
             );
           } else {
-            cy.get('[data-test=HomeGridCurrentGlmLock__DoubleValue__secondary]').contains(
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]').contains(
               displayCurrencyToUppercase,
             );
           }
@@ -263,7 +267,6 @@ Object.values(viewports).forEach(
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
         });
         cy.reload();
-
         cy.get('[data-test=ModalOnboarding]').should('be.visible');
         cy.get('[data-test=ModalOnboarding__Button]').click();
 
@@ -278,7 +281,6 @@ Object.values(viewports).forEach(
         cy.getAllLocalStorage().then(() => {
           expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
         });
-
         cy.reload();
         cy.get('[data-test=ModalOnboarding]').should('not.exist');
 
