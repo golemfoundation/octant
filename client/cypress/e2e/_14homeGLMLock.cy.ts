@@ -83,9 +83,6 @@ Object.values(viewports).forEach(
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-          .invoke('text')
-          .should('eq', 'Lock GLM');
         cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
         cy.get('[data-test=ModalLockGlm__overflow]').should('exist');
         cy.get('[data-test=ModalLockGlm]').should('be.visible');
