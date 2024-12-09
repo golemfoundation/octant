@@ -17,9 +17,14 @@ export default function useMilestonesPerGrantPerProgram(
     select: response =>
       response.data.find(
         element =>
-          element.project.externalAddresses?.octant.toLowerCase() === projectAddressToLowerCase ||
-          element.project.recipient.toLowerCase() === projectAddressToLowerCase ||
-          element.project.details.recipient.toLowerCase() === projectAddressToLowerCase,
+					element.project?.externalAddresses?.octant?.toLowerCase() ===
+						projectAddressToLowerCase ||
+					element?.externalAddresses?.octant?.toLowerCase() ===
+						projectAddressToLowerCase ||
+					element.project.recipient.toLowerCase() ===
+						projectAddressToLowerCase ||
+					element.project.details.recipient.toLowerCase() ===
+						projectAddressToLowerCase,
       ),
   });
 }
