@@ -112,25 +112,43 @@ class EpochsSubgraph:
             remaining_sec=0,
         )
 
+    async def get_epochs(self) -> list[EpochDetails]:
+        """Get all epochs from the subgraph."""
+        logging.debug("[Subgraph] Getting list of all epochs")
 
-# def get_epochs():
-#     query = gql(
-#         """
-# query {
-#   epoches(first: 1000) {
-#     epoch
-#     fromTs
-#     toTs
-#   }
-#   _meta {
-#     block {
-#       number
-#     }
-#   }
-# }
-#     """
-#     )
+        query = gql(
+            """
+            query {
+              epoches(first: 1000) {
+                epoch
+                fromTs
+                toTs
+                duration
+                decisionWindow
+              }
+              _meta {
+                block {
+                  number
+                }
+              }
+            }
+        """
+        )
 
-#     app.logger.debug("[Subgraph] Getting list of all epochs")
-#     data = gql_factory.build().execute(query)
-#     return data
+        data = await self.gql_client.execute_async(query)
+
+        logging.debug(f"[Subgraph] Received epochs: {data}")
+
+        epoches = data["epoches"]
+        epoches_details = []
+        for epoch in epoches:
+            epoch_detail = EpochDetails(
+                epoch_num=epoch["epoch"],
+                start=epoch["fromTs"],
+                duration=epoch["duration"],
+                decision_window=epoch["decisionWindow"],
+                remaining_sec=0,
+            )
+            epoches_details.append(epoch_detail)
+
+        return epoches_details

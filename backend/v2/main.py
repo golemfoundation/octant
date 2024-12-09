@@ -1,4 +1,3 @@
-# Create FastAPI app
 import logging
 import os
 
@@ -12,6 +11,7 @@ from v2.allocations.router import api as allocations_api
 from v2.allocations.socket import AllocateNamespace
 from v2.core.dependencies import get_socketio_settings
 from v2.project_rewards.router import api as project_rewards_api
+from v2.epochs.router import api as epochs_api
 
 app = FastAPI()
 
@@ -66,3 +66,4 @@ app.add_websocket_route("/socket.io/", sio_asgi_app)
 
 app.include_router(allocations_api)
 app.include_router(project_rewards_api)
+app.include_router(epochs_api)
