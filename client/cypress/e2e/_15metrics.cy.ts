@@ -14,7 +14,7 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
-    describe(`[AW IS CLOSED] Metrics: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS OPEN] Metrics: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         cy.clearLocalStorage();
       });
