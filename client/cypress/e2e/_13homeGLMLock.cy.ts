@@ -13,7 +13,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }, idx) => {
-    describe(`[AW IS OPEN] HomeGlmLock: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS CLOSED] HomeGlmLock: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
          * Global Metamask setup done by Synpress is not always done.

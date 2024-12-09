@@ -24,7 +24,7 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }) => {
-    describe(`[AW IS OPEN] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS CLOSED] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         cy.clearLocalStorage();
         beforeSetup();
