@@ -1,18 +1,10 @@
 import pytest
-<<<<<<< HEAD
+
 from fastapi import status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.v2.factories import FactoriesAggregator
-=======
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from fastapi import status
-from tests.v2.utils import FakeUser, FakeAllocation
-
->>>>>>> master
 
 """Test cases for the GET /allocations/projects/{project_address}/epoch/{epoch_number} endpoint"""
 
@@ -33,17 +25,12 @@ async def test_returns_empty_list_when_no_allocations(
 
 @pytest.mark.asyncio
 async def test_returns_allocations_when_they_exist(
-<<<<<<< HEAD
     fast_client: AsyncClient, factories: FactoriesAggregator
-=======
-    fast_client: AsyncClient, fast_session: AsyncSession
->>>>>>> master
 ):
     """Should return allocations when they exist"""
 
     # Given: allocations for a project
     project_address = "0x433485B5951f250cEFDCbf197Cb0F60fdBE55513"
-<<<<<<< HEAD
 
     alice = await factories.users.get_or_create_alice()
     a_alloc1 = await factories.allocations.create(
@@ -57,16 +44,6 @@ async def test_returns_allocations_when_they_exist(
     b_alloc1 = await factories.allocations.create(
         user=bob, epoch=1, project_address=project_address
     )
-=======
-    alice = await FakeUser.GetAlice(fast_session)
-    a_alloc1 = await FakeAllocation.of_(fast_session, alice, 1, project_address)
-    a_alloc2 = await FakeAllocation.of_(fast_session, alice, 2, project_address)
-
-    bob = await FakeUser.GetBob(fast_session)
-    b_alloc1 = await FakeAllocation.of_(fast_session, bob, 1, project_address)
-
-    await fast_session.commit()
->>>>>>> master
 
     async with fast_client as client:
         resp = await client.get(f"allocations/project/{project_address}/epoch/1")

@@ -1,17 +1,9 @@
 import pytest
-<<<<<<< HEAD
 from fastapi import status
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.v2.factories import FactoriesAggregator
-=======
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from fastapi import status
-from tests.v2.utils import FakeUser, FakeAllocation
->>>>>>> master
 
 """Test cases for the GET /allocations/epoch/{epoch_number} endpoint"""
 
@@ -30,16 +22,11 @@ async def test_returns_empty_list_when_no_allocations(
 
 @pytest.mark.asyncio
 async def test_returns_allocations_when_they_exist(
-<<<<<<< HEAD
     fast_client: AsyncClient, factories: FactoriesAggregator
-=======
-    fast_client: AsyncClient, fast_session: AsyncSession
->>>>>>> master
 ):
     """Should return allocations when they exist"""
 
     # Given: donors with allocations
-<<<<<<< HEAD
     alice = await factories.users.get_or_create_alice()
     a_alloc1 = await factories.allocations.create(user=alice, epoch=1)
     a_alloc2 = await factories.allocations.create(user=alice, epoch=2)
@@ -51,21 +38,6 @@ async def test_returns_allocations_when_they_exist(
 
     charlie = await factories.users.get_or_create_charlie()
     c_alloc1 = await factories.allocations.create(user=charlie, epoch=1)
-=======
-    alice = await FakeUser.GetAlice(fast_session)
-    a_alloc1 = await FakeAllocation.of_(fast_session, alice, 1)
-    a_alloc2 = await FakeAllocation.of_(fast_session, alice, 2)
-    a_alloc3 = await FakeAllocation.of_(fast_session, alice, 3)
-
-    bob = await FakeUser.GetBob(fast_session)
-    b_alloc1 = await FakeAllocation.of_(fast_session, bob, 1)
-    b_alloc2 = await FakeAllocation.of_(fast_session, bob, 2)
-
-    charlie = await FakeUser.GetCharlie(fast_session)
-    c_alloc1 = await FakeAllocation.of_(fast_session, charlie, 1)
-
-    await fast_session.commit()
->>>>>>> master
 
     async with fast_client as client:
         # Allocations for epoch 1
@@ -130,16 +102,11 @@ async def test_returns_allocations_when_they_exist(
 
 @pytest.mark.asyncio
 async def test_returns_zero_allocations_when_include_zero_allocations_is_true(
-<<<<<<< HEAD
     fast_client: AsyncClient, factories: FactoriesAggregator
-=======
-    fast_client: AsyncClient, fast_session: AsyncSession
->>>>>>> master
 ):
     """Should return zero allocations when include_zero_allocations is true"""
 
     # Given: a donor with allocations
-<<<<<<< HEAD
     alice = await factories.users.get_or_create_alice()
     # For testing purposes, we set the amount to 0 of one of the allocations
     a_alloc1 = await factories.allocations.create(alice, epoch=1, amount=0)
@@ -147,17 +114,6 @@ async def test_returns_zero_allocations_when_include_zero_allocations_is_true(
         alice, epoch=1
     )  # This will have random amount
 
-=======
-    alice = await FakeUser.GetAlice(fast_session)
-    # For testing purposes, we set the amount to 0 of one of the allocations
-    a_alloc1 = await FakeAllocation.of_(fast_session, alice, 1, amount=0)
-    a_alloc2 = await FakeAllocation.of_(
-        fast_session, alice, 1
-    )  # This will have random amount
-
-    await fast_session.commit()
-
->>>>>>> master
     async with fast_client as client:
         resp = await client.get(
             "allocations/epoch/1", params={"includeZeroAllocations": True}
