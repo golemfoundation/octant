@@ -5,7 +5,7 @@ export type GrantsPerProgram = {
   data: {
     // externalAddresses is set only when recipient does not match project has in Octant.
     externalAddresses?: {
-      octant: string;
+      octant?: string;
     };
     milestones: {
       createdAt: string;
