@@ -101,14 +101,14 @@ const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
   return (
     <BoxRounded
       className={cx(styles.root, className)}
-      dataTest="AllocationRewardsBox"
+      dataTest="AllocationSliderBox"
       hasPadding={false}
       isVertical
     >
       <div className={styles.sliderWrapper}>
         <Slider
           className={styles.slider}
-          dataTest="AllocationRewardsBox__Slider"
+          dataTest="AllocationSliderBox__Slider"
           hideThumb={isLocked}
           isDisabled={isDisabled}
           isError={isError}
@@ -128,20 +128,20 @@ const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
               isDisabled && styles.isDisabled,
               isLocked && styles.isLocked,
             )}
-            data-test={`AllocationRewardsBox__section--${index}`}
+            data-test={`AllocationSliderBox__section--${index}`}
             onClick={() =>
               isLocked || isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw')
             }
           >
             <div
               className={styles.header}
-              data-test={`AllocationRewardsBox__section__header--${index}`}
+              data-test={`AllocationSliderBox__section__header--${index}`}
             >
               {header}
             </div>
             <div
               className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isGrey)}
-              data-test={`AllocationRewardsBox__section__value--${index}`}
+              data-test={`AllocationSliderBox__section__value--${index}`}
             >
               {value}
             </div>
