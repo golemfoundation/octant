@@ -16,6 +16,12 @@ Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }) => {
     describe(`[AW IS OPEN] Allocation: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
+        /**
+         * Global Metamask setup done by Synpress is not always done.
+         * Since Synpress needs to have valid provider to fetch the data from contracts,
+         * setupMetamask is required in each test suite.
+         */
+        cy.setupMetamask();
         cy.clearLocalStorage();
       });
 
