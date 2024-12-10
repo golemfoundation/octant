@@ -175,7 +175,7 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
       />
       <Button
         className={styles.button}
-        dataTest="GlmLockTabs__Button"
+        dataTest="LockGlmTabs__Button"
         isDisabled={isButtonDisabled}
         isHigh
         isLoading={isLoading}
