@@ -56,11 +56,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="golem"
-<<<<<<< HEAD
-            dataTest="HomeGridCurrentGlmLock__DoubleValue"
-=======
             dataTest="HomeGridCurrentGlmLock--current"
->>>>>>> master
             isFetching={
               isFetchingDepositValue ||
               isFetchingUserRaffleWinnings ||
