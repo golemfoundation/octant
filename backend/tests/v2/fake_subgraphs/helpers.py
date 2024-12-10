@@ -1,0 +1,12 @@
+from dataclasses import dataclass
+
+from dataclasses_json import dataclass_json, LetterCase
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class FakeEpochEventDetails:
+    start: int = 1000
+    end: int = 2000
+    duration: int = 1000
+    decision_window: int = 500

@@ -55,3 +55,5 @@ async def fast_session(
 @pytest_asyncio.fixture(scope="function")
 async def factories(fast_session: AsyncSession) -> FactoriesAggregator:
     return FactoriesAggregator(fast_session)
+
+
