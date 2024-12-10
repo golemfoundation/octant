@@ -1,16 +1,16 @@
 from pydantic import BaseModel
 
 
-class CurrentEpochResponse(BaseModel):
+class CurrentEpochResponseV1(BaseModel):
     current_epoch: int
 
 
-class IndexedEpochResponse(BaseModel):
+class IndexedEpochResponseV1(BaseModel):
     current_epoch: int
     indexed_epoch: int
 
 
-class EpochStatsResponse(BaseModel):
+class EpochStatsResponseV1(BaseModel):
     staking_proceeds: str
     total_effective_deposit: str
     total_rewards: str
@@ -25,5 +25,5 @@ class EpochStatsResponse(BaseModel):
     donated_to_projects: str | None
 
 
-class EpochRewardsRateResponse(BaseModel):
+class EpochRewardsRateResponseV1(BaseModel):
     rewards_rate: float

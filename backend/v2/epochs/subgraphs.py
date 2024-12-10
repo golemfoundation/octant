@@ -4,6 +4,7 @@ from typing import Callable, Sequence, Type, Union
 
 import backoff
 from app import exceptions
+from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -112,14 +113,14 @@ class EpochsSubgraph:
             remaining_sec=0,
         )
 
-    async def get_epochs(self) -> list[EpochDetails]:
-        """Get all epochs from the subgraph."""
-        logging.debug("[Subgraph] Getting list of all epochs")
+    async def get_latest_epoch(self) -> EpochDetails:
+        """Get latest epoch from the subgraph."""
+        logging.debug("[Subgraph] Getting latest epoch from subgraph.")
 
         query = gql(
             """
             query {
-              epoches(first: 1000) {
+              epoches(first: 1, orderBy: epoch, orderDirection: desc) {
                 epoch
                 fromTs
                 toTs
@@ -132,23 +133,23 @@ class EpochsSubgraph:
                 }
               }
             }
-        """
+            """
         )
 
-        data = await self.gql_client.execute_async(query)
+        response = await self.gql_client.execute_async(query)
+        data = response["epoches"]
 
-        logging.debug(f"[Subgraph] Received epochs: {data}")
+        if not data:
+            logging.warning("[Subgraph] No epochs included in the subgraph.")
+            raise EpochsNotFound()
 
-        epoches = data["epoches"]
-        epoches_details = []
-        for epoch in epoches:
-            epoch_detail = EpochDetails(
-                epoch_num=epoch["epoch"],
-                start=epoch["fromTs"],
-                duration=epoch["duration"],
-                decision_window=epoch["decisionWindow"],
-                remaining_sec=0,
-            )
-            epoches_details.append(epoch_detail)
+        logging.debug(f"[Subgraph] Received the latest epoch: {data}")
 
-        return epoches_details
+        epoch_details = data[0]
+        return EpochDetails(
+            epoch_num=epoch_details["epoch"],
+            start=epoch_details["fromTs"],
+            duration=epoch_details["duration"],
+            decision_window=epoch_details["decisionWindow"],
+            remaining_sec=0,
+        )

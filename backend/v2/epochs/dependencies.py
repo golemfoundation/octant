@@ -5,6 +5,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from app.exceptions import InvalidEpoch
 from app.modules.staking.proceeds.core import ESTIMATED_STAKING_REWARDS_RATE
 from v2.core.dependencies import OctantSettings, Web3
 from v2.core.exceptions import AllocationWindowClosed
@@ -61,14 +62,15 @@ async def get_current_epoch(epochs_contracts: GetEpochsContracts) -> int:
 
 
 async def get_indexed_epoch(epochs_subgraph: GetEpochsSubgraph) -> int:
-    sg_epochs = await epochs_subgraph.get_epochs()
-    sg_epochs_sorted = sorted(sg_epochs, key=lambda d: d.epoch_num)
-
-    return sg_epochs_sorted[-1].epoch_num
+    latest_epoch = await epochs_subgraph.get_latest_epoch()
+    return latest_epoch.epoch_num
 
 
 async def get_rewards_rate(epoch_number: int) -> float:
     logging.debug(f"Getting rewards rate for epoch {epoch_number}")
+    if epoch_number <= 0:
+        raise InvalidEpoch()
+
     return ESTIMATED_STAKING_REWARDS_RATE
 
 
