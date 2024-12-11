@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -24,7 +26,7 @@ async def test_returns_correct_indexed_epoch_for_a_single_epoch(
 
     async with fast_client as client:
         resp = await client.get("epochs/indexed")
-        assert resp.status_code == 200
+        assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
             "current_epoch": mocked_current_epoch,
             "indexed_epoch": mocked_current_epoch,
@@ -49,7 +51,7 @@ async def test_returns_correct_indexed_epoch_for_multiple_epochs(
 
     async with fast_client as client:
         resp = await client.get("epochs/indexed")
-        assert resp.status_code == 200
+        assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
             "current_epoch": mocked_current_epoch,
             "indexed_epoch": mocked_current_epoch,
@@ -70,11 +72,11 @@ async def test_returns_divergent_epochs_when_not_indexed(
     )
     fake_epochs_subgraph_factory(
         [FakeEpochEventDetails(epoch=1)]
-    )  # subgraph has only epoch 1
+    )  # subgraph has only epoch 1 thus not indexed
 
     async with fast_client as client:
         resp = await client.get("epochs/indexed")
-        assert resp.status_code == 200
+        assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
             "current_epoch": mocked_current_epoch,
             "indexed_epoch": 1,

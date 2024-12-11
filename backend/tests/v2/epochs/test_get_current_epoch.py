@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,5 +22,5 @@ async def test_returns_correct_current_epoch(
 
     async with fast_client as client:
         resp = await client.get("epochs/current")
-        assert resp.status_code == 200
+        assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {"current_epoch": mocked_current_epoch}

@@ -12,7 +12,9 @@ from v2.epochs.dependencies import get_epochs_subgraph
 
 @pytest.fixture(scope="function")
 def fake_epochs_subgraph_factory(fast_app: FastAPI) -> FakeEpochsSubgraphCallable:
-    def _create_fake_epochs_subgraph(epochs_events: list[FakeEpochEventDetails] = None):
+    def _create_fake_epochs_subgraph(
+        epochs_events: list[FakeEpochEventDetails] | None = None,
+    ):
         fake_subgraph_epochs = FakeEpochsSubgraph(epochs_events)
 
         fast_app.dependency_overrides[

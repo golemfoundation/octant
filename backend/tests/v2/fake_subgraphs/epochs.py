@@ -5,9 +5,12 @@ from v2.core.exceptions import EpochsNotFound
 
 
 class FakeEpochsSubgraph:
-    def __init__(self, epochs_events: list[FakeEpochEventDetails] = None):
-        self.epochs_events = (
-            map(lambda epoch_event: epoch_event.to_dict(), epochs_events) or []
+    def __init__(self, epochs_events: list[FakeEpochEventDetails] | None = None):
+        if epochs_events is None:
+            epochs_events = []
+
+        self.epochs_events = map(
+            lambda epoch_event: epoch_event.to_dict(), epochs_events
         )
 
     async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:

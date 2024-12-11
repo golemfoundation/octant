@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +16,7 @@ async def test_returns_correct_rewards_rate(
 
     async with fast_client as client:
         resp = await client.get(f"epochs/rewards-rate/{epoch_number}")
-        assert resp.status_code == 200
+        assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {"rewards_rate": expected_rewards_rate}
 
 
@@ -26,5 +28,5 @@ async def test_validates_invalid_epoch(
 
     async with fast_client as client:
         resp = await client.get(f"epochs/rewards-rate/{epoch_number}")
-        assert resp.status_code == 400
+        assert resp.status_code == HTTPStatus.BAD_REQUEST
         assert resp.json() == {"message": "Given epoch is not valid."}
