@@ -4,6 +4,7 @@ from typing import Callable, Sequence, Type, Union
 
 import backoff
 from app import exceptions
+from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -112,25 +113,43 @@ class EpochsSubgraph:
             remaining_sec=0,
         )
 
+    async def get_latest_epoch(self) -> EpochDetails:
+        """Get latest epoch from the subgraph."""
+        logging.debug("[Subgraph] Getting latest epoch from subgraph.")
 
-# def get_epochs():
-#     query = gql(
-#         """
-# query {
-#   epoches(first: 1000) {
-#     epoch
-#     fromTs
-#     toTs
-#   }
-#   _meta {
-#     block {
-#       number
-#     }
-#   }
-# }
-#     """
-#     )
+        query = gql(
+            """
+            query {
+              epoches(first: 1, orderBy: epoch, orderDirection: desc) {
+                epoch
+                fromTs
+                toTs
+                duration
+                decisionWindow
+              }
+              _meta {
+                block {
+                  number
+                }
+              }
+            }
+            """
+        )
 
-#     app.logger.debug("[Subgraph] Getting list of all epochs")
-#     data = gql_factory.build().execute(query)
-#     return data
+        response = await self.gql_client.execute_async(query)
+        data = response["epoches"]
+
+        if not data:
+            logging.warning("[Subgraph] No epochs included in the subgraph.")
+            raise EpochsNotFound()
+
+        logging.debug(f"[Subgraph] Received the latest epoch: {data}")
+
+        epoch_details = data[0]
+        return EpochDetails(
+            epoch_num=epoch_details["epoch"],
+            start=epoch_details["fromTs"],
+            duration=epoch_details["duration"],
+            decision_window=epoch_details["decisionWindow"],
+            remaining_sec=0,
+        )
