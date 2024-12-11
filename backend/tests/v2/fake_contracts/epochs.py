@@ -34,4 +34,3 @@ class FakeEpochsContract:
 
     async def get_decision_window(self) -> int:
         return self.epochs_details_for_contract.decision_window_length
-

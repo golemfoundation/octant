@@ -6,14 +6,16 @@ from v2.core.exceptions import EpochsNotFound
 
 class FakeEpochsSubgraph:
     def __init__(self, epochs_events: list[FakeEpochEventDetails] = None):
-        self.epochs = epochs_events or []
+        self.epochs_events = (
+            map(lambda epoch_event: epoch_event.to_dict(), epochs_events) or []
+        )
 
     async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:
         """
         Simulate fetching epoch details by epoch number.
         """
         matching_epochs = [
-            epoch for epoch in self.epochs if epoch["epoch"] == epoch_number
+            epoch for epoch in self.epochs_events if epoch["epoch"] == epoch_number
         ]
 
         if not matching_epochs:
@@ -32,10 +34,10 @@ class FakeEpochsSubgraph:
         """
         Simulate fetching the latest epoch.
         """
-        if not self.epochs:
+        if not self.epochs_events:
             raise EpochsNotFound()
 
-        latest_epoch = max(self.epochs, key=lambda e: e["epoch"])
+        latest_epoch = max(self.epochs_events, key=lambda e: e["epoch"])
         return EpochDetails(
             epoch_num=latest_epoch["epoch"],
             start=latest_epoch["fromTs"],

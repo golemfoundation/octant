@@ -32,9 +32,7 @@ def get_epochs_settings() -> EpochsSettings:
 def get_epochs_contracts(
     w3: Web3, settings: Annotated[EpochsSettings, Depends(get_epochs_settings)]
 ) -> EpochsContract:
-    return EpochsContract(
-        w3, EPOCHS_ABI, settings.epochs_contract_address
-    )
+    return EpochsContract(w3, EPOCHS_ABI, settings.epochs_contract_address)
 
 
 async def get_open_allocation_window_epoch_number(
