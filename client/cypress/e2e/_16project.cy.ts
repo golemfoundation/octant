@@ -1,5 +1,5 @@
 import {
-  changeMainValueToFiat,
+  // changeMainValueToFiat,
   checkProjectsViewLoaded,
   connectWallet,
   mockCoinPricesServer,
@@ -22,7 +22,9 @@ import Chainable = Cypress.Chainable;
 const getButtonAddToAllocate = (): Chainable<any> => {
   const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
 
-  return projectListItemFirst.find('[data-test=ProjectListItemHeader__ButtonAddToAllocate]');
+  return projectListItemFirst
+    .find('[data-test=ProjectListItemHeader__ButtonAddToAllocate]')
+    .filter(':visible');
 };
 
 const checkProjectItemElements = (): Chainable<any> => {
@@ -31,19 +33,16 @@ const checkProjectItemElements = (): Chainable<any> => {
   projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
   projectListItemFirst.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
   getButtonAddToAllocate().should('be.visible');
-  projectListItemFirst.get('[data-test=ProjectListItemHeader__Button]').should('be.visible');
+  projectListItemFirst
+    .get('[data-test=ProjectListItemHeader__ButtonAddToAllocate]')
+    .should('be.visible');
   projectListItemFirst.get('[data-test=ProjectListItem__Description]').should('be.visible');
-
-  cy.get('[data-test=ProjectListItem__Donors]')
-    .first()
-    .scrollIntoView({ offset: { left: 0, top: 100 } });
-
-  cy.get('[data-test=ProjectListItem__Donors]').first().should('be.visible');
-  cy.get('[data-test=ProjectListItem__Donors__DonorsHeader__count]')
-    .first()
-    .should('be.visible')
-    .should('have.text', '0');
-  return cy.get('[data-test=ProjectListItem__Donors__noDonationsYet]').first().should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectRewards__currentTotal__label]').should('be.visible');
+  projectListItemFirst
+    .get('[data-test=ProjectRewards__donationsToDisplay__label]')
+    .should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectRewards__matchFunding__label]').should('be.visible');
+  return projectListItemFirst.get('[data-test=ProjectRewards__donors]').should('be.visible');
 };
 
 describe('move time - AW IS OPEN - less than 24h to change AW', () => {
