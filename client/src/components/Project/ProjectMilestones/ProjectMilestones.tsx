@@ -10,7 +10,7 @@ import ProjectMilestonesSkeleton from 'components/Project/ProjectMilestonesSkele
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useGrantsPerProgram from 'hooks/queries/karmaGap/useMilestonesPerGrantPerProgram';
+import useMilestonesPerGrantPerProgram from 'hooks/queries/karmaGap/useMilestonesPerGrantPerProgram';
 import { pending, completed } from 'svg/projectMilestones';
 
 import styles from './ProjectMilestones.module.scss';
@@ -30,7 +30,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
 
   const epochNumber = parseInt(epoch!, 10);
 
-  const { data, isFetching } = useGrantsPerProgram(epochNumber, projectAddress);
+  const { data, isFetching } = useMilestonesPerGrantPerProgram(epochNumber, projectAddress);
 
   const getDateFormatted = (date: string | number): string => format(date, 'd LLL');
 
