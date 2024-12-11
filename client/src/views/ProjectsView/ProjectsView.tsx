@@ -211,7 +211,7 @@ const ProjectsView = (): ReactElement => {
   const orderOptionsTranslated = ORDER_OPTIONS(t);
 
   return (
-    <>
+    <div data-test="ProjectsView">
       <ViewTitle className={styles.viewTitle}>
         {t('viewTitle', {
           epochNumber:
@@ -288,7 +288,7 @@ const ProjectsView = (): ReactElement => {
           ))}
         </InfiniteScroll>
       )}
-    </>
+    </div>
   );
 };
 

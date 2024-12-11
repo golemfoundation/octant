@@ -12,6 +12,8 @@ const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = 
   totalUserDonations,
   className,
 }) => {
+  const dataTestRoot = 'MetricsEpochGridTotalDonations';
+
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const getValuesToDisplay = useGetValuesToDisplay();
@@ -28,12 +30,12 @@ const MetricsEpochGridTotalDonations: FC<MetricsEpochGridTotalDonationsProps> = 
   return (
     <MetricsGridTile
       className={className}
-      dataTest="MetricsEpochGridTotalDonations"
+      dataTest={dataTestRoot}
       groups={[
         {
           children: (
             <MetricsGridTileValue
-              dataTest="MetricsEpochGridTotalDonations__MetricsGridTileValue"
+              dataTest={`${dataTestRoot}__totalDonations`}
               isLoading={isLoading}
               size="S"
               subvalue={totalUserDonationsValues.secondary}

@@ -19,3 +19,7 @@ export type AllocationWithPositiveValueBigInt = {
   projectAddress: string;
   value: bigint;
 };
+
+export default interface AllocationProps {
+  dataTest?: string;
+}

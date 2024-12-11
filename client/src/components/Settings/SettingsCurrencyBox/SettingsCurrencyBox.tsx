@@ -28,6 +28,7 @@ const SettingsCurrencyBox = (): ReactElement => {
   return (
     <BoxRounded
       className={styles.root}
+      dataTest="SettingsCurrencyBox"
       hasPadding={false}
       justifyContent="spaceBetween"
       textAlign="left"

@@ -65,11 +65,10 @@ const OnboardingStepper = (): ReactElement => {
       {...animationProps}
     >
       <Tooltip
-        childrenClassName={styles.tooltipChildrenClassname}
-        className={styles.tooltip}
         dataTest="OnboardingStepper__Tooltip"
         position="top"
         text={t('reopenOnboarding')}
+        tooltipWrapperClassName={styles.tooltipWrapper}
         variant="small"
       >
         <div className={styles.wrapper}>

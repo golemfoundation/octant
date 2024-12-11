@@ -20,10 +20,10 @@ export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<
   }
 
   cy.disconnectMetamaskWalletFromAllDapps();
-  visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
+  visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
 
   cy.wait(500);
-  cy.get('[data-test=MainLayout__Button--connect]').click();
+  cy.get('[data-test=LayoutTopBar__Button]').click();
   cy.wait(500);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();

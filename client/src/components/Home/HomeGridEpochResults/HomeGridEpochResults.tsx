@@ -57,6 +57,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   return (
     <GridTile
       className={className}
+      dataTest="HomeGridEpochResults"
       onMouseLeave={() => setHighlightedBarAddress(null)}
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,

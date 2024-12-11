@@ -13,6 +13,7 @@ const MetricsEpochGridUnallocatedValue: FC<MetricsEpochGridUnallocatedValueProps
   isLoading,
   className,
 }) => {
+  const dataTestRoot = 'MetricsEpochGridUnallocatedValue';
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const { epoch } = useMetricsEpoch();
@@ -31,12 +32,12 @@ const MetricsEpochGridUnallocatedValue: FC<MetricsEpochGridUnallocatedValueProps
   return (
     <MetricsGridTile
       className={className}
-      dataTest="MetricsEpochGridUnallocatedValue"
+      dataTest={dataTestRoot}
       groups={[
         {
           children: (
             <MetricsGridTileValue
-              dataTest="MetricsEpochGridUnallocatedValue"
+              dataTest={`${dataTestRoot}__unallocatedValue`}
               isLoading={isLoading}
               size="S"
               subvalue={unallocatedValue.secondary}
