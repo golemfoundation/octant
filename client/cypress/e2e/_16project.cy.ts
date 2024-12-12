@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
     });
 
     it('entering project view renders all its elements', () => {
-      checkProjectItemElements();
+      checkProjectItemElements(isMobile);
     });
 
     it('entering project view renders all its elements with fallback IPFS provider', () => {
@@ -126,7 +126,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         }
       });
 
-      checkProjectItemElements();
+      checkProjectItemElements(isMobile);
     });
 
     it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
