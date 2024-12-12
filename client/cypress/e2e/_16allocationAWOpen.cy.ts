@@ -46,7 +46,6 @@ Object.values(viewports).forEach(
         cy.get('[data-test=ProjectsListItem__ButtonAddToAllocate]').eq(0).click();
         cy.get('[data-test=ProjectsListItem__ButtonAddToAllocate]').eq(1).click();
         cy.get('[data-test=ProjectsListItem__ButtonAddToAllocate]').eq(2).click();
-        cy.get('[data-test=LayoutTopBar__numberOfAllocations]').should('be.visible');
         if (isLargeDesktop || isDesktop) {
           cy.get('[data-test=LayoutTopBar__numberOfAllocations]').should('be.visible');
           cy.get('[data-test=LayoutTopBar__numberOfAllocations]').invoke('text').should('eq', '3');
