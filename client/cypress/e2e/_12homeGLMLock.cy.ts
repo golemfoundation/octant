@@ -95,14 +95,14 @@ Object.values(viewports).forEach(
         cy.disconnectMetamaskWalletFromAllDapps();
       });
 
-      it('Wallet connected: Lock 100000 GLM', () => {
+      it('Wallet connected: Lock 1000 GLM', () => {
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
-            const amountToLock = 100000;
+            const amountToLock = 1000;
             const lockedGlms = parseInt(text, 10);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
