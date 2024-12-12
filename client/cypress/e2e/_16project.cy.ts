@@ -27,7 +27,7 @@ const getButtonAddToAllocate = (): Chainable<any> => {
     .filter(':visible');
 };
 
-const checkProjectItemElements = (): Chainable<any> => {
+const checkProjectItemElements = (isMobile: boolean): Chainable<any> => {
   cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
   const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
   projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
@@ -38,11 +38,27 @@ const checkProjectItemElements = (): Chainable<any> => {
     .should('be.visible');
   projectListItemFirst.get('[data-test=ProjectListItem__Description]').should('be.visible');
   projectListItemFirst.get('[data-test=ProjectRewards__currentTotal__label]').should('be.visible');
-  projectListItemFirst
-    .get('[data-test=ProjectRewards__donationsToDisplay__label]')
-    .should('be.visible');
-  projectListItemFirst.get('[data-test=ProjectRewards__matchFunding__label]').should('be.visible');
+
+  if (!isMobile) {
+    projectListItemFirst
+      .get('[data-test=ProjectRewards__donationsToDisplay__label]')
+      .should('be.visible');
+    projectListItemFirst
+      .get('[data-test=ProjectRewards__matchFunding__label]')
+      .should('be.visible');
+  }
+
   return projectListItemFirst.get('[data-test=ProjectRewards__donors]').should('be.visible');
+};
+
+const checkHeartedProjectsIndicator = (isMobile: boolean, number = 1): Chainable<any> => {
+  return cy
+    .get(
+      isMobile
+        ? '[data-test=Navbar__numberOfAllocations]'
+        : '[data-test=LayoutTopBar__numberOfAllocations]',
+    )
+    .contains(number);
 };
 
 describe('move time - AW IS OPEN - less than 24h to change AW', () => {
@@ -70,7 +86,7 @@ describe('move time - AW IS OPEN - less than 24h to change AW', () => {
   });
 });
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
   describe(`[AW IS OPEN] Project: ${device}`, { viewportHeight, viewportWidth }, () => {
     let projectNames: string[] = [];
 
@@ -117,9 +133,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
 
       getButtonAddToAllocate().click();
-
-      // cy.get('@buttonAddToAllocate').click();
-      cy.get('[data-test=Navbar__numberOfAllocations]').contains(1);
+      checkHeartedProjectsIndicator(isMobile);
       getButtonAddToAllocate().click();
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
@@ -147,7 +161,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
       for (let i = 0; i < projectNames.length - 1; i++) {
-        cy.get('[data-test=ProjectListItem__Donors]')
+        cy.get('[data-test=ProjectMilestones]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
@@ -161,7 +175,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
       for (let i = 0; i < projectNames.length - 1; i++) {
-        cy.get('[data-test=ProjectListItem__Donors]')
+        cy.get('[data-test=ProjectMilestones]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 

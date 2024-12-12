@@ -56,7 +56,7 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
     areMilestonesAvailable && data.milestones.length > MIELSTONES_MAX_LENGTH_CLIPPED;
 
   return (
-    <div className={cx(styles.root, isFetching && styles.isFetching)}>
+    <div className={cx(styles.root, isFetching && styles.isFetching)} data-test="ProjectMilestones">
       <div className={styles.header}>
         <div className={styles.reportingAndNumber}>
           {t('header')}
