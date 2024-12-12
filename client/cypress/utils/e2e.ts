@@ -42,14 +42,14 @@ export const connectWallet = ({
   // cy.intercept('GET', '/user/*/tos', { body: { accepted: true } });
 
   cy.intercept('GET', '/user/*/uq/*', {
-    body: { uniquenessQuotient: isUQScoreBelow15 ? '0.1' : '1.0' },
+    body: { uniquenessQuotient: isUQScoreBelow15 ? '0.01' : '1.0' },
   });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('GET', '/user/*/antisybil-status', {
     body: {
       expires_at: null,
       isOnTimeOutList: isSybil,
-      score: isUQScoreBelow15 ? '10' : '100',
+      score: isUQScoreBelow15 ? 10 : 100,
       status: 'Known',
     },
   });

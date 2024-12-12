@@ -82,7 +82,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   const sections: SectionProps[] = [
     {
       childrenLeft: (
-        <div className={styles.leftSection}>
+        <div className={styles.leftSection} data-test="AllocationSummary__totalDonated">
           <div className={styles.label}>{i18n.t('common.totalDonated')}</div>
           <div className={styles.label}>
             {i18n.t('common.matchFunding')}
@@ -91,6 +91,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
                 styles.matchFundingLeverage,
                 isLoadingAllocateSimulate && styles.isLoading,
               )}
+              data-test="AllocationSummary__totalDonated__value"
             >
               {leverage ? `${parseInt(leverage, 10)}x` : undefined}
             </span>
@@ -98,9 +99,12 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
         </div>
       ),
       childrenRight: (
-        <div className={styles.rightSection}>
+        <div className={styles.rightSection} data-test="AllocationSummary__matchFunding">
           <div className={styles.value}>{rewardsForProjectsToDisplay.primary}</div>
-          <div className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}>
+          <div
+            className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}
+            data-test="AllocationSummary__matchFunding__value"
+          >
             {matchingFundSumToDisplay}
           </div>
         </div>
@@ -109,9 +113,13 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     },
     {
       childrenLeft: <div className={styles.label}>{t('totalImpact')}</div>,
-      childrenRight: <div className={styles.value}>{totalImpactToDisplay}</div>,
-
+      childrenRight: (
+        <div className={styles.value} data-test="AllocationSummary__totalImpact__value">
+          {totalImpactToDisplay}
+        </div>
+      ),
       className: styles.section,
+      dataTest: 'AllocationSummary__totalImpact',
     },
   ];
 

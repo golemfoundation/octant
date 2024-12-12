@@ -56,7 +56,12 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
             ? t('donationHistory')
             : i18n.t('common.donations')}
           {isDecisionWindowOpen && userAllocations?.elements !== undefined && (
-            <div className={styles.numberOfAllocations}>{userAllocations?.elements?.length}</div>
+            <div
+              className={styles.numberOfAllocations}
+              data-test="HomeGridDonations__numberOfAllocations"
+            >
+              {userAllocations?.elements?.length}
+            </div>
           )}
         </div>
       }
@@ -77,7 +82,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
     >
       <div className={styles.root}>
         {areAllocationsEmpty ? (
-          <div className={styles.noDonationsYet}>
+          <div className={styles.noDonationsYet} data-test="HomeGridDonations__noDonationsYet">
             <Img className={styles.noDonationsYetImage} src="/images/headphones_girl.webp" />
             <div className={styles.noDonationsYetLabel}>
               <Trans
