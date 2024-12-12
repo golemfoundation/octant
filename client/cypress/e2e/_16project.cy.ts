@@ -27,7 +27,7 @@ const getButtonAddToAllocate = (): Chainable<any> => {
     .filter(':visible');
 };
 
-const checkProjectItemElements = (isMobile: boolean): Chainable<any> => {
+const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<any> => {
   cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
   const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
   projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
@@ -39,7 +39,7 @@ const checkProjectItemElements = (isMobile: boolean): Chainable<any> => {
   projectListItemFirst.get('[data-test=ProjectListItem__Description]').should('be.visible');
   projectListItemFirst.get('[data-test=ProjectRewards__currentTotal__label]').should('be.visible');
 
-  if (!isMobile) {
+  if (areMiddleSectionsVisible) {
     projectListItemFirst
       .get('[data-test=ProjectRewards__donationsToDisplay__label]')
       .should('be.visible');
@@ -55,7 +55,7 @@ const checkHeartedProjectsIndicator = (isMobile: boolean, number = 1): Chainable
   return cy
     .get(
       isMobile
-        ? '[data-test=Navbar__numberOfAllocations]'
+        ? '[data-test=LayoutNavbar__numberOfAllocations]'
         : '[data-test=LayoutTopBar__numberOfAllocations]',
     )
     .contains(number);
@@ -86,7 +86,7 @@ describe('move time - AW IS OPEN - less than 24h to change AW', () => {
   });
 });
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
   describe(`[AW IS OPEN] Project: ${device}`, { viewportHeight, viewportWidth }, () => {
     let projectNames: string[] = [];
 
@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
     });
 
     it('entering project view renders all its elements', () => {
-      checkProjectItemElements(isMobile);
+      checkProjectItemElements(isMobile || isTablet);
     });
 
     it('entering project view renders all its elements with fallback IPFS provider', () => {
@@ -126,7 +126,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         }
       });
 
-      checkProjectItemElements(isMobile);
+      checkProjectItemElements(isMobile || isTablet);
     });
 
     it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
@@ -150,9 +150,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .should('be.visible');
-        cy.get('[data-test=ProjectListItem__Donors]')
+        cy.get('[data-test=ProjectMilestones]')
           .eq(i)
-          .scrollIntoView({ offset: { left: 0, top: -150 } })
+          .scrollIntoView({ offset: { left: 0, top: 100 } })
           .should('be.visible');
       }
     });
