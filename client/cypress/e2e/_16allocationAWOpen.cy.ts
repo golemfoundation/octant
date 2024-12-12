@@ -301,30 +301,30 @@ Object.values(viewports).forEach(
           .should('eq', 'Personal allocation');
       });
     });
-  },
 
-  describe('move time - AW IS OPEN', () => {
-    before(() => {
-      /**
-       * Global Metamask setup done by Synpress is not always done.
-       * Since Synpress needs to have valid provider to fetch the data from contracts,
-       * setupMetamask is required in each test suite.
-       */
-      cy.setupMetamask();
-    });
+    describe('move time - AW IS OPEN', () => {
+      before(() => {
+        /**
+         * Global Metamask setup done by Synpress is not always done.
+         * Since Synpress needs to have valid provider to fetch the data from contracts,
+         * setupMetamask is required in each test suite.
+         */
+        cy.setupMetamask();
+      });
 
-    it('move time to the next open AW', () => {
-      setupAndMoveToPlayground();
+      it('move time to the next open AW', () => {
+        setupAndMoveToPlayground();
 
-      cy.window().then(async win => {
-        moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
-          cy.get('[data-test=PlaygroundView]').should('be.visible');
-          const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-            QUERY_KEYS.isDecisionWindowOpen,
-          );
-          expect(isDecisionWindowOpenAfter).to.be.true;
+        cy.window().then(async win => {
+          moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
+            cy.get('[data-test=PlaygroundView]').should('be.visible');
+            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+              QUERY_KEYS.isDecisionWindowOpen,
+            );
+            expect(isDecisionWindowOpenAfter).to.be.true;
+          });
         });
       });
     });
-  }),
+  },
 );
