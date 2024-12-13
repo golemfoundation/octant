@@ -51,10 +51,10 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   return projectListItemFirst.get('[data-test=ProjectRewards__donors]').should('be.visible');
 };
 
-const checkHeartedProjectsIndicator = (isMobile: boolean, number = 1): Chainable<any> => {
+const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Chainable<any> => {
   return cy
     .get(
-      isMobile
+      isNavbarVisible
         ? '[data-test=LayoutNavbar__numberOfAllocations]'
         : '[data-test=LayoutTopBar__numberOfAllocations]',
     )
@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
     });
 
     it('entering project view renders all its elements', () => {
-      checkProjectItemElements(isMobile || isTablet);
+      checkProjectItemElements(!isMobile && !isTablet));
     });
 
     it('entering project view renders all its elements with fallback IPFS provider', () => {
@@ -126,14 +126,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         }
       });
 
-      checkProjectItemElements(isMobile || isTablet);
+      checkProjectItemElements(!isMobile && !isTablet);
     });
 
     it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
 
       getButtonAddToAllocate().click();
-      checkHeartedProjectsIndicator(isMobile);
+      checkHeartedProjectsIndicator(isMobile || isTablet);
       getButtonAddToAllocate().click();
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
@@ -219,7 +219,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       });
 
       mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
     });
 
@@ -242,6 +244,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
 
     beforeEach(() => {
       mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
