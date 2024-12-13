@@ -15,6 +15,7 @@ const HomeView = (): ReactElement => {
   const { isMobile } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const dataTestRoot = 'HomeView';
 
   const title = useMemo(() => {
     if (isDecisionWindowOpen && isMobile) {
@@ -28,8 +29,8 @@ const HomeView = (): ReactElement => {
   }, [currentEpoch, t, isMobile, isDecisionWindowOpen, i18n.language]);
 
   return (
-    <div className={styles.root} data-test="HomeView">
-      <ViewTitle>{title}</ViewTitle>
+    <div className={styles.root} data-test={dataTestRoot}>
+      <ViewTitle dataTest={`${dataTestRoot}__title`}>{title}</ViewTitle>
       <HomeRewards />
       <HomeGrid />
     </div>

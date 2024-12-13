@@ -5,7 +5,7 @@ type Viewport = {
   isMobile: boolean;
   isTablet: boolean;
   viewportHeight: number;
-  viewportWidth: 471 | 755 | 1280 | 1920;
+  viewportWidth: 390 | 755 | 1280 | 1920;
 };
 
 type Viewports = {
@@ -37,8 +37,8 @@ const viewports: Viewports = {
     isLargeDesktop: false,
     isMobile: true,
     isTablet: false,
-    viewportHeight: 1020,
-    viewportWidth: 471,
+    viewportHeight: 844,
+    viewportWidth: 390,
   },
   tablet: {
     device: 'tablet',

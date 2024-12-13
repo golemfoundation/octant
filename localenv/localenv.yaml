@@ -26,6 +26,14 @@ services:
       - octant
 
 
+  backend-redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+    networks:
+      - octant
+
+
   backend:
     image: octant/backend:latest
     platform: linux/amd64
@@ -49,6 +57,9 @@ services:
       DELEGATION_SALT_PRIMARY: "salt_primary"
 
       SABLIER_SEPOLIA_SUBGRAPH_URL: "${SABLIER_SEPOLIA_SUBGRAPH_URL}"
+
+      CACHE_REDIS_HOST: backend-redis
+      CACHE_REDIS_PORT: 6379
 
     depends_on:
       - backend-postgres

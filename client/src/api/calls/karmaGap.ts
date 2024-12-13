@@ -3,6 +3,10 @@ import apiService from 'services/apiService';
 
 export type GrantsPerProgram = {
   data: {
+    // externalAddresses is set only when recipient does not match project has in Octant.
+    externalAddresses?: {
+      octant?: string;
+    };
     milestones: {
       createdAt: string;
       data: {
@@ -20,10 +24,6 @@ export type GrantsPerProgram = {
           title: string;
         };
         recipient: string;
-      };
-      // externalAddresses is set only when recipient does not match project has in Octant.
-      externalAddresses?: {
-        octant: string;
       };
       recipient: string;
     };

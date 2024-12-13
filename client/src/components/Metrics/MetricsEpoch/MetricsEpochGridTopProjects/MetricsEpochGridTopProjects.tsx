@@ -16,6 +16,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   isLoading,
   className,
 }) => {
+  const dataTestRoot = 'MetricsEpochGridTopProjects';
   const { i18n, t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isLargeDesktop } = useMediaQuery();
@@ -33,12 +34,12 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   return (
     <MetricsGridTile
       className={cx(styles.root, className)}
-      dataTest="MetricsEpochGridTopProjects"
+      dataTest={dataTestRoot}
       groups={[
         {
           children: (
             <MetricsProjectsList
-              dataTest="MetricsEpochGridTopProjects__list"
+              dataTest={`${dataTestRoot}__projectsList`}
               isLoading={isLoading}
               numberOfSkeletons={12}
               projects={projects}

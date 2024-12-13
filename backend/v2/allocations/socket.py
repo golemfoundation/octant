@@ -232,7 +232,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
                         "project": project_address,
                         "donors": [
                             {
-                                "address": d.donor_address,
+                                "address": d.address,
                                 "amount": str(d.amount),
                             }
                             for d in donations
@@ -300,7 +300,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
                         "project": project_address,
                         "donors": [
                             {
-                                "address": d.donor_address,
+                                "address": d.address,
                                 "amount": str(d.amount),
                             }
                             for d in donations
@@ -349,11 +349,11 @@ def from_dict(data: str) -> UserAllocationRequest:
     # parse the incoming data as UserAllocationRequestV1
     requestV1 = UserAllocationRequestV1.model_validate_json(data)
     request = UserAllocationRequest(
-        userAddress=requestV1.user_address,
+        user_address=requestV1.user_address,
         allocations=requestV1.payload.allocations,
         nonce=requestV1.payload.nonce,
         signature=requestV1.signature,
-        isManuallyEdited=requestV1.is_manually_edited,
+        is_manually_edited=requestV1.is_manually_edited,
     )
     return request
 

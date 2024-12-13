@@ -1,5 +1,6 @@
 import requests
 
+from app.extensions import cache
 from app.constants import GC_PASSPORT_SCORER_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.exception_handler import ExceptionHandler
@@ -29,6 +30,7 @@ def _get_issue_address_for_scoring_url() -> str:
     return f"{GC_PASSPORT_SCORER_API}/registry/submit-passport"
 
 
+@cache.memoize(timeout=1)
 def issue_address_for_scoring(address: str) -> dict:
     try:
         response = requests.post(
@@ -48,6 +50,7 @@ def _get_fetch_score_url(scorer_id: str, address: str) -> str:
     return f"{GC_PASSPORT_SCORER_API}/registry/score/{scorer_id}/{address}"
 
 
+@cache.memoize(timeout=1)
 def fetch_score(address: str) -> dict:
     try:
         response = requests.get(

@@ -3,9 +3,10 @@ from gql import gql
 
 from app.extensions import gql_octant_factory
 
-from app import exceptions
+from app import exceptions, cache
 
 
+@cache.memoize(timeout=15)
 def get_epoch_by_number(epoch_number):
     query = gql(
         """
@@ -39,21 +40,22 @@ def get_epoch_by_number(epoch_number):
         raise exceptions.EpochNotIndexed(epoch_number)
 
 
+@cache.memoize(timeout=15)
 def get_epochs():
     query = gql(
         """
-query {
-  epoches(first: 1000) {
-    epoch
-    fromTs
-    toTs
-  }
-  _meta {
-    block {
-      number
-    }
-  }
-}
+        query {
+          epoches(first: 1000) {
+            epoch
+            fromTs
+            toTs
+          }
+          _meta {
+            block {
+              number
+            }
+          }
+        }
     """
     )
 
