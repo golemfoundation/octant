@@ -54,7 +54,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=1500,
+                    deposit_before=500, # must be <= than the deposit_before from the first event
                     source=DepositSource.SABLIER,
                 ),
             ],
@@ -79,7 +79,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=3000,
+                    deposit_before=1500,
                     source=DepositSource.SABLIER,
                 ),
             ],
@@ -99,7 +99,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=1,
                     amount=1000,
-                    deposit_before=2000,
+                    deposit_before=1000,
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -108,7 +108,6 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     timestamp=2,
                     amount=500,
                     deposit_before=1000,
-                    # Takes the balance from the previous event from Octant, not Sablier
                     source=DepositSource.OCTANT,
                 ),
             ],
@@ -125,7 +124,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=1,
                     amount=1000,
-                    deposit_before=3000,
+                    deposit_before=1000,
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -133,7 +132,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=500,
-                    deposit_before=4000,
+                    deposit_before=2000,
                     source=DepositSource.OCTANT,
                 ),
             ],
@@ -162,7 +161,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=1000,
+                    deposit_before=500, # must be <= than the deposit_before from the first event
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -170,8 +169,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.UNLOCK,
                     timestamp=3,
                     amount=400,
-                    deposit_before=2000,
-                    # Takes the balance from the previous event from Sablier, not Octant
+                    deposit_before=1500,
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -180,7 +178,6 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     timestamp=4,
                     amount=200,
                     deposit_before=1500,
-                    # Takes the balance from the previous event from Octant, not Sablier
                     source=DepositSource.OCTANT,
                 ),
             ],
@@ -206,7 +203,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=2000,
+                    deposit_before=1000,
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -214,7 +211,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.UNLOCK,
                     timestamp=3,
                     amount=400,
-                    deposit_before=3000,
+                    deposit_before=2000,
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
@@ -222,7 +219,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=4,
                     amount=200,
-                    deposit_before=2600,
+                    deposit_before=1600,
                     source=DepositSource.OCTANT,
                 ),
             ],
