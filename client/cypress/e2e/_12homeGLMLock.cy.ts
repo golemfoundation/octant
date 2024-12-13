@@ -109,6 +109,10 @@ Object.values(viewports).forEach(
         cy.wait(5000);
 
         cy.get('[data-test=HomeView]').scrollIntoView();
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]').should(
+          'not.exist',
+        );
+        cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -147,6 +151,10 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
             cy.get('[data-test=HomeView]').scrollIntoView();
+            cy.get(
+              '[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]',
+            ).should('not.exist');
+            cy.wait(1000);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -186,6 +194,10 @@ Object.values(viewports).forEach(
         cy.wait(5000);
 
         cy.get('[data-test=HomeView]').scrollIntoView();
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]').should(
+          'not.exist',
+        );
+        cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -215,6 +227,10 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
             cy.get('[data-test=HomeView]').scrollIntoView();
+            cy.get(
+              '[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]',
+            ).should('not.exist');
+            cy.wait(1000);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
