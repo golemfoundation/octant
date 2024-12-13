@@ -72,8 +72,10 @@ export const connectWallet = ({
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
-  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.reload();
   cy.wait(500);
+  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.wait(1000);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();

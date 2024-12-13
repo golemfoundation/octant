@@ -24,6 +24,7 @@ Object.values(viewports).forEach(
       });
 
       beforeEach(() => {
+        cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
@@ -31,14 +32,14 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      it('Title is visible and has correct text', () => {
+      it('Title is visible and has correct text', { scrollBehavior: false }, () => {
         cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
         cy.get('[data-test=HomeGridCurrentGlmLock__title]')
           .invoke('text')
           .should('eq', 'Current GLM lock');
       });
 
-      it('Main value is 0 (GLM/$) when wallet isn`t connected ', () => {
+      it('Main value is 0 (GLM/$) when wallet isn`t connected ', { scrollBehavior: false }, () => {
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .should('eq', '0 GLM');
@@ -47,16 +48,20 @@ Object.values(viewports).forEach(
           .should('eq', '$0.00');
       });
 
-      it('Effective value is 0 (GLM/$) when wallet isn`t connected ', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
-          .invoke('text')
-          .should('eq', '0 GLM');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
-          .invoke('text')
-          .should('eq', '$0.00');
-      });
+      it(
+        'Effective value is 0 (GLM/$) when wallet isn`t connected ',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
+            .invoke('text')
+            .should('eq', '0 GLM');
+          cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
+            .invoke('text')
+            .should('eq', '$0.00');
+        },
+      );
 
-      it('Effective label has a tooltip with correct text', () => {
+      it('Effective label has a tooltip with correct text', { scrollBehavior: false }, () => {
         if (isLargeDesktop || isDesktop) {
           cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
         } else {
@@ -72,14 +77,18 @@ Object.values(viewports).forEach(
           );
       });
 
-      it('Button has "Lock GLM" text and is disabled when wallet isn`t connected', () => {
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
-        cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-          .invoke('text')
-          .should('eq', 'Lock GLM');
-      });
+      it(
+        'Button has "Lock GLM" text and is disabled when wallet isn`t connected',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
+          cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
+            .invoke('text')
+            .should('eq', 'Lock GLM');
+        },
+      );
 
-      it('User is able to close Lock/Unlock GLM Modal', () => {
+      it('User is able to close Lock/Unlock GLM Modal', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
@@ -99,6 +108,7 @@ Object.values(viewports).forEach(
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
+        cy.get('[data-test=HomeView]').scrollIntoView();
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -136,6 +146,7 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
+            cy.get('[data-test=HomeView]').scrollIntoView();
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })
@@ -174,6 +185,7 @@ Object.values(viewports).forEach(
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
+        cy.get('[data-test=HomeView]').scrollIntoView();
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
@@ -202,6 +214,7 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
+            cy.get('[data-test=HomeView]').scrollIntoView();
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
             })

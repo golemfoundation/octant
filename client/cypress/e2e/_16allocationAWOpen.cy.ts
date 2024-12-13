@@ -24,7 +24,6 @@ Object.values(viewports).forEach(
          * setupMetamask is required in each test suite.
          */
         cy.setupMetamask();
-        cy.clearAllLocalStorage();
       });
 
       beforeEach(() => {
