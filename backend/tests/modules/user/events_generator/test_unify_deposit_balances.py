@@ -54,7 +54,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=500, # must be <= than the deposit_before from the first event
+                    deposit_before=500,  # must be <= than the deposit_before from the first event
                     source=DepositSource.SABLIER,
                 ),
             ],
@@ -161,7 +161,7 @@ from app.modules.user.events_generator.core import unify_deposit_balances
                     type=EventType.LOCK,
                     timestamp=2,
                     amount=1000,
-                    deposit_before=500, # must be <= than the deposit_before from the first event
+                    deposit_before=500,  # must be <= than the deposit_before from the first event
                     source=DepositSource.SABLIER,
                 ),
                 DepositEvent(
