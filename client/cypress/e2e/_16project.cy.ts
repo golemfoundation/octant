@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
     });
 
     it('entering project view renders all its elements', () => {
-      checkProjectItemElements(!isMobile && !isTablet));
+      checkProjectItemElements(!isMobile && !isTablet);
     });
 
     it('entering project view renders all its elements with fallback IPFS provider', () => {
