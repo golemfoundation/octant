@@ -91,7 +91,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
                 styles.matchFundingLeverage,
                 isLoadingAllocateSimulate && styles.isLoading,
               )}
-              data-test="AllocationSummary__totalDonated__value"
+              data-test={`AllocationSummary__totalDonated__value${isLoadingAllocateSimulate ? '--loading' : ''}`}
             >
               {leverage ? `${parseInt(leverage, 10)}x` : undefined}
             </span>
@@ -103,7 +103,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
           <div className={styles.value}>{rewardsForProjectsToDisplay.primary}</div>
           <div
             className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}
-            data-test="AllocationSummary__matchFunding__value"
+            data-test={`AllocationSummary__matchFunding__value${!matchingFundSumToDisplay ? '--loading' : ''}`}
           >
             {matchingFundSumToDisplay}
           </div>
@@ -161,7 +161,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
             <div className={styles.label}>{i18n.t('common.personal')}</div>
             <div
               className={cx(styles.value, !personalToDisplay && styles.isLoading)}
-              data-test="AllocationSummary__personalReward"
+              data-test={`AllocationSummary__personalReward${!personalToDisplay ? '--loading' : ''}`}
             >
               {personalToDisplay}
             </div>

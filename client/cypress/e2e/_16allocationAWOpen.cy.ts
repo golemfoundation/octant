@@ -139,14 +139,17 @@ Object.values(viewports).forEach(
           cy.wait(1000);
           cy.get('[data-test=AllocationSummary]').should('exist');
           cy.get('[data-test=AllocationSummaryProject]').should('have.length', 3);
+          cy.wait(1000);
           cy.get('[data-test=AllocationSummary__totalDonated]').scrollIntoView();
           cy.get('[data-test=AllocationSummary__totalDonated]').should('be.visible');
+          cy.get('[data-test=AllocationSummary__totalDonated__value--loading]').should('not.exist');
           cy.get('[data-test=AllocationSummary__totalDonated__value]').then($totalDonated => {
             expect(parseFloat(`${$totalDonated.text()}`.replace('<', ''))).to.be.gt(0);
           });
 
           cy.get('[data-test=AllocationSummary__matchFunding]').scrollIntoView();
           cy.get('[data-test=AllocationSummary__matchFunding]').should('be.visible');
+          cy.get('[data-test=AllocationSummary__matchFunding__value--loading]').should('not.exist');
           cy.get('[data-test=AllocationSummary__matchFunding__value]').then($matchFunding => {
             expect(parseFloat(`${$matchFunding.text()}`.replace('<', ''))).to.be.gt(0);
           });
@@ -158,6 +161,7 @@ Object.values(viewports).forEach(
 
           cy.get('[data-test=AllocationSummary__personalRewardBox]').scrollIntoView();
           cy.get('[data-test=AllocationSummary__personalRewardBox]').should('be.visible');
+          cy.get('[data-test=AllocationSummary__personalReward--loading]').should('not.exist');
           cy.get('[data-test=AllocationSummary__personalReward]').then($personalReward => {
             expect(parseFloat(`${$personalReward.text()}`.replace('<', ''))).to.be.gt(0);
           });
