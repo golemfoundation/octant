@@ -12,7 +12,7 @@ const ProjectMilestonesNoResults = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix });
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="ProjectMilestonesNoResults">
       <Img alt="leafBlower" className={styles.image} src="/images/leafBlower.webp" />
       <div className={styles.header}>{t('header')}</div>
       <div className={styles.description}>
