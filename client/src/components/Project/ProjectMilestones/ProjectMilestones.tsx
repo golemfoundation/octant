@@ -51,7 +51,8 @@ const ProjectMilestones: FC<ProjectMilestonesProps> = ({ projectAddress }) => {
     },
   ];
 
-  const areMilestonesAvailable = !isFetching && data !== undefined && data.milestones.length > 0;
+  const areMilestonesAvailable =
+    !isFetching && data !== undefined && data.milestones && data.milestones.length > 0;
   const areMilestonesClipped =
     areMilestonesAvailable && data.milestones.length > MIELSTONES_MAX_LENGTH_CLIPPED;
 

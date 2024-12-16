@@ -1,21 +1,23 @@
 import { API_ENDPOINT } from 'constants/karmaGap';
 import apiService from 'services/apiService';
 
+export type Milestone = {
+  createdAt: string;
+  data: {
+    description: string;
+    endsAt: number;
+    title: string; // Timestamp.
+  };
+  updatedAt: string;
+};
+
 export type GrantsPerProgram = {
   data: {
     // externalAddresses is set only when recipient does not match project has in Octant.
     externalAddresses?: {
       octant?: string;
     };
-    milestones: {
-      createdAt: string;
-      data: {
-        description: string;
-        endsAt: number;
-        title: string; // Timestamp.
-      };
-      updatedAt: string;
-    }[];
+    milestones: Milestone[];
     project: {
       details: {
         data: {
