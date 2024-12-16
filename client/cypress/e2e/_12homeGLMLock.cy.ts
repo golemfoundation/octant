@@ -131,7 +131,6 @@ Object.values(viewports).forEach(
               'Waiting for confirmation',
             );
             cy.confirmMetamaskPermissionToSpend({
-              shouldWaitForPopupClosure: true,
               spendLimit: '99999999999999999999',
             });
             // Workaround for two notifications during first transaction.
@@ -216,7 +215,6 @@ Object.values(viewports).forEach(
               'Waiting for confirmation',
             );
             cy.confirmMetamaskPermissionToSpend({
-              shouldWaitForPopupClosure: true,
               spendLimit: '99999999999999999999',
             });
             cy.get('[data-test=LockGlmTabs__Button]', { timeout: 60000 }).should(
