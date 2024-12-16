@@ -19,7 +19,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
 }) => {
   const keyPrefix = 'components.dedicated.glmLock.glmLockNotification';
 
-  const { t } = useTranslation('translation', {
+  const { i18n } = useTranslation('translation', {
     keyPrefix,
   });
 
@@ -55,7 +55,7 @@ const LockGlmNotification: FC<LockGlmNotificationProps> = ({
       <div className={styles.notification}>
         <Svg img={type === 'success' ? checkMark : notificationIconWarning} size={3.2} />
         <div className={styles.info}>
-          {labelKey && <div className={styles.label}>{t(labelKey)}</div>}
+          {labelKey && <div className={styles.label}>{i18n.t(labelKey)}</div>}
           {text && (
             <div className={styles.text}>
               <Trans
