@@ -57,7 +57,7 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   }
   cy.get('[data-test^=ModalFullDonorsList').should('be.visible');
   cy.get('[data-test^=ModalFullDonorsList__Button').click();
-  cy.get('[data-test^=ModalFullDonorsList').should('not.be.visible');
+  cy.get('[data-test^=ModalFullDonorsList').should('not.exist');
   return projectListItemFirst
     .get('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
