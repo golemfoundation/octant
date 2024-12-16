@@ -1,16 +1,16 @@
-from pydantic import BaseModel
+from backend.v2.core.types import OctantModel
 
 
-class CurrentEpochResponseV1(BaseModel):
+class CurrentEpochResponseV1(OctantModel):
     current_epoch: int
 
 
-class IndexedEpochResponseV1(BaseModel):
+class IndexedEpochResponseV1(OctantModel):
     current_epoch: int
     indexed_epoch: int
 
 
-class EpochStatsResponseV1(BaseModel):
+class EpochStatsResponseV1(OctantModel):
     staking_proceeds: str
     total_effective_deposit: str
     total_rewards: str
@@ -25,5 +25,5 @@ class EpochStatsResponseV1(BaseModel):
     donated_to_projects: str | None
 
 
-class EpochRewardsRateResponseV1(BaseModel):
+class EpochRewardsRateResponseV1(OctantModel):
     rewards_rate: float
