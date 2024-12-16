@@ -65,7 +65,7 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('not.eq', '0 ETH');
 
-        cy.get('[data-test=AllocationNavigation__ctaButton]')
+        cy.get('[data-test=AllocationNavigation__Button--cta]')
           .invoke('text')
           .should('eq', 'Confirm');
         cy.wait(1000);
@@ -92,7 +92,7 @@ Object.values(viewports).forEach(
           });
 
           // reset
-          cy.get('[data-test=AllocationNavigation__resetButton]').click();
+          cy.get('[data-test=AllocationNavigation__Button--reset]').click();
 
           cy.wait(1000);
           cy.get('[data-test=AllocationSliderBox__section__value--0]')
@@ -122,17 +122,17 @@ Object.values(viewports).forEach(
             expect(parseFloat(`${el.val()}`)).to.be.gt(0);
           });
 
-          cy.get('[data-test=AllocationNavigation__ctaButton]')
+          cy.get('[data-test=AllocationNavigation__Button--cta]')
             .invoke('text')
             .should('eq', 'Confirm');
-          cy.get('[data-test=AllocationNavigation__ctaButton]').click();
+          cy.get('[data-test=AllocationNavigation__Button--cta]').click();
           cy.get('[data-test=ModalAllocationLowUqScore]').should('be.visible');
-          cy.get('[data-test=AllocationLowUqScore__checkbox]').check();
-          cy.get('[data-test=AllocationLowUqScore__ctaButton]').click();
+          cy.get('[data-test=AllocationLowUqScore__InputCheckbox]').check();
+          cy.get('[data-test=AllocationLowUqScore__Button--cta]').click();
           cy.get('[data-test=ModalAllocationLowUqScore]').should('not.exist');
           cy.wait(500);
-          cy.get('[data-test=AllocationNavigation__ctaButton]').should('be.disabled');
-          cy.get('[data-test=AllocationNavigation__ctaButton]')
+          cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.disabled');
+          cy.get('[data-test=AllocationNavigation__Button--cta]')
             .invoke('text')
             .should('eq', 'Waiting');
           cy.confirmMetamaskDataSignatureRequest();
@@ -168,7 +168,9 @@ Object.values(viewports).forEach(
 
           cy.get('[data-test=AllocationSliderBox__Slider__thumb]').scrollIntoView();
           cy.get('[data-test=AllocationSliderBox__Slider__thumb]').should('not.be.visible');
-          cy.get('[data-test=AllocationNavigation__ctaButton]').invoke('text').should('eq', 'Edit');
+          cy.get('[data-test=AllocationNavigation__Button--cta]')
+            .invoke('text')
+            .should('eq', 'Edit');
 
           if (isLargeDesktop || isDesktop) {
             cy.get('[data-test=AllocationDrawer__closeButton]').click();
@@ -231,12 +233,12 @@ Object.values(viewports).forEach(
         cy.get('[data-test=AllocationSummary__personalRewardBox]').scrollIntoView();
         cy.get('[data-test=AllocationSummary__personalRewardBox]').should('be.visible');
 
-        cy.get('[data-test=AllocationNavigation__resetButton]')
+        cy.get('[data-test=AllocationNavigation__Button--reset]')
           .invoke('text')
           .should('eq', 'Reset');
-        cy.get('[data-test=AllocationNavigation__resetButton]').should('be.disabled');
-        cy.get('[data-test=AllocationNavigation__ctaButton]').invoke('text').should('eq', 'Edit');
-        cy.get('[data-test=AllocationNavigation__ctaButton]').click();
+        cy.get('[data-test=AllocationNavigation__Button--reset]').should('be.disabled');
+        cy.get('[data-test=AllocationNavigation__Button--cta]').invoke('text').should('eq', 'Edit');
+        cy.get('[data-test=AllocationNavigation__Button--cta]').click();
 
         cy.get('[data-test=AllocationSliderBox__Slider__thumb]').scrollIntoView();
         cy.get('[data-test=AllocationSliderBox__Slider__thumb]').should('be.visible');
@@ -261,13 +263,13 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('not.eq', '0 ETH');
 
-        cy.get('[data-test=AllocationNavigation__ctaButton]')
+        cy.get('[data-test=AllocationNavigation__Button--cta]')
           .invoke('text')
           .should('eq', 'Confirm');
-        cy.get('[data-test=AllocationNavigation__ctaButton]').click();
+        cy.get('[data-test=AllocationNavigation__Button--cta]').click();
         cy.wait(500);
-        cy.get('[data-test=AllocationNavigation__ctaButton]').should('be.disabled');
-        cy.get('[data-test=AllocationNavigation__ctaButton]')
+        cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.disabled');
+        cy.get('[data-test=AllocationNavigation__Button--cta]')
           .invoke('text')
           .should('eq', 'Waiting');
         cy.confirmMetamaskDataSignatureRequest();
