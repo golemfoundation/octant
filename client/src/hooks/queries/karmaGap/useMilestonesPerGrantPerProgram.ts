@@ -14,12 +14,23 @@ export default function useMilestonesPerGrantPerProgram(
   return useQuery({
     queryFn: () => apiGetGrantsPerProgram(programId),
     queryKey: QUERY_KEYS.karmaGapMilestonesPerProjectPerGrantPerProgram(programId, projectAddress),
-    select: response =>
-      response.data.find(
+    select: response => {
+      /**
+       * In Cypress, when addresses & epoch number overlap with production environment,
+       * we can actually fetch the milestones. They are not set up by us, but by projects,
+       * creating uncontrolled environment tests are running in.
+       *
+       * Hence, always return [].
+       */
+      if (window.Cypress) {
+        return [];
+      }
+      return response.data.find(
         element =>
           element.externalAddresses?.octant?.toLowerCase() === projectAddressToLowerCase ||
           element.project.recipient.toLowerCase() === projectAddressToLowerCase ||
           element.project.details.recipient.toLowerCase() === projectAddressToLowerCase,
-      ),
+      );
+    },
   });
 }

@@ -191,6 +191,7 @@ const Rewards: FC<RewardsProps> = ({
             variant="cta"
           />
           <Button
+            dataTest="ProjectRewards__Button--donors"
             label={t('viewAllDonors')}
             onClick={() => setIsFullDonorsListModalOpen(true)}
             variant="secondary"

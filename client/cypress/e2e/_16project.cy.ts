@@ -49,7 +49,12 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   }
 
   projectListItemFirst.get('[data-test=ProjectRewards__donors]').should('be.visible');
-  projectListItemFirst.get('[data-test=ProjectRewards__donors]').click();
+
+  if (areMiddleSectionsVisible) {
+    projectListItemFirst.get('[data-test=ProjectRewards__donors]').click();
+  } else {
+    projectListItemFirst.get('[data-test=ProjectRewards__Button--donors]').click();
+  }
   cy.get('[data-test^=ModalFullDonorsList').should('be.visible');
   cy.get('[data-test^=ModalFullDonorsList__Button').click();
   cy.get('[data-test^=ModalFullDonorsList').should('not.be.visible');
