@@ -1,4 +1,4 @@
-from backend.v2.core.types import OctantModel
+from v2.core.types import OctantModel
 
 
 class CurrentEpochResponseV1(OctantModel):
