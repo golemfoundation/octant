@@ -83,8 +83,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
     const epochData = epochsStartEndTime[currentEpoch! - 1];
     const allocationWindowEndTimestamp =
       (parseInt(epochData?.fromTs, 10) + parseInt(epochData.decisionWindow, 10)) * 1000;
-    const nextAllocationWindowStartTimestamp =
-      (parseInt(epochData?.toTs, 10) + parseInt(epochData.decisionWindow, 10)) * 1000;
+    const nextAllocationWindowStartTimestamp = parseInt(epochData?.toTs, 10) * 1000;
 
     const setNextDuration = () => {
       const minutes =
