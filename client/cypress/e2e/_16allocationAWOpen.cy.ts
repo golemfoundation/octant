@@ -34,7 +34,7 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      it('User with UQ score below 15 can allocate rewards to personal and to projects', () => {
+      it('User with UQ score below 15 can allocate rewards to personal and to projects, ModalAllocationLowUqScore is shown to them', () => {
         connectWallet({ isPatronModeEnabled: false, isUQScoreBelow15: true });
         cy.wait(5000);
         if (isLargeDesktop || isDesktop) {
