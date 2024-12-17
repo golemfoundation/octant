@@ -581,7 +581,10 @@ Object.values(viewports).forEach(
           connectWallet({ isPatronModeEnabled: false });
           cy.wait(5000);
 
-          cy.get('[data-test=DonationsListSkeletonItem]').should('not.exist');
+          cy.get('[data-test=TransactionsListItem__DoubleValue__DoubleValueSkeleton]').should(
+            'not.exist',
+          );
+          cy.get('[data-test=TransactionsListItem__DoubleValue__primary]').should('exist');
 
           cy.get('[data-test=HomeGridDonations__title]')
             .invoke('text')
