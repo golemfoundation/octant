@@ -38,7 +38,7 @@ export default function useEpochTimestampHappenedIn(
     queryKey: QUERY_KEYS.epochTimestampHappenedIn(timestampSecondsNumber),
     select: data => {
       if (window.Cypress) {
-        return isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!;
+        return currentEpoch!;
       }
       return data.epoches[0].epoch;
     },
