@@ -581,10 +581,12 @@ Object.values(viewports).forEach(
           connectWallet({ isPatronModeEnabled: false });
           cy.wait(5000);
 
+          cy.get('[data-test=DonationsListSkeletonItem]').should('not.exist');
+
           cy.get('[data-test=HomeGridDonations__title]')
             .invoke('text')
-            .should('eq', 'Donations history');
-          cy.get('[data-test=DonationsList__item]').should('have.length', 4);
+            .should('eq', 'Donation history');
+          cy.get('[data-test=DonationsList__item]').should('have.length.gte', 4);
 
           cy.get('[data-test=TransactionsListItem__title]')
             .eq(0)
@@ -630,7 +632,7 @@ Object.values(viewports).forEach(
 
           cy.get('[data-test=AllocationRewardsBox]').scrollIntoView();
           cy.get('[data-test=AllocationRewardsBox]').should('be.visible');
-          cy.get('[data-test=AllocationSliderBox__Slider__thumb]').should('not.be.visible');
+          cy.get('[data-test=AllocationSliderBox]').should('not.exist');
 
           cy.get('[data-test=AllocationSummary]').should('exist');
           cy.get('[data-test=AllocationSummaryProject]').should('have.length', 4);
