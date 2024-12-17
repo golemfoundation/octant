@@ -41,6 +41,8 @@ export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
 
 export const SHOW_HELP_VIDEOS = getLocalStorageKey(settingsPrefix, 'showHelpVideos');
 
+export const LANGUAGE_UI = getLocalStorageKey(settingsPrefix, 'languageUI');
+
 // Delegation
 const delegationPrefix = 'delegation_5';
 

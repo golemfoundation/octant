@@ -17,6 +17,7 @@ const durationOfTransitionMobile = 0.3;
 const InputSelect: FC<InputSelectProps> = ({
   className,
   dataTest = 'InputSelect',
+  Icon,
   options,
   onChange,
   selectedOption,
@@ -70,6 +71,8 @@ const InputSelect: FC<InputSelectProps> = ({
     return () => document.removeEventListener('click', listener);
   }, [isMenuOpen, isDesktop]);
 
+  const isVariantFullWidthOnMobile = ['overselect', 'belowselect'].includes(variant);
+
   return (
     <div
       className={cx(styles.root, styles[`variant--${variant}`], className)}
@@ -78,12 +81,22 @@ const InputSelect: FC<InputSelectProps> = ({
       onClick={() => setIsMenuOpen(prev => !prev)}
     >
       <div ref={ref} className={cx(styles.selectedValue, styles[`variant--${variant}`])}>
-        <span className={styles.label} data-test={`${dataTest}__SingleValue`}>
-          {_selectedOption?.label}
-        </span>
+        <div className={styles.labelWrapper}>
+          {Icon && <div className={cx(styles.icon, styles[`variant--${variant}`])}>{Icon}</div>}
+          <span
+            className={cx(styles.label, !!Icon && styles.hasIcon)}
+            data-test={`${dataTest}__SingleValue`}
+          >
+            {_selectedOption?.label}
+          </span>
+        </div>
         <Svg
           ref={refChevron}
-          classNameSvg={cx(styles.chevron, isMenuOpen && styles.isMenuOpen)}
+          classNameSvg={cx(
+            styles.chevron,
+            styles[`variant--${variant}`],
+            isMenuOpen && styles.isMenuOpen,
+          )}
           img={chevronBottom}
           size={1.2}
         />
@@ -93,7 +106,11 @@ const InputSelect: FC<InputSelectProps> = ({
               <motion.div
                 key="menu-overlay"
                 animate={{ opacity: 1 }}
-                className={cx(styles.overlay, styles.isOpen)}
+                className={cx(
+                  styles.overlay,
+                  styles.isOpen,
+                  isVariantFullWidthOnMobile && styles.isVariantFullWidthOnMobile,
+                )}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 onClick={e => {
@@ -124,12 +141,14 @@ const InputSelect: FC<InputSelectProps> = ({
                   duration: durationOfTransition,
                 }}
               >
-                <Button
-                  className={styles.buttonClose}
-                  Icon={<Svg img={cross} size={1} />}
-                  onClick={() => setIsMenuOpen(false)}
-                  variant="iconOnly"
-                />
+                {isVariantFullWidthOnMobile && (
+                  <Button
+                    className={styles.buttonClose}
+                    Icon={<Svg img={cross} size={1} />}
+                    onClick={() => setIsMenuOpen(false)}
+                    variant="iconOnly"
+                  />
+                )}
                 {options.map(option => (
                   <div
                     key={option.value}

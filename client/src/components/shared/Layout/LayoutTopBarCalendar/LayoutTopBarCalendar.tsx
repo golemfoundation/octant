@@ -17,8 +17,8 @@ import { calendar } from 'svg/misc';
 import styles from './LayoutTopBarCalendar.module.scss';
 
 const LayoutTopBarCalendar = (): ReactElement => {
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const dataTestRoot = 'LayoutTopBarCalendar';
-  const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isMobile } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -68,7 +68,14 @@ const LayoutTopBarCalendar = (): ReactElement => {
     }
     return t('epochAllocationOpensIn', { duration, epoch });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDecisionWindowOpen, currentEpoch, isMobile, durationToChangeAWInMinutes, showAWAlert]);
+  }, [
+    isDecisionWindowOpen,
+    currentEpoch,
+    isMobile,
+    durationToChangeAWInMinutes,
+    showAWAlert,
+    i18n.language,
+  ]);
 
   useEffect(() => {
     if (
