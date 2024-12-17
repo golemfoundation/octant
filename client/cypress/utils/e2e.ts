@@ -34,18 +34,23 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 
 export const connectWallet = ({
   isPatronModeEnabled = false,
+  isUQScoreBelow15 = false,
+  isSybil = false,
 }: ConnectWalletParameters): Chainable<any> => {
   // In CI, e2e tests are run serially and mocking TOS response is not required
   // Uncomment snippet below to mock TOS GET response in development
   // cy.intercept('GET', '/user/*/tos', { body: { accepted: true } });
 
-  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
+  cy.intercept('GET', '/user/*/uq/*', {
+    body: { uniquenessQuotient: isUQScoreBelow15 ? '0.01' : '1.0' },
+  });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('GET', '/user/*/antisybil-status', {
     body: {
       expires_at: null,
-      score: null,
-      status: 'Unknown',
+      isOnTimeOutList: isSybil,
+      score: isUQScoreBelow15 ? 10 : 100,
+      status: 'Known',
     },
   });
   cy.intercept('PUT', '/user/*/antisybil-status', { statusCode: 204 });
@@ -67,8 +72,10 @@ export const connectWallet = ({
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
-  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.reload();
   cy.wait(500);
+  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.wait(1000);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();
