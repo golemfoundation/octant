@@ -8,6 +8,8 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
 import { graphql } from 'gql/gql';
 import { GetEpochTimestampHappenedInQuery } from 'gql/graphql';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
 const GET_EPOCH_TIMESTAMP_HAPPENED_IN = graphql(`
   query GetEpochTimestampHappenedIn($timestamp: BigInt) {
@@ -21,15 +23,24 @@ export default function useEpochTimestampHappenedIn(
   timestampSeconds: string,
 ): UseQueryResult<number> {
   const { subgraphAddress } = env;
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const timestampSecondsNumber = parseInt(timestampSeconds, 10);
 
   return useQuery<GetEpochTimestampHappenedInQuery, any, number, any>({
-    enabled: !!timestampSecondsNumber,
+    enabled: window.Cypress
+      ? currentEpoch !== undefined && isDecisionWindowOpen !== undefined
+      : !!timestampSecondsNumber,
     queryFn: async () =>
       request(subgraphAddress, GET_EPOCH_TIMESTAMP_HAPPENED_IN, {
         timestamp: timestampSecondsNumber,
       }),
     queryKey: QUERY_KEYS.epochTimestampHappenedIn(timestampSecondsNumber),
-    select: data => data.epoches[0].epoch,
+    select: data => {
+      if (window.Cypress) {
+        return isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!;
+      }
+      return data.epoches[0].epoch;
+    },
   });
 }
