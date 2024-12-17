@@ -87,14 +87,14 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     <div className={styles.root} data-test={dataTestRoot}>
       <Button
         className={styles.button}
-        dataTest={`${dataTestRoot}__resetButton`}
+        dataTest={`${dataTestRoot}__Button--reset`}
         isDisabled={isLeftButtonDisabled || areButtonsDisabled}
         label={t('reset')}
         onClick={onResetValues}
       />
       <Button
         className={styles.button}
-        dataTest={`${dataTestRoot}__ctaButton`}
+        dataTest={`${dataTestRoot}__Button--cta`}
         isDisabled={isLoading || areButtonsDisabled}
         label={nextButtonLabel}
         onClick={currentView === 'edit' ? onAllocate : () => setCurrentView('edit')}

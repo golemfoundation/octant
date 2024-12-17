@@ -152,13 +152,13 @@ Object.values(viewports).forEach(
       });
 
       it('User can`t reset allocation', () => {
-        cy.get('[data-test=AllocationNavigation__resetButton]').should('be.visible');
-        cy.get('[data-test=AllocationNavigation__resetButton]').should('be.disabled');
+        cy.get('[data-test=AllocationNavigation__Button--reset]').should('be.visible');
+        cy.get('[data-test=AllocationNavigation__Button--reset]').should('be.disabled');
       });
 
       it('User can`t confirm allocation', () => {
-        cy.get('[data-test=AllocationNavigation__ctaButton]').should('be.visible');
-        cy.get('[data-test=AllocationNavigation__ctaButton]').should('be.disabled');
+        cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.visible');
+        cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.disabled');
       });
     });
   },

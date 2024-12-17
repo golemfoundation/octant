@@ -19,7 +19,7 @@ const ModalAllocationLowUqScore: FC<ModalAllocationLowUqScoreProps> = ({
   return (
     <Modal
       bodyClassName={styles.modalBody}
-      dataTest="ModalSettingsCalculatingUQScore"
+      dataTest="ModalAllocationLowUqScore"
       header={t('header')}
       Image={<Img className={styles.image} src="/images/calculator.webp" />}
       isOverflowOnClickDisabled
