@@ -28,19 +28,26 @@ class EventsGenerator(Protocol):
 
 class CalculatedUserDeposits(Model):
     events_generator: EventsGenerator
+    sablier_unlock_grace_period: int
 
     def get_all_effective_deposits(
         self, context: Context
     ) -> Tuple[List[UserDeposit], int]:
         events = self.events_generator.get_all_users_events(context)
         return calculate_effective_deposits(
-            context.epoch_details, context.epoch_settings, events
+            context.epoch_details,
+            context.epoch_settings,
+            events,
+            self.sablier_unlock_grace_period,
         )
 
     def get_total_effective_deposit(self, context: Context) -> int:
         events = self.events_generator.get_all_users_events(context)
         _, total = calculate_effective_deposits(
-            context.epoch_details, context.epoch_settings, events
+            context.epoch_details,
+            context.epoch_settings,
+            events,
+            self.sablier_unlock_grace_period,
         )
         return total
 
@@ -49,7 +56,10 @@ class CalculatedUserDeposits(Model):
             user_address: self.events_generator.get_user_events(context, user_address)
         }
         deposits, _ = calculate_effective_deposits(
-            context.epoch_details, context.epoch_settings, events
+            context.epoch_details,
+            context.epoch_settings,
+            events,
+            self.sablier_unlock_grace_period,
         )
         return deposits[0].effective_deposit
 

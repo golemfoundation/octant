@@ -2,6 +2,10 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
+from app.constants import (
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+)
 from app.modules.modules_factory.protocols import (
     AllUserEffectiveDeposits,
     OctantRewards,
@@ -50,7 +54,10 @@ class PrePendingServices(Model):
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
 
         user_deposits = CalculatedUserDeposits(
-            events_generator=DbAndGraphEventsGenerator()
+            events_generator=DbAndGraphEventsGenerator(),
+            sablier_unlock_grace_period=SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+            if is_mainnet
+            else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
         )
         octant_rewards = CalculatedOctantRewards(
             staking_proceeds=(

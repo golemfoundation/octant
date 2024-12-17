@@ -3,12 +3,16 @@ from app.modules.common.time import from_timestamp_s
 from app.modules.history.dto import LockItem, OpType
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from tests.conftest import USER1_ADDRESS, mock_graphql, mock_sablier_graphql
+from tests.helpers.constants import TWENTY_FOUR_HOURS_PERIOD
 from tests.helpers.context import get_context
 
 
 def test_get_total_effective_deposit(mock_events_generator):
     context = get_context()
-    service = CalculatedUserDeposits(events_generator=mock_events_generator)
+    service = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
 
     result = service.get_total_effective_deposit(context)
 
@@ -19,7 +23,10 @@ def test_get_user_effective_deposit(
     mock_events_generator,
 ):
     context = get_context()
-    service = CalculatedUserDeposits(events_generator=mock_events_generator)
+    service = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
 
     result = service.get_user_effective_deposit(context, USER1_ADDRESS)
 
@@ -30,7 +37,10 @@ def test_get_all_deposits(
     mock_events_generator,
 ):
     context = get_context()
-    service = CalculatedUserDeposits(events_generator=mock_events_generator)
+    service = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
 
     result = service.get_all_effective_deposits(context)
 
@@ -67,7 +77,10 @@ def test_get_locks_by_timestamp(app, mocker, alice, mock_events_generator):
     timestamp_before = from_timestamp_s(1710719999)
     timestamp_after = from_timestamp_s(1710720001)
 
-    service = CalculatedUserDeposits(events_generator=mock_events_generator)
+    service = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
 
     result_before = service.get_locks(
         alice.address, from_timestamp=timestamp_before, limit=20
@@ -106,7 +119,10 @@ def test_get_unlocks_by_timestamp(app, mocker, alice, mock_events_generator):
     timestamp_before = from_timestamp_s(1710719999)
     timestamp_after = from_timestamp_s(1710720001)
 
-    service = CalculatedUserDeposits(events_generator=mock_events_generator)
+    service = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
 
     result_before = service.get_unlocks(
         alice.address, from_timestamp=timestamp_before, limit=20
