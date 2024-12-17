@@ -17,7 +17,7 @@ async def test_returns_correct_rewards_rate(
     async with fast_client as client:
         resp = await client.get(f"epochs/rewards-rate/{epoch_number}")
         assert resp.status_code == HTTPStatus.OK
-        assert resp.json() == {"rewards_rate": expected_rewards_rate}
+        assert resp.json() == {"rewardsRate": expected_rewards_rate}
 
 
 @pytest.mark.asyncio

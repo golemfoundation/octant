@@ -28,8 +28,8 @@ async def test_returns_correct_indexed_epoch_for_a_single_epoch(
         resp = await client.get("epochs/indexed")
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
-            "current_epoch": mocked_current_epoch,
-            "indexed_epoch": mocked_current_epoch,
+            "currentEpoch": mocked_current_epoch,
+            "indexedEpoch": mocked_current_epoch,
         }
 
 
@@ -53,8 +53,8 @@ async def test_returns_correct_indexed_epoch_for_multiple_epochs(
         resp = await client.get("epochs/indexed")
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
-            "current_epoch": mocked_current_epoch,
-            "indexed_epoch": mocked_current_epoch,
+            "currentEpoch": mocked_current_epoch,
+            "indexedEpoch": mocked_current_epoch,
         }
 
 
@@ -78,6 +78,6 @@ async def test_returns_divergent_epochs_when_not_indexed(
         resp = await client.get("epochs/indexed")
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {
-            "current_epoch": mocked_current_epoch,
-            "indexed_epoch": 1,
+            "currentEpoch": mocked_current_epoch,
+            "indexedEpoch": 1,
         }
