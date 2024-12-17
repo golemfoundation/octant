@@ -78,7 +78,6 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     if (!userAllocations?.hasUserAlreadyDoneAllocation) {
       return;
     }
-    setCurrentView('summary');
     setIsInitialCurrentViewSet(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
