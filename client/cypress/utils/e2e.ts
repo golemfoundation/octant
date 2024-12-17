@@ -1,3 +1,6 @@
+import { IS_CRYPTO_MAIN_VALUE_DISPLAY } from 'src/constants/localStorageKeys';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
 import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
@@ -99,4 +102,36 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   });
 
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+};
+
+export const changeMainValueToCryptoToggle = (
+  isDesktopTypeView: boolean,
+  changeToCryptoOrFiat: 'crypto' | 'fiat',
+): Chainable<any> => {
+  visitWithLoader(
+    ROOT_ROUTES.settings.absolute,
+    isDesktopTypeView ? ROOT_ROUTES.home.absolute : ROOT_ROUTES.settings.absolute,
+  );
+  if (isDesktopTypeView) {
+    cy.get('[data-test=SettingsDrawer]').should('be.visible');
+    cy.get('[data-test=SettingsView]').should('not.exist');
+  } else {
+    cy.get('[data-test=SettingsDrawer]').should('not.exist');
+    cy.get('[data-test=SettingsView]').should('be.visible');
+  }
+  if (changeToCryptoOrFiat === 'crypto') {
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check({ force: true });
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
+    cy.getAllLocalStorage().then(() => {
+      expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
+    });
+  } else {
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck({ force: true });
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
+  }
+  return cy.getAllLocalStorage().then(() => {
+    expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq(
+      changeToCryptoOrFiat === 'crypto' ? 'true' : 'false',
+    );
+  });
 };

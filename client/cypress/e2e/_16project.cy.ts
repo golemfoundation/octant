@@ -1,4 +1,5 @@
 import {
+  changeMainValueToCryptoToggle,
   // changeMainValueToFiat,
   checkProjectsViewLoaded,
   connectWallet,
@@ -58,20 +59,41 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   cy.get('[data-test^=ModalFullDonorsList').should('be.visible');
   cy.get('[data-test^=ModalFullDonorsList__Button').click();
   cy.get('[data-test^=ModalFullDonorsList').should('not.exist');
-  return projectListItemFirst
+
+  projectListItemFirst
+    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__websiteLink]')
+    .should('be.visible');
+
+  projectListItemFirst
+    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]')
+    .should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+  cy.window().then(win => {
+    projectListItemFirst.get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+    win.navigator.clipboard.readText().then(text => {
+      expect(text).to.eq(cy.url());
+    });
+  });
+  projectListItemFirst
     .get('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
     .should('be.visible');
+  return projectListItemFirst
+    .get('[data-test=ProjectMilestonesNoResults__header]')
+    .invoke('text')
+    .should('eq', 'Nothing to report yet. Check back again soon');
+};
+
+const getHeartedProjectsIndicator = (isNavbarVisible: boolean): Chainable<any> => {
+  return cy.get(
+    isNavbarVisible
+      ? '[data-test=LayoutNavbar__numberOfAllocations]'
+      : '[data-test=LayoutTopBar__numberOfAllocations]',
+  );
 };
 
 const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Chainable<any> => {
-  return cy
-    .get(
-      isNavbarVisible
-        ? '[data-test=LayoutNavbar__numberOfAllocations]'
-        : '[data-test=LayoutTopBar__numberOfAllocations]',
-    )
-    .contains(number);
+  return getHeartedProjectsIndicator(isNavbarVisible).contains(number);
 };
 
 describe('move time - AW IS OPEN - less than 24h to change AW', () => {
@@ -149,7 +171,7 @@ Object.values(viewports).forEach(
         getButtonAddToAllocate().click();
         checkHeartedProjectsIndicator(isMobile || isTablet);
         getButtonAddToAllocate().click();
-        cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+        getHeartedProjectsIndicator(isMobile || isTablet).should('not.exist');
       });
 
       it('Entering project view allows scroll only to the last project', () => {
@@ -207,14 +229,16 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('eq', '0 ETH');
       });
-      // it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
-      //   changeMainValueToFiat(ROOT_ROUTES.projects.absolute);
-      //   cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
-      //   cy.get('[data-test=ProjectRewards__currentTotal__number]')
-      //     .first()
-      //     .invoke('text')
-      //     .should('eq', '$0.00');
-      // });
+
+      it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
+        changeMainValueToCryptoToggle(!isMobile && !isTablet, 'fiat');
+        visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
+        cy.get('[data-test=ProjectRewards__currentTotal__number]')
+          .first()
+          .invoke('text')
+          .should('eq', '$0.00');
+      });
     });
 
     describe(`projects (IPFS failure): ${device}`, { viewportHeight, viewportWidth }, () => {
