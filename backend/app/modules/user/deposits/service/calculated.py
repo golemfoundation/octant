@@ -55,6 +55,7 @@ class CalculatedUserDeposits(Model):
         events = {
             user_address: self.events_generator.get_user_events(context, user_address)
         }
+        print("events", events)
         deposits, _ = calculate_effective_deposits(
             context.epoch_details,
             context.epoch_settings,
