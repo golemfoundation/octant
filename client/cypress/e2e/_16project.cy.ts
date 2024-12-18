@@ -61,15 +61,15 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   cy.get('[data-test^=ModalFullDonorsList').should('not.exist');
 
   projectListItemFirst
-    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__websiteLink]')
+    .find('[data-test=ProjectListItemButtonsWebsiteAndShare__websiteLink]')
     .should('be.visible');
 
   projectListItemFirst
-    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]')
+    .find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]')
     .should('be.visible');
-  projectListItemFirst.get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+  projectListItemFirst.find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
   cy.window().then(win => {
-    projectListItemFirst.get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+    projectListItemFirst.find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
     win.navigator.clipboard.readText().then(text => {
       expect(text).to.eq(cy.url());
     });
