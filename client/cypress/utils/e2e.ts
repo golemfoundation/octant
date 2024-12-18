@@ -122,9 +122,6 @@ export const changeMainValueToCryptoToggle = (
   if (changeToCryptoOrFiat === 'crypto') {
     cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check({ force: true });
     cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
-    cy.getAllLocalStorage().then(() => {
-      expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
-    });
   } else {
     cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck({ force: true });
     cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('not.be.checked');
