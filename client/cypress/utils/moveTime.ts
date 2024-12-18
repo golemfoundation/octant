@@ -100,7 +100,7 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
  */
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
-  moveTo: 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
+  moveTo: 'decisionWindowClosed' | 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
   connectWalletParams?: ConnectWalletParameters,
 ): Chainable<any> => {
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
@@ -112,11 +112,15 @@ export const moveTime = (
     waitForLoadersToDisappear();
     // reload is needed to get updated data in the app
     cy.reload();
+  } else if (moveTo === 'decisionWindowClosed') {
+    return cy.reload();
   }
 
   if (moveTo === 'nextEpochDecisionWindowOpen') {
     moveToDecisionWindowOpen(cypressWindow);
-  } else {
+  }
+
+  if (moveTo === 'nextEpochDecisionWindowClosed') {
     moveToDecisionWindowOpen(cypressWindow);
     // Reload is needed to get updated data in the app
     cy.reload();

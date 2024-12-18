@@ -541,11 +541,11 @@ Object.values(viewports).forEach(
         cy.setupMetamask();
       });
 
-      it('move time to the next closed AW', () => {
+      it('move time to closed AW', () => {
         setupAndMoveToPlayground();
 
         cy.window().then(async win => {
-          moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
+          moveTime(win, 'decisionWindowClosed').then(() => {
             cy.get('[data-test=PlaygroundView]').should('be.visible');
             const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
               QUERY_KEYS.isDecisionWindowOpen,
