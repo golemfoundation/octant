@@ -4,3 +4,6 @@
 [submodule "contracts-v1/lib/openzeppelin-contracts"]
 	path = contracts-v1/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "contracts-v1/lib/layerzero-v2"]
+	path = contracts-v1/lib/layerzero-v2
+	url = https://github.com/LayerZero-Labs/layerzero-v2
