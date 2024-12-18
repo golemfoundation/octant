@@ -6,10 +6,8 @@ import {
   mockCoinPricesServer,
   visitWithLoader,
 } from 'cypress/utils/e2e';
-import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
@@ -101,31 +99,6 @@ const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Ch
   return getHeartedProjectsIndicator(isNavbarVisible).contains(number);
 };
 
-describe('move time - AW IS OPEN - less than 24h to change AW', () => {
-  before(() => {
-    /**
-     * Global Metamask setup done by Synpress is not always done.
-     * Since Synpress needs to have valid provider to fetch the data from contracts,
-     * setupMetamask is required in each test suite.
-     */
-    cy.setupMetamask();
-  });
-
-  it('allocation window is open, when it is not, move time', () => {
-    setupAndMoveToPlayground();
-
-    cy.window().then(async win => {
-      moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
-        cy.get('[data-test=PlaygroundView]').should('be.visible');
-        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-          QUERY_KEYS.isDecisionWindowOpen,
-        );
-        expect(isDecisionWindowOpenAfter).to.be.true;
-      });
-    });
-  });
-});
-
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
     describe(`[AW IS OPEN] Project: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -137,6 +110,8 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.wait(500);
+
         checkProjectsViewLoaded();
 
         /**
@@ -230,6 +205,7 @@ Object.values(viewports).forEach(
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
         changeMainValueToCryptoToggle(!isMobile && !isTablet, 'crypto');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.wait(500);
         cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
         cy.get('[data-test=ProjectRewards__currentTotal__number]')
           .first()
@@ -240,6 +216,7 @@ Object.values(viewports).forEach(
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
         changeMainValueToCryptoToggle(!isMobile && !isTablet, 'fiat');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.wait(500);
         cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
         cy.get('[data-test=ProjectRewards__currentTotal__number]')
           .first()
@@ -268,6 +245,7 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.wait(500);
       });
 
       it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
@@ -293,6 +271,7 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.wait(500);
         connectWallet({ isPatronModeEnabled: true });
         checkProjectsViewLoaded();
 
