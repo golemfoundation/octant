@@ -677,66 +677,23 @@ Object.values(viewports).forEach(
             .should('eq', 'Edit');
         });
 
-        it('User has personal rewards, can withdraw rewards to wallet and the last transaction is "Withdrawn funds"', () => {
+        it('User has pending personal rewards', () => {
           connectWallet({ isPatronModeEnabled: false });
           cy.wait(5000);
 
           cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
           cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
             .invoke('text')
-            .should('not.eq', '0 ETH');
+            .should('eq', '0 ETH');
 
           cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
           cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
             .invoke('text')
-            .should('eq', '0 ETH');
+            .should('not.eq', '0 ETH');
 
           cy.get('[data-test=HomeGridPersonalAllocation__Button]')
             .invoke('text')
             .should('eq', 'Withdraw to wallet');
-
-          cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
-
-          cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
-          cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
-          cy.get('[data-test=WithdrawEth__Section--amount__DoubleValueSkeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=WithdrawEth__Section--estGasPrice__DoubleValueSkeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=WithdrawEth__Button]').click();
-          cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
-          cy.get('[data-test=WithdrawEth__Button]')
-            .invoke('text')
-            .should('eq', 'Waiting for confirmation');
-
-          cy.confirmMetamaskTransaction({ gasConfig: 'aggressive' });
-          cy.wait(2500);
-
-          cy.get('[data-test=HomeGridPersonalAllocation--current__DoubleValueSkeleton]').should(
-            'not.exist',
-          );
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__DoubleValueSkeleton]').should(
-            'not.exist',
-          );
-
-          cy.wait(1000);
-
-          cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
-
-          cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
-
-          cy.get('[data-test=TransactionsListItem__title]')
-            .eq(0)
-            .invoke('text')
-            .should('eq', 'Withdrawn funds');
 
           cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
           cy.wait(1000);
@@ -769,6 +726,91 @@ Object.values(viewports).forEach(
             expect(isDecisionWindowOpenAfter).to.be.true;
           });
         });
+      });
+    });
+
+    describe(`[AW IS OPEN] After allocation: ${device}`, { viewportHeight, viewportWidth }, () => {
+      before(() => {
+        /**
+         * Global Metamask setup done by Synpress is not always done.
+         * Since Synpress needs to have valid provider to fetch the data from contracts,
+         * setupMetamask is required in each test suite.
+         */
+        cy.setupMetamask();
+      });
+
+      beforeEach(() => {
+        mockCoinPricesServer();
+        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
+        visitWithLoader(ROOT_ROUTES.home.absolute);
+      });
+
+      it('User has personal rewards, can withdraw rewards to wallet and the last transaction is "Withdrawn funds"', () => {
+        connectWallet({ isPatronModeEnabled: false });
+        cy.wait(5000);
+
+        cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
+        cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+          .invoke('text')
+          .should('not.eq', '0 ETH');
+
+        cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
+        cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
+          .invoke('text')
+          .should('eq', '0 ETH');
+
+        cy.get('[data-test=HomeGridPersonalAllocation__Button]')
+          .invoke('text')
+          .should('eq', 'Withdraw to wallet');
+
+        cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
+
+        cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
+        cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
+        cy.get('[data-test=WithdrawEth__Section--amount__DoubleValueSkeleton]').should('not.exist');
+        cy.get('[data-test=WithdrawEth__Section--estGasPrice__DoubleValueSkeleton]').should(
+          'not.exist',
+        );
+        cy.get('[data-test=WithdrawEth__Button]').click();
+        cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
+        cy.get('[data-test=WithdrawEth__Button]')
+          .invoke('text')
+          .should('eq', 'Waiting for confirmation');
+
+        cy.confirmMetamaskTransaction({ gasConfig: 'aggressive' });
+        cy.wait(2500);
+
+        cy.get('[data-test=HomeGridPersonalAllocation--current__DoubleValueSkeleton]').should(
+          'not.exist',
+        );
+        cy.get('[data-test=HomeGridPersonalAllocation--pending__DoubleValueSkeleton]').should(
+          'not.exist',
+        );
+
+        cy.wait(1000);
+
+        cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
+        cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+          .invoke('text')
+          .should('eq', '0 ETH');
+
+        cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
+        cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
+          .invoke('text')
+          .should('eq', '0 ETH');
+
+        cy.get('[data-test=TransactionsListItem__title]')
+          .eq(0)
+          .invoke('text')
+          .should('eq', 'Withdrawn funds');
+
+        cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
+        cy.wait(1000);
+        cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
+        cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
+        cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
       });
     });
   },
