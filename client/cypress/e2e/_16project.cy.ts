@@ -61,15 +61,18 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   cy.get('[data-test^=ModalFullDonorsList').should('not.exist');
 
   projectListItemFirst
-    .find('[data-test=ProjectListItemButtonsWebsiteAndShare__websiteLink]')
+    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__websiteLink]')
+    .first()
     .should('be.visible');
 
-  projectListItemFirst
-    .find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]')
-    .should('be.visible');
-  projectListItemFirst.find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+  const buttonShare = projectListItemFirst
+    .get('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]')
+    .first();
+
+  buttonShare.should('be.visible');
+  buttonShare.click();
   cy.window().then(win => {
-    projectListItemFirst.find('[data-test=ProjectListItemButtonsWebsiteAndShare__Tooltip]').click();
+    buttonShare.click();
     win.navigator.clipboard.readText().then(text => {
       expect(text).to.eq(cy.url());
     });
@@ -223,6 +226,7 @@ Object.values(viewports).forEach(
       });
 
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
+        changeMainValueToCryptoToggle(!isMobile && !isTablet, 'crypto');
         cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
         cy.get('[data-test=ProjectRewards__currentTotal__number]')
           .first()

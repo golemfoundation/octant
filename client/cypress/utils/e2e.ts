@@ -127,7 +127,7 @@ export const changeMainValueToCryptoToggle = (
     });
   } else {
     cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck({ force: true });
-    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('not.be.checked');
   }
   return cy.getAllLocalStorage().then(() => {
     expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq(
