@@ -8,7 +8,6 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 contract GLMAdapter is OFTAdapter {
     constructor(
         address _token,
-        address _lzEndpoint,
-        address _owner
-    ) OFTAdapter(_token, _lzEndpoint, _owner) Ownable(_owner) {}
+        address _lzEndpoint
+    ) OFTAdapter(_token, _lzEndpoint, address(0)) Ownable(address(0)) {}
 }

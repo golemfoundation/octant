@@ -9,7 +9,6 @@ contract OGLM is OFT {
     constructor(
         string memory _name,
         string memory _symbol,
-        address _lzEndpoint,
-        address _delegate
-    ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) {}
+        address _lzEndpoint
+    ) OFT(_name, _symbol, _lzEndpoint, address(0)) Ownable(address(0)) {}
 }
