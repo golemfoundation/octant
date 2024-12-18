@@ -38,7 +38,7 @@ class DatabaseSettings(OctantSettings):
     db_uri: str = Field(..., alias="db_uri")
 
     pg_pool_size: int = Field(10, alias="sqlalchemy_connection_pool_size")
-    pg_max_overflow: int = Field(30, alias="sqlalchemy_connection_pool_max_overflow")
+    pg_max_overflow: int = Field(0, alias="sqlalchemy_connection_pool_max_overflow")
     pg_pool_timeout: int = 60
     pg_pool_recycle: int = 30 * 60  # 30 minutes
     pg_pool_pre_ping: bool = True
