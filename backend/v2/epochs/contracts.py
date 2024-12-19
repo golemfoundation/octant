@@ -5,12 +5,12 @@ from v2.core.contracts import SmartContract
 from web3 import exceptions
 
 
-class EpochsContracts(SmartContract):
+class EpochsContract(SmartContract):
     async def is_decision_window_open(self) -> bool:
         logging.debug("[Epochs contract] Checking if decision window is open")
         return await self.contract.functions.isDecisionWindowOpen().call()
 
-    async def get_decision_window(self) -> bool:
+    async def get_decision_window(self) -> int:
         logging.debug("[Epochs contract] Checking decision window length")
         return await self.contract.functions.getDecisionWindow().call()
 
