@@ -444,6 +444,20 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
     userNonce,
   ]);
 
+  useEffect(() => {
+    if (currentView) {
+      return;
+    }
+
+    if (userAllocations?.hasUserAlreadyDoneAllocation) {
+      setCurrentView('summary');
+    } else {
+      setCurrentView('edit');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentView, userAllocations?.hasUserAlreadyDoneAllocation]);
+
   const onChangeAllocationItemValue = (
     newAllocationValue: AllocationValue,
     isManualModeEnforced = false,

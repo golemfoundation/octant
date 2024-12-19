@@ -35,7 +35,12 @@ export default function useAllocationViewSetRewardsForProjects(): {
     if (!isConnected) {
       setIsRewardsForProjectsSet(true);
     }
-    if (isFetchingIndividualReward || isFetchingCurrentEpoch || isFetchingUserAllocations) {
+    if (
+      isFetchingIndividualReward ||
+      isFetchingCurrentEpoch ||
+      isFetchingUserAllocations ||
+      isRewardsForProjectsSet
+    ) {
       return;
     }
     if (!currentEpoch || (!userAllocations && currentEpoch > 1)) {

@@ -2,7 +2,7 @@ export type CurrentView = 'edit' | 'summary';
 
 export interface AllocationsData {
   allocations: string[];
-  currentView: CurrentView;
+  currentView?: CurrentView;
   rewardsForProjects: bigint;
 }
 

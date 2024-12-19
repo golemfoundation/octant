@@ -82,6 +82,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
       <BoxRounded className={styles.box} hasPadding={false} isGrey>
         <InputCheckbox
           className={styles.checkbox}
+          dataTest="AllocationLowUqScore__InputCheckbox"
           isChecked={isChecked}
           // eslint-disable-next-line  @typescript-eslint/naming-convention
           onChange={() => setIsChecked(prev => !prev)}
@@ -92,6 +93,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
       <div className={styles.buttonsContainer}>
         <Button
           className={styles.button}
+          dataTest="AllocationLowUqScore__Button--gitcoinPassport"
           href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
           target="_blank"
         >
@@ -99,6 +101,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
         </Button>
         <Button
           className={styles.button}
+          dataTest="AllocationLowUqScore__Button--cta"
           isDisabled={!isChecked}
           isLoading={isFetching}
           onClick={onAllocate}
