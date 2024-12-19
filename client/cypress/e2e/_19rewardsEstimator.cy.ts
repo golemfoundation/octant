@@ -14,7 +14,7 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
   describe(
-    `[AW IS CLOSED] Home rewards estimator: ${device}`,
+    `[AW IS OPEN] Home rewards estimator: ${device}`,
     { viewportHeight, viewportWidth },
     () => {
       before(() => {
