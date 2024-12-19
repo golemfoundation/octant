@@ -98,10 +98,12 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({
         !isConnected && styles.noWalletConnected,
         isOnTimeOutList && styles.isOnTimeOutList,
       )}
+      data-test="HomeGridUQScoreAddresses"
     >
       {isOnTimeOutList && (
         <TinyLabel
           className={styles.isOnTimeOutListLabel}
+          dataTest="HomeGridUQScoreAddresses__TinyLabel"
           isInTopRightCorner={false}
           text={t('isOnTimeOutListLabel')}
           variant="orange3"

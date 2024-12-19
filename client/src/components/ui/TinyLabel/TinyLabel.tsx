@@ -18,7 +18,12 @@ const TinyLabel: FC<TinyLabelProps> = ({
     data-test={dataTest}
     onClick={onClick}
   >
-    <div className={cx(styles.text, styles[`variant--${variant}`], textClassName)}>{text}</div>
+    <div
+      className={cx(styles.text, styles[`variant--${variant}`], textClassName)}
+      data-test={`${dataTest}__text`}
+    >
+      {text}
+    </div>
   </div>
 );
 

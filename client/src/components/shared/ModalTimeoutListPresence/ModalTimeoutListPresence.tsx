@@ -50,6 +50,7 @@ const ModalTimeoutListPresence = (): ReactElement => {
       <BoxRounded className={styles.box} hasPadding={false} isGrey>
         <InputCheckbox
           className={styles.checkbox}
+          dataTest="ModalTimeoutListPresence__InputCheckbox"
           isChecked={isChecked}
           // eslint-disable-next-line  @typescript-eslint/naming-convention
           onChange={() => setIsChecked(prev => !prev)}
@@ -58,11 +59,17 @@ const ModalTimeoutListPresence = (): ReactElement => {
         <label className={styles.checkboxLabel}>{t('checkboxLabel')}</label>
       </BoxRounded>
       <div className={styles.buttonsContainer}>
-        <Button className={styles.button} href={TIME_OUT_LIST_DISPUTE_FORM} target="_blank">
+        <Button
+          className={styles.button}
+          dataTest="ModalTimeoutListPresence__Button--form"
+          href={TIME_OUT_LIST_DISPUTE_FORM}
+          target="_blank"
+        >
           {t('goToDisputeForm')}
         </Button>
         <Button
           className={styles.button}
+          dataTest="ModalTimeoutListPresence__Button--close"
           isDisabled={!isChecked}
           onClick={() => setIsTimeoutListPresenceModalOpen({ address: address!, value: false })}
           variant="cta"
