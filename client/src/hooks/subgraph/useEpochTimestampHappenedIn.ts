@@ -27,6 +27,7 @@ export default function useEpochTimestampHappenedIn(
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const timestampSecondsNumber = parseInt(timestampSeconds, 10);
 
+  // workaround for Cypress to return currentEpoch instead of epoch based on timestamp for testing TransactionDetails
   return useQuery<GetEpochTimestampHappenedInQuery, any, number, any>({
     enabled: window.Cypress
       ? currentEpoch !== undefined && isDecisionWindowOpen !== undefined
