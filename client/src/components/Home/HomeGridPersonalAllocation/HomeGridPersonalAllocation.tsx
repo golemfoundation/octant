@@ -54,6 +54,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="ethereum"
+            dataTest="HomeGridPersonalAllocation__DoubleValue--current"
             isFetching={
               isFetchingWithdrawals ||
               (isAppWaitingForTransactionToBeIndexed &&
@@ -70,10 +71,10 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
             sections={[
               {
                 className: styles.pending,
-                dataTest: 'HomeGridPersonalAllocation__Section',
+                dataTest: 'HomeGridPersonalAllocation__Section--pending',
                 doubleValueProps: {
                   cryptoCurrency: 'ethereum',
-                  dataTest: 'HomeGridPersonalAllocation__Section--pending__DoubleValue',
+                  dataTest: 'HomeGridPersonalAllocation--pending',
                   isFetching:
                     isFetchingWithdrawals ||
                     (isAppWaitingForTransactionToBeIndexed &&
@@ -83,6 +84,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
                 },
                 label: i18n.t('common.pending'),
                 tooltipProps: {
+                  dataTest: 'HomeGridPersonalAllocation--pending__Tooltip',
                   position: 'bottom-right',
                   text: (
                     <div>
@@ -110,6 +112,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
           />
           <Button
             className={styles.withdrawEthButton}
+            dataTest="HomeGridPersonalAllocation__Button"
             isDisabled={
               isPreLaunch ||
               !isConnected ||

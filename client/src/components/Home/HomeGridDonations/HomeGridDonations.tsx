@@ -69,6 +69,7 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
         isDecisionWindowOpen ? (
           <Button
             className={styles.editButton}
+            dataTest="HomeGridDonations__Button--edit"
             onClick={() => {
               setCurrentView('edit');
               setIsAllocationDrawerOpen(!isAllocationDrawerOpen);
