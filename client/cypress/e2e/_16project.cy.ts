@@ -110,7 +110,7 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.wait(500);
+        cy.wait(1000);
 
         checkProjectsViewLoaded();
 
@@ -205,7 +205,7 @@ Object.values(viewports).forEach(
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
         changeMainValueToCryptoToggle(!isMobile && !isTablet, 'crypto');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.wait(500);
+        cy.wait(1000);
         cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
         cy.get('[data-test=ProjectRewards__currentTotal__number]')
           .first()
@@ -216,7 +216,7 @@ Object.values(viewports).forEach(
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
         changeMainValueToCryptoToggle(!isMobile && !isTablet, 'fiat');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.wait(500);
+        cy.wait(1000);
         cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
         cy.get('[data-test=ProjectRewards__currentTotal__number]')
           .first()
@@ -245,7 +245,7 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.wait(500);
+        cy.wait(1000);
       });
 
       it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
@@ -271,7 +271,7 @@ Object.values(viewports).forEach(
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.wait(500);
+        cy.wait(1000);
         connectWallet({ isPatronModeEnabled: true });
         checkProjectsViewLoaded();
 
