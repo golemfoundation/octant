@@ -36,6 +36,12 @@ Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 
 class DatabaseSettings(OctantSettings):
     db_uri: str = Field(..., alias="db_uri")
+
+    pg_pool_size: int = Field(10, alias="sqlalchemy_connection_pool_size")
+    pg_max_overflow: int = Field(0, alias="sqlalchemy_connection_pool_max_overflow")
+    pg_pool_timeout: int = 60
+    pg_pool_recycle: int = 30 * 60  # 30 minutes
+    pg_pool_pre_ping: bool = True
     # TODO other settings of the database
 
     @property
@@ -60,11 +66,11 @@ def get_sessionmaker(
     kw = {}
     if "postgresql" in settings.sqlalchemy_database_uri:
         kw = {
-            "pool_size": 100,  # Initial pool size (default is 5)
-            "max_overflow": 10,  # Extra connections if pool is exhausted
-            "pool_timeout": 30,  # Timeout before giving up on a connection
-            "pool_recycle": 3600,  # Recycle connections after 1 hour (for long-lived connections)
-            "pool_pre_ping": True,  # Check if the connection is alive before using it
+            "pool_size": settings.pg_pool_size,
+            "max_overflow": settings.pg_max_overflow,
+            "pool_timeout": settings.pg_pool_timeout,
+            "pool_recycle": settings.pg_pool_recycle,
+            "pool_pre_ping": settings.pg_pool_pre_ping,
         }
 
     engine = create_async_engine(
