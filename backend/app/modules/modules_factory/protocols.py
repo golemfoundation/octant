@@ -20,7 +20,7 @@ from app.modules.dto import (
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
 from app.modules.projects.details.service.projects_details import ProjectsDetailsDTO
-from app.modules.user.winnings.service.raffle import UserWinningDTO
+from app.modules.user.sablier_streams.service.sablier_streams import UserStreamsDTO
 
 
 @runtime_checkable
@@ -127,10 +127,10 @@ class UserRewards(Protocol):
 
 
 @runtime_checkable
-class WinningsService(Protocol):
-    def get_user_winnings(
+class SablierStreamsService(Protocol):
+    def get_sablier_streams(
         self, context: Context, user_address: str
-    ) -> List[UserWinningDTO]:
+    ) -> List[UserStreamsDTO]:
         ...
 
 
