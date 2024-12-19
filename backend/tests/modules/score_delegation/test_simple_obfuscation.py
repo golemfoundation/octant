@@ -19,6 +19,7 @@ from tests.helpers.constants import (
     USER2_ADDRESS,
     USER3_ADDRESS,
     TIMEOUT_LIST,
+    TWENTY_FOUR_HOURS_PERIOD,
 )
 
 
@@ -41,7 +42,10 @@ def test_delegation(
     context, mock_empty_events_generator, payload, tos_users, patch_is_contract
 ):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
+    user_deposits = CalculatedUserDeposits(
+        events_generator=mock_empty_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
@@ -64,7 +68,10 @@ def test_delegation_disabled_when_secondary_is_locking(
     context, mock_events_generator, tos_users, patch_is_contract
 ):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=mock_events_generator)
+    user_deposits = CalculatedUserDeposits(
+        events_generator=mock_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
@@ -91,7 +98,10 @@ def test_disable_recalculation_when_secondary_address_is_used(
     context, mock_empty_events_generator, payload, patch_is_contract
 ):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
+    user_deposits = CalculatedUserDeposits(
+        events_generator=mock_empty_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,
@@ -126,7 +136,10 @@ def test_recalculation_when_delegation_is_not_done(
     context, mock_empty_events_generator, payload, patch_is_contract
 ):
     verifier = SimpleObfuscationDelegationVerifier()
-    user_deposits = CalculatedUserDeposits(events_generator=mock_empty_events_generator)
+    user_deposits = CalculatedUserDeposits(
+        events_generator=mock_empty_events_generator,
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+    )
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
         20,

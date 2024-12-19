@@ -1,5 +1,9 @@
 from typing import List
 
+from app.constants import (
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+)
 from app.context.epoch_state import EpochState
 from app.context.manager import state_context, epoch_context
 from app.exceptions import NotImplementedForGivenEpochState
@@ -12,6 +16,8 @@ from app.modules.dto import AccountFundsDTO
 from app.modules.modules_factory.protocols import UserBudgets, UpcomingUserBudgets
 from app.modules.registry import get_services
 from app.modules.user.budgets import core
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+from flask import current_app as app
 
 
 def get_budgets(epoch_num: int) -> List[AccountFundsDTO]:
@@ -47,6 +53,12 @@ def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
     future_rewards_service = get_services(EpochState.FUTURE).octant_rewards_service
     future_rewards = future_rewards_service.get_octant_rewards(future_context)
 
+    sablier_unlock_grace_period = (
+        SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+        if compare_blockchain_types(app.config["CHAIN_ID"], ChainTypes.MAINNET)
+        else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN
+    )
+
     return core.estimate_budget(
         current_context,
         future_context,
@@ -54,6 +66,7 @@ def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
         future_rewards,
         lock_duration_sec,
         glm_amount,
+        sablier_unlock_grace_period,
     )
 
 
@@ -73,8 +86,18 @@ def estimate_epochs_budget(no_epochs: int, glm_amount: int) -> int:
 
     epoch_duration = future_context.epoch_details.duration_sec
 
+    sablier_unlock_grace_period = (
+        SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+        if compare_blockchain_types(app.config["CHAIN_ID"], ChainTypes.MAINNET)
+        else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN
+    )
+
     return no_epochs * core.estimate_epoch_budget(
-        future_context, future_rewards, epoch_duration, glm_amount
+        future_context,
+        future_rewards,
+        epoch_duration,
+        glm_amount,
+        sablier_unlock_grace_period,
     )
 
 

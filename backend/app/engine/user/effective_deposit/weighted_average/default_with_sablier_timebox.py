@@ -19,19 +19,17 @@ class DefaultWeightedAverageWithSablierTimebox(DefaultWeightedAverageEffectiveDe
         self, payload: UserEffectiveDepositPayload
     ) -> Tuple[List[UserDeposit], int]:
         payload.lock_events_by_addr = self._remove_unlock_and_lock_within_24_hours(
-            payload.lock_events_by_addr
+            payload.lock_events_by_addr, payload.sablier_unlock_grace_period
         )
 
         return super().calculate_users_effective_deposits(payload)
 
     def _remove_unlock_and_lock_within_24_hours(
-        self, events: LockEventsByAddr
+        self, events: LockEventsByAddr, sablier_unlock_grace_period: int
     ) -> LockEventsByAddr:
         """
         Removes the unlock event from Sablier if it is followed by a lock event in Octant within 24 hours.
         """
-        TWENTY_FOUR_HOURS_PERIOD = 24 * 60 * 60
-
         for address, user_events in events.items():
             if not user_events:
                 continue
@@ -51,7 +49,7 @@ class DefaultWeightedAverageWithSablierTimebox(DefaultWeightedAverageEffectiveDe
                     and next_event.source == DepositSource.OCTANT
                     and next_event.type == EventType.LOCK
                     and next_event.timestamp - prev_event.timestamp
-                    < TWENTY_FOUR_HOURS_PERIOD
+                    < sablier_unlock_grace_period
                 ):
                     # Skip both the unlock and the following lock.
                     skip_next = True
