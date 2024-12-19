@@ -367,7 +367,9 @@ class SablierStreams(OctantResource):
     def get(self, user_address: str):
         app.logger.debug(f"Getting sablier streams for user {user_address}.")
         sablier_streams = get_sablier_streams(user_address)
-        app.logger.debug(f"Retrieved {len(sablier_streams)} sablier streams for user {user_address}.")
+        app.logger.debug(
+            f"Retrieved {len(sablier_streams)} sablier streams for user {user_address}."
+        )
 
         return {
             "sablierStreams": [
@@ -375,7 +377,7 @@ class SablierStreams(OctantResource):
                     "amount": stream.amount,
                     "dateAvailableForWithdrawal": stream.date_available_for_withdrawal,
                     "isCancelled": stream.is_cancelled,
-                    "remainingAmount": stream.remaining_amount
+                    "remainingAmount": stream.remaining_amount,
                 }
                 for stream in sablier_streams
             ]

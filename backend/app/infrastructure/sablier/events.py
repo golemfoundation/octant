@@ -56,7 +56,13 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
             deposit_amount = stream["depositAmount"]
 
             all_streams.append(
-                SablierStream(actions=actions, intactAmount=final_intact_amount, canceled=is_cancelled, endTime=end_time, depositAmount=deposit_amount)
+                SablierStream(
+                    actions=actions,
+                    intactAmount=final_intact_amount,
+                    canceled=is_cancelled,
+                    endTime=end_time,
+                    depositAmount=deposit_amount,
+                )
             )
 
         if len(streams) < limit:

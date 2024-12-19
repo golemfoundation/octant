@@ -15,8 +15,12 @@ class UserStreamsDTO:
 
 
 class UserSablierStreamsService(Model):
-    def get_sablier_streams(self, _: Context, user_address: str) -> List[UserStreamsDTO]:
-        user_streams = get_user_events_history(user_address) # in practice: we should assume a user only has always one stream (one create event)
+    def get_sablier_streams(
+        self, _: Context, user_address: str
+    ) -> List[UserStreamsDTO]:
+        user_streams = get_user_events_history(
+            user_address
+        )  # in practice: we should assume a user only has always one stream (one create event)
 
         user_streams_details = []
         for user_stream in user_streams:
@@ -30,7 +34,7 @@ class UserSablierStreamsService(Model):
                     amount=amount,
                     date_available_for_withdrawal=date_available_for_withdrawal,
                     is_cancelled=is_cancelled,
-                    remaining_amount=remaining_amount
+                    remaining_amount=remaining_amount,
                 )
             )
 

@@ -29,7 +29,9 @@ from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
-from app.modules.user.sablier_streams.service.sablier_streams import UserSablierStreamsService
+from app.modules.user.sablier_streams.service.sablier_streams import (
+    UserSablierStreamsService,
+)
 
 
 class PrePendingUserDeposits(UserEffectiveDeposits, AllUserEffectiveDeposits, Protocol):

@@ -15,7 +15,8 @@ from app.modules.modules_factory.protocols import (
     UserAllocationNonceProtocol,
     ScoreDelegation,
     UniquenessQuotients,
-    ProjectsDetailsService, SablierStreamsService,
+    ProjectsDetailsService,
+    SablierStreamsService,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -54,7 +55,9 @@ from app.constants import (
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
-from app.modules.user.sablier_streams.service.sablier_streams import UserSablierStreamsService
+from app.modules.user.sablier_streams.service.sablier_streams import (
+    UserSablierStreamsService,
+)
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
