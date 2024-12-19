@@ -38,8 +38,10 @@ Object.values(viewports).forEach(
       // TODO: Run for all devices after OCT-2283 (https://linear.app/golemfoundation/issue/OCT-2283/personal-allocation-arent-available-to-withdraw-in-pr-e2e-environment)
       if (idx === 0) {
         it('User doesn`t have personal rewards, can`t witdraw and can check pending tooltip', () => {
-          cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
+            'be.visible',
+          );
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
             .invoke('text')
             .should('eq', '0 ETH');
 
@@ -67,8 +69,10 @@ Object.values(viewports).forEach(
           connectWallet({ isPatronModeEnabled: false });
           cy.wait(5000);
 
-          cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
+            'be.visible',
+          );
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
             .invoke('text')
             .should('eq', '0 ETH');
 
@@ -514,8 +518,8 @@ Object.values(viewports).forEach(
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
-        cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-        cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+        cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should('be.visible');
+        cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
           .invoke('text')
           .should('eq', '0 ETH');
 
@@ -686,8 +690,10 @@ Object.values(viewports).forEach(
           connectWallet({ isPatronModeEnabled: false });
           cy.wait(5000);
 
-          cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
+            'be.visible',
+          );
+          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
             .invoke('text')
             .should('eq', '0 ETH');
 
@@ -757,8 +763,8 @@ Object.values(viewports).forEach(
     //     connectWallet({ isPatronModeEnabled: false });
     //     cy.wait(5000);
 
-    //     cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-    //     cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+    //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should('be.visible');
+    //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
     //       .invoke('text')
     //       .should('not.eq', '0 ETH');
 
@@ -788,7 +794,7 @@ Object.values(viewports).forEach(
     //     cy.confirmMetamaskTransaction({ gasConfig: 'aggressive' });
     //     cy.wait(2500);
 
-    //     cy.get('[data-test=HomeGridPersonalAllocation--current__DoubleValueSkeleton]').should(
+    //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__DoubleValueSkeleton]').should(
     //       'not.exist',
     //     );
     //     cy.get('[data-test=HomeGridPersonalAllocation--pending__DoubleValueSkeleton]').should(
@@ -797,8 +803,8 @@ Object.values(viewports).forEach(
 
     //     cy.wait(1000);
 
-    //     cy.get('[data-test=HomeGridPersonalAllocation--current]').should('be.visible');
-    //     cy.get('[data-test=HomeGridPersonalAllocation--current__primary]')
+    //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should('be.visible');
+    //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
     //       .invoke('text')
     //       .should('eq', '0 ETH');
 

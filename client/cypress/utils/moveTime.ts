@@ -112,8 +112,6 @@ export const moveTime = (
     waitForLoadersToDisappear();
     // reload is needed to get updated data in the app
     cy.reload();
-  } else if (moveTo === 'decisionWindowClosed') {
-    return cy.reload();
   }
 
   if (moveTo === 'nextEpochDecisionWindowOpen') {
