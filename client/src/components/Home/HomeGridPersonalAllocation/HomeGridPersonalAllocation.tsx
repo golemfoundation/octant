@@ -54,7 +54,7 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
         <div className={styles.root}>
           <DoubleValue
             cryptoCurrency="ethereum"
-            dataTest="HomeGridPersonalAllocation--current"
+            dataTest="HomeGridPersonalAllocation__DoubleValue--current"
             isFetching={
               isFetchingWithdrawals ||
               (isAppWaitingForTransactionToBeIndexed &&

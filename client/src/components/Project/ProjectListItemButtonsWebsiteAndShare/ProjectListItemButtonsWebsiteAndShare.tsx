@@ -52,6 +52,7 @@ const ProjectListItemButtonsWebsiteAndShare: FC<ProjectListItemButtonsWebsiteAnd
     <div className={cx(styles.root, className)}>
       <a
         className={cx(styles.element, styles.actionButton, styles.websiteLink)}
+        data-test="ProjectListItemButtonsWebsiteAndShare__websiteLink"
         href={website?.url}
         rel="noreferrer"
         target="_blank"
@@ -61,6 +62,7 @@ const ProjectListItemButtonsWebsiteAndShare: FC<ProjectListItemButtonsWebsiteAnd
       </a>
       <Tooltip
         className={styles.element}
+        dataTest="ProjectListItemButtonsWebsiteAndShare__Tooltip"
         hideAfterClick
         onClickCallback={onShareClick}
         text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
