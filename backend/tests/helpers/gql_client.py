@@ -247,6 +247,7 @@ class MockSablierGQLClient:
                         "transferable": False,
                         "endTime": "1729077035",
                         "depositAmount": "10000000000000000000",
+                        "canceled": True,
                     }
                 ]
             }
