@@ -111,6 +111,7 @@ class UserEffectiveDepositPayload:
     epoch_start: int = None
     epoch_end: int = None
     lock_events_by_addr: LockEventsByAddr = None
+    sablier_unlock_grace_period: int = None
 
 
 @dataclass
