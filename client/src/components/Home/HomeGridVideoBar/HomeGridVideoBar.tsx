@@ -103,7 +103,7 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
           {!isMobile && (
             <NavigationArrows
               {...navigationArrowsProps}
-              dataTest="HomeGridVideoBar__NavigationArrows"
+              dataTest="HomeGridVideoBar__NavigationArrows--nonMobile"
             />
           )}
           <Button

@@ -148,8 +148,8 @@ Object.values(viewports).forEach(
       });
 
       it('User can move to next/prev video using the arrows ', { scrollBehavior: false }, () => {
-        const leftArrowDataTest = `HomeGridVideoBar__NavigationArrows${isMobile ? '--mobile' : ''}__leftArrow`;
-        const rightArrowDataTest = `HomeGridVideoBar__NavigationArrows${isMobile ? '--mobile' : ''}__rightArrow`;
+        const leftArrowDataTest = `HomeGridVideoBar__NavigationArrows${isMobile ? '--mobile' : '--nonMobile'}__leftArrow`;
+        const rightArrowDataTest = `HomeGridVideoBar__NavigationArrows${isMobile ? '--mobile' : '--nonMobile'}__rightArrow`;
         cy.get('[data-test=HomeGridVideoBar]').scrollIntoView({ offset: { left: 0, top: -100 } });
         cy.get('[data-test=VideoTile]').should('exist');
         cy.get(`[data-test=${leftArrowDataTest}]`).should('be.visible');
