@@ -100,7 +100,7 @@ const Rewards: FC<RewardsProps> = ({
     }
     return i18n.t('common.totalDonated');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isArchivedProject]);
+  }, [isArchivedProject, i18n.language]);
 
   const showMiddleSections = showMoreInfo && (isLargeDesktop || isDesktop);
 

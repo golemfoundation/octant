@@ -59,6 +59,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     showTickAnimation,
     showCircleAnimation,
     areButtonsDisabled,
+    i18n.language,
   ]);
 
   useEffect(() => {
