@@ -55,6 +55,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
+        dataTest: 'WithdrawEth__Section--amount',
         isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         showCryptoSuffix: true,
         valueCrypto: withdrawals?.sums.available,
@@ -64,6 +65,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
+        dataTest: 'WithdrawEth__Section--estGasPrice',
         isFetching: isFetchingFeeData,
         showCryptoSuffix: true,
         valueCrypto: BigInt(feeData?.gasPrice ?? 0),
@@ -73,11 +75,12 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
   ];
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="WithdrawEth">
       <BoxRounded hasSections isGrey isVertical>
         <Sections hasBottomDivider sections={sections} />
         <Button
           className={styles.button}
+          dataTest="WithdrawEth__Button"
           isDisabled={
             isWithdrawableRewardsFetching ||
             isAppWaitingForTransactionToBeIndexed ||

@@ -5,7 +5,7 @@ import { AllocationsMethods, AllocationsData } from './types';
 
 export const initialState: AllocationsData = {
   allocations: [],
-  currentView: 'edit',
+  currentView: undefined,
   rewardsForProjects: BigInt(0),
 };
 

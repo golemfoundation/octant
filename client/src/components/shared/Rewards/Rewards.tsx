@@ -128,7 +128,12 @@ const Rewards: FC<RewardsProps> = ({
             <>
               <div className={cx(styles.section, styles[`variant--${variant}`])}>
                 <div className={styles.container}>
-                  <div className={styles.label}>{i18n.t('common.donations')}</div>
+                  <div
+                    className={styles.label}
+                    data-test="ProjectRewards__donationsToDisplay__label"
+                  >
+                    {i18n.t('common.donations')}
+                  </div>
                   <div
                     className={cx(
                       styles.value,
@@ -142,7 +147,9 @@ const Rewards: FC<RewardsProps> = ({
               {variant === 'projectView' && <div className={cx(styles.verticalDivider)} />}
               <div className={cx(styles.section, styles[`variant--${variant}`])}>
                 <div className={styles.container}>
-                  <div className={styles.label}>{i18n.t('common.matchFunding')}</div>
+                  <div className={styles.label} data-test="ProjectRewards__matchFunding__label">
+                    {i18n.t('common.matchFunding')}
+                  </div>
                   <div
                     className={cx(
                       styles.value,
@@ -158,6 +165,7 @@ const Rewards: FC<RewardsProps> = ({
           {variant === 'projectView' && <div className={cx(styles.verticalDivider)} />}
           <div
             className={cx(styles.section, styles[`variant--${variant}`], styles.donorsSection)}
+            data-test="ProjectRewards__donors"
             onClick={isMobile ? () => {} : () => setIsFullDonorsListModalOpen(true)}
           >
             <div className={styles.label}>{i18n.t('common.donors')}</div>
@@ -183,6 +191,7 @@ const Rewards: FC<RewardsProps> = ({
             variant="cta"
           />
           <Button
+            dataTest="ProjectRewards__Button--donors"
             label={t('viewAllDonors')}
             onClick={() => setIsFullDonorsListModalOpen(true)}
             variant="secondary"

@@ -59,8 +59,10 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
 
   const sections: SectionProps[] = [
     {
+      dataTest: 'TransactionDetailsAllocation__personal',
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
+        dataTest: 'TransactionDetailsAllocation__personal--value',
         isFetching: isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward,
         showCryptoSuffix: true,
         valueCrypto: individualReward ? individualReward - amount : BigInt(0),
@@ -71,6 +73,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
       ? []
       : ([
           {
+            dataTest: 'TransactionDetailsAllocation__allocationProjects',
             doubleValueProps: {
               cryptoCurrency: 'ethereum' as CryptoCurrency,
               showCryptoSuffix: true,
@@ -85,6 +88,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
                     {leverage === null ? t('sections.leverageUnknown') : `${leverageInt}x`}
                   </div>
                 ),
+                dataTest: 'TransactionDetailsAllocation__estimatedLeverage',
                 label: t('sections.estimatedLeverage'),
                 tooltipProps: {
                   position: 'bottom-right',
@@ -114,6 +118,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
                     }
                   </div>
                 ),
+                dataTest: 'TransactionDetailsAllocation__finalMatchFunding',
                 label: t('sections.finalMatchFunding'),
                 tooltipProps: {
                   position: 'bottom-right',
@@ -124,6 +129,7 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
         ] as SectionProps[])),
     {
       childrenRight: <TransactionDetailsDateAndTime timestamp={timestamp} />,
+      dataTest: 'TransactionDetailsAllocation__when',
       label: t('sections.when'),
     },
   ];
@@ -134,7 +140,13 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
         <Sections hasBottomDivider sections={sections} variant="small" />
       </BoxRounded>
       {!isPersonalOnlyAllocation && (
-        <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
+        <BoxRounded
+          alignment="left"
+          className={styles.projects}
+          dataTest="TransactionDetailsAllocation__projects"
+          isGrey
+          isVertical
+        >
           {allocations?.map(allocation => (
             <ProjectAllocationDetailRow
               key={allocation.address}
