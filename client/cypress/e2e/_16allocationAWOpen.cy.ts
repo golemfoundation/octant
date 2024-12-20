@@ -384,8 +384,9 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('eq', 'Personal allocation');
 
-        cy.get('[data-test=TransactionsListItem]').eq(0).click();
         cy.wait(1000);
+        cy.get('[data-test=TransactionsListItem__DoubleValue__primary]').should('exist');
+        cy.get('[data-test=TransactionsListItem]').eq(0).click();
         cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
         cy.get('[data-test=TransactionDetailsAllocation__personal]').should('be.visible');
         cy.get('[data-test=TransactionDetailsAllocation__personal--value__primary]')
@@ -496,6 +497,8 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('eq', 'Allocated rewards');
 
+        cy.wait(1000);
+        cy.get('[data-test=TransactionsListItem__DoubleValue__primary]').should('exist');
         cy.get('[data-test=TransactionsListItem]').eq(0).click();
         cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
         cy.get('[data-test=TransactionDetailsAllocation__personal]').should('be.visible');
@@ -605,8 +608,9 @@ Object.values(viewports).forEach(
             .invoke('text')
             .should('eq', 'Allocated rewards');
 
-          cy.get('[data-test=TransactionsListItem]').eq(0).click();
           cy.wait(1000);
+          cy.get('[data-test=TransactionsListItem__DoubleValue__primary]').should('exist');
+          cy.get('[data-test=TransactionsListItem]').eq(0).click();
           cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
           cy.get('[data-test=TransactionDetailsAllocation__personal]').should('be.visible');
           cy.get('[data-test=TransactionDetailsAllocation__personal--value__primary]')

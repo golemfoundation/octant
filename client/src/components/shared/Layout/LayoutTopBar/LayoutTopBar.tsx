@@ -20,6 +20,7 @@ import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
+import useDelegationStore from 'store/delegation/store';
 import useLayoutStore from 'store/layout/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
@@ -50,6 +51,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     setIsConnectWalletModalOpen: state.setIsConnectWalletModalOpen,
     setIsSettingsDrawerOpen: state.setIsSettingsDrawerOpen,
     setIsWalletModalOpen: state.setIsWalletModalOpen,
+  }));
+
+  const { isTimeoutListPresenceModalOpen } = useDelegationStore(state => ({
+    isTimeoutListPresenceModalOpen: state.data.isTimeoutListPresenceModalOpen,
   }));
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
@@ -239,14 +244,14 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         <>
           <Drawer
             dataTest="SettingsDrawer"
-            isOpen={isSettingsDrawerOpen}
+            isOpen={isSettingsDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
             onClose={() => setIsSettingsDrawerOpen(false)}
           >
             <Settings />
           </Drawer>
           <Drawer
             dataTest="AllocationDrawer"
-            isOpen={isAllocationDrawerOpen}
+            isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
             onClose={() => setIsAllocationDrawerOpen(false)}
           >
             <Allocation />
