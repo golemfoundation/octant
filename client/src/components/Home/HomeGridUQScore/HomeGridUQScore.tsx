@@ -264,6 +264,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
           {antisybilStatusScore?.isOnTimeOutList ? (
             <Button
               className={styles.furtherActions}
+              dataTest="HomeGridUQScore__Button--form"
               href={TIME_OUT_LIST_DISPUTE_FORM}
               label={t('wantToDispute')}
               variant="link6"
