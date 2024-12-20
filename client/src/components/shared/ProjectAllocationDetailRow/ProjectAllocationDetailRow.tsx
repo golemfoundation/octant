@@ -24,7 +24,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
   const getValuesToDisplay = useGetValuesToDisplay();
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="ProjectAllocationDetailRow">
       {isLoading || isFetchingProjectIpfs || isAnyIpfsError ? (
         <div className={styles.skeleton} />
       ) : (
@@ -38,7 +38,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
             />
             <div className={styles.name}>{projectIpfs[0].name}</div>
           </div>
-          <div className={styles.amount}>
+          <div className={styles.amount} data-test="ProjectAllocationDetailRow__value">
             {
               getValuesToDisplay({
                 cryptoCurrency: 'ethereum',
