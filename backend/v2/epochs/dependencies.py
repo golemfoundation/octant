@@ -43,6 +43,7 @@ async def get_open_allocation_window_epoch_number(
     """
 
     epoch_number = await epochs_contracts.get_pending_epoch()
+    epoch_number = 1
     if epoch_number is None:
         raise AllocationWindowClosed()
 
