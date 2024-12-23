@@ -37,7 +37,7 @@ Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 class DatabaseSettings(OctantSettings):
     db_uri: str = Field(..., alias="db_uri")
 
-    pg_pool_size: int = Field(100, alias="sqlalchemy_connection_pool_size")
+    pg_pool_size: int = Field(70, alias="sqlalchemy_connection_pool_size")
     pg_max_overflow: int = Field(0, alias="sqlalchemy_connection_pool_max_overflow")
     pg_pool_timeout: int = 60
     pg_pool_recycle: int = 30 * 60  # 30 minutes
