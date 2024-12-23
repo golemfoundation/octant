@@ -5,11 +5,11 @@ from typing import Dict, NamedTuple
 
 from v2.allocations.schemas import AllocationWithUserUQScore
 from v2.core.types import Address
-from v2.project_rewards.schemas import ProjectFundingSummary
+from v2.project_rewards.schemas import ProjectFundingSummaryV1
 
 
 class CappedQuadriaticFunding(NamedTuple):
-    project_fundings: dict[Address, ProjectFundingSummary]
+    project_fundings: dict[Address, ProjectFundingSummaryV1]
     amounts_total: Decimal  # Sum of all allocation amounts for all projects
     matched_total: Decimal  # Sum of all matched rewards for all projects
 
@@ -96,7 +96,7 @@ def capped_quadriatic_funding(
         matched_total += matched_capped
 
     project_fundings = {
-        project_address: ProjectFundingSummary(
+        project_address: ProjectFundingSummaryV1(
             address=project_address,
             allocated=int(amount_by_project[project_address]),
             matched=int(matched_by_project[project_address]),
