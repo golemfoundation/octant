@@ -255,7 +255,6 @@
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
-        "patronModeSignatureMessage": "Signing this message will {{state}} patron mode for address {{address}}.",
         "firstParagraph": "This mode is for token holders <br /> who want to support Octant.",
         "secondParagraph": "It disables and removes all personal allocations and project donations.",
         "thirdParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",

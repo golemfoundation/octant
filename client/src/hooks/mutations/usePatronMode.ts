@@ -16,10 +16,7 @@ export default function usePatronMode(
   return useMutation({
     mutationFn: async () => {
       const signedMessages = await signMessageAsync({
-        message: t('patronModeSignatureMessage', {
-          address,
-          state: isPatronModeEnabled ? 'disable' : 'enable',
-        }),
+        message: `Signing this message will ${isPatronModeEnabled ? 'disable' : 'enable'} patron mode for address ${address}.`,
       });
 
       const data = await apiPatchPatronMode(address!, signedMessages);

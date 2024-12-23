@@ -255,7 +255,6 @@
       "patronMode": {
         "enablePatronMode": "Habilitar modo mecenas",
         "disablePatronMode": "Deshabilitar el modo mecenas",
-        "patronModeSignatureMessage": "Al firmar este mensaje se {{state}} el modo de usuario para la dirección {{address}}.",
         "firstParagraph": "Este modo es para los poseedores de tokens <br /> que desean apoyar a Octant.",
         "secondParagraph": "Deshabilita y elimina todas las asignaciones personales y donaciones a proyectos.",
         "thirdParagraph": "Todas las recompensas se destinan directamente al fondo de contrapartida sin que el patrocinador deba realizar ninguna acción. Obtenga más información en <0>Documentación</0>.",
