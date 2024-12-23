@@ -14,6 +14,7 @@ export default function usePatronMode(
   return useMutation({
     mutationFn: async () => {
       const signedMessages = await signMessageAsync({
+        // Message needs to stay in English regardless of locale, as it's content is verified in BE.
         message: `Signing this message will ${isPatronModeEnabled ? 'disable' : 'enable'} patron mode for address ${address}.`,
       });
 

@@ -170,7 +170,6 @@
           "switchAccount": "Switch account",
           "calculatingScore": "Calculating score",
           "delegationFailedText": "Delegation failed — your score needs to be 15 or higher. Please try another address",
-          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
           "toasts": {
             "unableToDelegateToAddressWithPositiveGLMLock": {
               "title": "Address with GLM locked",

@@ -170,7 +170,6 @@
           "switchAccount": "Cambiar de cuenta",
           "calculatingScore": "Calcular puntuación",
           "delegationFailedText": "La delegación falló: su puntuación debe ser 15 o superior. Intente con otra billetera",
-          "delegationMessageToSign": "Delegación de la puntuación UQ de {{delegationSecondaryAddress}} a {{delegationPrimaryAddress}}",
           "toasts": {
             "unableToDelegateToAddressWithPositiveGLMLock": {
               "title": "Dirección con tokens GLM bloqueados",
