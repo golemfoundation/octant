@@ -7,7 +7,7 @@ URL = "https://uat-backend.octant.wildland.dev/rewards/projects/estimated"
 
 # Parameters for the load test
 CONCURRENT_REQUESTS = 200
-TOTAL_REQUESTS = 100
+TOTAL_REQUESTS = 1000
 
 # Function to make a single request
 def make_request(_):
