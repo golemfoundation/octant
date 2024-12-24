@@ -107,13 +107,18 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   }, [isDesktop, pathname, isSettingsDrawerOpen]);
 
   useEffect(() => {
-    if (pathname !== ROOT_ROUTES.allocation.absolute || !isDesktop) {
+    if (
+      pathname !== ROOT_ROUTES.allocation.absolute ||
+      !isDesktop ||
+      isPatronMode ||
+      isProjectAdminMode
+    ) {
       return;
     }
 
     setIsAllocationDrawerOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDesktop, pathname]);
+  }, [isDesktop, pathname, isPatronMode, isProjectAdminMode]);
 
   useEffect(() => {
     if (isAllocationDrawerOpen && pathname !== ROOT_ROUTES.allocation.absolute && !isDesktop) {
@@ -220,7 +225,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
-          {!isProjectAdminMode && !isPatronMode && (
+          {!(isProjectAdminMode || isPatronMode) && (
             <div
               className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
               data-test={`${dataTestRoot}__allocationButton`}
@@ -249,13 +254,15 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           >
             <Settings />
           </Drawer>
-          <Drawer
-            dataTest="AllocationDrawer"
-            isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
-            onClose={() => setIsAllocationDrawerOpen(false)}
-          >
-            <Allocation />
-          </Drawer>
+          {!(isPatronMode || isProjectAdminMode) && (
+            <Drawer
+              dataTest="AllocationDrawer"
+              isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
+              onClose={() => setIsAllocationDrawerOpen(false)}
+            >
+              <Allocation />
+            </Drawer>
+          )}
         </>
       )}
     </div>
