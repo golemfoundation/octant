@@ -87,7 +87,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=AllocationDrawer]').should('not.exist');
       });
 
-      it('Settings views shows only project admin mode options', () => {
+      it('Settings view shows only project admin mode options', () => {
         if (isLargeDesktop || isDesktop) {
           cy.get('[data-test=LayoutTopBar__settingsButton]').click();
         } else {
