@@ -53,6 +53,7 @@ from app.shared.blockchain_types import ChainTypes
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.constants import UQ_THRESHOLD_MAINNET, TIMEOUT_LIST
+from tests.helpers.constants import TWENTY_FOUR_HOURS_PERIOD, FIFTEEN_MINUTES_PERIOD
 
 
 def test_future_services_factory():
@@ -67,7 +68,11 @@ def test_future_services_factory():
 def test_current_services_factory():
     result = CurrentServices.create(ChainTypes.MAINNET)
 
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+        )
+    )
     user_allocations = SavedUserAllocations()
     user_withdrawals = FinalizedWithdrawals()
     tos_verifier = InitialUserTosVerifier()
@@ -102,7 +107,11 @@ def test_current_services_factory():
 def test_pre_pending_services_factory_when_mainnet():
     result = PrePendingServices.create(ChainTypes.MAINNET)
 
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+        )
+    )
     octant_rewards = CalculatedOctantRewards(
         staking_proceeds=AggregatedStakingProceeds(),
         effective_deposits=user_deposits,
@@ -119,7 +128,11 @@ def test_pre_pending_services_factory_when_mainnet():
 def test_pre_pending_services_factory_when_not_mainnet():
     result = PrePendingServices.create(ChainTypes.LOCAL)
 
-    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    user_deposits = CalculatedUserDeposits(
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=FIFTEEN_MINUTES_PERIOD
+        )
+    )
     octant_rewards = CalculatedOctantRewards(
         staking_proceeds=ContractBalanceStakingProceeds(),
         effective_deposits=user_deposits,

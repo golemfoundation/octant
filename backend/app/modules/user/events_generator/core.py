@@ -4,7 +4,9 @@ from typing import List
 from app.engine.user.effective_deposit import DepositEvent, EventType, DepositSource
 
 
-def unify_deposit_balances(events: List[DepositEvent]) -> List[DepositEvent]:
+def unify_deposit_balances(
+    events: List[DepositEvent], sablier_unlock_grace_period: int
+) -> List[DepositEvent]:
     """
     Unify deposit balance for each event in the list of events. Events are expected to be sorted by timestamp.
     The first event is taken from deposits, but it already includes deposit from Sablier from the past.
@@ -22,11 +24,12 @@ def unify_deposit_balances(events: List[DepositEvent]) -> List[DepositEvent]:
         current_event = modified_events[i]
         next_event = modified_events[i + 1]
 
-        # Handle unlock and lock within grace period
         if current_event.type == EventType.UNLOCK and next_event.type == EventType.LOCK:
             if (
                 current_event.source == DepositSource.SABLIER
                 and next_event.source == DepositSource.OCTANT
+                and next_event.timestamp - current_event.timestamp
+                < sablier_unlock_grace_period
             ):
                 unlocked_amount = current_event.amount
                 locked_amount = next_event.amount
