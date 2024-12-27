@@ -549,7 +549,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=EpochResults__Img--headphonesGirl]').should('not.exist');
         cy.get('[data-test=EpochResultsDetails]').should('be.visible');
         cy.get('[data-test=EpochResultsDetails__loading]').should('not.exist');
-        cy.get('[data-test=EpochResultsBar]').should('have.length', 2);
+        cy.get('[data-test=EpochResultsBar]').should('have.length', 4);
 
         if (isMobile) {
           cy.get('[data-test=EpochResultsBar]').eq(0).click();
