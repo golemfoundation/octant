@@ -15,7 +15,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }, idx) => {
+  ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop, isMobile }, idx) => {
     describe(`[AW IS OPEN] Allocation: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
@@ -540,6 +540,31 @@ Object.values(viewports).forEach(
         cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
         cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
         cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
+      });
+
+      it('Epoch results graph shows donated projects', () => {
+        connectWallet({ isPatronModeEnabled: false });
+        cy.wait(5000);
+
+        cy.get('[data-test=EpochResults__Img--headphonesGirl]').should('not.exist');
+        cy.get('[data-test=EpochResultsDetails]').should('be.visible');
+        cy.get('[data-test=EpochResultsDetails__loading]').should('not.exist');
+        cy.get('[data-test=EpochResultsBar]').should('have.length', 2);
+
+        if (isMobile) {
+          cy.get('[data-test=EpochResultsBar]').eq(0).click();
+        } else {
+          cy.get('[data-test=EpochResultsBar]').eq(0).trigger('mouseover');
+        }
+
+        cy.get('[data-test=EpochResultsBar__projectLogo]').should('be.visible');
+        cy.get('[data-test=EpochResultsDetails__projectName]').should('be.visible');
+        cy.get('[data-test=EpochResultsDetails__donations]').should('be.visible');
+        cy.get('[data-test=EpochResultsDetails__matching]').should('be.visible');
+        cy.get('[data-test=EpochResultsDetails__total]').should('be.visible');
+        if (!isMobile) {
+          cy.get('[data-test=EpochResultsDetails__Button--visitProject]').should('be.visible');
+        }
       });
     });
 

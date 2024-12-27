@@ -173,7 +173,7 @@ const EpochResults: FC<EpochResultsProps> = ({
   }, [isLoading]);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="EpochResults">
       <div
         ref={graphContainerRef}
         className={cx(styles.graphContainer, isLoading && styles.isLoading)}
@@ -198,7 +198,11 @@ const EpochResults: FC<EpochResultsProps> = ({
         }}
       >
         {isLoading ? (
-          <Img className={styles.image} src="/images/headphones_girl.webp" />
+          <Img
+            className={styles.image}
+            data-test="EpochResults__Img--headphonesGirl"
+            src="/images/headphones_girl.webp"
+          />
         ) : (
           <div className={styles.barsContainer}>
             {projects.map(({ address, matchedRewards, donations, profileImageSmall }) => (
