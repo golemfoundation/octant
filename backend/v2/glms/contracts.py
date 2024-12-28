@@ -9,17 +9,6 @@ class AddressKey(Protocol):
 
 
 class GLMContracts(SmartContract):
-    # def glm_fund(self, to_address, nonce):
-    #     transaction = self.contract.functions.transfer(
-    #         to_address, app.config["GLM_WITHDRAWAL_AMOUNT"]
-    #     ).build_transaction({"from": app.config["GLM_SENDER_ADDRESS"], "nonce": nonce})
-    #     signed_tx = self.w3.eth.account.sign_transaction(
-    #         transaction, app.config["GLM_SENDER_PRIVATE_KEY"]
-    #     )
-    #     return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-
-    # def transfer(self, sender, receiver: str, amount: int):
-    # async def transfer(self, sender_address: str, receiver: str, amount: int):
     async def transfer(
         self, sender: AddressKey, receiver_address: str, amount: int
     ) -> None:
@@ -41,9 +30,6 @@ class GLMContracts(SmartContract):
         ).build_transaction({"from": owner.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, owner.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-
-    # def balance_of(self, owner: str) -> int:
-    #     return self.contract.functions.balanceOf(owner).call()
 
 
 ERC20_ABI = [
