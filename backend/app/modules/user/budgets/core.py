@@ -42,6 +42,7 @@ def estimate_epoch_budget(
     rewards: OctantRewardsDTO,
     lock_duration: int,
     glm_amount: int,
+    sablier_unlock_grace_period: int = None,
 ) -> int:
     epoch_details = context.epoch_details
     epoch_settings = context.epoch_settings
@@ -49,7 +50,10 @@ def estimate_epoch_budget(
         ZERO_ADDRESS: simulate_user_events(epoch_details, lock_duration, glm_amount)
     }
     user_effective_deposits, _ = calculate_effective_deposits(
-        epoch_details, epoch_settings, events
+        epoch_details,
+        epoch_settings,
+        events,
+        sablier_unlock_grace_period=sablier_unlock_grace_period,
     )
     effective_deposit = (
         user_effective_deposits[0].effective_deposit if user_effective_deposits else 0
@@ -72,6 +76,7 @@ def estimate_budget(
     future_rewards: OctantRewardsDTO,
     lock_duration_sec: int,
     glm_amount: int,
+    sablier_unlock_grace_period: int = None,
 ) -> int:
     remaining_lock_duration = lock_duration_sec
     budget = estimate_epoch_budget(
@@ -79,6 +84,7 @@ def estimate_budget(
         current_rewards,
         remaining_lock_duration,
         glm_amount,
+        sablier_unlock_grace_period,
     )
     remaining_lock_duration -= current_context.epoch_details.remaining_sec
 
@@ -92,6 +98,7 @@ def estimate_budget(
             future_rewards,
             epoch_duration,
             glm_amount,
+            sablier_unlock_grace_period,
         )
         remaining_lock_duration = remaining_future_epoch_sec
 
@@ -101,6 +108,7 @@ def estimate_budget(
             future_rewards,
             remaining_lock_duration,
             glm_amount,
+            sablier_unlock_grace_period,
         )
 
     return budget

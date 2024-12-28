@@ -13,6 +13,7 @@ def calculate_effective_deposits(
     epoch_details: EpochDetails,
     epoch_settings: EpochSettings,
     events: Dict[str, List[DepositEvent]],
+    sablier_unlock_grace_period: int = None,
 ) -> Tuple[List[UserDeposit], int]:
     start = epoch_details.start_sec
     end = epoch_details.end_sec
@@ -20,6 +21,9 @@ def calculate_effective_deposits(
 
     return effective_deposit_calculator.calculate_users_effective_deposits(
         UserEffectiveDepositPayload(
-            epoch_start=start, epoch_end=end, lock_events_by_addr=events
+            epoch_start=start,
+            epoch_end=end,
+            lock_events_by_addr=events,
+            sablier_unlock_grace_period=sablier_unlock_grace_period,
         )
     )
