@@ -45,11 +45,15 @@ def get_projects_allocation_threshold_getter(
     epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     projects: GetProjectsContracts,
-    settings: Annotated[
-        ProjectsAllocationThresholdSettings,
-        Depends(get_projects_allocation_threshold_settings),
-    ],
 ) -> ProjectsAllocationThresholdGetter:
+    project_count_multiplier = 2 if epoch_number <= 2 else 1
+
     return ProjectsAllocationThresholdGetter(
-        epoch_number, session, projects, settings.project_count_multiplier
+        epoch_number, session, projects, project_count_multiplier
     )
+
+
+GetProjectsAllocationThresholdGetter = Annotated[
+    ProjectsAllocationThresholdGetter,
+    Depends(get_projects_allocation_threshold_getter),
+]

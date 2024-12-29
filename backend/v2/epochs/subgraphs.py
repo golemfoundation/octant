@@ -2,8 +2,10 @@ import logging
 from dataclasses import dataclass
 from typing import Callable, Sequence, Type, Union
 
+from pydantic import TypeAdapter
 import backoff
 from app import exceptions
+from v2.core.types import OctantModel
 from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
 from gql import Client, gql
@@ -42,6 +44,14 @@ class BackoffParams:
     giveup: Callable[[Exception], bool] = lambda e: False
 
 
+class EpochSubgraphItem(OctantModel):
+    epoch: int
+    fromTs: int
+    toTs: int
+    duration: int
+    decisionWindow: int
+
+
 class EpochsSubgraph:
     def __init__(
         self,
@@ -66,14 +76,8 @@ class EpochsSubgraph:
                 self.gql_client.execute_async
             )
 
-    async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:
+    async def fetch_epoch_by_number(self, epoch_number: int) -> EpochSubgraphItem:
         """Get EpochDetails from the subgraph for a given epoch number."""
-
-        logging.debug(
-            f"[Subgraph] Getting epoch properties for epoch number: {epoch_number}"
-        )
-
-        # Prepare query and variables
         query = gql(
             """\
             query GetEpoch($epochNo: Int!) {
@@ -85,31 +89,28 @@ class EpochsSubgraph:
                 decisionWindow
             }
             }
-        """
+            """
         )
         variables = {"epochNo": epoch_number}
-
-        # Execute query
+        
         response = await self.gql_client.execute_async(query, variable_values=variables)
-
-        # Raise exception if no data received
+        
         data = response["epoches"]
         if not data:
-            logging.warning(
-                f"[Subgraph] No epoch properties received for epoch number: {epoch_number}"
-            )
             raise exceptions.EpochNotIndexed(epoch_number)
 
-        # Parse response and return result
-        logging.debug(f"[Subgraph] Received epoch properties: {data[0]}")
+        return TypeAdapter(EpochSubgraphItem).validate_python(data[0])
 
-        epoch_details = data[0]
+    async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:
+        """Get EpochDetails from the subgraph for a given epoch number."""
+
+        epoch_details = await self.fetch_epoch_by_number(epoch_number)
 
         return EpochDetails(
-            epoch_num=epoch_details["epoch"],
-            start=epoch_details["fromTs"],
-            duration=epoch_details["duration"],
-            decision_window=epoch_details["decisionWindow"],
+            epoch_num=epoch_details.epoch,
+            start=epoch_details.fromTs,
+            duration=epoch_details.duration,
+            decision_window=epoch_details.decisionWindow,
             remaining_sec=0,
         )
 
