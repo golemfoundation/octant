@@ -104,6 +104,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
     <div
       ref={ref}
       className={styles.root}
+      data-test="EpochResultsDetails"
       onMouseDown={e => {
         if (!isScrollable) {
           return;
@@ -152,7 +153,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
       }}
     >
       {isLoading && (
-        <div className={styles.loading}>
+        <div className={styles.loading} data-test="EpochResultsDetails__loading">
           {t('loadingChartData')}
           {[...Array(dots).keys()].map(key => (
             <span key={`dot__${key}`}>.</span>
@@ -170,18 +171,20 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
       )}
       {!isScrollInfoVisible && details && (
         <>
-          <div className={styles.projectName}>{details.name}</div>
-          <div className={styles.donations}>
+          <div className={styles.projectName} data-test="EpochResultsDetails__projectName">
+            {details.name}
+          </div>
+          <div className={styles.donations} data-test="EpochResultsDetails__donations">
             {isMobile ? t('donationsShort') : i18n.t('common.donations')}
             {isMobile ? '' : ' '}
             {donationsToDisplay}
           </div>
-          <div className={styles.matching}>
+          <div className={styles.matching} data-test="EpochResultsDetails__matching">
             {isMobile ? t('matchingShort') : i18n.t('common.matching')}
             {isMobile ? '' : ' '}
             {matchingToDisplay}
           </div>
-          <div className={styles.total}>
+          <div className={styles.total} data-test="EpochResultsDetails__total">
             {isMobile ? t('totalShort') : i18n.t('common.total')}
             {isMobile ? '' : ' '}
             {totalToDisplay}
@@ -189,6 +192,7 @@ const EpochResultsDetails: FC<EpochResultsDetailsProps> = ({
           {!isMobile && (
             <Button
               className={styles.link}
+              dataTest="EpochResultsDetails__Button--visitProject"
               isDisabled
               onMouseOver={e => e.stopPropagation()}
               variant="link"

@@ -52,6 +52,7 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
     <motion.div
       ref={ref}
       className={cx(styles.root, topBarHeightPercentage && styles.hasValue)}
+      data-test="EpochResultsBar"
       id={EPOCH_RESULTS_BAR_ID}
       onClick={e => {
         e.stopPropagation();
@@ -79,6 +80,7 @@ const EpochResultsBar: FC<EpochResultsBarProps> = ({
               scale: 1,
             }}
             className={styles.projectLogo}
+            data-test="EpochResultsBar__projectLogo"
             exit={{
               opacity: 0,
               scale: 0.5,
