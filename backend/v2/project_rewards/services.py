@@ -28,7 +28,7 @@ class ProjectRewardsEstimator:
         #     get_allocations_with_user_uqs(self.session, self.epoch_number),
         # )
 
-        matched_rewards = await self.matched_rewards_estimator.get()
+        matched_rewards = await self.matched_rewards_estimator.get(self.session)
         all_projects = await self.projects_contracts.get_project_addresses(self.epoch_number)
         allocations = await get_allocations_with_user_uqs(self.session, self.epoch_number)
 

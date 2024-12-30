@@ -10,7 +10,7 @@ from v2.user_patron_mode.repositories import get_patrons_rewards
 @dataclass
 class MatchedRewardsEstimator:
     # Dependencies
-    session: AsyncSession
+    #session: AsyncSession
     epochs_subgraph: EpochsSubgraph
     # Parameters
     tr_percent: Decimal
@@ -18,9 +18,9 @@ class MatchedRewardsEstimator:
     matched_rewards_percent: Decimal
     epoch_number: int
 
-    async def get(self) -> int:
+    async def get(self, session) -> int:
         return await get_estimated_project_matched_rewards_pending(
-            session=self.session,
+            session=session,
             epochs_subgraph=self.epochs_subgraph,
             tr_percent=self.tr_percent,
             ire_percent=self.ire_percent,
