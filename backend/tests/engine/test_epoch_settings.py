@@ -49,7 +49,6 @@ from app.engine.projects.rewards.capped_quadratic_funding import (
 from app.engine.octant_rewards import LeftoverWithPPFAndUnusedMR
 from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
-from app.engine.user import DefaultWeightedAverageWithSablierTimebox
 from app.engine.user.effective_deposit.weighted_average.default import (
     DefaultWeightedAverageEffectiveDeposit,
 )
@@ -74,7 +73,7 @@ def test_default_epoch_settings():
         projects_rewards=CappedQuadraticFundingProjectRewards(),
         projects_allocations=QuadraticFundingAllocations(),
         leftover=LeftoverWithPPFAndUnusedMR(),
-        effective_deposit=DefaultWeightedAverageWithSablierTimebox(
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
             timebased_weights=TimebasedWithoutUnlocksWeights()
         ),
     )
@@ -230,7 +229,7 @@ def test_epoch_6_settings():
         ),
         projects_allocations=QuadraticFundingAllocations(),
         leftover=LeftoverWithPPFAndUnusedMR(),
-        effective_deposit=DefaultWeightedAverageWithSablierTimebox(
+        effective_deposit=DefaultWeightedAverageEffectiveDeposit(
             timebased_weights=TimebasedWithoutUnlocksWeights()
         ),
     )

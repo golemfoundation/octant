@@ -4,7 +4,9 @@ from typing import List
 from app.engine.user.effective_deposit import DepositEvent, EventType, DepositSource
 
 
-def unify_deposit_balances(events: List[DepositEvent]) -> List[DepositEvent]:
+def unify_deposit_balances(
+    events: List[DepositEvent], sablier_unlock_grace_period: int
+) -> List[DepositEvent]:
     """
     Unify deposit balance for each event in the list of events. Events are expected to be sorted by timestamp.
     The first event is taken from deposits, but it already includes deposit from Sablier from the past.
@@ -17,23 +19,67 @@ def unify_deposit_balances(events: List[DepositEvent]) -> List[DepositEvent]:
     acc_balance_sablier = 0
     acc_balance_octant = events[0].deposit_before  # balance from previous epoch
 
-    for event in modified_events[1:]:
+    i = 0
+    while i < len(modified_events) - 1:
+        current_event = modified_events[i]
+        next_event = modified_events[i + 1]
+
+        if current_event.type == EventType.UNLOCK and next_event.type == EventType.LOCK:
+            if (
+                current_event.source == DepositSource.SABLIER
+                and next_event.source == DepositSource.OCTANT
+                and next_event.timestamp - current_event.timestamp
+                < sablier_unlock_grace_period
+            ):
+                unlocked_amount = current_event.amount
+                locked_amount = next_event.amount
+
+                if locked_amount == unlocked_amount:
+                    # Scenario 1: Transparent unlock and lock
+                    del modified_events[i : i + 2]
+                    continue
+                elif locked_amount > unlocked_amount:
+                    # Scenario 3: Transparent unlock, only record the excess lock
+                    excess_amount = locked_amount - unlocked_amount
+                    next_event.amount = excess_amount
+                    next_event.deposit_before = acc_balance_sablier + acc_balance_octant
+                    next_event.deposit_after = next_event.deposit_before + excess_amount
+                    del modified_events[i]  # Remove the unlock event
+                    continue
+
+        # Update balances for normal event processing
         combined_balance = acc_balance_sablier + acc_balance_octant
-        event.deposit_before = combined_balance
+        current_event.deposit_before = combined_balance
 
-        if event.type == EventType.LOCK:
-            if event.source == DepositSource.SABLIER:
-                acc_balance_sablier += event.amount
+        if current_event.type == EventType.LOCK:
+            if current_event.source == DepositSource.SABLIER:
+                acc_balance_sablier += current_event.amount
             else:
-                acc_balance_octant += event.amount
+                acc_balance_octant += current_event.amount
 
-            event.deposit_after = event.deposit_before + event.amount
-        elif event.type == EventType.UNLOCK:
-            if event.source == DepositSource.SABLIER:
-                acc_balance_sablier -= event.amount
+            current_event.deposit_after = (
+                current_event.deposit_before + current_event.amount
+            )
+        elif current_event.type == EventType.UNLOCK:
+            if current_event.source == DepositSource.SABLIER:
+                acc_balance_sablier -= current_event.amount
             else:
-                acc_balance_octant -= event.amount
+                acc_balance_octant -= current_event.amount
 
-            event.deposit_after = event.deposit_before - event.amount
+            current_event.deposit_after = (
+                current_event.deposit_before - current_event.amount
+            )
+
+        i += 1
+
+    # Process the last event
+    if modified_events:
+        last_event = modified_events[-1]
+        combined_balance = acc_balance_sablier + acc_balance_octant
+        last_event.deposit_before = combined_balance
+        if last_event.type == EventType.LOCK:
+            last_event.deposit_after = last_event.deposit_before + last_event.amount
+        elif last_event.type == EventType.UNLOCK:
+            last_event.deposit_after = last_event.deposit_before - last_event.amount
 
     return modified_events

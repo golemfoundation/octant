@@ -50,10 +50,7 @@ def estimate_epoch_budget(
         ZERO_ADDRESS: simulate_user_events(epoch_details, lock_duration, glm_amount)
     }
     user_effective_deposits, _ = calculate_effective_deposits(
-        epoch_details,
-        epoch_settings,
-        events,
-        sablier_unlock_grace_period=sablier_unlock_grace_period,
+        epoch_details, epoch_settings, events
     )
     effective_deposit = (
         user_effective_deposits[0].effective_deposit if user_effective_deposits else 0

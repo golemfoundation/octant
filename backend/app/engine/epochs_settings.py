@@ -81,7 +81,6 @@ def register_epoch_settings():
         ),
         user=UserSettings(
             budget=PreliminaryUserBudget(),
-            effective_deposit=DefaultWeightedAverageEffectiveDeposit(),
         ),
         project=ProjectSettings(
             rewards=PreliminaryProjectRewards(
@@ -95,10 +94,6 @@ def register_epoch_settings():
         user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit()),
         project=ProjectSettings(rewards=PreliminaryProjectRewards()),
     )
-    SETTINGS[4] = EpochSettings(
-        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
-    )
-    SETTINGS[5] = EpochSettings(
-        user=UserSettings(effective_deposit=DefaultWeightedAverageEffectiveDeposit())
-    )
+    SETTINGS[4] = EpochSettings()
+    SETTINGS[5] = EpochSettings()
     SETTINGS[6] = EpochSettings()

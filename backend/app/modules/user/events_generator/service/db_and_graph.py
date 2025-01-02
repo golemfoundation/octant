@@ -31,6 +31,8 @@ from app.pydantic import Model
 
 
 class DbAndGraphEventsGenerator(Model):
+    sablier_unlock_grace_period: int
+
     def get_user_events(
         self, context: Context, user_address: str
     ) -> List[DepositEvent]:
@@ -70,7 +72,9 @@ class DbAndGraphEventsGenerator(Model):
         if len(sorted_events) == 1 and sorted_events[0].deposit_after == 0:
             return []
 
-        sorted_events_with_unified_deposits = unify_deposit_balances(sorted_events)
+        sorted_events_with_unified_deposits = unify_deposit_balances(
+            sorted_events, self.sablier_unlock_grace_period
+        )
 
         return sorted_events_with_unified_deposits
 
@@ -125,7 +129,7 @@ class DbAndGraphEventsGenerator(Model):
                 )
 
             user_events[user_address] = unify_deposit_balances(
-                user_events[user_address]
+                user_events[user_address], self.sablier_unlock_grace_period
             )
 
         return user_events
