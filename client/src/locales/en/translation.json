@@ -373,6 +373,7 @@
       "allocate": "Allocate"
     },
     "topBar": {
+      "closeDrawerWithArrow": "Close drawer ->",
       "epochAllocationOpensIn": "Epoch {{epoch}} allocation opens in {{duration}}",
       "epochAllocationOpensInShort": "{{duration}} to allocation",
       "epochAllocationClosesIn": "Epoch {{epoch}} allocation closes in {{duration}}",

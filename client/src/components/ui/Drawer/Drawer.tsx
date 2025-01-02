@@ -10,7 +10,15 @@ import { cross } from 'svg/misc';
 import styles from './Drawer.module.scss';
 import DrawerProps from './types';
 
-const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose, dataTest = 'Drawer' }) =>
+const Drawer: FC<DrawerProps> = ({
+  children,
+  isOpen,
+  onClose,
+  dataTest = 'Drawer',
+  CustomCloseButton,
+  onMouseOver,
+  onMouseLeave,
+}) =>
   createPortal(
     <Fragment>
       {isOpen && (
@@ -26,15 +34,20 @@ const Drawer: FC<DrawerProps> = ({ children, isOpen, onClose, dataTest = 'Drawer
             data-test={dataTest}
             exit={{ x: '100%' }}
             initial={{ x: '100%' }}
+            onMouseLeave={onMouseLeave}
+            onMouseOver={onMouseOver}
             transition={{ duration: DRAWER_TRANSITION_TIME, ease: 'easeInOut' }}
           >
-            <Button
-              className={styles.buttonClose}
-              dataTest={`${dataTest}__closeButton`}
-              Icon={<Svg img={cross} size={1} />}
-              onClick={onClose}
-              variant="iconOnly"
-            />
+            <div className={styles.buttonCloseWrapper}>
+              {CustomCloseButton || (
+                <Button
+                  dataTest={`${dataTest}__closeButton`}
+                  Icon={<Svg img={cross} size={1} />}
+                  onClick={onClose}
+                  variant="iconOnly"
+                />
+              )}
+            </div>
             {children}
           </motion.div>
         )}
