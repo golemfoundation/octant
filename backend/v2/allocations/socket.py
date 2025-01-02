@@ -1,11 +1,11 @@
-import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Tuple
 
 import socketio
-from app.exceptions import OctantException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.exceptions import OctantException
 from v2.allocations.dependencies import get_allocator, get_signature_verifier
 from v2.allocations.repositories import get_donations_by_project
 from v2.allocations.schemas import UserAllocationRequest, UserAllocationRequestV1
@@ -89,7 +89,7 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
             yield (session, threshold_getter, estimated_project_rewards)
 
         except Exception as e:
-            await cleanup_sessions(session)
+            await safe_session_cleanup(session)
             raise e
 
 
@@ -171,7 +171,7 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
             )
 
         except Exception as e:
-            await cleanup_sessions(session)
+            await safe_session_cleanup(session)
             raise e
 
 
@@ -354,7 +354,3 @@ async def safe_session_cleanup(session: AsyncSession):
         except Exception:
             # Log the close error, but don't raise it
             logging.exception("Error during session close")
-
-
-async def cleanup_sessions(*sessions: AsyncSession):
-    await asyncio.gather(*(safe_session_cleanup(s) for s in sessions))

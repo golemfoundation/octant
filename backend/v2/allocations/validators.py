@@ -1,9 +1,10 @@
-import asyncio
 from dataclasses import dataclass
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from web3 import AsyncWeb3
 
 from app import exceptions
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
-from sqlalchemy.ext.asyncio import AsyncSession
 from v2.allocations.repositories import get_last_allocation_request_nonce
 from v2.allocations.schemas import UserAllocationRequest
 from v2.core.types import Address
@@ -14,7 +15,6 @@ from v2.user_patron_mode.repositories import (
     get_budget_by_user_address_and_epoch,
     user_is_patron_with_budget,
 )
-from web3 import AsyncWeb3
 
 
 @dataclass
@@ -25,20 +25,19 @@ class SignatureVerifier:
     chain_id: int
 
     async def verify(self, epoch_number: int, request: UserAllocationRequest) -> None:
-        await asyncio.gather(
-            verify_logic(
-                session=self.session,
-                epoch_subgraph=self.epochs_subgraph,
-                projects_contracts=self.projects_contracts,
-                epoch_number=epoch_number,
-                payload=request,
-            ),
-            verify_signature(
-                w3=self.projects_contracts.w3,
-                chain_id=self.chain_id,
-                user_address=request.user_address,
-                payload=request,
-            ),
+        await verify_logic(
+            session=self.session,
+            epoch_subgraph=self.epochs_subgraph,
+            projects_contracts=self.projects_contracts,
+            epoch_number=epoch_number,
+            payload=request,
+        )
+
+        await verify_signature(
+            w3=self.projects_contracts.w3,
+            chain_id=self.chain_id,
+            user_address=request.user_address,
+            payload=request,
         )
 
 
