@@ -1,4 +1,5 @@
 export interface Option {
+  dataTest?: string;
   label: string;
   value: string;
 }

@@ -134,7 +134,7 @@ const InputSelect: FC<InputSelectProps> = ({
                   <div
                     key={option.value}
                     className={cx(styles.option, styles[`variant--${variant}`])}
-                    data-test={`${dataTest}__Option--${option.label}`}
+                    data-test={`${dataTest}__Option--${option.value}`}
                     onClick={e => {
                       e.stopPropagation();
                       onOptionClick(option);
