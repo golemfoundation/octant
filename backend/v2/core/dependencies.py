@@ -31,18 +31,17 @@ def get_w3(
     return w3
 
 
-Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
-
-
 class DatabaseSettings(OctantSettings):
+    """
+    Values below are the defaults for the database with max_connetions = 100 and backend pods = 3.
+    """
     db_uri: str = Field(..., alias="db_uri")
 
-    pg_pool_size: int = Field(10, alias="sqlalchemy_connection_pool_size")
-    pg_max_overflow: int = Field(0, alias="sqlalchemy_connection_pool_max_overflow")
+    pg_pool_size: int = Field(20, alias="sqlalchemy_connection_pool_size")
+    pg_max_overflow: int = Field(13, alias="sqlalchemy_connection_pool_max_overflow")
     pg_pool_timeout: int = 60
     pg_pool_recycle: int = 30 * 60  # 30 minutes
     pg_pool_pre_ping: bool = True
-    # TODO other settings of the database
 
     @property
     def sqlalchemy_database_uri(self) -> str:
@@ -87,36 +86,9 @@ def get_sessionmaker(
     return sessionmaker
 
 
-# @asynccontextmanager
 async def get_db_session(
     sessionmaker: Annotated[async_sessionmaker[AsyncSession], Depends(get_sessionmaker)]
 ) -> AsyncGenerator[AsyncSession, None]:
-    # Create an async SQLAlchemy engine
-
-    # logging.error("Creating database engine")
-
-    # engine = create_async_engine(
-    #     settings.sqlalchemy_database_uri,
-    #     echo=False,                    # Disable SQL query logging (for performance)
-    #     pool_size=20,                  # Initial pool size (default is 5)
-    #     max_overflow=10,               # Extra connections if pool is exhausted
-    #     pool_timeout=30,               # Timeout before giving up on a connection
-    #     pool_recycle=3600,             # Recycle connections after 1 hour (for long-lived connections)
-    #     pool_pre_ping=True,            # Check if the connection is alive before using it
-    #     future=True,                   # Use the future-facing SQLAlchemy 2.0 style
-    #     # connect_args={"options": "-c timezone=utc"}  # Ensures timezone is UTC
-    # )
-
-    # # Create a sessionmaker with AsyncSession class
-    # async_session = async_sessionmaker(
-    #     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
-    # )
-
-    # logging.error("Opening session", async_session)
-
-    # scoped_session = async_scoped_session(sessionmaker, scopefunc=current_task)
-
-    # Create a new session
     async with sessionmaker() as session:
         try:
             yield session
@@ -128,9 +100,6 @@ async def get_db_session(
             await session.close()
 
 
-GetSession = Annotated[AsyncSession, Depends(get_db_session, use_cache=False)]
-
-
 class ChainSettings(OctantSettings):
     chain_id: int = Field(
         default=11155111,
@@ -140,9 +109,6 @@ class ChainSettings(OctantSettings):
 
 def get_chain_settings() -> ChainSettings:
     return ChainSettings()
-
-
-GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
 
 
 class SocketioSettings(OctantSettings):
@@ -161,3 +127,6 @@ def get_socketio_settings() -> SocketioSettings:
 
 
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]
+GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
+Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
+GetSession = Annotated[AsyncSession, Depends(get_db_session)]
