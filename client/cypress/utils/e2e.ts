@@ -132,3 +132,18 @@ export const changeMainValueToCryptoToggle = (
     );
   });
 };
+
+export const getHeartedProjectsIndicator = (isNavbarVisible: boolean): Chainable<any> => {
+  return cy.get(
+    isNavbarVisible
+      ? '[data-test=LayoutNavbar__numberOfAllocations]'
+      : '[data-test=LayoutTopBar__numberOfAllocations]',
+  );
+};
+
+export const checkHeartedProjectsIndicator = (
+  isNavbarVisible: boolean,
+  number = 1,
+): Chainable<any> => {
+  return getHeartedProjectsIndicator(isNavbarVisible).contains(number);
+};

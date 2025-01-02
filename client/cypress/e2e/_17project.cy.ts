@@ -1,10 +1,11 @@
 import {
   changeMainValueToCryptoToggle,
-  // changeMainValueToFiat,
   checkProjectsViewLoaded,
   connectWallet,
   mockCoinPricesServer,
   visitWithLoader,
+  getHeartedProjectsIndicator,
+  checkHeartedProjectsIndicator,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
@@ -71,13 +72,13 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
     .filter(':visible');
 
   buttonShare.should('be.visible');
-  // buttonShare.click();
-  // cy.window().then(win => {
-  //   buttonShare.click();
-  //   win.navigator.clipboard.readText().then(text => {
-  //     expect(text).to.eq(cy.url());
-  //   });
-  // });
+  buttonShare.click();
+  cy.window().then(win => {
+    buttonShare.click();
+    win.navigator.clipboard.readText().then(text => {
+      expect(text).to.eq(cy.url());
+    });
+  });
   projectListItemFirst
     .get('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
@@ -86,18 +87,6 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
     .get('[data-test=ProjectMilestonesNoResults__header]')
     .invoke('text')
     .should('eq', 'Nothing to report yet. Check back again soon');
-};
-
-const getHeartedProjectsIndicator = (isNavbarVisible: boolean): Chainable<any> => {
-  return cy.get(
-    isNavbarVisible
-      ? '[data-test=LayoutNavbar__numberOfAllocations]'
-      : '[data-test=LayoutTopBar__numberOfAllocations]',
-  );
-};
-
-const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Chainable<any> => {
-  return getHeartedProjectsIndicator(isNavbarVisible).contains(number);
 };
 
 Object.values(viewports).forEach(
