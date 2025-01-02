@@ -69,10 +69,8 @@ async def verify_logic(
         )
         await _user_has_budget(session, payload, epoch_number)
 
-    await asyncio.gather(
-        _check_database(),
-        _provided_projects_are_correct(projects_contracts, epoch_number, payload),
-    )
+    await _check_database()
+    await _provided_projects_are_correct(projects_contracts, epoch_number, payload)
 
 
 async def _provided_nonce_matches_expected(
