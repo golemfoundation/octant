@@ -35,6 +35,7 @@ class DatabaseSettings(OctantSettings):
     """
     Values below are the defaults for the database with max_connetions = 100 and backend pods = 3.
     """
+
     db_uri: str = Field(..., alias="db_uri")
 
     pg_pool_size: int = Field(20, alias="sqlalchemy_connection_pool_size")
