@@ -9,7 +9,7 @@ import {
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { languageKey } from 'src/i18n/languages';
-import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
@@ -27,11 +27,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-        visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
       });
 
-      it('shows Klingon greeting', () => {
-        cy.visit(ROOT_ROUTES.projects, {
+      it('shows LayoutTopBar__Button label in Spanish', () => {
+        visitWithLoader(ROOT_ROUTES.projects, ROOT_ROUTES.projects, {
           onBeforeLoad(win) {
             // DOES NOT WORK
             // Uncaught TypeError: Cannot assign to read only property
