@@ -29,6 +29,7 @@
     }
 
     .info {
+      order: 1;
       width: 100%;
       display: flex;
       text-align: start;
@@ -56,6 +57,7 @@
     }
 
     .links {
+      order: 1;
       grid-template-columns: repeat(3, minmax(11.2rem, auto) [col-start]);
       padding: 3.2rem 0;
       width: 100%;
@@ -66,6 +68,7 @@
       border-bottom: 0.1rem solid $color-octant-grey1;
 
       @media #{$tablet-up} {
+        grid-template-columns: repeat(3, minmax(13.2rem, auto) [col-start]);
         margin: 0;
         border-bottom: none;
         padding: 0;
@@ -94,6 +97,7 @@
 }
 
 .newsletterWrapper {
+  order: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -131,6 +135,29 @@
     @media #{$tablet-up} {
       margin-top: 0;
       margin-bottom: 0.4rem;
+    }
+  }
+}
+.socialMedia {
+  display: flex;
+  gap: 3.2rem;
+  margin-right: auto;
+  padding-top: 4rem;
+  padding-bottom: 1.6rem;
+
+  @media #{$tablet-up} {
+    padding-top: 3.2rem;
+    order: 1;
+  }
+
+  @media #{$desktop-up} {
+    gap: 1.6rem;
+  }
+
+  .socialMediaSvg:hover {
+    circle {
+      fill: $color-octant-dark;
+      transition: all $transition-time-1;
     }
   }
 }
