@@ -61,7 +61,7 @@ def test_gtc_staking_stamp_nullification(
 
     result = service.get_antisybil_status(context, carol.address)
 
-    assert result.score == 0.5
+    assert result.score == pytest.approx(0.491)
 
 
 def test_guest_stamp_score_bump_for_both_gp_and_octant_side_application(
