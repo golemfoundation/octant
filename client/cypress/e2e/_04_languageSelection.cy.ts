@@ -30,7 +30,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       });
 
       it('shows LayoutTopBar__Button label in Spanish', () => {
-        visitWithLoader(ROOT_ROUTES.projects, ROOT_ROUTES.projects, {
+        visitWithLoader(ROOT_ROUTES.projects.absolute, ROOT_ROUTES.projects.absolute, {
           onBeforeLoad(win) {
             // DOES NOT WORK
             // Uncaught TypeError: Cannot assign to read only property
