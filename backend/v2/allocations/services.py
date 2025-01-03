@@ -1,4 +1,3 @@
-import asyncio
 from dataclasses import dataclass
 
 from app import exceptions
@@ -126,11 +125,9 @@ async def simulate_leverage(
     Calculate leverage of the allocation made by the user.
     """
 
-    all_projects, matched_rewards, existing_allocations = await asyncio.gather(
-        projects_contracts.get_project_addresses(epoch_number),
-        matched_rewards_estimator.get(),
-        get_allocations_with_user_uqs(session, epoch_number),
-    )
+    all_projects = await projects_contracts.get_project_addresses(epoch_number)
+    matched_rewards = await matched_rewards_estimator.get()
+    existing_allocations = await get_allocations_with_user_uqs(session, epoch_number)
 
     return cqf_simulate_leverage(
         existing_allocations=existing_allocations,
