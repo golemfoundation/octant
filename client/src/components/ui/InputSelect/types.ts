@@ -1,5 +1,9 @@
 import { ReactNode } from 'react';
 
+const INPUT_SELECT_VARIANTS = ['topselect', 'overselect', 'belowselect'] as const;
+
+export type InputSelectVariants = (typeof INPUT_SELECT_VARIANTS)[number];
+
 export interface Option {
   label: string;
   value: string;
@@ -12,5 +16,5 @@ export default interface InputSelectProps {
   onChange?: (option: Option) => void;
   options: Option[];
   selectedOption?: Option;
-  variant?: 'topselect' | 'overselect' | 'belowselect';
+  variant?: InputSelectVariants;
 }

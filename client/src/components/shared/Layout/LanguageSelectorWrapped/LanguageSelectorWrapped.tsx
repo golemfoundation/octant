@@ -8,7 +8,7 @@ import LanguageSelectorWrappedProps from './types';
 
 const LanguageSelectorWrapped: FC<LanguageSelectorWrappedProps> = ({ className }) => (
   <div className={cx(styles.root, className)}>
-    <LanguageSelector />
+    <LanguageSelector variant="topselect" />
   </div>
 );
 
