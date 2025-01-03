@@ -211,7 +211,7 @@ const ProjectsView = (): ReactElement => {
   const orderOptionsTranslated = ORDER_OPTIONS(t);
 
   return (
-    <div data-test="ProjectsView">
+    <div className={styles.root} data-test="ProjectsView">
       <ViewTitle className={styles.viewTitle}>
         {t('viewTitle', {
           epochNumber:
