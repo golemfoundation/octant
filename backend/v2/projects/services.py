@@ -35,10 +35,8 @@ async def get_projects_allocation_threshold(
 ) -> int:
     # PROJECTS_COUNT_MULTIPLIER = 1  # TODO: from settings?
 
-    total_allocated, project_addresses = await sum_allocations_by_epoch(
-        session, epoch_number
-    )
-    project_addresses = (await projects.get_project_addresses(epoch_number),)
+    total_allocated = await sum_allocations_by_epoch(session, epoch_number)
+    project_addresses = await projects.get_project_addresses(epoch_number)
 
     return _calculate_threshold(
         total_allocated, len(project_addresses), project_count_multiplier
