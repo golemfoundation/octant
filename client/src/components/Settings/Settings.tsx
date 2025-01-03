@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 
 import SettingsCryptoMainValueBox from 'components/Settings/SettingsCryptoMainValueBox';
 import SettingsCurrencyBox from 'components/Settings/SettingsCurrencyBox';
+import SettingsLanguageSelectorBox from 'components/Settings/SettingsLanguageSelectorBox/SettingsLanguageSelectorBox';
 import SettingsMainInfoBox from 'components/Settings/SettingsMainInfoBox';
 import SettingsPatronModeBox from 'components/Settings/SettingsPatronModeBox';
 import SettingsShowOnboardingBox from 'components/Settings/SettingsShowOnboardingBox';
@@ -38,6 +39,7 @@ const Settings: FC<SettingsProps> = ({ dataTest }) => {
         <SettingsShowHelpVideosBox />
         {isConnected && !isProjectAdminMode && <SettingsPatronModeBox />}
         {!isProjectAdminMode && !isPatronMode && <SettingsShowOnboardingBox />}
+        <SettingsLanguageSelectorBox />
       </div>
     </div>
   );

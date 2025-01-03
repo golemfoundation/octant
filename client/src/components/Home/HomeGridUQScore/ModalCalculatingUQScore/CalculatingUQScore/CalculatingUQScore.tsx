@@ -60,10 +60,8 @@ const CalculatingUQScore: FC<CalculatingUQScoreProps> = ({ setShowCloseButton })
     },
   );
 
-  const messageToSign = t('delegationMessageToSign', {
-    delegationPrimaryAddress,
-    delegationSecondaryAddress,
-  });
+  // Message needs to stay in English regardless of locale, as it's content is verified in BE.
+  const messageToSign = ` "Delegation of UQ score from ${delegationSecondaryAddress} to ${delegationPrimaryAddress}`;
 
   const isScoreHighlighted = !!(lastDoneStep && lastDoneStep >= 1);
   const showLowScoreInfo =
