@@ -371,6 +371,7 @@
       "allocate": "Asignar"
     },
     "topBar": {
+      "closeDrawerWithArrow": "Cerrar cajón ->",
       "epochAllocationOpensIn": "La asignación de época {{epoch}} se abre en {{duration}}",
       "epochAllocationOpensInShort": "{{duration}} hasta la asignación",
       "epochAllocationClosesIn": "La asignación de la época {{epoch}} se cierra en {{duration}}",
