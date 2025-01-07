@@ -26,6 +26,7 @@ Object.values(viewports).forEach(
         });
 
         beforeEach(() => {
+          cy.disconnectMetamaskWalletFromAllDapps();
           mockCoinPricesServer();
           localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
           localStorage.setItem(IS_ONBOARDING_DONE, 'true');

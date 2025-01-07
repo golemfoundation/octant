@@ -469,7 +469,13 @@
       "staking": "Staking",
       "communityFund": "Community Fund",
       "ppf": "PPF",
-      "projectCosts": "Project costs"
+      "projectCosts": "Project costs",
+      "gridTileTimeSlicer": {
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1Y",
+        "all": "All"
+      }
     },
     "onboarding": {
       "modalTimeoutListPresence": {

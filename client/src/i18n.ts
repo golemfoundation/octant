@@ -25,8 +25,7 @@ i18n
     interpolation: {
       escapeValue: false,
     },
-    // lng: localStorage.getItem(LANGUAGE_UI) || defaultLang,
-resources: {
+    resources: {
       [languageKey.enEn]: {
         translation: translationEN,
       },
@@ -34,9 +33,8 @@ resources: {
         translation: translationES,
       },
     },
-    
     returnNull: false,
-    supportedLngs: Object.keys(languageKey).map(element => languageKey[element]),
+    supportedLngs: Object.values(languageKey),
   });
 
 export default i18n;

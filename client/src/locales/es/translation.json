@@ -141,7 +141,7 @@
         }
       },
       "homeGridUQScore": {
-        "yourUniquenessScore": "Tu puntuación de singularidad",
+        "yourUniquenessScore": "Tu puntuación de unicidad",
         "isOnTimeOutListLabel": "Cuenta Sybil",
         "recalculate": "Recalcular",
         "delegate": "Delegar",
@@ -256,7 +256,7 @@
         "disablePatronMode": "Deshabilitar el modo mecenas",
         "firstParagraph": "Este modo es para los poseedores de tokens <br /> que desean apoyar a Octant.",
         "secondParagraph": "Deshabilita y elimina todas las asignaciones personales y donaciones a proyectos.",
-        "thirdParagraph": "Todas las recompensas se destinan directamente al fondo de contrapartida sin que el patrocinador deba realizar ninguna acción. Obtenga más información en <0>Documentación</0>.",
+        "thirdParagraph": "Todas las recompensas se destinan directamente al fondo de contrapartida sin que el patrocinador deba realizar ninguna acción. Obtén más información en <0>Documentación</0>.",
         "fourthParagraphEnable": "Desliza el interruptor que se encuentra debajo completamente hacia la derecha<br /> para habilitar el modo usuario.",
         "fourthParagraphDisable": "Deslice el interruptor que se encuentra <br /> completamente hacia la izquierda para desactivar el modo usuario.",
         "patronModeEnabled": "Modo mecenas habilitado",
@@ -366,7 +366,7 @@
   "layout": {
     "navigationTabs": {
       "home": "Inicio",
-      "metrics": "Métrica",
+      "metrics": "Métricas",
       "settings": "Ajustes",
       "allocate": "Asignar"
     },
@@ -397,7 +397,7 @@
       "octantText": "Octant es un proyecto de la <0>Fundación Golem</0>, <br/> lanzado en 2023.",
       "links": {
         "website": "Sitio web",
-        "discord": "Discordia",
+        "discord": "Discord",
         "blog": "Blog",
         "docs": "Documentos",
         "brandAssets": "Activos de la marca",
@@ -443,8 +443,8 @@
       "epochAllocation": "Asignación de E {{epoch}}",
       "generalMetrics": "Estadísticas generales",
       "donationsVsPersonal": "Donaciones vs. personales",
-      "donationsVsMatchFunding": "Donaciones vs financiación equiparada",
-      "totalMatching": "Total de financiación equiparada",
+      "donationsVsMatchFunding": "Donaciones vs financiación emparejada",
+      "totalMatching": "Total de financiación emparejada",
       "totalProjects": "Proyectos totales",
       "totalEthStaked": "Total de ETH en staking",
       "totalGlmLocked": "Total de GLM bloqueado",
@@ -468,13 +468,19 @@
       "staking": "Bloqueado",
       "communityFund": "Fondo Comunitario",
       "ppf": "PPF",
-      "projectCosts": "Costos del proyecto"
+      "projectCosts": "Costos del proyecto",
+      "gridTileTimeSlicer": {
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1a",
+        "all": "Todo"
+      }
     },
     "onboarding": {
       "modalTimeoutListPresence": {
         "header": "Esta cuenta parece sybil",
         "text": "Hemos marcado esta cuenta como <0>sybil</0>, lo que significa que tu asignación no recibirá fondos equivalentes en esta época. Si deseas impugnar esto, por favor <1>completa este formulario</1> y lo revisaremos.",
-        "checkboxLabel": "Entiendo que no recibiré financiación equiparada en esta época.",
+        "checkboxLabel": "Entiendo que no recibiré financiación emparejada en esta época.",
         "goToDisputeForm": "Ir al formulario de disputa",
         "close": "Cerrar"
       },
