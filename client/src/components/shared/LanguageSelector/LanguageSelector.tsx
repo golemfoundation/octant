@@ -11,7 +11,7 @@ import { earth } from 'svg/misc';
 import styles from './LanguageSelector.module.scss';
 import LanguageSelectorProps from './types';
 
-const LanguageSelector: FC<LanguageSelectorProps> = ({ className, variant }) => {
+const LanguageSelector: FC<LanguageSelectorProps> = ({ className, dataTest, variant }) => {
   const { t, i18n } = useTranslation('translation');
 
   const languageOptions = getLanguageOptions(t);
@@ -19,6 +19,7 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({ className, variant }) => 
   return (
     <InputSelect
       className={cx(styles.root, className)}
+      dataTest={dataTest}
       Icon={<Svg img={earth} size={1.2} />}
       onChange={({ value }) => {
         localStorage.setItem(LANGUAGE_UI, value);

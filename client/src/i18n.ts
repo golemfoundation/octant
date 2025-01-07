@@ -19,13 +19,14 @@ i18n
   .init({
     detection: {
       lookupLocalStorage: LANGUAGE_UI,
+      order: ['localStorage', 'navigator'],
     },
     fallbackLng: defaultLang,
     interpolation: {
       escapeValue: false,
     },
     // lng: localStorage.getItem(LANGUAGE_UI) || defaultLang,
-    resources: {
+resources: {
       [languageKey.enEn]: {
         translation: translationEN,
       },
@@ -33,7 +34,9 @@ i18n
         translation: translationES,
       },
     },
+    
     returnNull: false,
+    supportedLngs: Object.keys(languageKey).map(element => languageKey[element]),
   });
 
 export default i18n;

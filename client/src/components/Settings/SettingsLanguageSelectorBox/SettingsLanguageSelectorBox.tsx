@@ -20,7 +20,11 @@ const SettingsLanguageSelectorBox = (): ReactElement => {
       {t('language')}
       <div className={styles.wrapper}>
         <div className={styles.spacer} />
-        <LanguageSelector className={styles.languageSelector} variant="overselect" />
+        <LanguageSelector
+          className={styles.languageSelector}
+          dataTest="SettingsLanguageSelectorBox__InputSelect"
+          variant="overselect"
+        />
       </div>
     </BoxRounded>
   );
