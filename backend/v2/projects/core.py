@@ -2,6 +2,9 @@ from app.infrastructure.database.models import ProjectsDetails
 
 
 def parse_cids_to_epochs_dict(cids_str: str) -> dict[int, str]:
+    """
+    Parse a string of comma-separated CIDs to a dictionary of epoch to CID.
+    """
     return {
         index: element.strip()
         for index, element in enumerate(cids_str.split(","), start=1)
@@ -24,6 +27,9 @@ def process_search_params(
 def filter_projects_details(
     projects_details: list[ProjectsDetails], search_phrase: str
 ) -> list[ProjectsDetails]:
+    """
+    Filter projects details by search phrase.
+    """
     search_phrase = search_phrase.strip().lower()
 
     filtered_project_details = []
