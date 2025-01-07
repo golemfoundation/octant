@@ -37,7 +37,9 @@ from v2.projects.dependencies import (
     get_projects_contracts,
     get_projects_settings,
 )
-from v2.projects.services import ProjectsAllocationThresholdGetter
+from v2.projects.services.projects_allocation_threshold_getter import (
+    ProjectsAllocationThresholdGetter,
+)
 from v2.uniqueness_quotients.dependencies import (
     get_uq_score_getter,
     get_uq_score_settings,
