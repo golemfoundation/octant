@@ -1,3 +1,6 @@
+import { IS_CRYPTO_MAIN_VALUE_DISPLAY } from 'src/constants/localStorageKeys';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
 import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
@@ -34,18 +37,23 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 
 export const connectWallet = ({
   isPatronModeEnabled = false,
+  isUQScoreBelow15 = false,
+  isSybil = false,
 }: ConnectWalletParameters): Chainable<any> => {
   // In CI, e2e tests are run serially and mocking TOS response is not required
   // Uncomment snippet below to mock TOS GET response in development
   // cy.intercept('GET', '/user/*/tos', { body: { accepted: true } });
 
-  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
+  cy.intercept('GET', '/user/*/uq/*', {
+    body: { uniquenessQuotient: isUQScoreBelow15 ? '0.01' : '1.0' },
+  });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('GET', '/user/*/antisybil-status', {
     body: {
       expires_at: null,
-      score: null,
-      status: 'Unknown',
+      isOnTimeOutList: isSybil,
+      score: isUQScoreBelow15 ? 10 : 100,
+      status: 'Known',
     },
   });
   cy.intercept('PUT', '/user/*/antisybil-status', { statusCode: 204 });
@@ -67,8 +75,10 @@ export const connectWallet = ({
   loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
-  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.reload();
   cy.wait(500);
+  cy.get('[data-test=LayoutTopBar__Button]').click();
+  cy.wait(1000);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();
@@ -92,4 +102,33 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   });
 
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+};
+
+export const changeMainValueToCryptoToggle = (
+  isDesktopTypeView: boolean,
+  changeToCryptoOrFiat: 'crypto' | 'fiat',
+): Chainable<any> => {
+  visitWithLoader(
+    ROOT_ROUTES.settings.absolute,
+    isDesktopTypeView ? ROOT_ROUTES.home.absolute : ROOT_ROUTES.settings.absolute,
+  );
+  if (isDesktopTypeView) {
+    cy.get('[data-test=SettingsDrawer]').should('be.visible');
+    cy.get('[data-test=SettingsView]').should('not.exist');
+  } else {
+    cy.get('[data-test=SettingsDrawer]').should('not.exist');
+    cy.get('[data-test=SettingsView]').should('be.visible');
+  }
+  if (changeToCryptoOrFiat === 'crypto') {
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check({ force: true });
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
+  } else {
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck({ force: true });
+    cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('not.be.checked');
+  }
+  return cy.getAllLocalStorage().then(() => {
+    expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq(
+      changeToCryptoOrFiat === 'crypto' ? 'true' : 'false',
+    );
+  });
 };

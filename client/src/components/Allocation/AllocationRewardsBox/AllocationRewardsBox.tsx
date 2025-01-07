@@ -19,14 +19,16 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
-  const { data: individualReward } = useIndividualReward();
-  const { data: upcomingBudget } = useUpcomingBudget();
+  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
+  const { data: upcomingBudget, isFetching: isFetchingUpcomingBudget } = useUpcomingBudget();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const getValuesToDisplay = useGetValuesToDisplay();
 
   const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
   const isDecisionWindowOpenAndHasIndividualReward =
     hasUserIndividualReward && isDecisionWindowOpen;
+
+  const isLoading = isFetchingIndividualReward || isFetchingUpcomingBudget;
 
   const subtitle = useMemo(() => {
     if (isDecisionWindowOpen === false && upcomingBudget) {
@@ -60,25 +62,31 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
 
   return (
     <div
-      className={cx(styles.root, isManuallyEdited && styles.isManuallyEdited)}
+      className={cx(
+        styles.root,
+        isManuallyEdited && styles.isManuallyEdited,
+        isLoading && styles.isLoading,
+      )}
       data-test={dataTestRoot}
     >
       <div>
         <div
           className={cx(styles.value, (isDisabled || isLocked) && styles.isGrey)}
-          data-test={`${dataTestRoot}__value`}
+          data-test={`${dataTestRoot}__value${isLoading ? 'Loading' : ''}`}
         >
-          {
+          {!isLoading &&
             getValuesToDisplay({
               cryptoCurrency: 'ethereum',
               showCryptoSuffix: true,
               showLessThanOneCentFiat: !isDisabled,
               valueCrypto: budget,
-            }).primary
-          }
+            }).primary}
         </div>
-        <div className={styles.label} data-test={`${dataTestRoot}__subtitle`}>
-          {subtitle}
+        <div
+          className={styles.label}
+          data-test={`${dataTestRoot}__subtitle${isLoading ? 'Loading' : ''}`}
+        >
+          {!isLoading && subtitle}
         </div>
       </div>
       {isManuallyEdited && <div className={styles.manuallyEditedLabel}>{t('manual')}</div>}

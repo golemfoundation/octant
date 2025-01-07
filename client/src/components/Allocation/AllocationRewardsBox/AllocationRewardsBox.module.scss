@@ -13,6 +13,21 @@
     background-color: $color-octant-green5;
   }
 
+  &.isLoading {
+    .value {
+      @include skeleton($color-octant-grey1, $color-octant-grey12);
+      height: 1.8rem;
+      width: 15rem;
+      margin: 0.3rem 0;
+    }
+    .label {
+      @include skeleton($color-octant-grey1, $color-octant-grey12);
+      height: 1.25rem;
+      width: 15rem;
+      margin: 0.1rem 0;
+    }
+  }
+
   @media #{$tablet-up} {
     padding: 2rem 2.4rem 0;
   }

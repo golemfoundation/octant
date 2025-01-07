@@ -64,7 +64,7 @@ const Slider: FC<SliderProps> = ({
     <div className={cx(styles.root, className)}>
       <ReactSlider
         ref={reactSliderRef}
-        className={cx(styles.slider, `${dataTest}__slider`)}
+        className={styles.slider}
         disabled={isDisabled || hideThumb}
         onChange={localOnChange}
         renderThumb={({ key, ...restProps }) => (

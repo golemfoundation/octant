@@ -51,6 +51,8 @@ from app.constants import (
     UQ_THRESHOLD_NOT_MAINNET,
     TIMEOUT_LIST_NOT_MAINNET,
     TIMEOUT_LIST,
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
 )
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
@@ -97,11 +99,14 @@ class CurrentServices(Model):
 
     @staticmethod
     def create(chain_id: int) -> "CurrentServices":
-        user_deposits = CalculatedUserDeposits(
-            events_generator=DbAndGraphEventsGenerator()
-        )
-
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+
+        user_deposits = CalculatedUserDeposits(
+            events_generator=DbAndGraphEventsGenerator(),
+            sablier_unlock_grace_period=SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+            if is_mainnet
+            else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+        )
 
         octant_rewards = CurrentServices._prepare_simulation_data(
             is_mainnet, user_deposits
