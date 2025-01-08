@@ -58,7 +58,7 @@
   },
   "components": {
     "allocation": {
-      "emptyState": "Bloquee algunos GLM para ganar recompensas, luego agrega proyectos aquí desde la vista de <br/> para donarlos durante la ventana de Asignación",
+      "emptyState": "Bloquee algunos GLM para ganar recompensas, luego agrega proyectos aquí desde la vista de para donarlos durante la ventana de Asignación",
       "emptyStateAWOpen": "Visita la <0>vista Proyectos</0> para agregar tus proyectos favoritos <br/> y donarles recompensas aquí",
       "emptyStateMobile": "Bloquea algunos tokens GLM para ganar recompensas, <br/> luego agrega proyectos aquí desde la vista Proyectos <br/> para donarlos durante la ventana de Asignación",
       "emptyStateMobileAWOpen": "Visita la <0>vista Proyectos</0> para agregar tus proyectos <br/> favoritos y así poder donarles recompensas aquí",
@@ -67,7 +67,7 @@
         "header": "Tu puntuación UQ es inferior a 15",
         "text": "Una puntuación de Gitcoin Passport de 15 o más multiplicará por 10 la financiación de tu donación. Para aumentar tu puntuación, visita el panel de control de GP personalizado que aparece a continuación para agregar más sellos antes de hacer la asignación.",
         "checkboxLabel": "Entiendo que solo recibiré el 10% del financiamiento máximo equivalente.",
-        "goToGitcoinPassportCustomOctantDashboard": "Ir al panel de control de GP",
+        "goToGitcoinPassportCustomOctantDashboard": "Panel de control de GP",
         "proceedToAllocate": "Asignar de todos modos",
         "toasts": {
           "success": {
@@ -234,7 +234,7 @@
       },
       "homeGridDonations": {
         "donationHistory": "Historial de donaciones",
-        "noDonationsYet": "Aún no hay donaciones. Bloquea tokens GLM<br/> y gana recompensas por donar",
+        "noDonationsYet": "Aún no hay donaciones.<br/>Bloquea tokens GLM y gana recompensas por donar",
         "noDonationsYetAWOpen": "Consulte la <0>vista Proyectos</0> <br/> para encontrar proyectos para financiar"
       },
       "homeGridEpochResults": {
@@ -254,7 +254,7 @@
       "patronMode": {
         "enablePatronMode": "Habilitar modo mecenas",
         "disablePatronMode": "Deshabilitar el modo mecenas",
-        "firstParagraph": "Este modo es para los poseedores de tokens <br /> que desean apoyar a Octant.",
+        "firstParagraph": "Este modo es para los poseedores de tokens que desean apoyar a Octant.",
         "secondParagraph": "Deshabilita y elimina todas las asignaciones personales y donaciones a proyectos.",
         "thirdParagraph": "Todas las recompensas se destinan directamente al fondo de contrapartida sin que el patrocinador deba realizar ninguna acción. Obtén más información en <0>Documentación</0>.",
         "fourthParagraphEnable": "Desliza el interruptor que se encuentra debajo completamente hacia la derecha<br /> para habilitar el modo usuario.",
@@ -481,7 +481,7 @@
         "header": "Esta cuenta parece sybil",
         "text": "Hemos marcado esta cuenta como <0>sybil</0>, lo que significa que tu asignación no recibirá fondos equivalentes en esta época. Si deseas impugnar esto, por favor <1>completa este formulario</1> y lo revisaremos.",
         "checkboxLabel": "Entiendo que no recibiré financiación emparejada en esta época.",
-        "goToDisputeForm": "Ir al formulario de disputa",
+        "goToDisputeForm": "Formulario de disputa",
         "close": "Cerrar"
       },
       "stepsCommon": {
