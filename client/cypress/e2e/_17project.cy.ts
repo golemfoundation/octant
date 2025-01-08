@@ -79,10 +79,12 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   //   });
   // });
   projectListItemFirst
+    .next('[data-test=ProjectMilestones]')
     .find('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
     .should('be.visible');
   return projectListItemFirst
+    .next('[data-test=ProjectMilestones]')
     .find('[data-test=ProjectMilestonesNoResults__header]')
     .invoke('text')
     .should('eq', 'Nothing to report yet. Check back again soon');
