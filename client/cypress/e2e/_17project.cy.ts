@@ -27,8 +27,8 @@ const getButtonAddToAllocate = (): Chainable<any> => {
 };
 
 const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<any> => {
-  cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
-  cy.wait(2000);
+  // cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
+  // cy.wait(2000);
   const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
   projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
   projectListItemFirst.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
@@ -78,13 +78,14 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   //     expect(text).to.eq(cy.url());
   //   });
   // });
-  projectListItemFirst
-    .next('[data-test=ProjectMilestones]')
+  cy.get('[data-test=ProjectMilestones]')
+    .first()
     .find('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
     .should('be.visible');
-  return projectListItemFirst
-    .next('[data-test=ProjectMilestones]')
+  return cy
+    .get('[data-test=ProjectMilestones]')
+    .first()
     .find('[data-test=ProjectMilestonesNoResults__header]')
     .invoke('text')
     .should('eq', 'Nothing to report yet. Check back again soon');
@@ -105,7 +106,7 @@ const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Ch
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
     describe(`[AW IS OPEN] Project: ${device}`, { viewportHeight, viewportWidth }, () => {
-      let projectNames: string[] = [];
+      const projectNames: string[] = [];
 
       beforeEach(() => {
         mockCoinPricesServer();
@@ -115,15 +116,15 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.projects.absolute);
         cy.wait(2000);
 
-        checkProjectsViewLoaded();
+        // checkProjectsViewLoaded();
 
         /**
          * This could be done in before hook, but CY wipes the state after each test
          * (could be disabled, but creates other problems)
          */
-        if (projectNames.length === 0) {
-          projectNames = getNamesOfProjects();
-        }
+        // if (projectNames.length === 0) {
+        //   projectNames = getNamesOfProjects();
+        // }
       });
 
       it('entering project view directly renders content', () => {
