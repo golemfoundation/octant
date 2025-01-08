@@ -23,7 +23,7 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({ className, dataTest, vari
       dataTest={dataTest}
       Icon={<Svg img={earth} size={1.2} />}
       onChange={({ value }) => {
-        localStorage.setItem(LANGUAGE_UI, value);
+        localStorage.setItem(LANGUAGE_UI, JSON.stringify(value));
         i18n.changeLanguage(value);
         setDefaultOptions({ locale: dateFnsLanguage[value] });
       }}
