@@ -79,11 +79,11 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
   //   });
   // });
   projectListItemFirst
-    .get('[data-test=ProjectMilestonesNoResults]')
+    .find('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
     .should('be.visible');
   return projectListItemFirst
-    .get('[data-test=ProjectMilestonesNoResults__header]')
+    .find('[data-test=ProjectMilestonesNoResults__header]')
     .invoke('text')
     .should('eq', 'Nothing to report yet. Check back again soon');
 };
