@@ -1,12 +1,13 @@
 import cx from 'classnames';
-import { format } from 'date-fns';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/ui/BoxRounded';
+import Button from 'components/ui/Button';
+import { SABLIER_APP_LINK } from 'constants/urls';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useUserRaffleWinnings from 'hooks/queries/useUserRaffleWinnings';
+import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 import getFormattedGlmValue from 'utils/getFormattedGlmValue';
 
 import AvailableFundsGlm from './AvailableFundsGlm';
@@ -22,41 +23,52 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
   const { data: availableFundsGlm, isFetching: isFetchingAvailableFundsGlm } =
     useAvailableFundsGlm();
-  const { data: userRaffleWinnings, isFetching: isFetchingUserRaffleWinnings } =
-    useUserRaffleWinnings();
+  const { data: userSablierStreams, isFetching: isFetchinguserSablierStreams } =
+    useUserSablierStreams();
 
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridCurrentGlmLock.modalLockGlm.lockGlmBudgetBox',
   });
 
   const depositsValueString = useMemo(
-    () => getFormattedGlmValue({ value: depositsValue || BigInt(0) }).fullString,
-    [depositsValue],
+    () =>
+      getFormattedGlmValue({
+        value:
+          (depositsValue || 0n) +
+          ((currentMode === 'lock' && userSablierStreams?.sumAvailable) || 0n),
+      }).fullString,
+    [depositsValue, currentMode, userSablierStreams?.sumAvailable],
   );
 
   const shouldRaffleWinningsBeDisplayed =
-    currentMode === 'unlock' && userRaffleWinnings && userRaffleWinnings.sum > 0;
-  const areFundsFetching = isFetchingAvailableFundsGlm || isFetchingUserRaffleWinnings;
+    currentMode === 'unlock' && userSablierStreams && userSablierStreams.sum > 0;
+  const areFundsFetching = isFetchingAvailableFundsGlm || isFetchinguserSablierStreams;
 
   const secondRowValue = getFormattedGlmValue({
     value: shouldRaffleWinningsBeDisplayed
-      ? userRaffleWinnings?.sum
+      ? userSablierStreams?.sumAvailable
       : BigInt(availableFundsGlm ? availableFundsGlm!.value : 0),
   }).fullString;
 
   const secondRowLabel = useMemo(() => {
     if (shouldRaffleWinningsBeDisplayed) {
-      const date = format(
-        parseInt(userRaffleWinnings?.winnings[0].dateAvailableForWithdrawal, 10) * 1000,
-        'd LLL y',
+      return (
+        <div className={styles.timeLockedInSablier}>
+          {t('timeLockedInSablier')}
+          <Button
+            className={styles.unlockInSablierButton}
+            href={SABLIER_APP_LINK}
+            isButtonScalingUpOnHover={false}
+            variant="link"
+          >
+            {t('unlockInSablier')}
+          </Button>
+        </div>
       );
-      return userRaffleWinnings?.winnings.length > 1
-        ? t('raffleWinnings.multipleWins')
-        : t('raffleWinnings.oneWin', { date });
     }
     return t('walletBalance');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldRaffleWinningsBeDisplayed, userRaffleWinnings?.winnings.length]);
+  }, [shouldRaffleWinningsBeDisplayed, userSablierStreams?.sablierStreams.length]);
 
   return (
     <BoxRounded

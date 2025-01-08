@@ -118,15 +118,15 @@
             "availableToUnlock": "Available to unlock",
             "currentlyLocked": "Currently Locked",
             "walletBalance": "Wallet balance",
-            "raffleWinnings": {
-              "oneWin": "Locked until {{date}}",
-              "multipleWins": "Time locked winnings"
-            }
+            "timeLockedInSablier": "Time locked in Sablier",
+            "unlockInSablier": "Unlock in Sablier"
           }
         },
         "raffleWinnerBadge": {
-          "text": "{{value}} GLM winnings",
-          "tooltipWinningRow": "{{value}} prize locked until {{date}}",
+          "text": "{{value}} GLM",
+          "textCancelled": "{{value}} GLM stream cancelled",
+          "tooltipWinningRow": "{{value}} GLM locked in Sablier until {{date}}",
+          "tooltipStreamCancelled": "Your Sablier stream was canceled due to your inactivity in the last allocation window. If you believe this is a mistake, please open a help ticket on Discord.",
           "tooltipCurrentBalanceRow": "{{value}} your locked balance"
         }
       },
