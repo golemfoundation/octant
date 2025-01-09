@@ -170,7 +170,6 @@
           "switchAccount": "Switch account",
           "calculatingScore": "Calculating score",
           "delegationFailedText": "Delegation failed — your score needs to be 15 or higher. Please try another address",
-          "delegationMessageToSign": "Delegation of UQ score from {{delegationSecondaryAddress}} to {{delegationPrimaryAddress}}",
           "toasts": {
             "unableToDelegateToAddressWithPositiveGLMLock": {
               "title": "Address with GLM locked",
@@ -255,7 +254,6 @@
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
-        "patronModeSignatureMessage": "Signing this message will {{state}} patron mode for address {{address}}.",
         "firstParagraph": "This mode is for token holders <br /> who want to support Octant.",
         "secondParagraph": "It disables and removes all personal allocations and project donations.",
         "thirdParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
@@ -373,6 +371,7 @@
       "allocate": "Allocate"
     },
     "topBar": {
+      "closeDrawerWithArrow": "Close drawer ->",
       "epochAllocationOpensIn": "Epoch {{epoch}} allocation opens in {{duration}}",
       "epochAllocationOpensInShort": "{{duration}} to allocation",
       "epochAllocationClosesIn": "Epoch {{epoch}} allocation closes in {{duration}}",
@@ -468,7 +467,13 @@
       "staking": "Staking",
       "communityFund": "Community Fund",
       "ppf": "PPF",
-      "projectCosts": "Project costs"
+      "projectCosts": "Project costs",
+      "gridTileTimeSlicer": {
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1Y",
+        "all": "All"
+      }
     },
     "onboarding": {
       "modalTimeoutListPresence": {
@@ -578,10 +583,15 @@
       "showHelpVideos": "Show help videos",
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
-      "docs": "Docs"
+      "docs": "Docs",
+      "language": "Language"
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
     }
+  },
+  "languageSelector": {
+    "english": "English",
+    "spanish": "Español"
   }
 }
