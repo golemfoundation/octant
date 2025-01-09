@@ -92,7 +92,7 @@ def test_get_projects_metadata_epoch_5():
 
 
 def test_get_projects_metadata_epoch_6():
-    context = get_context(5)
+    context = get_context(6)
 
     service = StaticProjectsMetadataService()
     projects_metadata: ProjectsMetadata = service.get_projects_metadata(
