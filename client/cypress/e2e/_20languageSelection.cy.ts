@@ -23,6 +23,13 @@ Object.values(viewports).forEach(
       () => {
         before(() => {
           cy.clearLocalStorage();
+
+          /**
+           * Global Metamask setup done by Synpress is not always done.
+           * Since Synpress needs to have valid provider to fetch the data from contracts,
+           * setupMetamask is required in each test suite.
+           */
+          cy.setupMetamask();
         });
 
         beforeEach(() => {
