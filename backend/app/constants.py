@@ -992,13 +992,16 @@ GUEST_LIST_STAMP_PROVIDERS = [
 ]
 
 GTC_STAKING_STAMP_PROVIDERS_AND_SCORES = {
-    "SelfStakingBronze": 1.0,
-    "SelfStakingSilver": 2.0,
-    "SelfStakingGold": 3.0,
-    "BeginnerCommunityStaker": 1.5,
-    "ExperiencedCommunityStaker": 2.5,
-    "TrustedCitizen": 4.0,
+    "SelfStakingBronze": 0.897,
+    "SelfStakingSilver": 2.066,
+    "SelfStakingGold": 2.7,
+    "BeginnerCommunityStaker": 0.673,
+    "ExperiencedCommunityStaker": 2.161,
+    "TrustedCitizen": 4.009,
 }
 
 SABLIER_SENDER_ADDRESS_SEPOLIA = "0xf86fD85672683c220709B9ED80bAD7a51800206a"
 SABLIER_TOKEN_ADDRESS_SEPOLIA = "0x71432dd1ae7db41706ee6a22148446087bdd0906"
+
+SABLIER_UNLOCK_GRACE_PERIOD_24_HRS = 24 * 60 * 60
+TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN = 15 * 60
