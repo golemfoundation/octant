@@ -27,8 +27,8 @@ const getButtonAddToAllocate = (): Chainable<any> => {
 };
 
 const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<any> => {
-  // cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
-  // cy.wait(2000);
+  cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
+  cy.wait(2000);
   const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
   projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
   projectListItemFirst.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
