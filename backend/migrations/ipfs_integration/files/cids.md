@@ -4,4 +4,4 @@
 - Epoch3: QmSXcT18anMXKACTueom8GXw8zrxTBbHGB71atitf6gZ9V
 - Epoch4: QmXomSdCCwt4FtBp3pidqSz3PtaiV2EyQikU6zRGWeCAsf
 - Epoch5: QmdtFLK3sB7EwQTNaqtmBnZqnN2pYZcu6GmUSTrpvb9wcq
-- Epoch6: bafybeidwpmlamodnqonogpyl2kgvtqe3p7ig74ilhxjy3a2jjbfv5zfg54
+- Epoch6: bafybeifs53yk5oycvy5lu5r42oefk3vh7qkvfdkklkvaw2ocubmycgvche
