@@ -107,6 +107,8 @@ Object.values(viewports).forEach(
           checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(true, isMobile);
         });
 
+        // TODO will be unskipped in https://github.com/golemfoundation/octant/pull/624.
+        // eslint-disable-next-line
         it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
           checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(true, isMobile);
         });
