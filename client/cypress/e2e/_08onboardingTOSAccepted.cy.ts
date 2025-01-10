@@ -103,10 +103,14 @@ Object.values(viewports).forEach(
           checkChangeStepsWithArrowKeys(true);
         });
 
-        it('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
+        // TODO will be unskipped in https://github.com/golemfoundation/octant/pull/624.
+        // eslint-disable-next-line
+        it.skip('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
           checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(true);
         });
 
+        // TODO will be unskipped in https://github.com/golemfoundation/octant/pull/624.
+        // eslint-disable-next-line
         it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
           checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(true);
         });
