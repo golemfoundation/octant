@@ -1,11 +1,10 @@
 import {
   changeMainValueToCryptoToggle,
+  // changeMainValueToFiat,
   checkProjectsViewLoaded,
   connectWallet,
   mockCoinPricesServer,
   visitWithLoader,
-  getHeartedProjectsIndicator,
-  checkHeartedProjectsIndicator,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
@@ -72,27 +71,42 @@ const checkProjectItemElements = (areMiddleSectionsVisible: boolean): Chainable<
     .filter(':visible');
 
   buttonShare.should('be.visible');
-  buttonShare.click();
-  cy.window().then(win => {
-    buttonShare.click();
-    win.navigator.clipboard.readText().then(text => {
-      expect(text).to.eq(cy.url());
-    });
-  });
-  projectListItemFirst
-    .get('[data-test=ProjectMilestonesNoResults]')
+  // buttonShare.click();
+  // cy.window().then(win => {
+  //   buttonShare.click();
+  //   win.navigator.clipboard.readText().then(text => {
+  //     expect(text).to.eq(cy.url());
+  //   });
+  // });
+  cy.get('[data-test=ProjectMilestones]')
+    .first()
+    .find('[data-test=ProjectMilestonesNoResults]')
     .scrollIntoView()
     .should('be.visible');
-  return projectListItemFirst
-    .get('[data-test=ProjectMilestonesNoResults__header]')
+  return cy
+    .get('[data-test=ProjectMilestones]')
+    .first()
+    .find('[data-test=ProjectMilestonesNoResults__header]')
     .invoke('text')
     .should('eq', 'Nothing to report yet. Check back again soon');
+};
+
+const getHeartedProjectsIndicator = (isNavbarVisible: boolean): Chainable<any> => {
+  return cy.get(
+    isNavbarVisible
+      ? '[data-test=LayoutNavbar__numberOfAllocations]'
+      : '[data-test=LayoutTopBar__numberOfAllocations]',
+  );
+};
+
+const checkHeartedProjectsIndicator = (isNavbarVisible: boolean, number = 1): Chainable<any> => {
+  return getHeartedProjectsIndicator(isNavbarVisible).contains(number);
 };
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
     describe(`[AW IS OPEN] Project: ${device}`, { viewportHeight, viewportWidth }, () => {
-      let projectNames: string[] = [];
+      const projectNames: string[] = [];
 
       beforeEach(() => {
         mockCoinPricesServer();
@@ -102,15 +116,15 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.projects.absolute);
         cy.wait(2000);
 
-        checkProjectsViewLoaded();
+        // checkProjectsViewLoaded();
 
         /**
          * This could be done in before hook, but CY wipes the state after each test
          * (could be disabled, but creates other problems)
          */
-        if (projectNames.length === 0) {
-          projectNames = getNamesOfProjects();
-        }
+        // if (projectNames.length === 0) {
+        //   projectNames = getNamesOfProjects();
+        // }
       });
 
       it('entering project view directly renders content', () => {

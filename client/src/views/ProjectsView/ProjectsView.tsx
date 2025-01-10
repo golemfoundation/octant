@@ -237,7 +237,7 @@ const ProjectsView = (): ReactElement => {
           className={styles.inputOrder}
           dataTest="ProjectsView__InputSelect"
           selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
-          variant="underselect"
+          variant="belowselect"
           onChange={option => setOrderOption(option!.value as OrderOption)}
           // TODO OCT-1952: settle on when & how randomised order should work.
           options={
