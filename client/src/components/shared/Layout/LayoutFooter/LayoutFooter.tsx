@@ -2,6 +2,7 @@ import cx from 'classnames';
 import React, { FC, memo, useLayoutEffect, useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import LanguageSelectorWrapped from 'components/shared/Layout/LanguageSelectorWrapped';
 import Svg from 'components/ui/Svg';
 import {
   BLOG_POST,
@@ -24,7 +25,7 @@ import LayoutFooterProps from './types';
 
 const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layout.footer' });
-  const { isDesktop } = useMediaQuery();
+  const { isDesktop, isMobile } = useMediaQuery();
   const newsletterRef = useRef<HTMLDivElement>(null);
   const dataTestRoot = 'LayoutFooter';
 
@@ -69,6 +70,7 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTestRoot}>
+      {isMobile && <LanguageSelectorWrapped />}
       <div className={styles.wrapper}>
         <div className={styles.info}>
           <Svg dataTest={`${dataTestRoot}__Logo`} img={octantSemiTransparent} size={4.8} />
@@ -103,15 +105,18 @@ const LayoutFooter: FC<LayoutFooterProps> = ({ className }) => {
           ))}
         </div>
       </div>
-      <div className={styles.newsletterWrapper}>
-        <div
-          ref={newsletterRef}
-          className={styles.newsletter}
-          data-test={`${dataTestRoot}__newsletter`}
-        />
-        <div className={styles.newsletterText} data-test={`${dataTestRoot}__newsletterText`}>
-          {t('newsletterText')}
+      <div className={styles.newsletterAndLanguageSelector}>
+        <div className={styles.newsletterWrapper}>
+          <div
+            ref={newsletterRef}
+            className={styles.newsletter}
+            data-test={`${dataTestRoot}__newsletter`}
+          />
+          <div className={styles.newsletterText} data-test={`${dataTestRoot}__newsletterText`}>
+            {t('newsletterText')}
+          </div>
         </div>
+        {!isMobile && <LanguageSelectorWrapped />}
       </div>
     </div>
   );
