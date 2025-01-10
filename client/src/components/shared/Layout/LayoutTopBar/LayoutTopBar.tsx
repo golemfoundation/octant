@@ -1,6 +1,6 @@
 import cx from 'classnames';
-import { useAnimate, motion } from 'framer-motion';
-import React, { FC, Fragment, useEffect, useMemo, useRef } from 'react';
+import { useAnimate, motion, AnimatePresence } from 'framer-motion';
+import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -23,7 +23,7 @@ import useAllocationsStore from 'store/allocations/store';
 import useDelegationStore from 'store/delegation/store';
 import useLayoutStore from 'store/layout/store';
 import { octant } from 'svg/logo';
-import { chevronBottom } from 'svg/misc';
+import { chevronBottom, cross } from 'svg/misc';
 import { allocate, settings } from 'svg/navigation';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -32,7 +32,7 @@ import LayoutTopBarProps from './types';
 
 const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const dataTestRoot = 'LayoutTopBar';
-  const { t } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const { pathname } = useLocation();
@@ -61,10 +61,14 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { allocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
   }));
+  const [isCloseButtonExpanded, setIsCloseButtonExpanded] = useState(true);
+
   const allocationsPrevRef = useRef(allocations);
 
   const tabs = useNavigationTabs(true);
   const [scope, animate] = useAnimate();
+  const [closeButtonRef, animateCloseButton] = useAnimate();
+
   const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const buttonWalletText = useMemo(() => {
@@ -78,7 +82,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
 
     return truncateEthAddress(address!, isMobile);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isConnected, isMobile, isProjectAdminMode, isPatronMode]);
+  }, [address, isConnected, isMobile, isProjectAdminMode, isPatronMode, i18n.language]);
 
   const onLogoClick = () => {
     if (pathname === ROOT_ROUTES.home.absolute) {
@@ -139,6 +143,20 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     allocationsPrevRef.current = allocations;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allocations]);
+
+  useEffect(() => {
+    if (!closeButtonRef?.current) {
+      return;
+    }
+    animateCloseButton(
+      closeButtonRef?.current,
+      {
+        width: isCloseButtonExpanded ? '13.2rem' : '3.2rem',
+      },
+      { delay: 0.25 },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCloseButtonExpanded]);
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTestRoot}>
@@ -256,9 +274,37 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           </Drawer>
           {!(isPatronMode || isProjectAdminMode) && (
             <Drawer
+              CustomCloseButton={
+                <div
+                  ref={closeButtonRef}
+                  className={cx(
+                    styles.customCloseButton,
+                    isCloseButtonExpanded && styles.isCloseButtonExpanded,
+                  )}
+                  data-test="AllocationDrawer__closeButton"
+                  onClick={() => setIsAllocationDrawerOpen(false)}
+                >
+                  <AnimatePresence>
+                    {isCloseButtonExpanded && (
+                      <motion.div
+                        animate={{ opacity: 1 }}
+                        className={styles.customCloseButtonText}
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }}
+                        transition={{ delay: 0.25 }}
+                      >
+                        {t('closeDrawerWithArrow')}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Svg classNameSvg={styles.customCloseButtonSvg} img={cross} size={1} />
+                </div>
+              }
               dataTest="AllocationDrawer"
               isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
               onClose={() => setIsAllocationDrawerOpen(false)}
+              onMouseLeave={() => setIsCloseButtonExpanded(false)}
+              onMouseOver={() => setIsCloseButtonExpanded(true)}
             >
               <Allocation />
             </Drawer>

@@ -10,7 +10,9 @@ import {
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
   SHOW_HELP_VIDEOS,
+  LANGUAGE_UI,
 } from 'constants/localStorageKeys';
+import { languageKey } from 'i18n/languages';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 
 import localStorageService, { LocalStorageInitParams } from './localStorageService';
@@ -109,6 +111,22 @@ describe('LocalStorageService', () => {
       localStorage.setItem(ALLOCATION_REWARDS_FOR_PROJECTS, bigInt100Stringified);
       localStorageService.init(localStorageInitParams);
       expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS)).toBe(bigInt100Stringified);
+    });
+
+    describe(`should validate ${LANGUAGE_UI}`, () => {
+      it('when value is one of the languageKey, it passes validation & can be read later on', () => {
+        Object.values(languageKey).forEach(element => {
+          localStorage.setItem(LANGUAGE_UI, element);
+          localStorageService.init(localStorageInitParams);
+          expect(localStorage.getItem(LANGUAGE_UI)).toBe(element);
+        });
+      });
+
+      it('when value is not one of the languageKey, it does not pass validation & cant be read later on', () => {
+        localStorage.setItem(LANGUAGE_UI, 'not-an-actual-language-key');
+        localStorageService.init(localStorageInitParams);
+        expect(localStorage.getItem(LANGUAGE_UI)).toBe(null);
+      });
     });
 
     describe(`should validate ${PROJECTS_ADDRESSES_RANDOMIZED_ORDER}`, () => {
