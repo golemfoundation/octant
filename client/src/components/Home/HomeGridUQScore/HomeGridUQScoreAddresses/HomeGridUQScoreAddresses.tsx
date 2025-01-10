@@ -18,7 +18,7 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({
   isFetchingScore,
   isOnTimeOutList,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridUQScore',
   });
   const ref = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ const HomeGridUQScoreAddresses: FC<HomeGridUQScoreAddressesProps> = ({
     }
     return truncateEthAddress(addresses.at(0) || '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showMoreThanOneAddress, addresses, isConnected]);
+  }, [showMoreThanOneAddress, addresses, isConnected, i18n.language]);
 
   useEffect(() => {
     if (isFetchingScore || !ref?.current || !isConnected) {

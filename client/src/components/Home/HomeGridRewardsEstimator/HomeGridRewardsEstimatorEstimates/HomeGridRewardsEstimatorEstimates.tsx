@@ -20,7 +20,10 @@ const HomeGridRewardsEstimatorEstimates: FC<HomeGridRewardsEstimatorEstimatesPro
         <div className={styles.label}>{i18n.t('common.rewards', { rewards: '' })}</div>
 
         <div className={styles.valueBox}>
-          <div className={cx(styles.value, isLoading && styles.showSkeleton)}>
+          <div
+            className={cx(styles.value, isLoading && styles.showSkeleton)}
+            data-test={`${dataTest}__estimatedRewards${isLoading ? '--loading' : ''}`}
+          >
             {estimatedRewards ? estimatedRewards.primary : ''}
           </div>
         </div>
@@ -28,7 +31,10 @@ const HomeGridRewardsEstimatorEstimates: FC<HomeGridRewardsEstimatorEstimatesPro
       <div className={styles.column}>
         <div className={styles.label}> {i18n.t('common.matchFunding')}</div>
         <div className={styles.valueBox}>
-          <div className={cx(styles.value, isLoading && styles.showSkeleton)}>
+          <div
+            className={cx(styles.value, isLoading && styles.showSkeleton)}
+            data-test={`${dataTest}__matchFunding${isLoading ? '--loading' : ''}`}
+          >
             {matchFunding ? matchFunding.primary : ''}
           </div>
         </div>
