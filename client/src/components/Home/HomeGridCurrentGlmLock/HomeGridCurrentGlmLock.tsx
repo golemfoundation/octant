@@ -51,8 +51,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
         classNameTitleWrapper={didUserWinAnyRaffles ? styles.didUserWinAnyRaffles : ''}
         dataTest="HomeGridCurrentGlmLock"
         title={t('currentGlmLock')}
-        // When won or fetching, show badge so it unhides w/ animation. When no, remove it.
-        titleSuffix={(didUserWinAnyRaffles || isFetchingUserRaffleWinnings) && <RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
+        titleSuffix={<RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
       >
         <div className={styles.root}>
           <DoubleValue
