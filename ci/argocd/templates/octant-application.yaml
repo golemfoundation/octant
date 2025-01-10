@@ -58,6 +58,10 @@ spec:
             value: '${BACKEND_SERVER_REPLICAS:-3}'
           - name: backendPgsql.deploy
             value: '${BACKEND_SERVER_PGSQL:-true}'
+          - name: backendPgsql.primary.extraEnvVars[0].name
+            value: POSTGRESQL_MAX_CONNECTIONS
+          - name: backendPgsql.primary.extraEnvVars[0].value
+            value: ' ${BACKEND_POSTGRESQL_MAX_CONNECTIONS:-300}'
           - name: 'backendServer.schedulerEnabled'
             value: '$SCHEDULER_ENABLED'
           - name: 'backendServer.vaultConfirmWithdrawals'
