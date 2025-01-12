@@ -52,12 +52,16 @@ class PrePendingServices(Model):
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+        sablier_unlock_grace_period = (
+            SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+            if is_mainnet
+            else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN
+        )
 
         user_deposits = CalculatedUserDeposits(
-            events_generator=DbAndGraphEventsGenerator(),
-            sablier_unlock_grace_period=SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
-            if is_mainnet
-            else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+            events_generator=DbAndGraphEventsGenerator(
+                sablier_unlock_grace_period=sablier_unlock_grace_period
+            )
         )
         octant_rewards = CalculatedOctantRewards(
             staking_proceeds=(

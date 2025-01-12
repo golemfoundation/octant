@@ -187,8 +187,8 @@ Object.values(viewports).forEach(
         for (let i = 0; i < DISPLAY_CURRENCIES.length - 1; i++) {
           const displayCurrency = DISPLAY_CURRENCIES[i];
           const displayCurrencyToUppercase = displayCurrency.toUpperCase();
-          const nextDisplayCurrencyToUppercase =
-            i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
+          const nextDisplayCurrency =
+            i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1] : undefined;
 
           cy.get('[data-test=SettingsCurrencyBox__InputSelect--currency__SingleValue]').contains(
             displayCurrencyToUppercase,
@@ -214,7 +214,7 @@ Object.values(viewports).forEach(
           }
           cy.get('[data-test=SettingsCurrencyBox__InputSelect--currency]').click();
           cy.get(
-            `[data-test=SettingsCurrencyBox__InputSelect--currency__Option--${nextDisplayCurrencyToUppercase}]`,
+            `[data-test=SettingsCurrencyBox__InputSelect--currency__Option--${nextDisplayCurrency}]`,
           ).click();
         }
       });
