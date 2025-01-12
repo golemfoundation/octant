@@ -33,7 +33,7 @@ def get_w3(
 
 class DatabaseSettings(OctantSettings):
     """
-    Values below are the defaults for the database with max_connetions = 300 and backend pods = 3.
+    Values below are the defaults for the pod which can serve up to 100 connections.
     """
 
     db_uri: str = Field(..., alias="db_uri")
