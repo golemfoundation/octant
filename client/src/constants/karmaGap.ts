@@ -6,6 +6,7 @@ export const PROGRAMS_IDS_TO_EPOCH_NUMBER_MAPPING = {
   3: '546',
   4: '547',
   5: '548',
+  6: '0x69bcb5a6cf6a3c95185cbb451e77787240c866dd2e8332597e3013ff18a1aba1',
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
