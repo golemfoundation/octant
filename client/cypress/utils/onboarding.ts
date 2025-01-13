@@ -77,7 +77,7 @@ export const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean): void => {
 
 export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
   isTOSAccepted: boolean,
-  isMobile = false,
+  isMobileOrTablet = false,
 ): void => {
   checkCurrentElement(0, true);
 
@@ -93,7 +93,7 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
       { clientX: leftEdgeX, el: 0 },
     ].forEach(({ clientX, el }) => {
       cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
-        force: isMobile,
+        force: isMobileOrTablet,
       });
       checkCurrentElement(el, isTOSAccepted || el === 0);
 
@@ -106,7 +106,7 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
 
 export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
   isTOSAccepted: boolean,
-  isMobile = false,
+  isMobileOrTablet = false,
 ): void => {
   checkCurrentElement(0, true);
 
@@ -121,7 +121,7 @@ export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
       { clientX: leftEdgeX + 25, el: 0 },
     ].forEach(({ clientX, el }) => {
       cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
-        force: isMobile,
+        force: isMobileOrTablet,
       });
       checkCurrentElement(el, isTOSAccepted || el === 0);
 
