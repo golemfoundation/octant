@@ -202,6 +202,7 @@ Object.values(viewports).forEach(
         for (let i = 0; i < projectNames.length; i++) {
           cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
           checkProjectItemElements(i, projectNames[i]);
+          cy.wait(500);
         }
       });
 
