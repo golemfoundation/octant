@@ -187,11 +187,11 @@ Object.values(viewports).forEach(
 
         /**
          * This could be done in before hook, but CY wipes the state after each test
-         * (could be disabled, but creates other problems)
+         * (could be disabled, but creates other problems).
+         *
+         * Needs to be done for each test, because each has different default "random" order for projects.
          */
-        if (projectNames.length === 0) {
-          projectNames = getNamesOfProjects();
-        }
+        projectNames = getNamesOfProjects();
       });
 
       it('header is visible', () => {
@@ -202,7 +202,6 @@ Object.values(viewports).forEach(
         for (let i = 0; i < projectNames.length; i++) {
           cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
           checkProjectItemElements(i, projectNames[i]);
-          cy.wait(500);
         }
       });
 
