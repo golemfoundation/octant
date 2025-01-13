@@ -21,7 +21,9 @@ Object.values(viewports).forEach(
       });
 
       beforeEach(() => {
-        cy.intercept('https://api.vimeo.com/users/*/albums/*/videos', [
+        cy.intercept(
+          'https://api.vimeo.com/users/*/albums/*/videos?*',
+
           {
             data: [
               {
@@ -50,7 +52,7 @@ Object.values(viewports).forEach(
               },
             ],
           },
-        ]);
+        );
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
