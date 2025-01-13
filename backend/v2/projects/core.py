@@ -1,14 +1,11 @@
 from app.infrastructure.database.models import ProjectsDetails
 
 
-def parse_cids_to_epochs_dict(cids_str: str) -> dict[int, str]:
+def parse_cids_to_epochs_dict(cids: list[str]) -> dict[int, str]:
     """
-    Parse a string of comma-separated CIDs to a dictionary of epoch to CID.
+    Convert a list of CIDs to a dictionary mapping epochs to CIDs.
     """
-    return {
-        index: element.strip()
-        for index, element in enumerate(cids_str.split(","), start=1)
-    }
+    return {index: cid.strip() for index, cid in enumerate(cids, start=1)}
 
 
 def process_search_params(

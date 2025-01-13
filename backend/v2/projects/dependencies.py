@@ -31,9 +31,13 @@ class ProjectsSettings(OctantSettings):
             Field(validation_alias="chain_id"), ChainTypes.MAINNET
         )
     )
-    mainnet_project_cids: str = Field(
+    mainnet_project_cids_raw: str = Field(
         validation_alias="mainnet_proposal_cids", default=DEFAULT_MAINNET_PROJECT_CIDS
     )
+
+    @property
+    def mainnet_project_cids(self) -> list[str]:
+        return self.mainnet_project_cids_raw.split(",")
 
 
 class ProjectsAllocationThresholdSettings(OctantSettings):

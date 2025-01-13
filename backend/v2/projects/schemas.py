@@ -32,4 +32,4 @@ EpochsParameter = Annotated[
 SearchPhrasesParameter = Annotated[
     str, Query(..., alias="searchPhrases", description="Comma-separated search phrases")
 ]
-EpochNumberPath = Annotated[str, Path(..., description="Epoch number")]
+EpochNumberPath = Annotated[int, Path(..., description="Epoch number")]

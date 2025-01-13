@@ -26,10 +26,10 @@ class ProjectsDetailsGetter:
         all_filtered_projects_details = []
 
         for epoch_number in self.epoch_numbers:
+            projects_details = await get_projects_details_for_epoch(
+                self.session, epoch_number
+            )
             for search_phrase in self.search_phrases:
-                projects_details = await get_projects_details_for_epoch(
-                    self.session, epoch_number
-                )
                 filtered_projects_details = filter_projects_details(
                     projects_details, search_phrase
                 )
@@ -50,18 +50,13 @@ class ProjectsMetadataGetter:
     # Parameters
     epoch_number: int
     is_mainnet: bool
-    mainnet_project_cids: str
+    mainnet_project_cids: list[str]
 
     # Dependencies
     session: AsyncSession
     projects_contracts: ProjectsContracts
 
-    async def get(self) -> ProjectsMetadataResponseV1:
-        """
-        Get projects metadata for a specific epoch.
-        """
-        logging.debug(f"Getting projects metadata for epoch {self.epoch_number}")
-
+    async def _get_projects_cid(self) -> str:
         if self.is_mainnet:
             epoch_to_cid_dict = parse_cids_to_epochs_dict(self.mainnet_project_cids)
             projects_cid = (
@@ -71,6 +66,16 @@ class ProjectsMetadataGetter:
             )
         else:
             projects_cid = await self.projects_contracts.get_project_cid()
+
+        return projects_cid
+
+    async def get(self) -> ProjectsMetadataResponseV1:
+        """
+        Get projects metadata for a specific epoch.
+        """
+        logging.debug(f"Getting projects metadata for epoch {self.epoch_number}")
+
+        projects_cid = await self._get_projects_cid()
 
         logging.debug(f"Projects CID: {projects_cid}")
 
