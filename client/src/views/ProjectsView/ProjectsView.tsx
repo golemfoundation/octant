@@ -211,7 +211,7 @@ const ProjectsView = (): ReactElement => {
   const orderOptionsTranslated = ORDER_OPTIONS(t);
 
   return (
-    <div data-test="ProjectsView">
+    <div className={styles.root} data-test="ProjectsView">
       <ViewTitle className={styles.viewTitle}>
         {t('viewTitle', {
           epochNumber:
@@ -243,7 +243,7 @@ const ProjectsView = (): ReactElement => {
               : orderOptionsTranslated.filter(element => element.value !== 'randomized')
           }
           selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
-          variant="underselect"
+          variant="belowselect"
         />
       </div>
       {searchQuery === '' && !areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
