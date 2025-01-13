@@ -22,7 +22,7 @@ import {
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isMobile, isDesktop, isLargeDesktop }) => {
+  ({ device, viewportWidth, viewportHeight, isMobile, isTablet, isDesktop, isLargeDesktop }) => {
     describe(
       `[AW IS CLOSED] onboarding (TOS accepted): ${device}`,
       { viewportHeight, viewportWidth },
@@ -104,13 +104,11 @@ Object.values(viewports).forEach(
         });
 
         it('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
-          checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(true, isMobile);
+          checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(true, isMobile || isTablet);
         });
 
-        // TODO will be unskipped in https://github.com/golemfoundation/octant/pull/624.
-        // eslint-disable-next-line
         it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
-          checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(true, isMobile);
+          checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(true, isMobile || isTablet);
         });
 
         it('user can change steps by swiping on screen (difference more than or equal 5px)', () => {
