@@ -22,7 +22,7 @@ import {
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isMobile }, index, arr) => {
+  ({ device, viewportWidth, viewportHeight, isMobile, isTablet }, index, arr) => {
     describe(
       `[AW IS CLOSED] Onboarding (TOS not accepted): ${device}`,
       { viewportHeight, viewportWidth },
@@ -77,11 +77,11 @@ Object.values(viewports).forEach(
         });
 
         it('user cannot change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
-          checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(false, isMobile);
+          checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(false, isMobile || isTablet);
         });
 
         it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
-          checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(false, isMobile);
+          checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(false, isMobile || isTablet);
         });
 
         it('user cannot change steps by swiping on screen (difference more than or equal 5px)', () => {
