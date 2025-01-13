@@ -172,7 +172,7 @@ def test_score_is_too_low():
         core.verify_score_delegation(
             hashed_addresses,
             set(),
-            19.9,
+            14.9,
             0,
             core.ActionType.DELEGATION,
             USER1_ADDRESS,
