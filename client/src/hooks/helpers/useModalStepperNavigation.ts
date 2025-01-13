@@ -61,10 +61,8 @@ const useModalStepperNavigation = ({
     }
 
     const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
-    const offsetLeftParent = offsetParent.offsetLeft;
-    const onboardingModalWidth = isDesktop
-      ? (e.target as HTMLDivElement).offsetParent!.clientWidth!
-      : window.innerWidth;
+    const offsetLeftParent = offsetParent?.offsetLeft || 0;
+    const onboardingModalWidth = isDesktop ? offsetParent!.clientWidth! : window.innerWidth;
     const { clientX } = e;
 
     const clickDiff = 25;
