@@ -12,7 +12,7 @@ import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMobile }) => {
   describe(`[AW IS CLOSED] LayoutFooter: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
@@ -76,26 +76,29 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', '_blank');
     });
 
-    it('Discord link is visible, has correct text and attributes', () => {
-      cy.get('[data-test=LayoutFooter__link--discord]').should('be.visible');
-      cy.get('[data-test=LayoutFooter__link--discord]').invoke('text').should('eq', '→ Discord');
-      cy.get('[data-test=LayoutFooter__link--discord]')
+    it('Blog link is visible, has correct text and attributes', () => {
+      cy.get('[data-test=LayoutFooter__link--blog]').should('be.visible');
+      cy.get('[data-test=LayoutFooter__link--blog]').invoke('text').should('eq', '→ Blog');
+      cy.get('[data-test=LayoutFooter__link--blog]')
         .invoke('attr', 'href')
-        .should('eq', 'https://discord.gg/octant');
-      cy.get('[data-test=LayoutFooter__link--discord]')
+        .should('eq', 'https://blog.octant.build/');
+      cy.get('[data-test=LayoutFooter__link--blog]')
         .invoke('attr', 'target')
         .should('eq', '_blank');
     });
 
-    it('Farcaster link is visible, has correct text and attributes', () => {
-      cy.get('[data-test=LayoutFooter__link--farcaster]').should('be.visible');
-      cy.get('[data-test=LayoutFooter__link--farcaster]')
+    it('Brand assets link is visible, has correct text and attributes', () => {
+      cy.get('[data-test=LayoutFooter__link--brandAssets]').should('be.visible');
+      cy.get('[data-test=LayoutFooter__link--brandAssets]')
         .invoke('text')
-        .should('eq', '→ Farcaster');
-      cy.get('[data-test=LayoutFooter__link--farcaster]')
+        .should('eq', isMobile ? '→ Brand' : '→ Brand assets');
+      cy.get('[data-test=LayoutFooter__link--brandAssets]')
         .invoke('attr', 'href')
-        .should('eq', 'https://warpcast.com/octant');
-      cy.get('[data-test=LayoutFooter__link--farcaster]')
+        .should(
+          'eq',
+          'https://www.figma.com/community/file/1295533951881708349/octant-brand-assets',
+        );
+      cy.get('[data-test=LayoutFooter__link--brandAssets]')
         .invoke('attr', 'target')
         .should('eq', '_blank');
     });
@@ -133,41 +136,32 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', 'Get PGF news and updates from Octant. No spam, ever');
     });
 
-    if (device === 'desktop' || device === 'large-desktop') {
-      it('Blog of use link is visible, has correct text and attributes', () => {
-        cy.get('[data-test=LayoutFooter__link--blog]').should('be.visible');
-        cy.get('[data-test=LayoutFooter__link--blog]').invoke('text').should('eq', '→ Blog');
-        cy.get('[data-test=LayoutFooter__link--blog]')
-          .invoke('attr', 'href')
-          .should('eq', 'https://blog.octant.build/');
-        cy.get('[data-test=LayoutFooter__link--blog]')
-          .invoke('attr', 'target')
-          .should('eq', '_blank');
-      });
+    it('X link is visible and has correct attributes', () => {
+      cy.get('[data-test=LayoutFooter__Button--x]').should('be.visible');
+      cy.get('[data-test=LayoutFooter__Button--x]')
+        .invoke('attr', 'href')
+        .should('eq', 'https://x.com/OctantApp');
+      cy.get('[data-test=LayoutFooter__Button--x]').invoke('attr', 'target').should('eq', '_blank');
+    });
 
-      it('Terms of use link is visible, has correct text and attributes', () => {
-        cy.get('[data-test=LayoutFooter__link--brandAssets]').should('be.visible');
-        cy.get('[data-test=LayoutFooter__link--brandAssets]')
-          .invoke('text')
-          .should('eq', '→ Brand assets');
-        cy.get('[data-test=LayoutFooter__link--brandAssets]')
-          .invoke('attr', 'href')
-          .should(
-            'eq',
-            'https://www.figma.com/community/file/1295533951881708349/octant-brand-assets',
-          );
-        cy.get('[data-test=LayoutFooter__link--brandAssets]')
-          .invoke('attr', 'target')
-          .should('eq', '_blank');
-      });
-    } else {
-      it('Blog of use link doesn`t exist', () => {
-        cy.get('[data-test=LayoutFooter__link--blog]').should('not.exist');
-      });
+    it('Farcaster link is visible and has correct attributes', () => {
+      cy.get('[data-test=LayoutFooter__Button--farcaster]').should('be.visible');
+      cy.get('[data-test=LayoutFooter__Button--farcaster]')
+        .invoke('attr', 'href')
+        .should('eq', 'https://warpcast.com/octant');
+      cy.get('[data-test=LayoutFooter__Button--farcaster]')
+        .invoke('attr', 'target')
+        .should('eq', '_blank');
+    });
 
-      it('Terms of use link doesn`t exist', () => {
-        cy.get('[data-test=LayoutFooter__link--brandAssets]').should('not.exist');
-      });
-    }
+    it('Discord link is visible and has correct attributes', () => {
+      cy.get('[data-test=LayoutFooter__Button--discord]').should('be.visible');
+      cy.get('[data-test=LayoutFooter__Button--discord]')
+        .invoke('attr', 'href')
+        .should('eq', 'https://discord.gg/octant');
+      cy.get('[data-test=LayoutFooter__Button--discord]')
+        .invoke('attr', 'target')
+        .should('eq', '_blank');
+    });
   });
 });
