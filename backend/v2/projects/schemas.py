@@ -30,6 +30,6 @@ EpochsParameter = Annotated[
     str, Query(..., description="Comma-separated list of epoch numbers")
 ]
 SearchPhrasesParameter = Annotated[
-    str, Query(..., description="Comma-separated search phrases")
+    str, Query(..., alias="searchPhrases", description="Comma-separated search phrases")
 ]
 EpochNumberPath = Annotated[str, Path(..., description="Epoch number")]
