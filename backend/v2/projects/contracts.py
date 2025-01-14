@@ -10,7 +10,7 @@ class ProjectsContracts(SmartContract):
         )
         return await self.contract.functions.getProposalAddresses(epoch_number).call()
 
-    async def get_project_cid(self):
+    async def get_project_cid(self) -> str:
         logging.debug("[Projects contract] Getting projects CID")
         return await self.contract.functions.cid().call()
 

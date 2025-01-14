@@ -398,13 +398,11 @@
       "octantText": "Octant is a <0>Golem Foundation</0> project,<br/> launched in 2023.",
       "links": {
         "website": "Website",
-        "discord": "Discord",
         "blog": "Blog",
         "docs": "Docs",
         "brandAssets": "Brand assets",
+        "brand": "Brand",
         "termsOfUse": "Terms of use",
-        "farcaster": "Farcaster",
-        "twitterX": "Twitter/X",
         "privacyPolicy": "Privacy policy"
       }
     }
