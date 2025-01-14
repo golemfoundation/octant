@@ -116,3 +116,29 @@ async def test_returns_correct_project_details_for_many_epochs_and_search_phrase
                 },
             ]
         }
+
+
+@pytest.mark.asyncio
+async def test_returns_not_duplicated_project_details_for_words_from_the_same_project(
+    fast_client: AsyncClient,
+    factories: FactoriesAggregator,
+    multiple_project_details_various: list,
+):
+    details = multiple_project_details_various
+    words = "test,project1"
+
+    for detail in details:
+        await factories.projects_details.create(**detail)
+
+    async with fast_client as client:
+        resp = await client.get(f"projects/details?epochs=3&searchPhrases={words}")
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {
+            "projectsDetails": [
+                {
+                    "name": details[0]["name"],
+                    "epoch": str(details[0]["epoch"]),
+                    "address": details[0]["address"],
+                }
+            ]
+        }
