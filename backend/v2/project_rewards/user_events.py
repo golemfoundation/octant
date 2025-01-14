@@ -2,6 +2,7 @@
 
 from itertools import groupby
 from operator import attrgetter
+import os
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -20,88 +21,16 @@ from app.modules.octant_rewards.core import calculate_rewards
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from app.modules.user.budgets.core import get_upcoming_budget
 from app.modules.user.events_generator.core import unify_deposit_balances
+from app.modules.staking.proceeds.core import estimate_staking_proceeds
+from app.constants import SABLIER_SENDER_ADDRESS_SEPOLIA, SABLIER_TOKEN_ADDRESS_SEPOLIA, ZERO_ADDRESS
+from app.infrastructure import SubgraphEndpoints
+from v2.deposits.repositories import DepositEventsRepository
+from v2.epochs.subgraphs import EpochsSubgraph
+from v2.sablier.subgraphs import SablierSubgraph
 
 
-async def get_all_deposit_events_for_epoch(
-    session: AsyncSession,
-    epoch_number: int,
-) -> dict[str, list[DepositEvent]]:
-    
-    results = await session.scalars(
-        select(Deposit)
-        .options(selectinload(Deposit.user))
-        .where(Deposit.epoch == epoch_number)
-    )
-
-    return {
-        result.user.address: result for result in results
-    }
 
 
-async def get_all_user_events(
-        session: AsyncSession,
-        epoch_number: int,
-        start_sec: int,
-        end_sec: int,
-) -> dict[str, list[DepositEvent]]:
-    
-    # Get all locked amounts for the previous epoch
-    epoch_start_locked_amounts = await get_all_deposit_events_for_epoch(
-        session, epoch_number - 1
-    )
-    epoch_start_events = [
-        DepositEvent(
-            user=user,
-            type=EventType.LOCK,
-            timestamp=start_sec,
-            amount=0,  # it is not a deposit in fact
-            deposit_before=int(deposit.epoch_end_deposit),
-        )
-        for user, deposit in epoch_start_locked_amounts.items()
-    ]
-
-    sablier = SablierEventsGenerator()
-    sablier_streams = await sablier.get_all_streams_history()
-    mapped_streams = process_to_locks_and_unlocks(
-        sablier_streams, from_timestamp=start_sec, to_timestamp=end_sec
-    )
-    epoch_events = []
-    epoch_events += flatten_sablier_events(mapped_streams, FlattenStrategy.ALL)
-    epoch_events += get_locks_by_timestamp_range(start_sec, end_sec)
-    epoch_events += get_unlocks_by_timestamp_range(start_sec, end_sec)
-
-    epoch_events = [DepositEvent.from_dict(event) for event in epoch_events]
-    sorted_events = sorted(epoch_events, key=attrgetter("user", "timestamp"))
-
-    user_events = {
-        k: list(g) for k, g in groupby(sorted_events, key=attrgetter("user"))
-    }
-
-    for event in epoch_start_events:
-        if event.user in user_events:
-            user_events[event.user].insert(0, event)
-        else:
-            user_events[event.user] = [event]
-
-    epoch_start_users = list(map(attrgetter("user"), epoch_start_events))
-    for user_address in user_events:
-        if user_address not in epoch_start_users:
-            user_events[user_address].insert(
-                0,
-                DepositEvent(
-                    user_address,
-                    EventType.LOCK,
-                    timestamp=start_sec,
-                    amount=0,
-                    deposit_before=0,
-                ),
-            )
-
-        user_events[user_address] = unify_deposit_balances(
-            user_events[user_address]
-        )
-
-    return user_events
 
 
 def calculate_effective_deposits(
@@ -110,6 +39,7 @@ def calculate_effective_deposits(
     events: Dict[str, list[DepositEvent]],
 ) -> tuple[list[UserDeposit], int]:
     
+    # TODO: We can do this better and nicer
     effective_deposit_calculator = DefaultWeightedAverageWithSablierTimebox()
     payload = UserEffectiveDepositPayload(
         epoch_start=start_sec,
@@ -120,72 +50,62 @@ def calculate_effective_deposits(
     return effective_deposit_calculator.calculate_users_effective_deposits(payload)
 
 
-async def get_octant_rewards(
-    session: AsyncSession,
+async def calculate_pending_epoch_snapshot(
+    deposit_events: DepositEventsRepository,
     epoch_number: int,
-    start_sec: int,
-    end_sec: int,
-) -> OctantRewardsDTO:
+    epoch_start: int,
+    epoch_end: int,
+) -> PendingSnapshotDTO:
     
-    # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
+    # Get octant rewards
+        # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
     # duration_sec = epoch_details.duration
     # return estimate_staking_proceeds(duration_sec)
-    eth_proceeds = await get_staking_proceeds(session, epoch_number, start_sec, end_sec)
+    # eth_proceeds = await get_staking_proceeds(session, epoch_number, start_sec, end_sec)
+    eth_proceeds = estimate_staking_proceeds(epoch_end - epoch_start)
 
-    events = await get_all_user_events(session, epoch_number, start_sec, end_sec)
-    user_deposits, total_effective_deposit = calculate_effective_deposits(start_sec, end_sec, events)
+    events = await deposit_events.get_all_users_events(
+        epoch_number,
+        epoch_start,
+        epoch_end
+    )
+    user_deposits, total_effective_deposit = calculate_effective_deposits(epoch_start, epoch_end, events)
 
+    # total_effective_deposit = 155654569757136462439580980
     rewards_settings = OctantRewardsSettings()
 
     octant_rewards = calculate_rewards(
         rewards_settings, eth_proceeds, total_effective_deposit
     )
 
-    (
-        locked_ratio,
-        total_rewards,
-        vanilla_individual_rewards,
-        op_cost,
-        ppf,
-        community_fund,
-    ) = (
-        octant_rewards.locked_ratio,
-        octant_rewards.total_rewards,
-        octant_rewards.vanilla_individual_rewards,
-        octant_rewards.operational_cost,
-        octant_rewards.ppf_value,
-        octant_rewards.community_fund,
-    )
-
-    return OctantRewardsDTO(
+    rewards = OctantRewardsDTO(
         staking_proceeds=eth_proceeds,
-        locked_ratio=locked_ratio,
+        locked_ratio=octant_rewards.locked_ratio,
         total_effective_deposit=total_effective_deposit,
-        total_rewards=total_rewards,
-        vanilla_individual_rewards=vanilla_individual_rewards,
-        operational_cost=op_cost,
-        ppf=ppf,
-        community_fund=community_fund,
+        total_rewards=octant_rewards.total_rewards,
+        vanilla_individual_rewards=octant_rewards.vanilla_individual_rewards,
+        operational_cost=octant_rewards.operational_cost,
+        ppf=octant_rewards.ppf_value,
+        community_fund=octant_rewards.community_fund,
     )
 
-
-async def calculate_pending_epoch_snapshot(
-    session: AsyncSession,
-    epoch_number: int
-) -> PendingSnapshotDTO:
-    
-    octant_rewards = await get_octant_rewards(session, epoch_number, start_sec, end_sec)
-
-    events = await get_all_user_events(session, epoch_number, start_sec, end_sec)
-    user_deposits, total_effective_deposit = calculate_effective_deposits(start_sec, end_sec, events)
+    # events = await get_all_user_events(
+    #     session,
+    #     epochs_subgraph,
+    #     sablier,
+    #     epoch_number,
+    #     epoch_start,
+    #     epoch_end
+    # )
+    # user_deposits, total_effective_deposit = calculate_effective_deposits(epoch_start, epoch_end, events)
 
     user_budget_calculator = UserBudgetWithPPF()
     user_budgets = calculate_user_budgets(
-        user_budget_calculator, octant_rewards, user_deposits
+        user_budget_calculator, rewards, user_deposits
     )
 
     return PendingSnapshotDTO(
-        rewards=octant_rewards, user_deposits=user_deposits, user_budgets=user_budgets
+        rewards=rewards, user_deposits=user_deposits, user_budgets=user_budgets
     )
 
 
@@ -201,3 +121,32 @@ async def get_budget(
     )
 
     return upcoming_budget
+
+
+def simulate_user_events(
+    end_sec: int,
+    lock_duration: int,
+    remaining_sec: int,
+    glm_amount: int
+) -> list[DepositEvent]:
+
+    user_events = [
+        DepositEvent(
+            user=ZERO_ADDRESS,
+            type=EventType.LOCK,
+            timestamp=end_sec - remaining_sec,
+            amount=glm_amount,
+            deposit_before=0,
+        )
+    ]
+    if lock_duration < remaining_sec:
+        user_events.append(
+            DepositEvent(
+                user=ZERO_ADDRESS,
+                type=EventType.UNLOCK,
+                timestamp=end_sec - remaining_sec + lock_duration,
+                amount=glm_amount,
+                deposit_before=glm_amount,
+            )
+        )
+    return user_events

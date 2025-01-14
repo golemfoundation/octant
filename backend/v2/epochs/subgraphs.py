@@ -5,6 +5,8 @@ from typing import Callable, Sequence, Type, Union
 from pydantic import TypeAdapter
 import backoff
 from app import exceptions
+from app.infrastructure.graphql.locks import LockEvent
+from app.infrastructure.graphql.unlocks import UnlockEvent
 from v2.core.types import OctantModel
 from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
@@ -75,6 +77,66 @@ class EpochsSubgraph:
             self.gql_client.execute_async = backoff_decorator(
                 self.gql_client.execute_async
             )
+
+    async def fetch_locks_by_timestamp_range(self, from_ts: int, to_ts: int) -> list[LockEvent]:
+        """
+        Get locks by timestamp range.
+        """
+        query = gql(
+            """
+            query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
+              lockeds(
+                first: 1000,
+                skip: 0,
+                orderBy: timestamp
+                where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp}
+              ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                user
+                transactionHash
+              }
+            }
+            """
+        )
+        variables = {
+            "fromTimestamp": from_ts,
+            "toTimestamp": to_ts,
+        }
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        return response["lockeds"]
+
+    async def fetch_unlocks_by_timestamp_range(self, from_ts: int, to_ts: int) -> list[UnlockEvent]:
+        """
+        Get unlocks by timestamp range.
+        """
+        query = gql(
+            """
+            query GetUnlocks($fromTimestamp: Int!, $toTimestamp: Int!) {
+              unlockeds(
+                first: 1000,
+                skip: 0,
+                orderBy: timestamp
+                where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp}
+              ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                user
+                transactionHash
+              }
+            }
+            """
+        )
+        variables = {
+            "fromTimestamp": from_ts,
+            "toTimestamp": to_ts,
+        }
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        return response["unlockeds"]
 
     async def fetch_epoch_by_number(self, epoch_number: int) -> EpochSubgraphItem:
         """Get EpochDetails from the subgraph for a given epoch number."""

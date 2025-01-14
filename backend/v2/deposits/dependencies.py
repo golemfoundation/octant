@@ -1,7 +1,10 @@
 from typing import Annotated
 
 from fastapi import Depends
-from v2.core.dependencies import OctantSettings, Web3
+from v2.deposits.repositories import DepositEventsRepository
+from v2.epochs.dependencies import GetEpochsSubgraph
+from v2.sablier.dependencies import GetSablierSubgraph
+from v2.core.dependencies import GetSession, OctantSettings, Web3
 from v2.deposits.contracts import DEPOSITS_ABI, DepositsContracts
 
 
@@ -17,3 +20,17 @@ def get_deposits_contracts(
     w3: Web3, settings: Annotated[DepositsSettings, Depends(get_deposits_settings)]
 ) -> DepositsContracts:
     return DepositsContracts(w3, DEPOSITS_ABI, settings.deposits_contract_address)  # type: ignore[arg-type]
+
+
+
+def get_deposit_events_repository(
+    session: GetSession,
+    epochs_subgraph: GetEpochsSubgraph,
+    sublier_subgraph: GetSablierSubgraph,
+) -> DepositEventsRepository:
+    return DepositEventsRepository(session, epochs_subgraph, sublier_subgraph)
+
+
+# Annotated dependencies
+GetDepositsContracts = Annotated[DepositsContracts, Depends(get_deposits_contracts)]
+GetDepositEventsRepository = Annotated[DepositEventsRepository, Depends(get_deposit_events_repository)]

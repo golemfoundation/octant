@@ -98,6 +98,7 @@ async def get_all_users_budgets_by_epoch(
         select(Budget.budget, User.address)
         .join(Budget.user)
         .where(Budget.epoch == epoch_number)
+        .order_by(User.address)
     )
     return {
         transform_to_checksum_address(row.address): int(row.budget)

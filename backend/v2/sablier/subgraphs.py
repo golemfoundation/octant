@@ -1,15 +1,19 @@
-
-
-
+import logging
+import os
+from flask import json
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
+from gql.client import log as requests_logger
 
 
 import backoff
 from app.infrastructure.sablier.events import SablierStream
 from v2.epochs.subgraphs import BackoffParams
 
-class SablierEventsGenerator:
+from gql.transport.aiohttp import log as requests_logger
+requests_logger.setLevel(logging.WARNING)
+
+class SablierSubgraph:
 
     def __init__(
         self,
@@ -18,12 +22,17 @@ class SablierEventsGenerator:
         token_address: str,
         backoff_params: BackoffParams | None = None,
     ):
+
+        requests_logger.setLevel(logging.WARNING)    
         self.url = url
         self.sender = sender
         self.token_address = token_address
 
         self.gql_client = Client(
-            transport=AIOHTTPTransport(url=self.url, timeout=2),
+            transport=AIOHTTPTransport(
+                url=self.url, 
+                timeout=2,
+            ),
             fetch_schema_from_transport=False,
         )
 
@@ -109,4 +118,12 @@ class SablierEventsGenerator:
             "tokenAddress": self.token_address,
         }
 
-        return await self._fetch_streams(query, variables)
+        # Cache into file to avoid rate limiting
+        if not os.path.exists("sablier_streams.json"):
+            streams = await self._fetch_streams(query, variables)
+            with open("sablier_streams.json", "w") as f:
+                json.dump(streams, f)
+        else:
+            with open("sablier_streams.json", "r") as f:
+                streams = json.load(f)
+        return streams

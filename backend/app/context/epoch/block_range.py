@@ -12,7 +12,9 @@ def get_blocks_range(
     if not with_block_range:
         return None, None
 
-    start_block = get_block_num_from_ts(start_sec) if start_sec <= now_sec else None
-    end_block = get_block_num_from_ts(end_sec) if end_sec <= now_sec else None
+    # start_block = get_block_num_from_ts(start_sec) if start_sec <= now_sec else None
+    # end_block = get_block_num_from_ts(end_sec) if end_sec <= now_sec else None
 
+    start_block = None
+    end_block = None
     return start_block, end_block

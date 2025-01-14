@@ -89,7 +89,8 @@ async def get_rewards_rate(epoch_number: int) -> float:
 async def get_epoch_state(
     session: GetSession, epochs_contracts: GetEpochsContracts, epoch_number: int
 ) -> EpochState:
-    current_epoch_number = await get_current_epoch(epoch_number)
+
+    current_epoch_number = await epochs_contracts.get_current_epoch()
     if epoch_number > current_epoch_number:
         return EpochState.FUTURE
 
