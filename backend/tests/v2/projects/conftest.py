@@ -1,6 +1,8 @@
 import pytest
 
-from tests.v2.fake_contracts.conftest import fake_projects_contract_factory  # noqa: F401
+from tests.v2.fake_contracts.conftest import (  # noqa: F401
+    fake_projects_contract_factory,
+)
 
 from tests.v2.factories.helpers import generate_random_eip55_address
 
