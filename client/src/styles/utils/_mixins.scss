@@ -1,4 +1,4 @@
-@mixin overlay($width, $height) {
+@mixin overlay($width, $height, $isUsingBlur: true) {
   content: '';
   position: fixed;
   top: 0;
@@ -10,8 +10,15 @@
 
   // This class needs to be aligned with whatever triggers the overflow to open, e.g. Modal.tsx.
   &.isOpen {
-    backdrop-filter: blur(0.5rem);
-    -webkit-backdrop-filter: blur(0.5rem);
+    @if $isUsingBlur == true {
+      backdrop-filter: blur(0.5rem);
+      -webkit-backdrop-filter: blur(0.5rem);
+
+      &::after {
+        background-color: $color-octant-dark;
+        opacity: 0.1;
+      }
+    }
 
     &::after {
       content: '';
@@ -22,8 +29,6 @@
       width: 100%;
       z-index: $z-index-4;
       cursor: pointer;
-      background-color: $color-octant-dark;
-      opacity: 0.1;
     }
   }
 }

@@ -14,7 +14,9 @@ import {
   PROJECTS_ADDRESSES_RANDOMIZED_ORDER,
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
   SHOW_HELP_VIDEOS,
+  LANGUAGE_UI,
 } from 'constants/localStorageKeys';
+import { languageKey } from 'i18n/languages';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
 import isStringValidJson from 'utils/isStringValidJson';
@@ -33,7 +35,8 @@ const LocalStorageService = () => {
     for (let i = 0; i < localStorageKeys.length; i++) {
       const localStorageKey = localStorageKeys[i];
       const localStorageElement = localStorage.getItem(localStorageKey);
-      if (!isStringValidJson(localStorageElement)) {
+      // LANGUAGE_UI is excluded. It's set as JSON, but then it's overridden by i18n library.
+      if (!isStringValidJson(localStorageElement) && localStorageKey !== LANGUAGE_UI) {
         localStorage.removeItem(localStorageKey);
       }
     }
@@ -202,6 +205,14 @@ const LocalStorageService = () => {
     }
   };
 
+  const validateLanguageUi = (): void => {
+    const languageUi = localStorage.getItem(LANGUAGE_UI);
+
+    if (languageUi && !Object.values(languageKey).includes(languageUi)) {
+      localStorage.removeItem(LANGUAGE_UI);
+    }
+  };
+
   const init = (params: LocalStorageInitParams): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
@@ -215,6 +226,7 @@ const LocalStorageService = () => {
     validateLastSeenStep();
     validateProjectsAddressesRandomizedOrder(params);
     validateTimeoutListPresenceModalClosed();
+    validateLanguageUi();
   };
 
   return {

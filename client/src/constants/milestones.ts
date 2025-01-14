@@ -20,7 +20,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-01-17T17:00:00+0100'),
         id: 'e3-epoch-starts',
-        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Three' }),
+        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 3 }),
       },
       {
         from: new Date('2024-02-12T00:00:00+0100'),
@@ -53,7 +53,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-04-16T18:00:00+0200'),
         id: 'e4-epoch-starts',
-        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Four' }),
+        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 4 }),
       },
       {
         from: new Date('2024-05-13T00:00:00+0200'),
@@ -85,7 +85,7 @@ export default function getMilestones(): Milestone[] {
       {
         from: new Date('2024-07-15T18:00:00+0200'),
         id: 'e5-epoch-starts',
-        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Five' }),
+        label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 5 }),
       },
     ];
   }
@@ -120,7 +120,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e3-epoch-starts',
-      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Three' }),
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 3 }),
     },
     {
       from: new Date('2024-02-12T00:00:00+0100'),
@@ -153,7 +153,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e4-epoch-starts',
-      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Four' }),
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 4 }),
     },
     {
       from: new Date('2024-05-13T00:00:00+0200'),
@@ -185,7 +185,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-07-15T18:00:00+0200'),
       id: 'e5-epoch-starts',
-      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Five' }),
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 5 }),
     },
     {
       from: new Date('2024-08-01T00:00:00+0200'),
@@ -217,7 +217,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2024-10-13T18:00:00+0200'),
       id: 'e6-epoch-starts',
-      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Six' }),
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 6 }),
     },
     // 2024-10-27 timezone changes from UTC+00200 to UTC+00100.
     {
@@ -249,7 +249,7 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2025-01-11T17:00:00+0100'),
       id: 'e7-epoch-starts',
-      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Seven' }),
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 7 }),
     },
   ];
 }
