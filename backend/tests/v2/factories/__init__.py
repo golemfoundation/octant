@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.v2.factories.allocation_requests import AllocationRequestFactorySet
 from tests.v2.factories.allocations import AllocationFactorySet
+from tests.v2.factories.projects_details import ProjectsDetailsFactorySet
 from tests.v2.factories.users import UserFactorySet
 from dataclasses import dataclass
 
@@ -21,6 +22,7 @@ class FactoriesAggregator:
     users: UserFactorySet
     allocation_requests: AllocationRequestFactorySet
     allocations: AllocationFactorySet
+    projects_details: ProjectsDetailsFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -29,3 +31,4 @@ class FactoriesAggregator:
         self.users = UserFactorySet(fast_session)
         self.allocation_requests = AllocationRequestFactorySet(fast_session)
         self.allocations = AllocationFactorySet(fast_session)
+        self.projects_details = ProjectsDetailsFactorySet(fast_session)
