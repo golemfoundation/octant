@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from v2.core.types import Address
+
 
 @dataclass
 class FakeEpochsContractDetails:
@@ -13,3 +15,15 @@ class FakeEpochsContractDetails:
     future_epoch_props: dict = None
     is_started: bool = False
     started: int = 0
+
+
+@dataclass
+class FakeProjectDetails:
+    address: Address
+    epoch_number: int
+
+
+@dataclass
+class FakeProjectsContractDetails:
+    projects_cid: str
+    projects_details: list[FakeProjectDetails]

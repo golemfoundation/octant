@@ -40,6 +40,10 @@ class ProjectsDetailsGetter:
                         address=project_details.address,
                         epoch=project_details.epoch,
                     )
+
+                    if project_details_model in all_filtered_projects_details:
+                        continue
+
                     all_filtered_projects_details.append(project_details_model)
 
         return all_filtered_projects_details
