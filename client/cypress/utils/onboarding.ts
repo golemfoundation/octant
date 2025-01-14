@@ -80,7 +80,7 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
   isMobileOrTablet = false,
 ): void => {
   checkCurrentElement(0, true);
-
+  cy.wait(500);
   cy.get('[data-test=ModalOnboarding]').then(element => {
     const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
     const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
@@ -109,7 +109,7 @@ export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
   isMobileOrTablet = false,
 ): void => {
   checkCurrentElement(0, true);
-
+  cy.wait(500);
   cy.get('[data-test=ModalOnboarding]').then(element => {
     const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
     const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
