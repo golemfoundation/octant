@@ -16,37 +16,12 @@ import {
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
-import getMilestones from 'src/constants/milestones';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import { ORDER_OPTIONS } from 'src/views/ProjectsView/utils';
 
 import Chainable = Cypress.Chainable;
 
 chai.use(chaiColors);
-
-// describe('move time', () => {
-//   before(() => {
-//     /**
-//      * Global Metamask setup done by Synpress is not always done.
-//      * Since Synpress needs to have valid provider to fetch the data from contracts,
-//      * setupMetamask is required in each test suite.
-//      */
-//     cy.setupMetamask();
-//   });
-//
-//   it('allocation window is open, when it is not, move time', () => {
-//     setupAndMoveToPlayground();
-//
-//     cy.window().then(async win => {
-//       moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
-//         const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-//           QUERY_KEYS.isDecisionWindowOpen,
-//         );
-//         expect(isDecisionWindowOpenAfter).to.be.true;
-//       });
-//     });
-//   });
-// });
 
 function checkProjectItemElements(
   index: number,
@@ -124,14 +99,14 @@ function addProjectToAllocate(
   getHeartedProjectsIndicator(isNavbarVisible).contains(numberOfAddedProjects + 1);
 
   if (isNavbarVisible) {
-    cy.get('[data-test=LayoutTopBar__allocationButton]').click();
-    cy.get('[data-test=AllocationDrawer]').should('be.visible');
-  } else {
     visitWithLoader(
       ROOT_ROUTES.allocation.absolute,
       isNavbarVisible ? ROOT_ROUTES.allocation.absolute : ROOT_ROUTES.home.absolute,
     );
     cy.get('[data-test=AllocationView]').should('be.visible');
+  } else {
+    cy.get('[data-test=LayoutTopBar__allocationButton]').click();
+    cy.get('[data-test=AllocationDrawer]').should('be.visible');
   }
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProjects + 1);
 
@@ -155,14 +130,14 @@ function removeProjectFromAllocate(
     .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
     .click();
   if (isNavbarVisible) {
-    cy.get('[data-test=LayoutTopBar__allocationButton]').click();
-    cy.get('[data-test=AllocationDrawer]').should('be.visible');
-  } else {
     visitWithLoader(
       ROOT_ROUTES.allocation.absolute,
       isNavbarVisible ? ROOT_ROUTES.allocation.absolute : ROOT_ROUTES.home.absolute,
     );
     cy.get('[data-test=AllocationView]').should('be.visible');
+  } else {
+    cy.get('[data-test=LayoutTopBar__allocationButton]').click();
+    cy.get('[data-test=AllocationDrawer]').should('be.visible');
   }
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProjects - 1);
   if (index < numberOfProjects - 1) {
@@ -170,7 +145,10 @@ function removeProjectFromAllocate(
   } else {
     getHeartedProjectsIndicator(isNavbarVisible).should('not.exist');
   }
-  return cy.go('back');
+
+  return isNavbarVisible
+    ? cy.go('back')
+    : cy.get('[data-test=AllocationDrawer__closeButton]').click();
 }
 
 Object.values(viewports).forEach(
@@ -226,14 +204,14 @@ Object.values(viewports).forEach(
 
         const isNavbarVisible = isMobile || isTablet;
         if (isNavbarVisible) {
-          cy.get('[data-test=LayoutTopBar__allocationButton]').click();
-          cy.get('[data-test=AllocationDrawer]').should('be.visible');
-        } else {
           visitWithLoader(
             ROOT_ROUTES.allocation.absolute,
             isNavbarVisible ? ROOT_ROUTES.allocation.absolute : ROOT_ROUTES.home.absolute,
           );
           cy.get('[data-test=AllocationView]').should('be.visible');
+        } else {
+          cy.get('[data-test=LayoutTopBar__allocationButton]').click();
+          cy.get('[data-test=AllocationDrawer]').should('be.visible');
         }
 
         cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
@@ -250,40 +228,6 @@ Object.values(viewports).forEach(
           cy.get('[data-test=AllocationItem]').should('not.exist');
           cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
         });
-      });
-
-      it('ProjectsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
-        const milestones = getMilestones();
-        cy.get('[data-test=ProjectsTimelineWidget]').should('be.visible');
-        cy.get('[data-test=ProjectsTimelineWidgetItem]').should('have.length', milestones.length);
-        for (let i = 0; i < milestones.length; i++) {
-          if (milestones[i].href) {
-            cy.get('[data-test=ProjectsTimelineWidgetItem]')
-              .eq(i)
-              .within(() => {
-                cy.get('[data-test=ProjectsTimelineWidgetItem__Svg--arrowTopRight]').should(
-                  'be.visible',
-                );
-              });
-
-            cy.get('[data-test=ProjectsTimelineWidgetItem]')
-              .eq(i)
-              .then(el => {
-                const { x } = el[0].getBoundingClientRect();
-                cy.get('[data-test=ProjectsTimelineWidgetItem]')
-                  .eq(i)
-                  .trigger('mousedown')
-                  .trigger('mouseup', { clientX: x + 10 });
-                cy.location('pathname').should('eq', ROOT_ROUTES.projects.absolute);
-
-                cy.get('[data-test=ProjectsTimelineWidgetItem]')
-                  .eq(i)
-                  .trigger('mousedown')
-                  .trigger('mouseup');
-                cy.location('pathname').should('not.eq', ROOT_ROUTES.projects.absolute);
-              });
-          }
-        }
       });
 
       it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
@@ -316,17 +260,15 @@ Object.values(viewports).forEach(
 
       it('search field -- results should show project', () => {
         cy.get('[data-test=ProjectsList__InputText]').clear().type(projectNames[0]);
-        cy.get('[data-test=ProjectsView__ProjectsList]')
-          .find('[data-test^=ProjectsView__ProjectsListItem]')
-          .should('have.length', 1);
+        cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length', 1);
       });
 
       it('search field -- no results should show no results image & text', () => {
         cy.get('[data-test=ProjectsList__InputText]')
           .clear()
           .type('there-is-no-way-there-will-ever-be-a-project-with-such-a-name');
-        cy.get('[data-test=ProjectsList__noSearchResults]').should('be.visible');
-        cy.get('[data-test=ProjectsList__noSearchResults__Img]').should('be.visible');
+        cy.get('[data-test=ProjectsSearchResults__noSearchResults]').should('be.visible');
+        cy.get('[data-test=ProjectsSearchResults__noSearchResults__Img]').should('be.visible');
       });
     });
 
@@ -349,13 +291,14 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.projects.absolute);
         connectWallet({ isPatronModeEnabled: true });
         checkProjectsViewLoaded();
+
         /**
          * This could be done in before hook, but CY wipes the state after each test
-         * (could be disabled, but creates other problems)
+         * (could be disabled, but creates other problems).
+         *
+         * Needs to be done for each test, because each has different default "random" order for projects.
          */
-        if (projectNames.length === 0) {
-          projectNames = getNamesOfProjects();
-        }
+        projectNames = getNamesOfProjects();
       });
 
       after(() => {

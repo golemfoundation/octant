@@ -236,8 +236,6 @@ const ProjectsView = (): ReactElement => {
         <InputSelect
           className={styles.inputOrder}
           dataTest="ProjectsView__InputSelect"
-          selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
-          variant="belowselect"
           onChange={option => setOrderOption(option!.value as OrderOption)}
           // TODO OCT-1952: settle on when & how randomised order should work.
           options={
@@ -245,6 +243,8 @@ const ProjectsView = (): ReactElement => {
               ? orderOptionsTranslated
               : orderOptionsTranslated.filter(element => element.value !== 'randomized')
           }
+          selectedOption={orderOptionsTranslated.find(({ value }) => value === orderOption)}
+          variant="belowselect"
         />
       </div>
       {searchQuery === '' && !areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
