@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.v2.factories import FactoriesAggregator
 from tests.v2.factories.helpers import generate_random_eip55_address
@@ -16,6 +17,7 @@ from tests.v2.fake_contracts.helpers import (
 async def test_returns_correct_projects_metadata_for_epoch(
     fake_projects_contract_factory: FakeProjectsContractCallable,
     fast_client: AsyncClient,
+    fast_session: AsyncSession,
 ):
     epoch_number = 3
     projects_cid = "Qm123456789abcdef"
