@@ -11,6 +11,7 @@ import {
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
@@ -51,7 +52,12 @@ function checkProjectItemElements(
     cy.get('[data-test^=ProjectsView__ProjectsListItem')
       .eq(index)
       .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
-      .should('be.disabled');
+      .should('not.be.visible');
+  } else {
+    cy.get('[data-test^=ProjectsView__ProjectsListItem')
+      .eq(index)
+      .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
+      .should('be.visible');
   }
 
   return cy
@@ -259,8 +265,24 @@ Object.values(viewports).forEach(
       });
 
       it('search field -- results should show project', () => {
-        cy.get('[data-test=ProjectsList__InputText]').clear().type(projectNames[0]);
-        cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length', 1);
+        cy.window().then(win => {
+          const { currentEpoch } = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
+
+          /**
+           * There may be two projects with the same part of their name.
+           * eg. "Ethereum A" and "Ethereum B" projects.
+           *
+           * In order to make sure only one is returned, we look for project name with only one word.
+           */
+          const projectNameOneWord = projectNames.find(
+            projectName => projectName.split(' ').length === 1,
+          );
+
+          cy.get('[data-test=ProjectsList__InputText]')
+            .clear()
+            .type(`${projectNameOneWord} Epoch ${currentEpoch - 1}`);
+          cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length', 1);
+        });
       });
 
       it('search field -- no results should show no results image & text', () => {
@@ -276,6 +298,8 @@ Object.values(viewports).forEach(
       let projectNames: string[] = [];
 
       before(() => {
+        cy.clearLocalStorage();
+
         /**
          * Global Metamask setup done by Synpress is not always done.
          * Since Synpress needs to have valid provider to fetch the data from contracts,
