@@ -5,7 +5,10 @@ from typing import Annotated
 from fastapi import Depends
 from pydantic import Field
 
-from app.constants import DEFAULT_MAINNET_PROJECT_CIDS
+from app.constants import (
+    DEFAULT_MAINNET_PROJECT_CIDS,
+    DEFAULT_PROJECTS_CONTRACT_ADDRESS,
+)
 from v2.core.dependencies import GetSession, OctantSettings, Web3
 from v2.core.enums import ChainTypes
 from v2.core.logic import compare_blockchain_types
@@ -24,7 +27,8 @@ from v2.projects.services.projects_details import (
 
 class ProjectsSettings(OctantSettings):
     projects_contract_address: str = Field(
-        validation_alias="proposals_contract_address"
+        validation_alias="proposals_contract_address",
+        default=DEFAULT_PROJECTS_CONTRACT_ADDRESS,
     )
     is_mainnet: bool = Field(
         default_factory=lambda: compare_blockchain_types(
