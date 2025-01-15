@@ -8,6 +8,7 @@ import Loader from 'components/ui/Loader';
 import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
+import { MODAL_ONBOARDING_ID } from 'constants/domElementsIds';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -190,6 +191,7 @@ const ModalOnboarding = (): ReactElement => {
       dataTest="ModalOnboarding"
       header={currentStep?.header}
       headerClassName={styles.onboardingModalHeader}
+      id={MODAL_ONBOARDING_ID}
       Image={
         <div className={styles.onboardingModalImageWrapper}>
           <AnimatePresence mode="wait">

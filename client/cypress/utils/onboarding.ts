@@ -82,17 +82,14 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
   checkCurrentElement(0, true);
   cy.wait(500);
   cy.get('[data-test=ModalOnboarding]').then(element => {
-    const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
-    const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
-
     [
-      { clientX: rightEdgeX - 25, el: 1 },
-      { clientX: rightEdgeX - 10, el: 2 },
-      { clientX: leftEdgeX + 10, el: 1 },
-      { clientX: leftEdgeX + 5, el: 0 },
-      { clientX: leftEdgeX, el: 0 },
-    ].forEach(({ clientX, el }) => {
-      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
+      { distanceFromTheLeftEdge: element.width()! - 25, el: 1 },
+      { distanceFromTheLeftEdge: element.width()! - 10, el: 2 },
+      { distanceFromTheLeftEdge: 10, el: 1 },
+      { distanceFromTheLeftEdge: 5, el: 0 },
+      { distanceFromTheLeftEdge: 0, el: 0 },
+    ].forEach(({ distanceFromTheLeftEdge, el }) => {
+      cy.get('[data-test=ModalOnboarding]').click(distanceFromTheLeftEdge, element.height()! / 2, {
         force: isMobileOrTablet,
       });
       checkCurrentElement(el, isTOSAccepted || el === 0);
@@ -111,16 +108,13 @@ export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
   checkCurrentElement(0, true);
   cy.wait(500);
   cy.get('[data-test=ModalOnboarding]').then(element => {
-    const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
-    const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
-
     [
-      { clientX: rightEdgeX - 25, el: 1 },
-      { clientX: rightEdgeX - 26, el: 1 },
-      { clientX: leftEdgeX + 26, el: 1 },
-      { clientX: leftEdgeX + 25, el: 0 },
-    ].forEach(({ clientX, el }) => {
-      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
+      { distanceFromTheLeftEdge: element.width()! - 25, el: 1 },
+      { distanceFromTheLeftEdge: element.width()! - 26, el: 1 },
+      { distanceFromTheLeftEdge: 26, el: 1 },
+      { distanceFromTheLeftEdge: 25, el: 0 },
+    ].forEach(({ distanceFromTheLeftEdge, el }) => {
+      cy.get('[data-test=ModalOnboarding]').click(distanceFromTheLeftEdge, element.height()! / 2, {
         force: isMobileOrTablet,
       });
       checkCurrentElement(el, isTOSAccepted || el === 0);
