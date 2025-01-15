@@ -40,7 +40,7 @@ const getRewards = ({
   rewardsEstimated: ResponseRewards | undefined;
   rewardsPast: ResponseRewards | undefined;
 }): ResponseRewards['rewards'] | undefined => {
-  if (epoch === currentEpoch && isDecisionWindowOpen) {
+  if (epoch === currentEpoch! - 1 && isDecisionWindowOpen) {
     return rewardsEstimated?.rewards;
   }
   if (epoch !== currentEpoch) {
@@ -61,6 +61,12 @@ export default function useSearchedProjectsDetails(
         const projectsEpoch = await apiGetProjects(Number(projectsSearchResult.epoch));
         const shouldFetchEstimatedRewards =
           projectsSearchResult.epoch === currentEpoch! - 1 && !!isDecisionWindowOpen;
+        /**
+         * apiGetMatchedProjectRewards can be called only after AW is closed.
+         * Calling it before AW opens results in 500 from BE (snapshot not taken)
+         */
+        const shouldFetchMatchedProjectRewards =
+          !shouldFetchEstimatedRewards && currentEpoch! > projectsSearchResult.epoch;
         return Promise.all([
           projectsSearchResult.epoch,
           projectsSearchResult.address,
@@ -70,7 +76,7 @@ export default function useSearchedProjectsDetails(
             ? apiGetAllocationsPerProject(projectsSearchResult.address, projectsSearchResult.epoch)
             : undefined,
           shouldFetchEstimatedRewards ? apiGetEstimatedMatchedProjectRewards() : undefined,
-          !shouldFetchEstimatedRewards
+          shouldFetchMatchedProjectRewards
             ? apiGetMatchedProjectRewards(projectsSearchResult.epoch)
             : undefined,
         ]);

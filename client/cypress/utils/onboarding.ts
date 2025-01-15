@@ -75,11 +75,14 @@ export const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean): void => {
   });
 };
 
-export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted: boolean): void => {
+export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (
+  isTOSAccepted: boolean,
+  isMobileOrTablet = false,
+): void => {
   checkCurrentElement(0, true);
 
   cy.get('[data-test=ModalOnboarding]').then(element => {
-    const leftEdgeX = element.offsetParent().offset()?.left as number;
+    const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
     const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
 
     [
@@ -89,7 +92,9 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted:
       { clientX: leftEdgeX + 5, el: 0 },
       { clientX: leftEdgeX, el: 0 },
     ].forEach(({ clientX, el }) => {
-      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2);
+      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
+        force: isMobileOrTablet,
+      });
       checkCurrentElement(el, isTOSAccepted || el === 0);
 
       if (!isTOSAccepted) {
@@ -101,11 +106,12 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted:
 
 export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
   isTOSAccepted: boolean,
+  isMobileOrTablet = false,
 ): void => {
   checkCurrentElement(0, true);
 
   cy.get('[data-test=ModalOnboarding]').then(element => {
-    const leftEdgeX = element.offsetParent().offset()?.left as number;
+    const leftEdgeX = element.offsetParent()?.offset()?.left || 0;
     const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
 
     [
@@ -114,7 +120,9 @@ export const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (
       { clientX: leftEdgeX + 26, el: 1 },
       { clientX: leftEdgeX + 25, el: 0 },
     ].forEach(({ clientX, el }) => {
-      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2);
+      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2, {
+        force: isMobileOrTablet,
+      });
       checkCurrentElement(el, isTOSAccepted || el === 0);
 
       if (!isTOSAccepted) {

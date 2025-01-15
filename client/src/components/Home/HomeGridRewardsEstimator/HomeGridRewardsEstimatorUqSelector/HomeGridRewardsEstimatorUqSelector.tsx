@@ -14,12 +14,11 @@ const HomeGridRewardsEstimatorUqSelector: FC<HomeGridRewardsEstimatorUqSelectorP
     keyPrefix: 'components.home.homeGridRewardsEstimator',
   });
 
-  const dataTest = 'HomeGridRewardsEstimatorUqSelector';
-
   return (
-    <div className={styles.root} data-test={dataTest}>
+    <div className={styles.root} data-test="HomeGridRewardsEstimatorUqSelector">
       <div className={styles.label}>{t('minimalUqValueGivingMultiplier1')}</div>
       <InputToggle
+        dataTest="HomeGridRewardsEstimatorUqSelector__InputToggle"
         isChecked={isUqScoreOverThresholdGivingMultiplier1}
         onChange={({ target: { checked: isChecked } }) => onChange(isChecked)}
       />
