@@ -71,7 +71,15 @@ Object.values(viewports).forEach(
           } else {
             checkLocationWithLoader(ROOT_ROUTES.settings.absolute);
           }
-          cy.get('[data-test=SettingsLanguageSelectorBox__InputSelect]').click();
+          /**
+           * Sometimes when the view loads on mobile, it scrolls to the bottom
+           * and after a moment shows the topbar.
+           *
+           * It happens in Synpress only because of its extreme speed.
+           *
+           * .scrollIntoView() solves the problem.
+           */
+          cy.get('[data-test=SettingsLanguageSelectorBox__InputSelect]').scrollIntoView().click();
           cy.get(
             `[data-test=SettingsLanguageSelectorBox__InputSelect__Option--${languageKey.enEn}]`,
           ).click();
@@ -89,7 +97,15 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LayoutTopBar__settingsButton]').click();
           }
 
-          cy.get('[data-test=SettingsLanguageSelectorBox__InputSelect]').click();
+          /**
+           * Sometimes when the view loads on mobile, it scrolls to the bottom
+           * and after a moment shows the topbar.
+           *
+           * It happens in Synpress only because of its extreme speed.
+           *
+           * .scrollIntoView() solves the problem.
+           */
+          cy.get('[data-test=SettingsLanguageSelectorBox__InputSelect]').scrollIntoView().click();
           cy.get(
             `[data-test=SettingsLanguageSelectorBox__InputSelect__Option--${languageKey.esEs}]`,
           ).click();
