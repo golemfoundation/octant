@@ -52,7 +52,7 @@ function checkProjectItemElements(
     cy.get('[data-test^=ProjectsView__ProjectsListItem')
       .eq(index)
       .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
-      .should('not.be.visible');
+      .should('not.exist');
   } else {
     cy.get('[data-test^=ProjectsView__ProjectsListItem')
       .eq(index)
@@ -269,19 +269,23 @@ Object.values(viewports).forEach(
           const { currentEpoch } = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
 
           /**
-           * There may be two projects with the same part of their name.
-           * eg. "Ethereum A" and "Ethereum B" projects.
+           * We search for projectn name having "a" letter inside.
            *
-           * In order to make sure only one is returned, we look for project name with only one word.
+           * Initially we implemented getting here actual name from the current epoch list,
+           * but BE requires migrations to be done to have results available.
+           *
+           * These migrations do not happen automatically when epoch is changed,
+           * and epochs do not change in the BE at all actually.
+           *
+           * When we move time in E2E we move them in contracts only.
+           *
+           * Assumption here is that any project in current epoch will have "a" letter in their name,
+           * which is very likely.
            */
-          const projectNameOneWord = projectNames.find(
-            projectName => projectName.split(' ').length === 1,
-          );
-
           cy.get('[data-test=ProjectsList__InputText]')
             .clear()
-            .type(`${projectNameOneWord} Epoch ${currentEpoch - 1}`);
-          cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length', 1);
+            .type(`a Epoch ${currentEpoch - 1}`);
+          cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
         });
       });
 
