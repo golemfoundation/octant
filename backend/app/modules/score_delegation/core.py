@@ -19,7 +19,7 @@ from app.modules.common.crypto.signature import (
 from app.modules.common.delegation import HashedAddresses, hash_addresses
 from app.modules.dto import ScoreDelegationPayload
 
-MIN_SCORE = 20
+MIN_SCORE = 15
 
 
 class ActionType(Enum):

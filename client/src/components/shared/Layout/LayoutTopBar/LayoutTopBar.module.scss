@@ -223,3 +223,42 @@
     }
   }
 }
+
+.customCloseButton {
+  width: 13.2rem;
+  height: 3.2rem;
+  border-radius: $border-radius-10;
+  background: $color-octant-grey8;
+  display: flex;
+  align-items: center;
+  padding: 0 1.1rem;
+  cursor: pointer;
+  overflow: hidden;
+  justify-content: end;
+
+  .customCloseButtonText {
+    color: $color-octant-grey5;
+    text-align: right;
+    margin-top: -0.2rem;
+    white-space: nowrap;
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    margin-right: 0.4rem;
+  }
+
+  .customCloseButtonSvg {
+    path {
+      transition: all 0.5s;
+      transition-delay: 0.25s;
+      stroke: $color-octant-grey5;
+    }
+  }
+
+  &.isCloseButtonExpanded {
+    .customCloseButtonSvg {
+      path {
+        stroke: $color-octant-dark;
+      }
+    }
+  }
+}

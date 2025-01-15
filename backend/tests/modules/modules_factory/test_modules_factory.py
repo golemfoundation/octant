@@ -69,8 +69,9 @@ def test_current_services_factory():
     result = CurrentServices.create(ChainTypes.MAINNET)
 
     user_deposits = CalculatedUserDeposits(
-        events_generator=DbAndGraphEventsGenerator(),
-        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+        )
     )
     user_allocations = SavedUserAllocations()
     user_withdrawals = FinalizedWithdrawals()
@@ -107,8 +108,9 @@ def test_pre_pending_services_factory_when_mainnet():
     result = PrePendingServices.create(ChainTypes.MAINNET)
 
     user_deposits = CalculatedUserDeposits(
-        events_generator=DbAndGraphEventsGenerator(),
-        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD,
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+        )
     )
     octant_rewards = CalculatedOctantRewards(
         staking_proceeds=AggregatedStakingProceeds(),
@@ -127,8 +129,9 @@ def test_pre_pending_services_factory_when_not_mainnet():
     result = PrePendingServices.create(ChainTypes.LOCAL)
 
     user_deposits = CalculatedUserDeposits(
-        events_generator=DbAndGraphEventsGenerator(),
-        sablier_unlock_grace_period=FIFTEEN_MINUTES_PERIOD,
+        events_generator=DbAndGraphEventsGenerator(
+            sablier_unlock_grace_period=FIFTEEN_MINUTES_PERIOD
+        )
     )
     octant_rewards = CalculatedOctantRewards(
         staking_proceeds=ContractBalanceStakingProceeds(),

@@ -26,7 +26,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
   const { data: userSablierStreams, isFetching: isFetchinguserSablierStreams } =
     useUserSablierStreams();
 
-  const { t } = useTranslation('translation', {
+  const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridCurrentGlmLock.modalLockGlm.lockGlmBudgetBox',
   });
 
@@ -68,7 +68,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
     }
     return t('walletBalance');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldRaffleWinningsBeDisplayed, userSablierStreams?.sablierStreams.length]);
+  }, [shouldRaffleWinningsBeDisplayed, userSablierStreams?.sablierStreams.length, i18n.language]);
 
   return (
     <BoxRounded
