@@ -658,6 +658,9 @@ class Client:
 
     def get_user_deposit(self, user_address: str, epoch: int):
         rv = self._flask_client.get(f"/deposits/users/{user_address}/{epoch}")
+        current_app.logger.debug(
+            f"get_user_deposit {rv.status_code} returned :{rv.text}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_user_estimated_effective_deposit(self, user_address: str):

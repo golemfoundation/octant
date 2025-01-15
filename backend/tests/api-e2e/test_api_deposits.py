@@ -20,21 +20,21 @@ def test_deposit_basics(
         total_effective_estimated_before_lock,
         response_code,
     ) = client.get_total_effective_estimated()
-    assert int(total_effective_estimated_before_lock["totalEffective"]) == 0
     assert response_code == 200
+    assert int(total_effective_estimated_before_lock["totalEffective"]) == 0
 
     user_deposit1_before_lock, response_code = client.get_user_deposit(
         ua_alice.address, STARTING_EPOCH
     )
-    assert int(user_deposit1_before_lock["effectiveDeposit"]) == 0
     assert response_code == 200
+    assert int(user_deposit1_before_lock["effectiveDeposit"]) == 0
 
     (
         user_estimated_deposit_before_lock,
         response_code,
     ) = client.get_user_estimated_effective_deposit(ua_alice.address)
-    assert int(user_estimated_deposit_before_lock["effectiveDeposit"]) == 0
     assert response_code == 200
+    assert int(user_estimated_deposit_before_lock["effectiveDeposit"]) == 0
 
     # Lock GML for one account
     alice_GLM_budget = 10000
@@ -135,22 +135,23 @@ def test_deposit_basics(
 
     # Check that current total deposit for epoch 2 is equal to epoch 1 total GLM locked.
     total_effective_estimated, response_code = client.get_total_effective_estimated()
+    assert response_code == 200
     assert float(total_effective_estimated["totalEffective"]) == w3.to_wei(
         alice_GLM_budget, "ether"
     )
-    assert response_code == 200
 
     # Check that current total deposit for epoch 2 is equal to last effective deposit from epoch 1.
     total_effective_epoch1, response_code = client.get_total_effective(STARTING_EPOCH)
+    assert response_code == 200
     assert int(total_effective_epoch1["totalEffective"]) == int(
         total_effective_estimated_after_lock2["totalEffective"]
     )
-    assert response_code == 200
 
     # Check if locked ratio for Epoch 1 is calculated properly
     locked_ratio, status_code = client.get_locked_ratio_in_epoch(STARTING_EPOCH)
     tolerance = 1e-15
     app.logger.debug(f"GLM Locked Ratio: {locked_ratio['lockedRatio']}")
+    assert response_code == 200
     assert (
         abs(
             float(locked_ratio["lockedRatio"])
@@ -159,4 +160,3 @@ def test_deposit_basics(
         )
         < tolerance
     )
-    assert response_code == 200
