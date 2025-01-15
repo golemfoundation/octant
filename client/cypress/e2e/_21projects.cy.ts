@@ -11,6 +11,7 @@ import {
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
+import { durationOfTransitionMobile } from 'src/components/ui/InputSelect/InputSelect';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
@@ -255,7 +256,11 @@ Object.values(viewports).forEach(
         const orderOptionsValues = ORDER_OPTIONS((key: string) => {}).map(element => element.value);
         orderOptionsValues.forEach(orderOptionsValue => {
           cy.get('[data-test=ProjectsView__InputSelect]').click();
+          // Wait for animation to show / hide menu & overflow.
+          cy.wait(durationOfTransitionMobile * 1000 * 2);
           cy.get(`[data-test=ProjectsView__InputSelect__Option--${orderOptionsValue}]`).click();
+          // Wait for animation to show / hide menu & overflow.
+          cy.wait(durationOfTransitionMobile * 1000 * 2);
         });
       });
 
@@ -274,9 +279,7 @@ Object.values(viewports).forEach(
          * Assumption here is that any project in current epoch will have "a" letter in their name,
          * which is very likely.
          */
-        cy.get('[data-test=ProjectsList__InputText]')
-          .clear()
-          .type(`a Epoch 1`);
+        cy.get('[data-test=ProjectsList__InputText]').clear().type(`a Epoch 1`);
         cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
       });
 
