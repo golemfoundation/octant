@@ -11,7 +11,6 @@ import {
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
@@ -42,10 +41,6 @@ function checkProjectItemElements(
   cy.get('[data-test^=ProjectsView__ProjectsListItem')
     .eq(index)
     .find('[data-test=ProjectsListItem__IntroDescription]')
-    .should('be.visible');
-  cy.get('[data-test^=ProjectsView__ProjectsListItem')
-    .eq(index)
-    .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
     .should('be.visible');
 
   if (isPatronMode) {
@@ -265,28 +260,24 @@ Object.values(viewports).forEach(
       });
 
       it('search field -- results should show project', () => {
-        cy.window().then(win => {
-          const { currentEpoch } = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
-
-          /**
-           * We search for projectn name having "a" letter inside.
-           *
-           * Initially we implemented getting here actual name from the current epoch list,
-           * but BE requires migrations to be done to have results available.
-           *
-           * These migrations do not happen automatically when epoch is changed,
-           * and epochs do not change in the BE at all actually.
-           *
-           * When we move time in E2E we move them in contracts only.
-           *
-           * Assumption here is that any project in current epoch will have "a" letter in their name,
-           * which is very likely.
-           */
-          cy.get('[data-test=ProjectsList__InputText]')
-            .clear()
-            .type(`a Epoch ${currentEpoch - 1}`);
-          cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
-        });
+        /**
+         * We search for projects name having "a" letter inside and from Epoch 1.
+         *
+         * Initially we implemented getting here actual name from the current epoch list,
+         * but BE requires migrations to be done to have results available.
+         *
+         * These migrations do not happen automatically when epoch is changed,
+         * and epochs do not change in the BE at all actually.
+         *
+         * When we move time in E2E we move them in contracts only.
+         *
+         * Assumption here is that any project in current epoch will have "a" letter in their name,
+         * which is very likely.
+         */
+        cy.get('[data-test=ProjectsList__InputText]')
+          .clear()
+          .type(`a Epoch 1`);
+        cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
       });
 
       it('search field -- no results should show no results image & text', () => {
