@@ -51,9 +51,9 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
         for stream in streams:
             actions = stream.get("actions", [])
             final_intact_amount = stream.get("intactAmount", 0)
-            is_cancelled = stream["canceled"]
-            end_time = stream["endTime"]
-            deposit_amount = stream["depositAmount"]
+            is_cancelled = stream.get("canceled")
+            end_time = stream.get("endTime")
+            deposit_amount = stream.get("depositAmount")
 
             all_streams.append(
                 SablierStream(
