@@ -15,6 +15,31 @@ $padding: 1.1rem;
   padding: 0 $padding;
   transition: opacity $transition-time-1;
 
+  &.isSablierStreamCancelled {
+    background: $color-octant-orange5;
+    color: $color-octant-orange;
+
+    .img {
+      path {
+        stroke: $color-octant-orange;
+
+        &:hover {
+          stroke: $color-octant-orange;
+        }
+      }
+    }
+  }
+
+  &:not(.isSablierStreamCancelled) {
+    .tooltipWrapper {
+      &:hover {
+        path {
+          stroke: $color-white !important;
+        }
+      }
+    }
+  }
+
   .img {
     margin-right: $padding;
   }
@@ -25,14 +50,6 @@ $padding: 1.1rem;
 
   &.isVisible {
     opacity: 1;
-  }
-}
-
-.tooltipWrapper {
-  &:hover {
-    path {
-      stroke: $color-white !important;
-    }
   }
 }
 

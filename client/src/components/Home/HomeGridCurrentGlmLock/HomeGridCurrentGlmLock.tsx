@@ -1,5 +1,5 @@
 import _first from 'lodash/first';
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -12,7 +12,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
-import useUserRaffleWinnings from 'hooks/queries/useUserRaffleWinnings';
+import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
@@ -38,11 +38,22 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
     useEstimatedEffectiveDeposit();
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
-  const { data: userRaffleWinnings, isFetching: isFetchingUserRaffleWinnings } =
-    useUserRaffleWinnings();
+  const { data: userSablierStreams, isFetching: isFetchinguserSablierStreams } =
+    useUserSablierStreams();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const didUserWinAnyRaffles = !!userRaffleWinnings && userRaffleWinnings.sum > 0;
+  const didUserWinAnyRaffles = !!userSablierStreams && userSablierStreams.sum > 0;
+
+  const buttonText = useMemo(() => {
+    if (userSablierStreams && userSablierStreams.sumAvailable > 0n) {
+      return t('editLockedGLM');
+    }
+    if (!depositsValue || (!!depositsValue && depositsValue === 0n)) {
+      return i18n.t('common.lockGlm');
+    }
+    return t('editLockedGLM');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depositsValue, userSablierStreams?.sumAvailable]);
 
   return (
     <>
@@ -59,12 +70,12 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
             dataTest="HomeGridCurrentGlmLock--current"
             isFetching={
               isFetchingDepositValue ||
-              isFetchingUserRaffleWinnings ||
+              isFetchinguserSablierStreams ||
               (isAppWaitingForTransactionToBeIndexed &&
                 _first(transactionsPending)?.type !== 'withdrawal')
             }
             showCryptoSuffix
-            valueCrypto={(depositsValue || 0n) + (userRaffleWinnings?.sum || 0n)}
+            valueCrypto={(depositsValue || 0n) + (userSablierStreams?.sumAvailable || 0n)}
             variant={isMobile ? 'large' : 'extra-large'}
           />
           <div className={styles.divider} />
@@ -104,9 +115,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
             onClick={() => setIsModalLockGlmOpen(true)}
             variant="cta"
           >
-            {!depositsValue || (!!depositsValue && depositsValue === 0n)
-              ? i18n.t('common.lockGlm')
-              : t('editLockedGLM')}
+            {buttonText}
           </Button>
         </div>
       </GridTile>
