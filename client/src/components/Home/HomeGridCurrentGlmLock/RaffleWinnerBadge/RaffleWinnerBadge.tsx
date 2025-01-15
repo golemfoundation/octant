@@ -92,6 +92,7 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
       )}
     >
       <Tooltip
+        childrenClassName={cx(styles.tooltipChildren, isVisible && styles.isVisible)}
         className={styles.tooltipWrapper}
         position="bottom-right"
         text={tooltipText}
