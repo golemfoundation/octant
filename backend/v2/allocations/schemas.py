@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from pydantic import Field
+
 from v2.core.types import Address, BigInteger, OctantModel
 
 

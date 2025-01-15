@@ -1,11 +1,11 @@
-import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Tuple
 
 import socketio
-from app.exceptions import OctantException
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.exceptions import OctantException
 from v2.allocations.dependencies import get_allocator, get_signature_verifier
 from v2.allocations.repositories import get_donations_by_project
 from v2.allocations.schemas import UserAllocationRequest, UserAllocationRequestV1
@@ -37,7 +37,9 @@ from v2.projects.dependencies import (
     get_projects_contracts,
     get_projects_settings,
 )
-from v2.projects.services import ProjectsAllocationThresholdGetter
+from v2.projects.services.projects_allocation_threshold_getter import (
+    ProjectsAllocationThresholdGetter,
+)
 from v2.uniqueness_quotients.dependencies import (
     get_uq_score_getter,
     get_uq_score_settings,
@@ -62,42 +64,34 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
     projects_contracts = get_projects_contracts(w3, get_projects_settings())
     epochs_subgraph = get_epochs_subgraph(get_epochs_subgraph_settings())
 
-    # For safety, we create separate sessions for each dependency
-    #  (to avoid any potential issues with session sharing in async task context)
-
     sessionmaker = get_sessionmaker(get_database_settings())
 
-    async with (
-        sessionmaker() as s1,
-        sessionmaker() as s2,
-        sessionmaker() as s3,
-        sessionmaker() as s4,
-    ):
+    async with sessionmaker() as session:
         try:
             threshold_getter = get_projects_allocation_threshold_getter(
                 epoch_number,
-                s1,
+                session,
                 projects_contracts,
                 get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator(
                 epoch_number,
-                s2,
+                session,
                 epochs_subgraph,
                 get_matched_rewards_estimator_settings(),
             )
             estimated_project_rewards = await get_project_rewards_estimator(
                 epoch_number,
-                s3,
+                session,
                 projects_contracts,
                 estimated_matched_rewards,
             )
 
             # Yield the dependencies to the on_connect handler
-            yield (s4, threshold_getter, estimated_project_rewards)
+            yield (session, threshold_getter, estimated_project_rewards)
 
         except Exception as e:
-            await cleanup_sessions(s1, s2, s3, s4)
+            await safe_session_cleanup(session)
             raise e
 
 
@@ -129,49 +123,41 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
     #  (to avoid any potential issues with session sharing in async task context)
     sessionmaker = get_sessionmaker(get_database_settings())
 
-    async with (
-        sessionmaker() as s1,
-        sessionmaker() as s2,
-        sessionmaker() as s3,
-        sessionmaker() as s4,
-        sessionmaker() as s5,
-        sessionmaker() as s6,
-        sessionmaker() as s7,
-    ):
+    async with sessionmaker() as session:
         try:
             threshold_getter = get_projects_allocation_threshold_getter(
                 epoch_number,
-                s1,
+                session,
                 projects_contracts,
                 get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator(
                 epoch_number,
-                s2,
+                session,
                 epochs_subgraph,
                 get_matched_rewards_estimator_settings(),
             )
             estimated_project_rewards = await get_project_rewards_estimator(
                 epoch_number,
-                s3,
+                session,
                 projects_contracts,
                 estimated_matched_rewards,
             )
 
             signature_verifier = get_signature_verifier(
-                s4,
+                session,
                 epochs_subgraph,
                 projects_contracts,
                 get_chain_settings(),
             )
 
             uq_score_getter = get_uq_score_getter(
-                s5, get_uq_score_settings(), get_chain_settings()
+                session, get_uq_score_settings(), get_chain_settings()
             )
 
             allocations = await get_allocator(
                 epoch_number,
-                s6,
+                session,
                 signature_verifier,
                 uq_score_getter,
                 projects_contracts,
@@ -180,14 +166,14 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
 
             # Yield the dependencies to the on_allocate handler
             yield (
-                s7,
+                session,
                 allocations,
                 threshold_getter,
                 estimated_project_rewards,
             )
 
         except Exception as e:
-            await cleanup_sessions(s1, s2, s3, s4, s5, s6, s7)
+            await safe_session_cleanup(session)
             raise e
 
 
@@ -358,7 +344,7 @@ def from_dict(data: str) -> UserAllocationRequest:
     return request
 
 
-async def safe_session_cleanup(session):
+async def safe_session_cleanup(session: AsyncSession):
     try:
         await session.rollback()
     except Exception:
@@ -370,7 +356,3 @@ async def safe_session_cleanup(session):
         except Exception:
             # Log the close error, but don't raise it
             logging.exception("Error during session close")
-
-
-async def cleanup_sessions(*sessions):
-    await asyncio.gather(*(safe_session_cleanup(s) for s in sessions))

@@ -1,20 +1,42 @@
 import cx from 'classnames';
 import { startOfDay, sub } from 'date-fns';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './MetricsGridTileTimeSlicer.module.scss';
 import MetricsGridTileTimeSlicerProps from './types';
 
 const MetricsGridTileTimeSlicer: FC<MetricsGridTileTimeSlicerProps> = ({ onValueChange }) => {
-  const [value, setValue] = useState('3M');
+  const { i18n, t } = useTranslation('translation', {
+    keyPrefix: 'views.metrics.gridTileTimeSlicer',
+  });
 
-  const values = ['3M', '6M', '1Y', 'ALL'];
+  const [currentValue, setCurrentValue] = useState('3M');
+
+  const options = [
+    {
+      label: t('3M'),
+      value: '3M',
+    },
+    {
+      label: t('6M'),
+      value: '6M',
+    },
+    {
+      label: t('1Y'),
+      value: '1Y',
+    },
+    {
+      label: t('all'),
+      value: 'ALL',
+    },
+  ];
 
   useEffect(() => {
     const startOfDayNow = startOfDay(new Date());
     let dateToFilter: Date | null = null;
 
-    switch (value) {
+    switch (currentValue) {
       case '3M':
         dateToFilter = sub(startOfDayNow, { months: 3 });
         break;
@@ -30,17 +52,17 @@ const MetricsGridTileTimeSlicer: FC<MetricsGridTileTimeSlicerProps> = ({ onValue
     }
 
     onValueChange(dateToFilter);
-  }, [value, onValueChange]);
+  }, [currentValue, onValueChange, i18n]);
 
   return (
     <div className={styles.root}>
-      {values.map(val => (
+      {options.map(({ value, label }) => (
         <div
-          key={val}
-          className={cx(styles.item, value === val && styles.active)}
-          onClick={() => setValue(val)}
+          key={value}
+          className={cx(styles.item, currentValue === value && styles.active)}
+          onClick={() => setCurrentValue(value)}
         >
-          {val}
+          {label}
         </div>
       ))}
     </div>

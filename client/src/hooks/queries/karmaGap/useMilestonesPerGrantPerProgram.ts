@@ -27,7 +27,9 @@ export default function useMilestonesPerGrantPerProgram(
       }
       return response.data.find(
         element =>
-          element.externalAddresses?.octant?.toLowerCase() === projectAddressToLowerCase ||
+          element.external?.octant
+            ?.map(address => address.toLowerCase())
+            .includes(projectAddressToLowerCase) ||
           element.project.recipient.toLowerCase() === projectAddressToLowerCase ||
           element.project.details.recipient.toLowerCase() === projectAddressToLowerCase,
       );

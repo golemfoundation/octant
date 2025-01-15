@@ -22,6 +22,7 @@ from tests.helpers.constants import (
     USER3_ED,
     ALICE_SABLIER_LOCKING_ADDRESS,
     BOB_SABLIER_LOCKING_ADDRESS,
+    TWENTY_FOUR_HOURS_PERIOD,
 )
 from tests.helpers.context import get_context
 
@@ -131,7 +132,9 @@ def test_returns_locks_and_unlocks_for_first_epoch(mocker, events):
         ],
     }
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     assert generator.get_user_events(context, ALICE_ADDRESS) == expected[ALICE_ADDRESS]
     assert generator.get_user_events(context, BOB_ADDRESS) == expected[BOB_ADDRESS]
@@ -204,7 +207,9 @@ def test_returns_locks_and_unlocks_for_second_epoch(
         ],
     }
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     assert generator.get_user_events(context, ALICE_ADDRESS) == expected[ALICE_ADDRESS]
     assert generator.get_user_events(context, BOB_ADDRESS) == expected[BOB_ADDRESS]
@@ -222,7 +227,9 @@ def test_returns_events_with_one_element_if_deposit_is_gt_0(mocker, dave, events
     mock_sablier_graphql(mocker)
     context = get_context(3, start=3000)
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     assert generator.get_user_events(context, dave) == [
         DepositEvent(
@@ -252,7 +259,9 @@ def test_returns_empty_list_if_there_is_one_event_with_deposit_eq_0(
     mock_sablier_graphql(mocker)
     context = get_context(4, start=4000)
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     assert generator.get_user_events(context, dave) == []
 
@@ -262,7 +271,9 @@ def test_returned_events_are_sorted_by_timestamp(mocker, events):
     mock_sablier_graphql(mocker)
     context = get_context()
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     for user in [ALICE_ADDRESS, BOB_ADDRESS]:
         events = generator.get_user_events(context, user)
@@ -354,7 +365,9 @@ def test_returns_sorted_events_from_sablier_and_octant_for_user(
     mock_sablier_graphql(mocker)
     context = get_context(epoch_num=epoch_num, start=start, duration=duration)
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     assert (
         generator.get_user_events(context, ALICE_SABLIER_LOCKING_ADDRESS)
@@ -587,7 +600,9 @@ def test_returns_locks_and_unlocks_for_other_events(mocker, events_with_sablier_
         ],
     }
 
-    generator = DbAndGraphEventsGenerator()
+    generator = DbAndGraphEventsGenerator(
+        sablier_unlock_grace_period=TWENTY_FOUR_HOURS_PERIOD
+    )
 
     for user_address, expected_events in expected.items():
         user_events = generator.get_user_events(context, user_address)
