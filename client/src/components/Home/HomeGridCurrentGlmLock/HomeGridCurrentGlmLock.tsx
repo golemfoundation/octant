@@ -42,7 +42,11 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
     useUserSablierStreams();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const didUserWinAnyRaffles = !!userSablierStreams && userSablierStreams.sum > 0;
+  const didUserWinAnyRaffles =
+    !!userSablierStreams &&
+    (userSablierStreams.sum > 0 ||
+      (userSablierStreams.sablierStreams.some(({ isCancelled }) => isCancelled) &&
+        userSablierStreams.sumAvailable > 0));
 
   const buttonText = useMemo(() => {
     if (userSablierStreams && userSablierStreams.sumAvailable > 0n) {
@@ -75,7 +79,12 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
                 _first(transactionsPending)?.type !== 'withdrawal')
             }
             showCryptoSuffix
-            valueCrypto={(depositsValue || 0n) + (userSablierStreams?.sumAvailable || 0n)}
+            valueCrypto={
+              (depositsValue || 0n) +
+              ((!userSablierStreams?.sablierStreams.some(({ isCancelled }) => isCancelled) &&
+                userSablierStreams?.sumAvailable) ||
+                0n)
+            }
             variant={isMobile ? 'large' : 'extra-large'}
           />
           <div className={styles.divider} />

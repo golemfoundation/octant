@@ -24,9 +24,6 @@ export default function useUserSablierStreams(): UseQueryResult<ReturnType, unkn
         return acc + parseUnitsBigInt(curr.amount, 'wei');
       }, BigInt(0)),
       sumAvailable: response.sablierStreams.reduce((acc, curr) => {
-        if (curr.isCancelled) {
-          return acc;
-        }
         return acc + parseUnitsBigInt(curr.remainingAmount, 'wei');
       }, BigInt(0)),
     }),

@@ -28,7 +28,7 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
     ? getValuesToDisplay({
         cryptoCurrency: 'golem',
         showFiatPrefix: false,
-        valueCrypto: userSablierStreams.sum,
+        valueCrypto: userSablierStreams.sumAvailable,
       })
     : undefined;
 
@@ -49,7 +49,7 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
     const amountFormatted = getValuesToDisplay({
       cryptoCurrency: 'golem',
       showCryptoSuffix: true,
-      valueCrypto: parseUnitsBigInt(curr.amount, 'wei'),
+      valueCrypto: parseUnitsBigInt(curr.remainingAmount, 'wei'),
     });
     const newRow = t('tooltipWinningRow', {
       date: format(parseInt(curr.dateAvailableForWithdrawal, 10) * 1000, 'd LLL y'),

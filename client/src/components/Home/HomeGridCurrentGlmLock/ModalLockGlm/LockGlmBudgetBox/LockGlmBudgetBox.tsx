@@ -41,7 +41,10 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
   );
 
   const shouldRaffleWinningsBeDisplayed =
-    currentMode === 'unlock' && userSablierStreams && userSablierStreams.sumAvailable > 0;
+    currentMode === 'unlock' &&
+    userSablierStreams &&
+    userSablierStreams.sumAvailable > 0 &&
+    !userSablierStreams.sablierStreams.some(({ isCancelled }) => isCancelled);
   const areFundsFetching = isFetchingAvailableFundsGlm || isFetchinguserSablierStreams;
 
   const secondRowValue = getFormattedGlmValue({
@@ -54,7 +57,9 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
     if (shouldRaffleWinningsBeDisplayed) {
       return (
         <div className={styles.timeLockedInSablier}>
-          {t('timeLockedInSablier')}
+          {userSablierStreams.sum === userSablierStreams.sumAvailable
+            ? t('timeLockedInSablier')
+            : t('lockedInSablier')}
           <Button
             className={styles.unlockInSablierButton}
             href={SABLIER_APP_LINK}

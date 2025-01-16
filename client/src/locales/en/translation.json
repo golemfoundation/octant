@@ -119,6 +119,7 @@
             "currentlyLocked": "Currently Locked",
             "walletBalance": "Wallet balance",
             "timeLockedInSablier": "Time locked in Sablier",
+            "lockedInSablier": "Locked in Sablier",
             "unlockInSablier": "Unlock in Sablier"
           }
         },
