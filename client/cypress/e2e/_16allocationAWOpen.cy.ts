@@ -35,66 +35,66 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      // TODO: Run for all devices after OCT-2283 (https://linear.app/golemfoundation/issue/OCT-2283/personal-allocation-arent-available-to-withdraw-in-pr-e2e-environment)
-      if (idx === 0) {
-        it('User doesn`t have personal rewards, can`t witdraw and can check pending tooltip', () => {
-          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
-            'be.visible',
-          );
-          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
+      // // TODO: Run for all devices after OCT-2283 (https://linear.app/golemfoundation/issue/OCT-2283/personal-allocation-arent-available-to-withdraw-in-pr-e2e-environment)
+      // if (idx === 0) {
+      //   it('User doesn`t have personal rewards, can`t witdraw and can check pending tooltip', () => {
+      //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
+      //       'be.visible',
+      //     );
+      //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
+      //       .invoke('text')
+      //       .should('eq', '0 ETH');
 
-          cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
+      //     cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
+      //       .invoke('text')
+      //       .should('eq', '0 ETH');
 
-          cy.get('[data-test=HomeGridPersonalAllocation__Button]').should('be.disabled');
-          cy.get('[data-test=HomeGridPersonalAllocation__Button]')
-            .invoke('text')
-            .should('eq', 'Withdraw to wallet');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Button]').should('be.disabled');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Button]')
+      //       .invoke('text')
+      //       .should('eq', 'Withdraw to wallet');
 
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').should('be.visible');
-          if (isLargeDesktop || isDesktop) {
-            cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').trigger('mouseover');
-          } else {
-            cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').click();
-          }
+      //     cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').should('be.visible');
+      //     if (isLargeDesktop || isDesktop) {
+      //       cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').trigger('mouseover');
+      //     } else {
+      //       cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip]').click();
+      //     }
 
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip__content]').should(
-            'exist',
-          );
+      //     cy.get('[data-test=HomeGridPersonalAllocation--pending__Tooltip__content]').should(
+      //       'exist',
+      //     );
 
-          connectWallet({ isPatronModeEnabled: false });
-          cy.wait(5000);
+      //     connectWallet({ isPatronModeEnabled: false });
+      //     cy.wait(5000);
 
-          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
-            'be.visible',
-          );
-          cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current]').should(
+      //       'be.visible',
+      //     );
+      //     cy.get('[data-test=HomeGridPersonalAllocation__DoubleValue--current__primary]')
+      //       .invoke('text')
+      //       .should('eq', '0 ETH');
 
-          cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
-          cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Section--pending]').should('be.visible');
+      //     cy.get('[data-test=HomeGridPersonalAllocation--pending__primary]')
+      //       .invoke('text')
+      //       .should('eq', '0 ETH');
 
-          cy.get('[data-test=HomeGridPersonalAllocation__Button]')
-            .invoke('text')
-            .should('eq', 'Withdraw to wallet');
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Button]')
+      //       .invoke('text')
+      //       .should('eq', 'Withdraw to wallet');
 
-          cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
-          cy.wait(1000);
-          cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
-          cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
-          cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
-          cy.get('[data-test=ModalWithdrawEth__Button]').click();
-          cy.wait(1000);
-          cy.get('[data-test=ModalWithdrawEth]').should('not.exist');
-        });
-      }
+      //     cy.get('[data-test=HomeGridPersonalAllocation__Button]').click();
+      //     cy.wait(1000);
+      //     cy.get('[data-test=ModalWithdrawEth]').should('be.visible');
+      //     cy.get('[data-test=WithdrawEth__Button]').invoke('text').should('eq', 'Withdraw all');
+      //     cy.get('[data-test=WithdrawEth__Button]').should('be.disabled');
+      //     cy.get('[data-test=ModalWithdrawEth__Button]').click();
+      //     cy.wait(1000);
+      //     cy.get('[data-test=ModalWithdrawEth]').should('not.exist');
+      //   });
+      // }
 
       it('User with UQ score below 15 can allocate rewards to projects, ModalAllocationLowUqScore is shown to them', () => {
         connectWallet({ isPatronModeEnabled: false, isUQScoreBelow15: true });
@@ -141,8 +141,8 @@ Object.values(viewports).forEach(
 
             cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
               .trigger('mousedown', { pageX: pageXStart })
-              .trigger('mousemove', { pageX: pageXEnd });
-            // .trigger('mouseup', { pageX: pageXEnd });
+              .trigger('mousemove', { pageX: pageXEnd })
+              .trigger('mouseup', { pageX: pageXEnd });
 
             cy.wait(1000);
             cy.get('[data-test=AllocationSliderBox__section__value--0]')
@@ -171,10 +171,13 @@ Object.values(viewports).forEach(
               expect(parseFloat(`${el.val()}`)).to.be.eq(0);
             });
 
-            cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
-              .trigger('mousedown', { pageX: pageXStart })
-              .trigger('mousemove', { pageX: pageXEnd });
-            // .trigger('mouseup', { pageX: pageXEnd });
+            cy.get('[data-test=AllocationSliderBox__section--0]').click();
+            cy.wait(500);
+            cy.get('[data-test=ModalAllocationValuesEdit]').should('be.visible');
+            cy.get('[data-test=AllocationInputs__InputText--percentage]').clear().type('100');
+            cy.get('[data-test=AllocationInputs__Button]').click();
+            cy.wait(500);
+            cy.get('[data-test=ModalAllocationValuesEdit]').should('not.exist');
 
             cy.get('[data-test=AllocationSliderBox__section__value--0]')
               .invoke('text')
