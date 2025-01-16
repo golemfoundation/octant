@@ -99,7 +99,7 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
         tooltipClassName={styles.tooltip}
       >
         <Svg
-          classNameSvg={cx(styles.img, isSablierStreamCancelled && styles.isSablierStreamCancelled)}
+          classNameSvg={styles.img}
           img={isSablierStreamCancelled ? cross : gift}
           size={isSablierStreamCancelled ? 1.2 : 1.6}
         />

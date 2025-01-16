@@ -19,23 +19,17 @@ $padding: 1.1rem;
     background: $color-octant-orange5;
     color: $color-octant-orange;
 
-    .img {
-      path {
-        stroke: $color-octant-orange;
-
-        &:hover {
-          stroke: $color-octant-orange;
-        }
-      }
-    }
-  }
-
-  &:not(.isSablierStreamCancelled) {
     .tooltipWrapper {
       &:hover {
         path {
-          stroke: $color-white !important;
+          stroke: $color-octant-orange !important;
         }
+      }
+    }
+
+    .img {
+      path {
+        stroke: $color-octant-orange;
       }
     }
   }
@@ -54,6 +48,8 @@ $padding: 1.1rem;
 }
 
 .tooltipWrapper {
+  user-select: none;
+
   &:hover {
     path {
       stroke: $color-white !important;

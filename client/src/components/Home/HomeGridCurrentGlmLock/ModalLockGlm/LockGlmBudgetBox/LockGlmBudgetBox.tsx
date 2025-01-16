@@ -41,7 +41,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
   );
 
   const shouldRaffleWinningsBeDisplayed =
-    currentMode === 'unlock' && userSablierStreams && userSablierStreams.sum > 0;
+    currentMode === 'unlock' && userSablierStreams && userSablierStreams.sumAvailable > 0;
   const areFundsFetching = isFetchingAvailableFundsGlm || isFetchinguserSablierStreams;
 
   const secondRowValue = getFormattedGlmValue({
