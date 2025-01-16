@@ -35,61 +35,61 @@ Object.values(viewports).forEach(
         visitWithLoader(ROOT_ROUTES.home.absolute);
       });
 
-      // it('Title is visible and has correct text', { scrollBehavior: false }, () => {
-      //   cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
-      //   cy.get('[data-test=HomeGridCurrentGlmLock__title]')
-      //     .invoke('text')
-      //     .should('eq', 'Current GLM lock');
-      // });
+      it('Title is visible and has correct text', { scrollBehavior: false }, () => {
+        cy.get('[data-test=HomeGridCurrentGlmLock__title]').should('be.visible');
+        cy.get('[data-test=HomeGridCurrentGlmLock__title]')
+          .invoke('text')
+          .should('eq', 'Current GLM lock');
+      });
 
-      // it('Main value is 0 (GLM/$) when wallet isn`t connected ', { scrollBehavior: false }, () => {
-      //   cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
-      //     .invoke('text')
-      //     .should('eq', '0 GLM');
-      //   cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]')
-      //     .invoke('text')
-      //     .should('eq', '$0.00');
-      // });
+      it('Main value is 0 (GLM/$) when wallet isn`t connected ', { scrollBehavior: false }, () => {
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
+          .invoke('text')
+          .should('eq', '0 GLM');
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__secondary]')
+          .invoke('text')
+          .should('eq', '$0.00');
+      });
 
-      // it(
-      //   'Effective value is 0 (GLM/$) when wallet isn`t connected ',
-      //   { scrollBehavior: false },
-      //   () => {
-      //     cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
-      //       .invoke('text')
-      //       .should('eq', '0 GLM');
-      //     cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
-      //       .invoke('text')
-      //       .should('eq', '$0.00');
-      //   },
-      // );
+      it(
+        'Effective value is 0 (GLM/$) when wallet isn`t connected ',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__primary]')
+            .invoke('text')
+            .should('eq', '0 GLM');
+          cy.get('[data-test=HomeGridCurrentGlmLock__Section--effective__DoubleValue__secondary]')
+            .invoke('text')
+            .should('eq', '$0.00');
+        },
+      );
 
-      // it('Effective label has a tooltip with correct text', { scrollBehavior: false }, () => {
-      //   if (isLargeDesktop || isDesktop) {
-      //     cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
-      //   } else {
-      //     cy.get('[data-test=TooltipEffectiveLockedBalance]').click();
-      //   }
+      it('Effective label has a tooltip with correct text', { scrollBehavior: false }, () => {
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=TooltipEffectiveLockedBalance]').trigger('mouseover');
+        } else {
+          cy.get('[data-test=TooltipEffectiveLockedBalance]').click();
+        }
 
-      //   cy.get('[data-test=TooltipEffectiveLockedBalance__content]').should('be.visible');
-      //   cy.get('[data-test=TooltipEffectiveLockedBalance__content]')
-      //     .invoke('text')
-      //     .should(
-      //       'eq',
-      //       'Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.',
-      //     );
-      // });
+        cy.get('[data-test=TooltipEffectiveLockedBalance__content]').should('be.visible');
+        cy.get('[data-test=TooltipEffectiveLockedBalance__content]')
+          .invoke('text')
+          .should(
+            'eq',
+            'Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.',
+          );
+      });
 
-      // it(
-      //   'Button has "Lock GLM" text and is disabled when wallet isn`t connected',
-      //   { scrollBehavior: false },
-      //   () => {
-      //     cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
-      //     cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
-      //       .invoke('text')
-      //       .should('eq', 'Lock GLM');
-      //   },
-      // );
+      it(
+        'Button has "Lock GLM" text and is disabled when wallet isn`t connected',
+        { scrollBehavior: false },
+        () => {
+          cy.get('[data-test=HomeGridCurrentGlmLock__Button]').should('be.disabled');
+          cy.get('[data-test=HomeGridCurrentGlmLock__Button]')
+            .invoke('text')
+            .should('eq', 'Lock GLM');
+        },
+      );
 
       it('User is able to close Lock/Unlock GLM Modal', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
