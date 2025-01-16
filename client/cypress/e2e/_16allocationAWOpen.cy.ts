@@ -141,8 +141,8 @@ Object.values(viewports).forEach(
 
             cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
               .trigger('mousedown', { pageX: pageXStart })
-              .trigger('mousemove', { pageX: pageXEnd })
-              .trigger('mouseup', { pageX: pageXEnd });
+              .trigger('mousemove', { pageX: pageXEnd });
+            // .trigger('mouseup', { pageX: pageXEnd });
 
             cy.wait(1000);
             cy.get('[data-test=AllocationSliderBox__section__value--0]')
@@ -173,8 +173,8 @@ Object.values(viewports).forEach(
 
             cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
               .trigger('mousedown', { pageX: pageXStart })
-              .trigger('mousemove', { pageX: pageXEnd })
-              .trigger('mouseup', { pageX: pageXEnd });
+              .trigger('mousemove', { pageX: pageXEnd });
+            // .trigger('mouseup', { pageX: pageXEnd });
 
             cy.get('[data-test=AllocationSliderBox__section__value--0]')
               .invoke('text')
