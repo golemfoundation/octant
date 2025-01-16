@@ -1,36 +1,24 @@
-
-
-from itertools import groupby
-from operator import attrgetter
-import os
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 from typing import Dict
 
 from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
-from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit, UserEffectiveDepositPayload
-from app.engine.user.effective_deposit.weighted_average.default_with_sablier_timebox import DefaultWeightedAverageWithSablierTimebox
-from app.infrastructure.database.models import Deposit
-from app.infrastructure.graphql.locks import get_locks_by_timestamp_range
-from app.infrastructure.graphql.unlocks import get_unlocks_by_timestamp_range
-from app.modules.common.sablier_events_mapper import FlattenStrategy, flatten_sablier_events, process_to_locks_and_unlocks
+from app.engine.user.effective_deposit import (
+    DepositEvent,
+    EventType,
+    UserDeposit,
+    UserEffectiveDepositPayload,
+)
 from app.modules.dto import OctantRewardsDTO, PendingSnapshotDTO
 from app.modules.octant_rewards.core import calculate_rewards
 from app.modules.snapshots.pending.core import calculate_user_budgets
-from app.modules.user.budgets.core import get_upcoming_budget
-from app.modules.user.events_generator.core import unify_deposit_balances
 from app.modules.staking.proceeds.core import estimate_staking_proceeds
-from app.constants import SABLIER_SENDER_ADDRESS_SEPOLIA, SABLIER_TOKEN_ADDRESS_SEPOLIA, ZERO_ADDRESS
-from app.infrastructure import SubgraphEndpoints
+from app.constants import (
+    ZERO_ADDRESS,
+)
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
 from v2.deposits.repositories import DepositEventsRepository
-from v2.epochs.subgraphs import EpochsSubgraph
-from v2.sablier.subgraphs import SablierSubgraph
-
-
-
-
 
 
 def calculate_effective_deposits(
@@ -38,9 +26,8 @@ def calculate_effective_deposits(
     end_sec: int,
     events: Dict[str, list[DepositEvent]],
 ) -> tuple[list[UserDeposit], int]:
-    
     # TODO: We can do this better and nicer
-    effective_deposit_calculator = DefaultWeightedAverageWithSablierTimebox()
+    effective_deposit_calculator = DefaultWeightedAverageEffectiveDeposit()
     payload = UserEffectiveDepositPayload(
         epoch_start=start_sec,
         epoch_end=end_sec,
@@ -56,20 +43,19 @@ async def calculate_pending_epoch_snapshot(
     epoch_start: int,
     epoch_end: int,
 ) -> PendingSnapshotDTO:
-    
     # Get octant rewards
-        # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
+    # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
     # duration_sec = epoch_details.duration
     # return estimate_staking_proceeds(duration_sec)
     # eth_proceeds = await get_staking_proceeds(session, epoch_number, start_sec, end_sec)
     eth_proceeds = estimate_staking_proceeds(epoch_end - epoch_start)
 
     events = await deposit_events.get_all_users_events(
-        epoch_number,
-        epoch_start,
-        epoch_end
+        epoch_number, epoch_start, epoch_end
     )
-    user_deposits, total_effective_deposit = calculate_effective_deposits(epoch_start, epoch_end, events)
+    user_deposits, total_effective_deposit = calculate_effective_deposits(
+        epoch_start, epoch_end, events
+    )
 
     # total_effective_deposit = 155654569757136462439580980
     rewards_settings = OctantRewardsSettings()
@@ -109,27 +95,9 @@ async def calculate_pending_epoch_snapshot(
     )
 
 
-async def get_budget(
-    session: AsyncSession,
-    epoch_number: int,
-    user_address: str
-) -> int:
-    simulated_snapshot = await calculate_pending_epoch_snapshot(session, epoch_number)
-
-    upcoming_budget = get_upcoming_budget(
-        user_address, simulated_snapshot.user_budgets
-    )
-
-    return upcoming_budget
-
-
 def simulate_user_events(
-    end_sec: int,
-    lock_duration: int,
-    remaining_sec: int,
-    glm_amount: int
+    end_sec: int, lock_duration: int, remaining_sec: int, glm_amount: int
 ) -> list[DepositEvent]:
-
     user_events = [
         DepositEvent(
             user=ZERO_ADDRESS,

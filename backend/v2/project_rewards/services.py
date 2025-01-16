@@ -2,6 +2,16 @@ from dataclasses import dataclass
 from multiproof import StandardMerkleTree
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.constants import ZERO_ADDRESS
+from app.engine.octant_rewards import OctantRewardsSettings
+from app.engine.user.budget import UserBudgetPayload
+from app.engine.user.budget.with_ppf import UserBudgetWithPPF
+from app.modules.dto import OctantRewardsDTO
+from app.modules.octant_rewards.core import calculate_rewards
+from v2.project_rewards.user_events import (
+    calculate_effective_deposits,
+    simulate_user_events,
+)
 from v2.project_rewards.repositories import get_rewards_for_epoch
 from v2.project_rewards.schemas import (
     RewardsMerkleTreeLeafV1,
@@ -80,4 +90,79 @@ async def get_rewards_merkle_tree_for_epoch(
         root=mt.root,
         leaves=leaves,
         leaf_encoding=LEAF_ENCODING,
+    )
+
+
+def calculate_octant_rewards(
+    eth_proceeds: int,
+    total_effective_deposit: int,
+) -> OctantRewardsDTO:
+    """
+    Calculate the octant rewards based on ETH proceeds and total effective deposit.
+    Proceeds are the what the octant gets from the staking.
+    Effective deposit is the amount of GLMs that are eligible for rewards.
+
+    Parameters:
+        eth_proceeds: int - The amount of ETH proceeds.
+        total_effective_deposit: int - The total amount of GLMs deposited.
+
+    Returns:
+        OctantRewardsDTO - The octant rewards distribution.
+    """
+
+    settings = OctantRewardsSettings()
+    rewards = calculate_rewards(settings, eth_proceeds, total_effective_deposit)
+
+    # fmt: off
+    return OctantRewardsDTO(
+        staking_proceeds            = eth_proceeds,
+        locked_ratio                = rewards.locked_ratio,
+        total_effective_deposit     = total_effective_deposit,
+        total_rewards               = rewards.total_rewards,
+        vanilla_individual_rewards  = rewards.vanilla_individual_rewards,
+        operational_cost            = rewards.operational_cost,
+        ppf                         = rewards.ppf_value,
+        community_fund              = rewards.community_fund,
+    )
+    # fmt: on
+
+
+def simulate_user_effective_deposits(
+    epoch_start: int,
+    epoch_end: int,
+    epoch_remaining: int,
+    lock_duration: int,
+    glm_amount: int,
+) -> int:
+    """
+    Simulate the user effective deposits for a given epoch.
+    """
+
+    events = {
+        ZERO_ADDRESS: simulate_user_events(
+            epoch_end, lock_duration, epoch_remaining, glm_amount
+        )
+    }
+    _, total_effective_deposit = calculate_effective_deposits(
+        epoch_start, epoch_end, events
+    )
+    return total_effective_deposit
+
+
+def calculate_user_budget(
+    user_effective_deposit: int,
+    rewards: OctantRewardsDTO,
+) -> int:
+    """
+    Calculate the user budget based on the user effective deposit and the octant rewards.
+    """
+
+    budget_calculator = UserBudgetWithPPF()
+    return budget_calculator.calculate_budget(
+        UserBudgetPayload(
+            user_effective_deposit=user_effective_deposit,
+            total_effective_deposit=rewards.total_effective_deposit,
+            vanilla_individual_rewards=rewards.vanilla_individual_rewards,
+            ppf=rewards.ppf,
+        )
     )

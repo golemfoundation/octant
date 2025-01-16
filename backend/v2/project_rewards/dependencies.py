@@ -1,8 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
-from v2.sablier.subgraphs import SablierSubgraph
-from v2.core.dependencies import GetSession, OctantSettings
+from v2.core.dependencies import GetSession
 from v2.epochs.dependencies import GetOpenAllocationWindowEpochNumber
 from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
 from v2.project_rewards.services import ProjectRewardsEstimator
@@ -21,6 +20,7 @@ async def get_project_rewards_estimator(
         matched_rewards_estimator=estimated_project_matched_rewards,
         epoch_number=epoch_number,
     )
+
 
 GetProjectRewardsEstimator = Annotated[
     ProjectRewardsEstimator,

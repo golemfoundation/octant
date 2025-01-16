@@ -78,7 +78,9 @@ class EpochsSubgraph:
                 self.gql_client.execute_async
             )
 
-    async def fetch_locks_by_timestamp_range(self, from_ts: int, to_ts: int) -> list[LockEvent]:
+    async def fetch_locks_by_timestamp_range(
+        self, from_ts: int, to_ts: int
+    ) -> list[LockEvent]:
         """
         Get locks by timestamp range.
         """
@@ -108,7 +110,9 @@ class EpochsSubgraph:
         response = await self.gql_client.execute_async(query, variable_values=variables)
         return response["lockeds"]
 
-    async def fetch_unlocks_by_timestamp_range(self, from_ts: int, to_ts: int) -> list[UnlockEvent]:
+    async def fetch_unlocks_by_timestamp_range(
+        self, from_ts: int, to_ts: int
+    ) -> list[UnlockEvent]:
         """
         Get unlocks by timestamp range.
         """
@@ -154,9 +158,9 @@ class EpochsSubgraph:
             """
         )
         variables = {"epochNo": epoch_number}
-        
+
         response = await self.gql_client.execute_async(query, variable_values=variables)
-        
+
         data = response["epoches"]
         if not data:
             raise exceptions.EpochNotIndexed(epoch_number)

@@ -3,14 +3,9 @@ from typing import Annotated
 
 from fastapi import Depends
 from pydantic import Field
-from pydantic_settings import SettingsConfigDict
 from app.shared.blockchain_types import ChainTypes
 from v2.sablier.subgraphs import SablierSubgraph
-from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings
-from v2.epochs.dependencies import GetOpenAllocationWindowEpochNumber
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
-from v2.project_rewards.services import ProjectRewardsEstimator
-from v2.projects.dependencies import GetProjectsContracts
+from v2.core.dependencies import GetChainSettings, OctantSettings
 
 
 class SablierSubgraphSettings(OctantSettings):
@@ -47,6 +42,7 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
         sablier_settings.sablier_sender_address_sepolia,
         sablier_settings.sablier_token_address_sepolia,
     )
+
 
 GetSablierSubgraph = Annotated[
     SablierSubgraph,

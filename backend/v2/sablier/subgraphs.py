@@ -10,11 +10,10 @@ import backoff
 from app.infrastructure.sablier.events import SablierStream
 from v2.epochs.subgraphs import BackoffParams
 
-from gql.transport.aiohttp import log as requests_logger
 requests_logger.setLevel(logging.WARNING)
 
-class SablierSubgraph:
 
+class SablierSubgraph:
     def __init__(
         self,
         url: str,
@@ -22,15 +21,14 @@ class SablierSubgraph:
         token_address: str,
         backoff_params: BackoffParams | None = None,
     ):
-
-        requests_logger.setLevel(logging.WARNING)    
+        requests_logger.setLevel(logging.WARNING)
         self.url = url
         self.sender = sender
         self.token_address = token_address
 
         self.gql_client = Client(
             transport=AIOHTTPTransport(
-                url=self.url, 
+                url=self.url,
                 timeout=2,
             ),
             fetch_schema_from_transport=False,
@@ -48,9 +46,7 @@ class SablierSubgraph:
                 self.gql_client.execute_async
             )
 
-
     async def _fetch_streams(self, query: str, variables: dict) -> list[SablierStream]:
-
         all_streams = []
         has_more = True
         limit = 1000

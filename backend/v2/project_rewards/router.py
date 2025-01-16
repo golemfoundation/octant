@@ -1,23 +1,19 @@
-from datetime import datetime, time, timezone
-import os
 from fastapi import APIRouter, Response, status
-import json
 from app.context.epoch_state import EpochState
-from app.exceptions import NotImplementedForGivenEpochState
-from app.constants import SABLIER_SENDER_ADDRESS_SEPOLIA, SABLIER_TOKEN_ADDRESS_SEPOLIA, ZERO_ADDRESS
-from app.infrastructure import SubgraphEndpoints
-from app.engine.user.budget import UserBudgetPayload
+from app.exceptions import (
+    InvalidEpoch,
+    MissingSnapshot,
+    NotImplementedForGivenEpochState,
+)
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
-from app.engine.octant_rewards import OctantRewardsSettings
-from app.modules.dto import OctantRewardsDTO, PendingSnapshotDTO
-from app.modules.octant_rewards.core import calculate_rewards
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from app.modules.staking.proceeds.core import estimate_staking_proceeds
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
 from v2.deposits.dependencies import GetDepositEventsRepository
-from v2.sablier.dependencies import GetSablierSubgraph
-from v2.glms.dependencies import GetGLMBalanceOfDeposits, GetGLMContracts
-from v2.sablier.subgraphs import SablierSubgraph
-from v2.project_rewards.user_events import calculate_effective_deposits, calculate_pending_epoch_snapshot, simulate_user_events
+from v2.glms.dependencies import GetGLMBalanceOfDeposits
+from v2.project_rewards.user_events import (
+    calculate_effective_deposits,
+)
 from v2.allocations.repositories import (
     get_donors_for_epoch,
     sum_allocations_by_epoch,
@@ -39,8 +35,13 @@ from v2.user_patron_mode.repositories import (
     get_all_users_budgets_by_epoch,
     get_budget_by_user_address_and_epoch,
 )
-from v2.core.dependencies import GetSession
-from v2.project_rewards.services import get_rewards_merkle_tree_for_epoch
+from v2.core.dependencies import GetCurrentTimestamp, GetSession
+from v2.project_rewards.services import (
+    calculate_octant_rewards,
+    calculate_user_budget,
+    get_rewards_merkle_tree_for_epoch,
+    simulate_user_effective_deposits,
+)
 from v2.project_rewards.dependencies import GetProjectRewardsEstimator
 from v2.project_rewards.schemas import (
     EpochBudgetItemV1,
@@ -87,234 +88,67 @@ async def get_user_budget_for_epoch_v1(
 
 @api.get("/budget/{user_address}/upcoming")
 async def get_user_budget_for_upcoming_epoch_v1(
-    session: GetSession,
-    epoch_contracts: GetEpochsContracts,
-    epoch_subgraph: GetEpochsSubgraph,
-    deposit_events: GetDepositEventsRepository,
+    # Dependencies
+    epochs_contracts: GetEpochsContracts,
+    epochs_subgraph: GetEpochsSubgraph,
+    deposit_events_repository: GetDepositEventsRepository,
+    current_timestamp: GetCurrentTimestamp,
+    # Parameters
     user_address: Address,
 ) -> UpcomingUserBudgetResponseV1:
     """
-    Returns the upcoming user budget based on if allocation happened now.
+    Returns the upcoming user budget based on as-if allocation happened now.
+
+    This is done by simulating the epoch end as if it ended now.
+    So we simulate the pending snapshot for this epoch end.
+     - Get current epoch details
+     - Simulate the epoch end as if it ended now (end_time = now)
+     - Simulate the pending snapshot for this epoch end
+        - Estimate staking proceeds
+        - Calculate total effective deposit based on deposit events
+        - Calculate octant rewards
+     - Calculate the user budget for this pending snapshot
     """
 
-    epoch_number = await epoch_contracts.get_current_epoch()
-    epoch_details = await epoch_subgraph.fetch_epoch_by_number(epoch_number)
-    
+    # Get current epoch details
+    epoch_number = await epochs_contracts.get_current_epoch()
+    epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
+
     # We SIMULATE the epoch end as if it ended now
-    epoch_end = int(datetime.now(timezone.utc).timestamp())
+    epoch_end = current_timestamp
     epoch_start = epoch_details.fromTs
 
-    # pending_snapshot = await calculate_pending_epoch_snapshot(
-    #     deposit_events,
-    #     epoch_number, 
-    #     epoch_start, 
-    #     epoch_end
-    # )
-# async def calculate_pending_epoch_snapshot(
-#     deposit_events: DepositEventsRepository,
-#     epoch_number: int,
-#     epoch_start: int,
-#     epoch_end: int,
-# ) -> PendingSnapshotDTO:
-    
-    # Get octant rewards
-        # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
-    # duration_sec = epoch_details.duration
-    # return estimate_staking_proceeds(duration_sec)
-    # eth_proceeds = await get_staking_proceeds(session, epoch_number, start_sec, end_sec)
+    # BEGIN: Calculate pending snapshot
     eth_proceeds = estimate_staking_proceeds(epoch_end - epoch_start)
 
-    events = await deposit_events.get_all_users_events(
-        epoch_number,
-        epoch_start,
-        epoch_end
+    # Based on all deposit events, calculate effective deposits
+    events = await deposit_events_repository.get_all_users_events(
+        epoch_number, epoch_start, epoch_end
     )
-    user_deposits, total_effective_deposit = calculate_effective_deposits(epoch_start, epoch_end, events)
-
-    # total_effective_deposit = 155654569757136462439580980
-    rewards_settings = OctantRewardsSettings()
-    octant_rewards = calculate_rewards(
-        rewards_settings, eth_proceeds, total_effective_deposit
-    )
-    rewards = OctantRewardsDTO(
-        staking_proceeds=eth_proceeds,
-        locked_ratio=octant_rewards.locked_ratio,
-        total_effective_deposit=total_effective_deposit,
-        total_rewards=octant_rewards.total_rewards,
-        vanilla_individual_rewards=octant_rewards.vanilla_individual_rewards,
-        operational_cost=octant_rewards.operational_cost,
-        ppf=octant_rewards.ppf_value,
-        community_fund=octant_rewards.community_fund,
+    user_deposits, total_effective_deposit = calculate_effective_deposits(
+        epoch_start, epoch_end, events
     )
 
-    # events = await get_all_user_events(
-    #     session,
-    #     epochs_subgraph,
-    #     sablier,
-    #     epoch_number,
-    #     epoch_start,
-    #     epoch_end
-    # )
-    # user_deposits, total_effective_deposit = calculate_effective_deposits(epoch_start, epoch_end, events)
+    # Calculate octant rewards
+    rewards = calculate_octant_rewards(eth_proceeds, total_effective_deposit)
 
+    # END: Calculate pending snapshot
+
+    # Calculate user budget
     user_budget_calculator = UserBudgetWithPPF()
     user_budgets = calculate_user_budgets(
         user_budget_calculator, rewards, user_deposits
     )
-    # pending_snapshot = PendingSnapshotDTO(
-    #     rewards=rewards, user_deposits=user_deposits, user_budgets=user_budgets
-    # )
-    # return PendingSnapshotDTO(
-    #     rewards=rewards, user_deposits=user_deposits, user_budgets=user_budgets
-    # )
-
-
-# Getting unlocks in timestamp range 1728835200 - 1735308472
-    # upcoming_budget = pending_snapshot.user_budgets.get(user_address)
-
-    # print("Pending snapshot", pending_snapshot)
-
     user_budget = next(
-        (budget.budget for budget in user_budgets if budget.user_address == user_address),
-        0  # Default value if user not found
+        (
+            budget.budget
+            for budget in user_budgets
+            if budget.user_address == user_address
+        ),
+        0,  # Default value if user not found
     )
 
-    # if not user_budget:
-    #     return UpcomingUserBudgetResponseV1(upcoming_budget=0)
-    
     return UpcomingUserBudgetResponseV1(upcoming_budget=user_budget)
-    print("I'm here")
-
-    # TODO we need to handle snapshots here unfortunatelly
-    # upcoming_budget = await get_upcoming_user_budget(user_address)
-
-
-
-    # context = state_context(EpochState.SIMULATED, with_block_range=True)
-    # service: UpcomingUserBudgets = get_services(EpochState.CURRENT).user_budgets_service
-    # return service.get_budget(context, user_address)
-
-    # def get_budget(self, context: Context, user_address: str) -> int:
-        # simulated_snapshot = (
-        #     self.simulated_pending_snapshot_service.simulate_pending_epoch_snapshot(
-        #         context
-        #     )
-        # )
-        # upcoming_budget = core.get_upcoming_budget(
-        #     user_address, simulated_snapshot.user_budgets
-        # )
-
-        # return upcoming_budget
-
-
-    # user_deposits = CalculatedUserDeposits(
-    #         events_generator=DbAndGraphEventsGenerator()
-    #     )
-    # octant_rewards = CalculatedOctantRewards(
-    #     staking_proceeds=EstimatedStakingProceeds(),
-    #     effective_deposits=user_deposits,
-    # )
-    # UpcomingUserBudgets(
-    #     simulated_pending_snapshot_service=SimulatedPendingSnapshots(
-    #         effective_deposits=user_deposits, octant_rewards=octant_rewards
-    #     )
-    # )
-
-
-
-    # simulated_snapshot = (
-    #     self.simulated_pending_snapshot_service.simulate_pending_epoch_snapshot(
-    #         context
-    #     )
-    # )
-
-    # def _calculate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
-    # rewards = self.octant_rewards.get_octant_rewards(context)
-
-        # def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
-        #     eth_proceeds = self.staking_proceeds.get_staking_proceeds(context)
-            # def get_staking_proceeds(self, context: Context) -> int:
-            #     return estimate_staking_proceeds(context.epoch_details.duration_sec)
-
-                # epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
-                # duration_sec = epoch_details.duration
-                # return estimate_staking_proceeds(duration_sec)
-
-    #     total_effective_deposit = self.effective_deposits.get_total_effective_deposit(
-    #         context
-    #     )
-        # def get_total_effective_deposit(self, context: Context) -> int:
-        #    events = self.events_generator.get_all_users_events(context)
-        #    _, total = calculate_effective_deposits(
-        #        context.epoch_details, context.epoch_settings, events
-        #    )
-        #    return total
-
-
-    #     rewards_settings = context.epoch_settings.octant_rewards
-    #     octant_rewards = calculate_rewards(
-    #         rewards_settings, eth_proceeds, total_effective_deposit
-    #     )
-    #     (
-    #         locked_ratio,
-    #         total_rewards,
-    #         vanilla_individual_rewards,
-    #         op_cost,
-    #         ppf,
-    #         community_fund,
-    #     ) = (
-    #         octant_rewards.locked_ratio,
-    #         octant_rewards.total_rewards,
-    #         octant_rewards.vanilla_individual_rewards,
-    #         octant_rewards.operational_cost,
-    #         octant_rewards.ppf_value,
-    #         octant_rewards.community_fund,
-    #     )
-
-    #     return OctantRewardsDTO(
-    #         staking_proceeds=eth_proceeds,
-    #         locked_ratio=locked_ratio,
-    #         total_effective_deposit=total_effective_deposit,
-    #         total_rewards=total_rewards,
-    #         vanilla_individual_rewards=vanilla_individual_rewards,
-    #         operational_cost=op_cost,
-    #         ppf=ppf,
-    #         community_fund=community_fund,
-    #     )
-
-    # (
-    #     user_deposits,
-    #     _,
-    # ) = self.effective_deposits.get_all_effective_deposits(context)
-    # user_budgets = calculate_user_budgets(
-    #     context.epoch_settings.user.budget, rewards, user_deposits
-    # )
-
-    # return PendingSnapshotDTO(
-    #     rewards=rewards, user_deposits=user_deposits, user_budgets=user_budgets
-    # )
-
-    # user_budget = next(
-    #     filter(
-    #         lambda budget_info: budget_info.user_address == user_address,
-    #         upcoming_user_budgets,
-    #     ),
-    #     None,
-    # )
-    # if not user_budget:
-    #     return 0
-    # return user_budget.budget
-
-    # upcoming_budget = core.get_upcoming_budget(
-    #     user_address, simulated_snapshot.user_budgets
-    # )
-
-    # return upcoming_budget
-
-    return UpcomingUserBudgetResponseV1(upcoming_budget=upcoming_budget)
-
-
-
 
 
 @api.get("/budgets/epoch/{epoch_number}")
@@ -340,129 +174,61 @@ async def get_estimated_budget_v1(
     session: GetSession,
     epoch_contracts: GetEpochsContracts,
     glm_balance: GetGLMBalanceOfDeposits,
+    matched_rewards_estimator: GetMatchedRewardsEstimator,
     request: EstimatedBudgetByEpochRequestV1,
 ) -> UserBudgetWithMatchedFundingResponseV1:
-    
-    # leverage
-    epoch_number = await epoch_contracts.get_finalized_epoch()
-    
-    # Calculate leverage based on the last finalized epoch
-    allocations_sum = await sum_allocations_by_epoch(session, epoch_number)
-    finalized_snapshot = await get_finalized_epoch_snapshot(session, epoch_number)
-    matched_rewards = int(finalized_snapshot.matched_rewards)
+    """
+    Returns the estimated budget if the user deposits GLMs for a given number of FULL epochs.
+    Each epoch is a 90 day period.
 
-    leverage = matched_rewards / allocations_sum if allocations_sum else 0
+    This is done based on the last finalized snapshot.
+    - Get the last finalized epoch
+    - Calculate the leverage based on the last finalized epoch
+    - Get the future epoch details (start_time, duration, end_time)
+    - Calculate rewards:
+        - Estimate staking proceeds
+        - Assume total effective deposit as total GLMs from contract
+        - Calculate octant rewards
+    - Simulate user events as if they deposited given amount of GLMs
+    - Calculate user budget for this pending snapshot
+    """
 
     future_epoch = await epoch_contracts.get_future_epoch_props()
-    print("Future epoch", future_epoch)
-    # start_sec = future_epoch[2]
-    start_sec = future_epoch[2]
-    # duration = future_epoch[3]
-    duration = future_epoch[3]
-    end_sec = start_sec + duration
-    # decision_window = future_epoch[4]
-    decision_window = future_epoch[4]
+    epoch_start = future_epoch[2]
+    epoch_duration = future_epoch[3]
+    epoch_end = epoch_start + epoch_duration
+    epoch_remaining = epoch_duration
 
-    # Estimate staking proceeds
-    eth_proceeds = estimate_staking_proceeds(duration)
+    # We interpolate future rewards based on the future epoch
+    #  duration and total effective deposit of the finalized epoch
+    eth_proceeds = estimate_staking_proceeds(epoch_duration)
     total_effective_deposit = glm_balance
+    future_rewards = calculate_octant_rewards(eth_proceeds, total_effective_deposit)
 
-    # total_effective_deposit = 155654569757136462439580980
-    rewards_settings = OctantRewardsSettings()
-    octant_rewards = calculate_rewards(
-        rewards_settings, eth_proceeds, total_effective_deposit
+    # Simulate budget
+    user_effective_deposit = simulate_user_effective_deposits(
+        epoch_start,
+        epoch_end,
+        epoch_remaining,
+        epoch_duration,
+        request.glm_amount,
     )
-    future_rewards = OctantRewardsDTO(
-        staking_proceeds=eth_proceeds,
-        locked_ratio=octant_rewards.locked_ratio,
-        total_effective_deposit=total_effective_deposit,
-        total_rewards=octant_rewards.total_rewards,
-        vanilla_individual_rewards=octant_rewards.vanilla_individual_rewards,
-        operational_cost=octant_rewards.operational_cost,
-        ppf=octant_rewards.ppf_value,
-        community_fund=octant_rewards.community_fund,
+    user_budget = calculate_user_budget(
+        user_effective_deposit,
+        future_rewards,
     )
 
+    epochs_budget = request.number_of_epochs * user_budget
 
-    # Simulate user events as if they deposited given amount of GLMs
-    events = {
-        ZERO_ADDRESS: simulate_user_events(
-            end_sec,
-            duration,
-            duration,
-            request.glm_amount
-        )
-    }
-    user_deposits, total_effective_deposit = calculate_effective_deposits(start_sec, end_sec, events)
-
-    # print("total_effective_deposit", total_effective_deposit)
-    # print("User deposits", user_deposits)
-    effective_deposit = (
-        user_deposits[0].effective_deposit if user_deposits else 0
+    # Matching fund is calculated based on the last epoch's leverage
+    epoch_number = await epoch_contracts.get_finalized_epoch()
+    rewards_leverage = await get_rewards_leverage_v1(
+        session, epoch_contracts, epoch_number, matched_rewards_estimator
     )
-
-    # print("Effective deposit", effective_deposit)
-    # print("Total effective deposit", future_rewards.total_effective_deposit)
-    # print("Vanilla individual rewards", future_rewards.vanilla_individual_rewards)
-    # print("PPF", future_rewards.ppf)
-
-    budget_calculator = UserBudgetWithPPF()
-    epoch_budget = budget_calculator.calculate_budget(
-        UserBudgetPayload(
-            user_effective_deposit=effective_deposit,
-            total_effective_deposit=future_rewards.total_effective_deposit,
-            vanilla_individual_rewards=future_rewards.vanilla_individual_rewards,
-            ppf=future_rewards.ppf,
-        )
-    )
-    epochs_budget = request.number_of_epochs * epoch_budget
-
-    matching_fund = epochs_budget * leverage
-
 
     return UserBudgetWithMatchedFundingResponseV1(
         budget=epochs_budget,
-        matched_funding=matching_fund
-    )
-
-
-def estimate_epoch_budget(
-    start_sec: int, 
-    end_sec: int,
-    remaining_sec: int,
-    lock_duration: int,
-    glm_amount: int, 
-    rewards: OctantRewardsDTO
-) -> int:
-    events = {
-        ZERO_ADDRESS: simulate_user_events(
-            end_sec,
-            lock_duration,
-            remaining_sec,
-            glm_amount
-        )
-    }
-    user_deposits, total_effective_deposit = calculate_effective_deposits(start_sec, end_sec, events)
-
-    # print("total_effective_deposit", total_effective_deposit)
-    # print("User deposits", user_deposits)
-    effective_deposit = (
-        user_deposits[0].effective_deposit if user_deposits else 0
-    )
-
-    # print("Effective deposit", effective_deposit)
-    # print("Total effective deposit", future_rewards.total_effective_deposit)
-    # print("Vanilla individual rewards", future_rewards.vanilla_individual_rewards)
-    # print("PPF", future_rewards.ppf)
-
-    budget_calculator = UserBudgetWithPPF()
-    return budget_calculator.calculate_budget(
-        UserBudgetPayload(
-            user_effective_deposit=effective_deposit,
-            total_effective_deposit=rewards.total_effective_deposit,
-            vanilla_individual_rewards=rewards.vanilla_individual_rewards,
-            ppf=rewards.ppf,
-        )
+        matched_funding=int(epochs_budget * rewards_leverage.leverage),
     )
 
 
@@ -472,59 +238,66 @@ async def get_estimated_budget_by_days_v1(
     epoch_subgraph: GetEpochsSubgraph,
     deposit_events: GetDepositEventsRepository,
     glm_balance: GetGLMBalanceOfDeposits,
+    current_timestamp: GetCurrentTimestamp,
     request: EstimatedBudgetByDaysRequestV1,
 ) -> UserBudgetResponseV1:
-    # validate_estimate_budget_inputs(days, glm_amount)
+    """
+    Returns the estimated budget if the user deposits GLMs for a given number of days.
 
-    lock_duration_sec = request.days * 86400 # 24hours * 60minutes * 60seconds
+    This is done by first filling up the current epoch and then calculating the remaining budget for the future epochs.
+    """
 
+    remaining_lock_duration = request.lock_duration_sec
+
+    # Get the current epoch details
     current_epoch_number = await epoch_contracts.get_current_epoch()
-    current_epoch_details = await epoch_subgraph.fetch_epoch_by_number(current_epoch_number)
+    current_epoch_details = await epoch_subgraph.fetch_epoch_by_number(
+        current_epoch_number
+    )
     current_epoch_start = current_epoch_details.fromTs
     current_epoch_duration = current_epoch_details.duration
-    current_epoch_remaining = current_epoch_start + current_epoch_duration - int(datetime.now().timestamp())
+    current_epoch_remaining = (
+        current_epoch_start + current_epoch_duration - current_timestamp
+    )
 
     # CURRENT EPOCH REWARDS
     current_eth_proceeds = estimate_staking_proceeds(current_epoch_duration)
     current_events = await deposit_events.get_all_users_events(
         current_epoch_number,
         current_epoch_start,
-        current_epoch_start + current_epoch_duration
+        current_epoch_start + current_epoch_duration,
     )
-    user_deposits, total_effective_deposit = calculate_effective_deposits(current_epoch_start, current_epoch_start + current_epoch_duration, current_events)
-
-    current_rewards_settings = OctantRewardsSettings()
-    current_octant_rewards = calculate_rewards(
-        current_rewards_settings, current_eth_proceeds, total_effective_deposit
-    )
-    current_rewards = OctantRewardsDTO(
-        staking_proceeds=current_eth_proceeds,
-        locked_ratio=current_octant_rewards.locked_ratio,
-        total_effective_deposit=total_effective_deposit,
-        total_rewards=current_octant_rewards.total_rewards,
-        vanilla_individual_rewards=current_octant_rewards.vanilla_individual_rewards,
-        operational_cost=current_octant_rewards.operational_cost,
-        ppf=current_octant_rewards.ppf_value,
-        community_fund=current_octant_rewards.community_fund,
+    _, total_effective_deposit = calculate_effective_deposits(
+        current_epoch_start,
+        current_epoch_start + current_epoch_duration,
+        current_events,
     )
 
+    current_rewards = calculate_octant_rewards(
+        current_eth_proceeds, total_effective_deposit
+    )
 
-    # return estimate_budget(lock_duration_sec, glm_amount)
-    # current_context = state_context(EpochState.CURRENT)
-    # current_rewards_service = get_services(EpochState.CURRENT).octant_rewards_service
-        # CURRENT
-        # is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
-            # octant_rewards = CalculatedOctantRewards(
-            #     staking_proceeds=EstimatedStakingProceeds(),
-            #     effective_deposits=CalculatedUserDeposits(
-            #     events_generator=DbAndGraphEventsGenerator()
-            # )
-        # )
+    # Simulate user budget till the end of the current epoch
+    user_effective_deposit = simulate_user_effective_deposits(
+        current_epoch_start,
+        current_epoch_start + current_epoch_duration,
+        current_epoch_remaining,
+        remaining_lock_duration,
+        request.glm_amount,
+    )
+    budget = calculate_user_budget(
+        user_effective_deposit,
+        current_rewards,
+    )
 
-
-    # current_rewards = current_rewards_service.get_octant_rewards(current_context)
+    # Subtract the current epoch remaining from the remaining lock duration
+    # If there's no remaining lock duration, we're done
+    remaining_lock_duration -= current_epoch_remaining
+    if remaining_lock_duration <= 0:
+        return UserBudgetResponseV1(budget=budget)
 
     # FUTURE EPOCH REWARDS
+    # Because we've already filled up the current epoch, we need to calculate based on the future epoch
     future_epoch_number = await epoch_contracts.get_future_epoch_props()
     future_epoch_start = future_epoch_number[2]
     future_epoch_duration = future_epoch_number[3]
@@ -532,81 +305,42 @@ async def get_estimated_budget_by_days_v1(
     future_eth_proceeds = estimate_staking_proceeds(future_epoch_duration)
 
     future_total_effective_deposit = glm_balance
-
-    future_rewards_settings = OctantRewardsSettings()
-    future_octant_rewards = calculate_rewards(
-        future_rewards_settings, future_eth_proceeds, future_total_effective_deposit
-    )
-    future_rewards = OctantRewardsDTO(
-        staking_proceeds=future_eth_proceeds,
-        locked_ratio=future_octant_rewards.locked_ratio,
-        total_effective_deposit=future_total_effective_deposit,
-        total_rewards=future_octant_rewards.total_rewards,
-        vanilla_individual_rewards=future_octant_rewards.vanilla_individual_rewards,
-        operational_cost=future_octant_rewards.operational_cost,
-        ppf=future_octant_rewards.ppf_value,
-        community_fund=future_octant_rewards.community_fund,
+    future_rewards = calculate_octant_rewards(
+        future_eth_proceeds, future_total_effective_deposit
     )
 
-    # future_context = state_context(EpochState.FUTURE)
-    # future_rewards_service = get_services(EpochState.FUTURE).octant_rewards_service
-        # octant_rewards_service=CalculatedOctantRewards(
-        #     staking_proceeds=EstimatedStakingProceeds(),
-        #     effective_deposits=ContractBalanceUserDeposits(),
-        # ),
+    # Calculate the number of full future epochs and the remaining lock duration
+    full_epochs_num, remaining_future_epoch_sec = divmod(
+        remaining_lock_duration, future_epoch_duration
+    )
 
-    # future_rewards = future_rewards_service.get_octant_rewards(future_context)
-
-
-
-    # return core.estimate_budget(
-    #     current_context,
-    #     future_context,
-    #     current_rewards,
-    #     future_rewards,
-    #     lock_duration_sec,
-    #     glm_amount,
-    # )
-
-    remaining_lock_duration = lock_duration_sec
-
-    budget = estimate_epoch_budget(
-        current_epoch_start,
-        current_epoch_start + current_epoch_duration,
-        current_epoch_remaining,
-        remaining_lock_duration,
+    # Simulate user budget for the full future epochs
+    user_effective_deposit = simulate_user_effective_deposits(
+        future_epoch_start,
+        future_epoch_end,
+        future_epoch_duration,
+        future_epoch_duration,
         request.glm_amount,
-        current_rewards,
     )
-    remaining_lock_duration -= current_epoch_remaining
+    budget += full_epochs_num * calculate_user_budget(
+        user_effective_deposit,
+        future_rewards,
+    )
 
-    if remaining_lock_duration > 0:
-        full_epochs_num, remaining_future_epoch_sec = divmod(
-            remaining_lock_duration, future_epoch_duration
-        )
-        budget += full_epochs_num * estimate_epoch_budget(
+    if remaining_future_epoch_sec > 0:
+        user_effective_deposit = simulate_user_effective_deposits(
             future_epoch_start,
             future_epoch_end,
             future_epoch_duration,
-            future_epoch_duration,
+            remaining_future_epoch_sec,
             request.glm_amount,
-            future_rewards,
         )
-        remaining_lock_duration = remaining_future_epoch_sec
-
-    if remaining_lock_duration > 0:
-        budget += estimate_epoch_budget(
-            future_epoch_start,
-            future_epoch_end,
-            future_epoch_duration,
-            remaining_lock_duration,
-            request.glm_amount,
+        budget += calculate_user_budget(
+            user_effective_deposit,
             future_rewards,
         )
 
-    return UserBudgetResponseV1(
-        budget=budget
-    )
+    return UserBudgetResponseV1(budget=budget)
 
 
 @api.get("/leverage/{epoch_number}")
@@ -614,61 +348,40 @@ async def get_rewards_leverage_v1(
     session: GetSession,
     epochs_contracts: GetEpochsContracts,
     epoch_number: int,
+    matched_rewards_estimator: GetMatchedRewardsEstimator,
 ) -> RewardsLeverageResponseV1:
     """
     Returns leverage for a given epoch.
 
     For finalized epochs it returns the leverage based on the data from the finalized snapshot.
-
+    For pending and finalizing epochs it returns the leverage based on the estimated matched rewards of pending epoch.
     """
+
+    print(f"Getting leverage for epoch {epoch_number}")
 
     epoch_state = await get_epoch_state(session, epochs_contracts, epoch_number)
 
-    print("Epoch state", epoch_state)
+    # This operations only makes sense for finalized, finalizing and pending epochs
     if epoch_state > EpochState.PENDING:
         raise NotImplementedForGivenEpochState()
 
+    # Figure out the matched rewards
     if epoch_state == EpochState.FINALIZED:
-        # We are in pending epoch, so we need to get the leverage from the pending epoch
-
-        allocations_sum = await sum_allocations_by_epoch(session, epoch_number)
-
-        # allocations_sum = database.allocations.get_alloc_sum_by_epoch(
-        #     context.epoch_details.epoch_num
-        # )
-
+        # For finalized epoch matched_rewards is just taken from the finalized snapshot
         finalized_snapshot = await get_finalized_epoch_snapshot(session, epoch_number)
-        # finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
-        #     context.epoch_details.epoch_num
-        # )
+        if finalized_snapshot is None:
+            raise MissingSnapshot()
         matched_rewards = int(finalized_snapshot.matched_rewards)
 
-        return RewardsLeverageResponseV1(
-            leverage=matched_rewards / allocations_sum if allocations_sum else 0
-        )
+    else:
+        # For pending or finalizing epoch matched_rewards is estimated based on current state of AW
+        matched_rewards = await matched_rewards_estimator.get()
 
-        # return context.epoch_settings.project.rewards.leverage.calculate_leverage(
-        #     matched_rewards, allocations_sum
-        # )
-        # def calculate_leverage(self, matched_rewards: int, total_allocated: int) -> float:
-        # return matched_rewards / total_allocated if total_allocated else 0
+    allocations_sum = await sum_allocations_by_epoch(session, epoch_number)
 
-    if epoch_state <= EpochState.PENDING:
-        allocations_sum = await sum_allocations_by_epoch(session, epoch_number)
-        # allocations_sum = database.allocations.get_alloc_sum_by_epoch(
-        #     context.epoch_details.epoch_num
-        # )
-        matched_rewards = self.get_matched_rewards(context)
-
-        return RewardsLeverageResponseV1(
-            leverage=matched_rewards / allocations_sum if allocations_sum else 0
-        )
-
-        # return context.epoch_settings.project.rewards.leverage.calculate_leverage(
-        #     matched_rewards, allocations_sum
-        # )
-        # def calculate_leverage(self, matched_rewards: int, total_allocated: int) -> float:
-        # return matched_rewards / total_allocated if total_allocated else 0
+    return RewardsLeverageResponseV1(
+        leverage=matched_rewards / allocations_sum if allocations_sum else 0
+    )
 
 
 @api.get("/merkle_tree/{epoch_number}")
@@ -680,7 +393,12 @@ async def get_rewards_merkle_tree_v1(
     Returns the rewards merkle tree for a given epoch.
     """
 
-    return await get_rewards_merkle_tree_for_epoch(session, epoch_number)
+    tree = await get_rewards_merkle_tree_for_epoch(session, epoch_number)
+    if tree is None:
+        # TODO: this could be better :)
+        raise InvalidEpoch()
+
+    return tree
 
 
 @api.get("/projects/estimated")
@@ -759,11 +477,12 @@ async def get_unused_rewards_v1(
 
     # Exclude donors and patrons from the list of users who didn't use their rewards
     unused_budgets = {
-        address: budget for address, budget in budgets.items() 
+        address: budget
+        for address, budget in budgets.items()
         if address not in set(donors + patrons)
     }
 
     return UnusedRewardsResponseV1(
-        addresses=sorted(list(unused_budgets.keys())), 
+        addresses=sorted(list(unused_budgets.keys())),
         value=sum(unused_budgets.values()),
     )

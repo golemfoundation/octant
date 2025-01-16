@@ -1,4 +1,5 @@
 from functools import lru_cache
+import time
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
@@ -7,6 +8,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
+
+from app.shared.blockchain_types import ChainTypes
 
 
 class OctantSettings(BaseSettings):
@@ -107,6 +110,10 @@ class ChainSettings(OctantSettings):
         description="The chain id to use for the signature verification.",
     )
 
+    @property
+    def is_mainnet(self) -> bool:
+        return self.chain_id == ChainTypes.MAINNET
+
 
 def get_chain_settings() -> ChainSettings:
     return ChainSettings()
@@ -127,7 +134,12 @@ def get_socketio_settings() -> SocketioSettings:
     return SocketioSettings()  # type: ignore[call-arg]
 
 
+def get_current_timestamp() -> int:
+    return int(time.time())
+
+
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]
 GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
 Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 GetSession = Annotated[AsyncSession, Depends(get_db_session)]
+GetCurrentTimestamp = Annotated[int, Depends(get_current_timestamp)]

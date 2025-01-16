@@ -1,7 +1,7 @@
-from email.headerregistry import Address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.database.models import Reward
+from v2.core.types import Address
 
 
 async def get_rewards_for_epoch(

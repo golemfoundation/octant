@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends
-from v2.deposits.contracts import DepositsContracts
 from v2.deposits.dependencies import GetDepositsContracts
 from v2.core.dependencies import OctantSettings, Web3
 from v2.glms.contracts import ERC20_ABI, GLMContracts

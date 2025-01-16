@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional
+from typing import Optional
 
 from v2.core.contracts import SmartContract
 from web3 import exceptions

@@ -71,12 +71,15 @@ def get_projects_allocation_threshold_getter(
     epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     projects: GetProjectsContracts,
+    settings: Annotated[
+        ProjectsAllocationThresholdSettings,
+        Depends(get_projects_allocation_threshold_settings),
+    ],
 ) -> ProjectsAllocationThresholdGetter:
-    project_count_multiplier = 2 if epoch_number <= 2 else 1
-
     return ProjectsAllocationThresholdGetter(
-        epoch_number, session, projects, project_count_multiplier
+        epoch_number, session, projects, settings.project_count_multiplier
     )
+
 
 async def get_projects_metadata_getter(
     epoch_number: EpochNumberPath,
@@ -94,9 +97,11 @@ async def get_projects_metadata_getter(
 
 
 async def get_projects_details_getter(
-    session: GetSession, epochs: EpochsParameter, search_phrases: SearchPhrasesParameter
+    session: GetSession,
+    epochs: EpochsParameter,
+    search_phrases_param: SearchPhrasesParameter,
 ) -> ProjectsDetailsGetter:
-    epoch_numbers, search_phrases = process_search_params(epochs, search_phrases)
+    epoch_numbers, search_phrases = process_search_params(epochs, search_phrases_param)
     return ProjectsDetailsGetter(
         session=session, epoch_numbers=epoch_numbers, search_phrases=search_phrases
     )

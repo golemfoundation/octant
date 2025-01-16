@@ -1,10 +1,14 @@
 from typing import Annotated
 
 from fastapi import Depends
+from app.constants import (
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+)
 from v2.deposits.repositories import DepositEventsRepository
 from v2.epochs.dependencies import GetEpochsSubgraph
 from v2.sablier.dependencies import GetSablierSubgraph
-from v2.core.dependencies import GetSession, OctantSettings, Web3
+from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings, Web3
 from v2.deposits.contracts import DEPOSITS_ABI, DepositsContracts
 
 
@@ -22,15 +26,28 @@ def get_deposits_contracts(
     return DepositsContracts(w3, DEPOSITS_ABI, settings.deposits_contract_address)  # type: ignore[arg-type]
 
 
-
 def get_deposit_events_repository(
     session: GetSession,
     epochs_subgraph: GetEpochsSubgraph,
     sublier_subgraph: GetSablierSubgraph,
+    chain_settings: GetChainSettings,
 ) -> DepositEventsRepository:
-    return DepositEventsRepository(session, epochs_subgraph, sublier_subgraph)
+    sablier_unlock_grace_period = (
+        SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
+        if chain_settings.is_mainnet
+        else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN
+    )
+
+    return DepositEventsRepository(
+        session,
+        epochs_subgraph,
+        sublier_subgraph,
+        sablier_unlock_grace_period,
+    )
 
 
 # Annotated dependencies
 GetDepositsContracts = Annotated[DepositsContracts, Depends(get_deposits_contracts)]
-GetDepositEventsRepository = Annotated[DepositEventsRepository, Depends(get_deposit_events_repository)]
+GetDepositEventsRepository = Annotated[
+    DepositEventsRepository, Depends(get_deposit_events_repository)
+]

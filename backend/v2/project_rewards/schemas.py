@@ -40,6 +40,10 @@ class EstimatedBudgetByDaysRequestV1(OctantModel):
         ..., description="Amount of estimated GLM locked in wei"
     )
 
+    @property
+    def lock_duration_sec(self) -> int:
+        return self.days * 86400  # 24hours * 60minutes * 60seconds
+
 
 class RewardsMerkleTreeLeafV1(OctantModel):
     address: Address = Field(..., description="User account or project address")
