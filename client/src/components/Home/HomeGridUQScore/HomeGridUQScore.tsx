@@ -249,6 +249,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
         titleSuffix={
           <Button
             className={styles.titleSuffix}
+            dataTest="HomeGridUQScore__Button--whatIsThis"
             isButtonScalingUpOnHover={false}
             label={t('whatIsThis')}
             onClick={() => setIsCalculatingYourUniquenessModalOpen(true)}
@@ -272,6 +273,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
           ) : (
             <Button
               className={styles.furtherActions}
+              dataTest="HomeGridUQScore__Button--scoreTooLow"
               href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
               label={t('scoreTooLow')}
               variant="link6"
@@ -280,6 +282,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
           <div className={styles.buttonsWrapper}>
             <Button
               className={styles.button}
+              dataTest="HomeGridUQScore__Button--recalculate"
               isDisabled={isRecalculateButtonDisabled}
               isHigh
               onClick={() => setIsRecalculatingScoreModalOpen(true)}
@@ -289,6 +292,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
             </Button>
             <Button
               className={styles.button}
+              dataTest="HomeGridUQScore__Button--delegate"
               isDisabled={isDelegateButtonDisabled}
               isHigh
               onClick={() => {

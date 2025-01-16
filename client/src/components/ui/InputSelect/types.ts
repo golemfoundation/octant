@@ -5,6 +5,7 @@ const INPUT_SELECT_VARIANTS = ['topselect', 'overselect', 'belowselect'] as cons
 export type InputSelectVariants = (typeof INPUT_SELECT_VARIANTS)[number];
 
 export interface Option {
+  dataTest?: string;
   label: string;
   value: string;
 }
