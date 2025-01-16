@@ -131,149 +131,159 @@ Object.values(viewports).forEach(
           .invoke('text')
           .should('eq', 'Confirm');
         cy.wait(1000);
-        cy.get('[data-test=AllocationSliderBox__Slider__thumb]').then($thumb => {
-          const { left: thumbLeft } = $thumb[0].getBoundingClientRect();
-          const pageXStart = thumbLeft;
-          const pageXEnd = viewportWidth - 20; // px
+        cy.get('[data-test=AllocationSliderBox__Slider]').then($slider => {
+          const { right: sliderRight } = $slider[0].getBoundingClientRect();
 
-          cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
-            .trigger('mousedown', { pageX: pageXStart })
-            .trigger('mousemove', { pageX: pageXEnd })
-            .trigger('mouseup', { pageX: pageXEnd });
+          cy.get('[data-test=AllocationSliderBox__Slider__thumb]').then($thumb => {
+            const { left: thumbLeft, width: thumbWidth } = $thumb[0].getBoundingClientRect();
+            const pageXStart = thumbLeft + thumbWidth / 2;
+            const pageXEnd = sliderRight;
 
-          cy.wait(1000);
-          cy.get('[data-test=AllocationSliderBox__section__value--0]')
-            .invoke('text')
-            .should('not.eq', '0 ETH');
-          cy.get('[data-test=AllocationSliderBox__section__value--1]')
-            .invoke('text')
-            .should('eq', '0 ETH');
+            cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
+              .trigger('mousedown', { pageX: pageXStart })
+              .trigger('mousemove', { pageX: pageXEnd })
+              .trigger('mouseup', { pageX: pageXEnd });
 
-          cy.get('[data-test=AllocationItem__InputText]').each(el => {
-            expect(parseFloat(`${el.val()}`)).to.be.gt(0);
+            cy.wait(1000);
+            cy.get('[data-test=AllocationSliderBox__section__value--0]')
+              .invoke('text')
+              .should('not.eq', '0 ETH');
+            cy.get('[data-test=AllocationSliderBox__section__value--1]')
+              .invoke('text')
+              .should('eq', '0 ETH');
+
+            cy.get('[data-test=AllocationItem__InputText]').each(el => {
+              expect(parseFloat(`${el.val()}`)).to.be.gt(0);
+            });
+
+            // reset
+            cy.get('[data-test=AllocationNavigation__Button--reset]').click();
+
+            cy.wait(1000);
+            cy.get('[data-test=AllocationSliderBox__section__value--0]')
+              .invoke('text')
+              .should('eq', '0 ETH');
+            cy.get('[data-test=AllocationSliderBox__section__value--1]')
+              .invoke('text')
+              .should('not.eq', '0 ETH');
+
+            cy.get('[data-test=AllocationItem__InputText]').each(el => {
+              expect(parseFloat(`${el.val()}`)).to.be.eq(0);
+            });
+
+            cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
+              .trigger('mousedown', { pageX: pageXStart })
+              .trigger('mousemove', { pageX: pageXEnd })
+              .trigger('mouseup', { pageX: pageXEnd });
+
+            cy.get('[data-test=AllocationSliderBox__section__value--0]')
+              .invoke('text')
+              .should('not.eq', '0 ETH');
+            cy.get('[data-test=AllocationSliderBox__section__value--1]')
+              .invoke('text')
+              .should('eq', '0 ETH');
+
+            cy.get('[data-test=AllocationItem__InputText]').each(el => {
+              expect(parseFloat(`${el.val()}`)).to.be.gt(0);
+            });
+
+            cy.get('[data-test=AllocationNavigation__Button--cta]')
+              .invoke('text')
+              .should('eq', 'Confirm');
+            cy.get('[data-test=AllocationNavigation__Button--cta]').click();
+            cy.get('[data-test=ModalAllocationLowUqScore]').should('be.visible');
+            cy.get('[data-test=AllocationLowUqScore__InputCheckbox]').check();
+            cy.get('[data-test=AllocationLowUqScore__Button--cta]').click();
+            cy.get('[data-test=ModalAllocationLowUqScore]').should('not.exist');
+            cy.wait(500);
+            cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.disabled');
+            cy.get('[data-test=AllocationNavigation__Button--cta]')
+              .invoke('text')
+              .should('eq', 'Waiting');
+            cy.confirmMetamaskDataSignatureRequest();
+            cy.wait(1000);
+            cy.get('[data-test=AllocationSummary]').should('exist');
+            cy.get('[data-test=AllocationSummaryProject]').should('have.length', 3);
+            cy.wait(1000);
+            cy.get('[data-test=AllocationSummary__totalDonated]').scrollIntoView();
+            cy.get('[data-test=AllocationSummary__totalDonated]').should('be.visible');
+            cy.get('[data-test=AllocationSummary__totalDonated__value--loading]').should(
+              'not.exist',
+            );
+            cy.get('[data-test=AllocationSummary__totalDonated__value]').then($totalDonated => {
+              expect(parseFloat(`${$totalDonated.text()}`.replace('<', ''))).to.be.gt(0);
+            });
+
+            cy.get('[data-test=AllocationSummary__matchFunding]').scrollIntoView();
+            cy.get('[data-test=AllocationSummary__matchFunding]').should('be.visible');
+            cy.get('[data-test=AllocationSummary__matchFunding__value--loading]').should(
+              'not.exist',
+            );
+            cy.get('[data-test=AllocationSummary__matchFunding__value]').then($matchFunding => {
+              expect(parseFloat(`${$matchFunding.text()}`.replace('<', ''))).to.be.gt(0);
+            });
+            cy.get('[data-test=AllocationSummary__totalImpact]').scrollIntoView();
+            cy.get('[data-test=AllocationSummary__totalImpact]').should('be.visible');
+            cy.get('[data-test=AllocationSummary__totalImpact__value]').then($totalImpact => {
+              expect(parseFloat(`${$totalImpact.text()}`.replace('<', ''))).to.be.gt(0);
+            });
+            cy.get('[data-test=AllocationSummary__personalRewardBox]').should('not.exist');
+            cy.get('[data-test=AllocationSliderBox__Slider__thumb]').scrollIntoView();
+            cy.get('[data-test=AllocationSliderBox__Slider__thumb]').should('not.be.visible');
+            cy.get('[data-test=AllocationNavigation__Button--cta]')
+              .invoke('text')
+              .should('eq', 'Edit');
+
+            if (isLargeDesktop || isDesktop) {
+              cy.get('[data-test=AllocationDrawer__closeButton]').click();
+              cy.get('[data-test=LayoutTopBar__link--home]').click();
+            } else {
+              cy.get('[data-test=LayoutNavbar__Button--home]').click();
+            }
+            cy.wait(1000);
+            cy.get('[data-test=HomeGridDonations__numberOfAllocations]').should('be.visible');
+            cy.get('[data-test=HomeGridDonations__numberOfAllocations]')
+              .invoke('text')
+              .should('eq', '3');
+
+            cy.get('[data-test=HomeGridDonations__noDonationsYet]').should('not.exist');
+            cy.get('[data-test=HomeGridDonations__Button--edit]').should('be.visible');
+            cy.get('[data-test=DonationsList]').should('be.visible');
+            cy.get('[data-test=DonationsList__item]').should('have.length', 3);
+            cy.get('[data-test=DonationsList__item__value]').each($donationListItemValue => {
+              expect(parseFloat(`${$donationListItemValue.text()}`.replace('<', ''))).to.be.gt(0);
+            });
+
+            cy.get('[data-test=TransactionsListItem__title]')
+              .eq(0)
+              .invoke('text')
+              .should('eq', 'Allocated rewards');
+
+            cy.get('[data-test=TransactionsListItem__title]').eq(0).click();
+            cy.wait(1000);
+            cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
+            cy.get('[data-test=TransactionDetailsAllocation__personal]').should('be.visible');
+            cy.get('[data-test=TransactionDetailsAllocation__personal--value__primary]')
+              .invoke('text')
+              .should('eq', '0 ETH');
+            cy.get('[data-test=TransactionDetailsAllocation__allocationProjects__label]')
+              .invoke('text')
+              .should('eq', 'Projects (3)');
+            cy.get('[data-test=TransactionDetailsAllocation__allocationProjects]').should(
+              'be.visible',
+            );
+            cy.get('[data-test=TransactionDetailsAllocation__finalMatchFunding]').should(
+              'not.exist',
+            );
+
+            cy.get('[data-test=TransactionDetailsAllocation__estimatedLeverage]').should(
+              'be.visible',
+            );
+            cy.get('[data-test=TransactionDetailsAllocation__projects]').scrollIntoView();
+            cy.get('[data-test=TransactionDetailsAllocation__projects]').should('be.visible');
+            cy.get('[data-test=TransactionDetailsAllocation__when]').should('be.visible');
+            cy.get('[data-test=ProjectAllocationDetailRow]').should('have.length', 3);
           });
-
-          // reset
-          cy.get('[data-test=AllocationNavigation__Button--reset]').click();
-
-          cy.wait(1000);
-          cy.get('[data-test=AllocationSliderBox__section__value--0]')
-            .invoke('text')
-            .should('eq', '0 ETH');
-          cy.get('[data-test=AllocationSliderBox__section__value--1]')
-            .invoke('text')
-            .should('not.eq', '0 ETH');
-
-          cy.get('[data-test=AllocationItem__InputText]').each(el => {
-            expect(parseFloat(`${el.val()}`)).to.be.eq(0);
-          });
-
-          cy.get('[data-test=AllocationSliderBox__Slider__thumb]')
-            .trigger('mousedown', { pageX: pageXStart })
-            .trigger('mousemove', { pageX: pageXEnd })
-            .trigger('mouseup', { pageX: pageXEnd });
-
-          cy.get('[data-test=AllocationSliderBox__section__value--0]')
-            .invoke('text')
-            .should('not.eq', '0 ETH');
-          cy.get('[data-test=AllocationSliderBox__section__value--1]')
-            .invoke('text')
-            .should('eq', '0 ETH');
-
-          cy.get('[data-test=AllocationItem__InputText]').each(el => {
-            expect(parseFloat(`${el.val()}`)).to.be.gt(0);
-          });
-
-          cy.get('[data-test=AllocationNavigation__Button--cta]')
-            .invoke('text')
-            .should('eq', 'Confirm');
-          cy.get('[data-test=AllocationNavigation__Button--cta]').click();
-          cy.get('[data-test=ModalAllocationLowUqScore]').should('be.visible');
-          cy.get('[data-test=AllocationLowUqScore__InputCheckbox]').check();
-          cy.get('[data-test=AllocationLowUqScore__Button--cta]').click();
-          cy.get('[data-test=ModalAllocationLowUqScore]').should('not.exist');
-          cy.wait(500);
-          cy.get('[data-test=AllocationNavigation__Button--cta]').should('be.disabled');
-          cy.get('[data-test=AllocationNavigation__Button--cta]')
-            .invoke('text')
-            .should('eq', 'Waiting');
-          cy.confirmMetamaskDataSignatureRequest();
-          cy.wait(1000);
-          cy.get('[data-test=AllocationSummary]').should('exist');
-          cy.get('[data-test=AllocationSummaryProject]').should('have.length', 3);
-          cy.wait(1000);
-          cy.get('[data-test=AllocationSummary__totalDonated]').scrollIntoView();
-          cy.get('[data-test=AllocationSummary__totalDonated]').should('be.visible');
-          cy.get('[data-test=AllocationSummary__totalDonated__value--loading]').should('not.exist');
-          cy.get('[data-test=AllocationSummary__totalDonated__value]').then($totalDonated => {
-            expect(parseFloat(`${$totalDonated.text()}`.replace('<', ''))).to.be.gt(0);
-          });
-
-          cy.get('[data-test=AllocationSummary__matchFunding]').scrollIntoView();
-          cy.get('[data-test=AllocationSummary__matchFunding]').should('be.visible');
-          cy.get('[data-test=AllocationSummary__matchFunding__value--loading]').should('not.exist');
-          cy.get('[data-test=AllocationSummary__matchFunding__value]').then($matchFunding => {
-            expect(parseFloat(`${$matchFunding.text()}`.replace('<', ''))).to.be.gt(0);
-          });
-          cy.get('[data-test=AllocationSummary__totalImpact]').scrollIntoView();
-          cy.get('[data-test=AllocationSummary__totalImpact]').should('be.visible');
-          cy.get('[data-test=AllocationSummary__totalImpact__value]').then($totalImpact => {
-            expect(parseFloat(`${$totalImpact.text()}`.replace('<', ''))).to.be.gt(0);
-          });
-          cy.get('[data-test=AllocationSummary__personalRewardBox]').should('not.exist');
-          cy.get('[data-test=AllocationSliderBox__Slider__thumb]').scrollIntoView();
-          cy.get('[data-test=AllocationSliderBox__Slider__thumb]').should('not.be.visible');
-          cy.get('[data-test=AllocationNavigation__Button--cta]')
-            .invoke('text')
-            .should('eq', 'Edit');
-
-          if (isLargeDesktop || isDesktop) {
-            cy.get('[data-test=AllocationDrawer__closeButton]').click();
-            cy.get('[data-test=LayoutTopBar__link--home]').click();
-          } else {
-            cy.get('[data-test=LayoutNavbar__Button--home]').click();
-          }
-          cy.wait(1000);
-          cy.get('[data-test=HomeGridDonations__numberOfAllocations]').should('be.visible');
-          cy.get('[data-test=HomeGridDonations__numberOfAllocations]')
-            .invoke('text')
-            .should('eq', '3');
-
-          cy.get('[data-test=HomeGridDonations__noDonationsYet]').should('not.exist');
-          cy.get('[data-test=HomeGridDonations__Button--edit]').should('be.visible');
-          cy.get('[data-test=DonationsList]').should('be.visible');
-          cy.get('[data-test=DonationsList__item]').should('have.length', 3);
-          cy.get('[data-test=DonationsList__item__value]').each($donationListItemValue => {
-            expect(parseFloat(`${$donationListItemValue.text()}`.replace('<', ''))).to.be.gt(0);
-          });
-
-          cy.get('[data-test=TransactionsListItem__title]')
-            .eq(0)
-            .invoke('text')
-            .should('eq', 'Allocated rewards');
-
-          cy.get('[data-test=TransactionsListItem__title]').eq(0).click();
-          cy.wait(1000);
-          cy.get('[data-test=ModalTransactionDetails]').should('be.visible');
-          cy.get('[data-test=TransactionDetailsAllocation__personal]').should('be.visible');
-          cy.get('[data-test=TransactionDetailsAllocation__personal--value__primary]')
-            .invoke('text')
-            .should('eq', '0 ETH');
-          cy.get('[data-test=TransactionDetailsAllocation__allocationProjects__label]')
-            .invoke('text')
-            .should('eq', 'Projects (3)');
-          cy.get('[data-test=TransactionDetailsAllocation__allocationProjects]').should(
-            'be.visible',
-          );
-          cy.get('[data-test=TransactionDetailsAllocation__finalMatchFunding]').should('not.exist');
-
-          cy.get('[data-test=TransactionDetailsAllocation__estimatedLeverage]').should(
-            'be.visible',
-          );
-          cy.get('[data-test=TransactionDetailsAllocation__projects]').scrollIntoView();
-          cy.get('[data-test=TransactionDetailsAllocation__projects]').should('be.visible');
-          cy.get('[data-test=TransactionDetailsAllocation__when]').should('be.visible');
-          cy.get('[data-test=ProjectAllocationDetailRow]').should('have.length', 3);
         });
       });
 

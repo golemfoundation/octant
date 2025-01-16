@@ -8,6 +8,7 @@ export default interface ModalProps {
   dataTest?: string;
   header?: string | ReactNode;
   headerClassName?: string;
+  id?: string;
   isCloseButtonDisabled?: boolean;
   isConnectWalletModal?: boolean;
   isFullScreen?: boolean;
