@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 
+import { MODAL_ONBOARDING_ID } from 'constants/domElementsIds';
+
 import useMediaQuery from './useMediaQuery';
 
 type UseModalStepperProps = {
@@ -60,16 +62,18 @@ const useModalStepperNavigation = ({
       return;
     }
 
-    const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
-    const offsetLeftParent = offsetParent?.offsetLeft || 0;
-    const onboardingModalWidth = isDesktop ? offsetParent!.clientWidth! : window.innerWidth;
+    const modalOnboarding = document.getElementById(MODAL_ONBOARDING_ID);
+    if (!modalOnboarding) {
+      return;
+    }
+
+    const { offsetLeft, clientWidth: modalOnboardingWidth } = modalOnboarding;
     const { clientX } = e;
 
     const clickDiff = 25;
 
-    const isLeftEdgeClick = clientX - offsetLeftParent <= clickDiff;
-    const isRightEdgeClick =
-      Math.abs(clientX - offsetLeftParent - onboardingModalWidth) <= clickDiff;
+    const isLeftEdgeClick = clientX - offsetLeft <= clickDiff;
+    const isRightEdgeClick = Math.abs(clientX - offsetLeft - modalOnboardingWidth) <= clickDiff;
 
     const canChangeToPrevStep = isLeftEdgeClick && currentStepIndex > 0;
     const canChangeToNextStep = isRightEdgeClick && currentStepIndex !== steps.length - 1;
