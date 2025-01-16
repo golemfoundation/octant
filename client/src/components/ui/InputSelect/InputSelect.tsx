@@ -12,7 +12,7 @@ import styles from './InputSelect.module.scss';
 import InputSelectProps, { Option } from './types';
 
 const durationOfTransitionDesktop = 0;
-const durationOfTransitionMobile = 0.3;
+export const durationOfTransitionMobile = 0.3;
 
 const InputSelect: FC<InputSelectProps> = ({
   className,
