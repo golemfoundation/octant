@@ -40,12 +40,12 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
   };
 
   return (
-    <div className={styles.list}>
+    <div className={styles.list} data-test="ProjectsSearchResults">
       {projectsIpfsWithRewardsAndEpochs.length === 0 && !isLoading && (
-        <div className={styles.noSearchResults}>
+        <div className={styles.noSearchResults} data-test="ProjectsSearchResults__noSearchResults">
           <Img
             className={styles.image}
-            dataTest="ProjectsList__noSearchResults__Img"
+            dataTest="ProjectsSearchResults__noSearchResults__Img"
             src="images/swept.webp"
           />
           {t('noSearchResults')}
@@ -62,8 +62,8 @@ const ProjectsSearchResults: FC<ProjectsSearchResultsProps> = ({
                 key={`${projectIpfsWithRewards.address}--${projectIpfsWithRewards.epoch}`}
                 dataTest={
                   projectIpfsWithRewards.epoch
-                    ? `ProjectsView__ProjectsListItem--archive--${index}`
-                    : `ProjectsView__ProjectsListItem--${index}`
+                    ? `ProjectsSearchResults__ProjectsListItem--archive--${index}`
+                    : `ProjectsSearchResults__ProjectsListItem--${index}`
                 }
                 epoch={epochNumberToFetchData}
                 projectIpfsWithRewards={projectIpfsWithRewards}
