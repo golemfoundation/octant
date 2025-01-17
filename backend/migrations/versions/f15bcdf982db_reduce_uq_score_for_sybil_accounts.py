@@ -33,6 +33,7 @@ def upgrade():
         # Testing address
         "0xd0a7c12f82bf981009a1f1cc525d64c123002ba0",
         "0xca50c6c165d19ab38cc7935ff84f214a483a5494",
+        "0x747e6abc102222f1df65c662540ddf471241a644",
     ]
     # INFO: remember to checksum addresses :)
     checksum_addresses = [to_checksum_address(address) for address in addresses]
