@@ -20,16 +20,18 @@ depends_on = None
 def upgrade():
     epoch = 6
     addresses = [
-        "0xF3Ad97364bcCC3eA0582Ede58C363888f8C4ec85",
-        "0xbAba775A0400A5E442335CEaa4820eDb1DeD8f73",
-        "0x9DCbA70B2dfe5807e2A847E065EBb666791F8b8A",
-        "0x63b1EfC5602C0023BBb373F2350Cf34c2E5F8669",
-        "0xA64f2228cceC96076c82abb903021C33859082F8",
-        "0x8073639B11994C549eDa58fC3cd7132a72aaDF10",
-        "0x4D5B28d08e8c00e041053b0dc584e00e6997Daa3",
+        "0xf3ad97364bccc3ea0582ede58c363888f8c4ec85",
+        "0xbaba775a0400a5e442335ceaa4820edb1ded8f73",
+        "0x9dcba70b2dfe5807e2a847e065ebb666791f8b8a",
+        "0x63b1efc5602c0023bbb373f2350cf34c2e5f8669",
+        "0xa64f2228ccec96076c82abb903021c33859082f8",
+        "0x8073639b11994c549eda58fc3cd7132a72aadf10",
+        "0x4d5b28d08e8c00e041053b0dc584e00e6997daa3",
         "0xe862e2c1ca94eacfede3c95a217c15ef0086a29d",
         "0x8682bddfb5fd9484a0a19a85ca4274caa084106d",
         "0x9f000bfb33b0b63fce685b538b1a8af079b57d93",
+        # Testing address
+        "0xd0a7c12f82bf981009a1f1cc525d64c123002ba0",
     ]
     # INFO: remember to checksum addresses :)
     checksum_addresses = [to_checksum_address(address) for address in addresses]
