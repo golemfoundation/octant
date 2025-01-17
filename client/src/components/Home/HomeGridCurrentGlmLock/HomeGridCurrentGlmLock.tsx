@@ -44,7 +44,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const didUserWinAnyRaffles =
     !!userSablierStreams &&
-    (userSablierStreams.sum > 0 ||
+    (userSablierStreams.sumAvailable > 0 ||
       (userSablierStreams.sablierStreams.some(({ isCancelled }) => isCancelled) &&
         userSablierStreams.sumAvailable > 0));
 
