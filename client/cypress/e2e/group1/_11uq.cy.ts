@@ -13,7 +13,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe(`[AW IS OPEN] UQ: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`[AW IS CLOSED] UQ: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
     });

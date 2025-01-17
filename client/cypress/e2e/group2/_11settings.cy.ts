@@ -24,9 +24,8 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }) => {
-    describe(`[AW IS CLOSED] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS OPEN] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
-        cy.clearLocalStorage();
         beforeSetup();
       });
 
@@ -39,6 +38,10 @@ Object.values(viewports).forEach(
           ROOT_ROUTES.settings.absolute,
           isLargeDesktop || isDesktop ? ROOT_ROUTES.home.absolute : ROOT_ROUTES.settings.absolute,
         );
+      });
+
+      afterEach(() => {
+        cy.clearLocalStorage();
       });
 
       if (isLargeDesktop || isDesktop) {
