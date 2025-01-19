@@ -144,7 +144,7 @@ Object.values(viewports).forEach(
             // 1. Allow the third party to spend TKN from your current balance.
             // 2. Confirm permission to spend
             if (Cypress.env('CI') === 'true' && idx === 0) {
-              cy.wait(5000);
+              cy.wait(30000);
               cy.confirmMetamaskPermissionToSpend({
                 spendLimit: '99999999999999999999',
               });
