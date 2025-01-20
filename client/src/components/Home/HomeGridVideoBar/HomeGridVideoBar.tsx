@@ -100,9 +100,15 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
       title={t('learnHowToUseOctant')}
       titleSuffix={
         <>
-          {!isMobile && <NavigationArrows {...navigationArrowsProps} />}
+          {!isMobile && (
+            <NavigationArrows
+              {...navigationArrowsProps}
+              dataTest="HomeGridVideoBar__NavigationArrows--nonMobile"
+            />
+          )}
           <Button
             className={styles.buttonClose}
+            dataTest="HomeGridVideoBar__Button"
             Icon={<Svg img={cross} size={0.8} />}
             onClick={() => setShowHelpVideos(false)}
             variant="iconOnly"
@@ -110,10 +116,15 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
         </>
       }
     >
-      <div ref={constraintsRef} className={styles.constraintsWrapper}>
+      <div
+        ref={constraintsRef}
+        className={styles.constraintsWrapper}
+        data-test="HomeGridVideoBar__constraintsWrapper"
+      >
         <motion.div
           ref={videosWrapperRef}
           className={styles.videosWrapper}
+          data-test="HomeGridVideoBar__videosWrapper"
           drag="x"
           dragConstraints={constraintsRef}
           onDragEnd={() => setIsDragging(false)}
@@ -142,7 +153,12 @@ const HomeGridVideoBar: FC<HomeGridVideoBarProps> = ({ className }) => {
           ))}
         </motion.div>
       </div>
-      {isMobile && <NavigationArrows {...navigationArrowsProps} />}
+      {isMobile && (
+        <NavigationArrows
+          {...navigationArrowsProps}
+          dataTest="HomeGridVideoBar__NavigationArrows--mobile"
+        />
+      )}
     </GridTile>
   );
 };

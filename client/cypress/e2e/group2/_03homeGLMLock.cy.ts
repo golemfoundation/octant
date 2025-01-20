@@ -14,6 +14,8 @@ chai.use(chaiColors);
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }, idx) => {
     describe(`[AW IS CLOSED] HomeGlmLock: ${device}`, { viewportHeight, viewportWidth }, () => {
+      let lockedGlms = 0;
+
       before(() => {
         /**
          * Global Metamask setup done by Synpress is not always done.
@@ -21,6 +23,7 @@ Object.values(viewports).forEach(
          * setupMetamask is required in each test suite.
          */
         cy.setupMetamask();
+        cy.clearLocalStorage();
       });
 
       beforeEach(() => {
@@ -104,20 +107,22 @@ Object.values(viewports).forEach(
         cy.disconnectMetamaskWalletFromAllDapps();
       });
 
-      it('Wallet connected: Lock 1000 GLM', () => {
+      it('Wallet connected: Lock 1000 GLM', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
-        cy.get('[data-test=HomeView]').scrollIntoView();
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]').should(
-          'not.exist',
-        );
+        cy.get('[data-test=HomeGridCurrentGlmLock]').scrollIntoView({
+          offset: { left: 0, top: -100 },
+        });
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]', {
+          timeout: 60000,
+        }).should('not.exist');
         cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
             const amountToLock = 1000;
-            const lockedGlms = parseInt(text, 10);
+            lockedGlms = parseInt(text, 10);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
             cy.get('[data-test=InputsCryptoFiat__InputText--crypto]')
@@ -130,14 +135,16 @@ Object.values(viewports).forEach(
               'have.text',
               'Waiting for confirmation',
             );
+            cy.switchToMetamaskNotification();
             cy.confirmMetamaskPermissionToSpend({
+              shouldWaitForPopupClosure: true,
               spendLimit: '99999999999999999999',
             });
             // Workaround for two notifications during first transaction.
             // 1. Allow the third party to spend TKN from your current balance.
             // 2. Confirm permission to spend
             if (Cypress.env('CI') === 'true' && idx === 0) {
-              cy.wait(5000);
+              cy.wait(30000);
               cy.confirmMetamaskPermissionToSpend({
                 spendLimit: '99999999999999999999',
               });
@@ -149,10 +156,12 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
-            cy.get('[data-test=HomeView]').scrollIntoView();
-            cy.get(
-              '[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]',
-            ).should('not.exist');
+            cy.get('[data-test=HomeGridCurrentGlmLock]').scrollIntoView({
+              offset: { left: 0, top: -100 },
+            });
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]', {
+              timeout: 60000,
+            }).should('not.exist');
             cy.wait(1000);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
@@ -162,6 +171,9 @@ Object.values(viewports).forEach(
                 const lockedGlmsAfterLock = parseInt(nextText, 10);
                 expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
               });
+            cy.get('[data-test=HomeGridTransactions]').scrollIntoView({
+              offset: { left: 0, top: -100 },
+            });
             cy.get('[data-test=TransactionsListItem__title]')
               .first()
               .should('have.text', 'Locked GLM');
@@ -188,20 +200,22 @@ Object.values(viewports).forEach(
         cy.disconnectMetamaskWalletFromAllDapps();
       });
 
-      it('Wallet connected: Unlock 1 GLM', () => {
+      it('Wallet connected: Unlock 1 GLM', { scrollBehavior: false }, () => {
         connectWallet({ isPatronModeEnabled: false });
         cy.wait(5000);
 
-        cy.get('[data-test=HomeView]').scrollIntoView();
-        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]').should(
-          'not.exist',
-        );
+        cy.get('[data-test=HomeGridCurrentGlmLock]').scrollIntoView({
+          offset: { left: 0, top: -100 },
+        });
+        cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]', {
+          timeout: 60000,
+        }).should('not.exist');
         cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
           .invoke('text')
           .then(text => {
             const amountToUnlock = 1;
-            const lockedGlms = parseInt(text, 10);
+            lockedGlms = parseInt(text, 10);
 
             cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
             cy.get('[data-test=LockGlmTabs__tab--1]').click();
@@ -214,7 +228,9 @@ Object.values(viewports).forEach(
               'have.text',
               'Waiting for confirmation',
             );
+            cy.switchToMetamaskNotification();
             cy.confirmMetamaskPermissionToSpend({
+              shouldWaitForPopupClosure: true,
               spendLimit: '99999999999999999999',
             });
             cy.get('[data-test=LockGlmTabs__Button]', { timeout: 60000 }).should(
@@ -224,10 +240,12 @@ Object.values(viewports).forEach(
             cy.get('[data-test=LockGlmNotification--success]').should('be.visible');
             cy.get('[data-test=LockGlmTabs__Button]').click();
             cy.wait(5000);
-            cy.get('[data-test=HomeView]').scrollIntoView();
-            cy.get(
-              '[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]',
-            ).should('not.exist');
+            cy.get('[data-test=HomeGridCurrentGlmLock]').scrollIntoView({
+              offset: { left: 0, top: -100 },
+            });
+            cy.get('[data-test=HomeGridCurrentGlmLock--current__primary__DoubleValueSkeleton]', {
+              timeout: 60000,
+            }).should('not.exist');
             cy.wait(1000);
             cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
               timeout: 60000,
@@ -237,6 +255,10 @@ Object.values(viewports).forEach(
                 const lockedGlmsAfterUnlock = parseInt(nextText, 10);
                 expect(lockedGlms - amountToUnlock).to.be.eq(lockedGlmsAfterUnlock);
               });
+            cy.get('[data-test=HomeGridTransactions]').scrollIntoView({
+              offset: { left: 0, top: -100 },
+            });
+
             cy.get('[data-test=TransactionsListItem__title]')
               .first()
               .should('have.text', 'Unlocked GLM');
@@ -267,8 +289,15 @@ Object.values(viewports).forEach(
               cy.get('[data-test=SettingsDrawer__closeButton]').click();
             } else {
               cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
+              cy.wait(500);
+              cy.get('[data-test=SettingsCryptoMainValueBox]').scrollIntoView({
+                offset: { left: 0, top: -100 },
+              });
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
+              cy.get('[data-test=HomeGridTransactions]').scrollIntoView({
+                offset: { left: 0, top: -100 },
+              });
             }
 
             cy.get('[data-test=TransactionsListItem__DoubleValue__primary]')
@@ -297,6 +326,10 @@ Object.values(viewports).forEach(
               cy.get('[data-test=SettingsDrawer__closeButton]').click();
             } else {
               cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
+              cy.wait(500);
+              cy.get('[data-test=SettingsCryptoMainValueBox]').scrollIntoView({
+                offset: { left: 0, top: -100 },
+              });
               cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
               cy.get(`[data-test=LayoutNavbar__Button--home]`).click();
             }
