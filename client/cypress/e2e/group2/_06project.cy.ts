@@ -1,6 +1,5 @@
 import {
   changeMainValueToCryptoToggle,
-  // changeMainValueToFiat,
   checkProjectsViewLoaded,
   connectWallet,
   mockCoinPricesServer,
