@@ -83,8 +83,13 @@ Object.values(viewports).forEach(
 
       it('route /allocate redirects to /home and not open allocation drawer', () => {
         visitWithLoader(ROOT_ROUTES.allocation.absolute, ROOT_ROUTES.home.absolute);
-        cy.get('[data-test=HomeView]').should('be.visible');
-        cy.get('[data-test=AllocationDrawer]').should('not.exist');
+        cy.window().then(win => {
+          // eslint-disable-next-line no-param-reassign
+          win[CYPRESS_IS_PROJECT_ADMIN] = true;
+          cy.wait(2500);
+          cy.get('[data-test=HomeView]').should('be.visible');
+          cy.get('[data-test=AllocationDrawer]').should('not.exist');
+        });
       });
 
       it('Settings view shows only project admin mode options', () => {

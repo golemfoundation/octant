@@ -90,4 +90,4 @@ const HomeGrid = (): ReactNode => {
   );
 };
 
-export default memo(HomeGrid);
+export default window.Cypress ? HomeGrid : memo(HomeGrid);

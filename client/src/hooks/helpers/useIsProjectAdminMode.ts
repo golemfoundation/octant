@@ -7,7 +7,7 @@ const useIsProjectAdminMode = (): boolean => {
   const { isConnected, address } = useAccount();
   const { data: allProjects } = useAllProjects();
 
-  if (window.Cypress && CYPRESS_IS_PROJECT_ADMIN) {
+  if (window.Cypress && window[CYPRESS_IS_PROJECT_ADMIN]) {
     return isConnected;
   }
 
