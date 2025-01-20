@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFeeData } from 'wagmi';
+import { useGasPrice } from 'wagmi';
 
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
@@ -17,7 +17,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridPersonalAllocation.modalWithdrawEth',
   });
-  const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
+  const { data: gasPrice, isFetching: isFetchingGasPrice } = useGasPrice();
   const { isAppWaitingForTransactionToBeIndexed, addTransactionPending } = useTransactionLocalStore(
     state => ({
       addTransactionPending: state.addTransactionPending,
@@ -66,9 +66,9 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         dataTest: 'WithdrawEth__Section--estGasPrice',
-        isFetching: isFetchingFeeData,
+        isFetching: isFetchingGasPrice,
         showCryptoSuffix: true,
-        valueCrypto: BigInt(feeData?.gasPrice ?? 0),
+        valueCrypto: BigInt(gasPrice ?? 0),
       },
       label: t('estimatedGasPrice'),
     },
