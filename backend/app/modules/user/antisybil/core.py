@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import json
 from typing import Optional
 
@@ -24,12 +25,14 @@ def determine_antisybil_score(
 
     potential_score = _apply_gtc_staking_stamp_nullification(score.score, score)
 
+    now = datetime.now(timezone.utc)
+
     if user_address.lower() in timeout_list:
         return AntisybilStatusDTO(
             score=0.0, expires_at=score.expires_at, is_on_timeout_list=True
         )
     elif user_address.lower() in GUEST_LIST and not _has_guest_stamp_applied_by_gp(
-        score
+        score, now
     ):
         return AntisybilStatusDTO(
             score=potential_score + 21.0,
@@ -46,12 +49,18 @@ def _get_provider(stamp) -> str:
     return stamp["credential"]["credentialSubject"]["provider"]
 
 
-def _has_guest_stamp_applied_by_gp(score: GPStamps) -> bool:
+def _is_not_expired(stamp, now: datetime) -> bool:
+    expiration_date = datetime.fromisoformat(stamp["credential"]["expirationDate"])
+    return expiration_date > now
+
+
+def _has_guest_stamp_applied_by_gp(score: GPStamps, now: datetime) -> bool:
     all_stamps = json.loads(score.stamps)
     stamps = [
         stamp
         for stamp in all_stamps
         if _get_provider(stamp) in GUEST_LIST_STAMP_PROVIDERS
+        and _is_not_expired(stamp, now)
     ]
     return len(stamps) > 0
 

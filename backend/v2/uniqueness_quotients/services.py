@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from app.modules.user.antisybil.core import (
@@ -75,6 +76,7 @@ async def get_gitcoin_passport_score(
     user_address = to_checksum_address(user_address)
 
     stamps = await get_gp_stamps_by_address(session, user_address)
+    now = datetime.now(timezone.utc)
 
     # We have no information about the user's score
     if stamps is None:
@@ -84,7 +86,7 @@ async def get_gitcoin_passport_score(
     potential_score = _apply_gtc_staking_stamp_nullification(stamps.score, stamps)
 
     # If the user is in the guest list and has not been stamped by a guest list provider, increase the score by 21.0
-    if user_address in guest_list and not _has_guest_stamp_applied_by_gp(stamps):
+    if user_address in guest_list and not _has_guest_stamp_applied_by_gp(stamps, now):
         return potential_score + 21.0
 
     return potential_score
