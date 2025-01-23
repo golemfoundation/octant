@@ -83,7 +83,7 @@ async def get_gitcoin_passport_score(
         return 0.0
 
     # We remove score associated with GTC staking
-    potential_score = _apply_gtc_staking_stamp_nullification(stamps.score, stamps)
+    potential_score = _apply_gtc_staking_stamp_nullification(stamps.score, stamps, now)
 
     # If the user is in the guest list and has not been stamped by a guest list provider, increase the score by 21.0
     if user_address in guest_list and not _has_guest_stamp_applied_by_gp(stamps, now):

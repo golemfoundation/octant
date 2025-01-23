@@ -23,9 +23,8 @@ def determine_antisybil_score(
     if score is None:
         return None
 
-    potential_score = _apply_gtc_staking_stamp_nullification(score.score, score)
-
     now = datetime.now(timezone.utc)
+    potential_score = _apply_gtc_staking_stamp_nullification(score.score, score, now)
 
     if user_address.lower() in timeout_list:
         return AntisybilStatusDTO(
@@ -65,13 +64,22 @@ def _has_guest_stamp_applied_by_gp(score: GPStamps, now: datetime) -> bool:
     return len(stamps) > 0
 
 
-def _apply_gtc_staking_stamp_nullification(score: int, stamps: GPStamps) -> int:
+def _apply_gtc_staking_stamp_nullification(
+    score: int, stamps: GPStamps, now: datetime
+) -> int:
     """Take score and stamps as returned by Passport and remove score associated with GTC staking"""
 
-    delta = 0
     all_stamps = json.loads(stamps.stamps)
-    providers = [_get_provider(stamp) for stamp in all_stamps]
-    for provider in providers:
-        if provider in GTC_STAKING_STAMP_PROVIDERS_AND_SCORES.keys():
-            delta = delta + GTC_STAKING_STAMP_PROVIDERS_AND_SCORES[provider]
+    delta = 0
+
+    # Consider only stamps that are not expired
+    for stamp in all_stamps:
+        expiration_date = datetime.fromisoformat(stamp["credential"]["expirationDate"])
+
+        if expiration_date < now:
+            continue
+
+        provider = stamp["credential"]["credentialSubject"]["provider"]
+        delta += GTC_STAKING_STAMP_PROVIDERS_AND_SCORES.get(provider, 0)
+
     return score - delta

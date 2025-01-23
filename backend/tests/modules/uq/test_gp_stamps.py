@@ -1,5 +1,8 @@
 import json
-from app.modules.user.antisybil.core import _has_guest_stamp_applied_by_gp
+from app.modules.user.antisybil.core import (
+    _apply_gtc_staking_stamp_nullification,
+    _has_guest_stamp_applied_by_gp,
+)
 from app.infrastructure.database.models import GPStamps
 from datetime import datetime, timedelta, timezone
 
@@ -18,7 +21,14 @@ t_valid_stamp = [
             "expirationDate": in_ten_days_str,
             "credentialSubject": {"provider": "AllowList#OctantFinal"},
         },
-    }
+    },
+    {
+        "credential": {
+            "issuanceDate": ten_days_ago_str,
+            "expirationDate": in_ten_days_str,
+            "credentialSubject": {"provider": "BeginnerCommunityStaker"},
+        },
+    },
 ]
 
 t_expired_stamp = [
@@ -28,7 +38,14 @@ t_expired_stamp = [
             "expirationDate": ten_days_ago_str,
             "credentialSubject": {"provider": "AllowList#OctantFinal"},
         },
-    }
+    },
+    {
+        "credential": {
+            "issuanceDate": ten_days_ago_str,
+            "expirationDate": ten_days_ago_str,
+            "credentialSubject": {"provider": "BeginnerCommunityStaker"},
+        },
+    },
 ]
 
 
@@ -39,6 +56,10 @@ def test_has_guest_stamp_applied_by_gp():
     assert _has_guest_stamp_applied_by_gp(
         valid_stamps, now
     ), "We should consider the stamp if it's not expired"
+
+    assert (
+        _apply_gtc_staking_stamp_nullification(100, valid_stamps, now) == 100 - 0.673
+    ), "We should remove the score associated with GTC staking stamps"
 
 
 def test_expired_stamps():
@@ -51,3 +72,7 @@ def test_expired_stamps():
     assert not _has_guest_stamp_applied_by_gp(
         expired_stamps, now
     ), "We should not consider the stamp if it's expired"
+
+    assert (
+        _apply_gtc_staking_stamp_nullification(100, expired_stamps, now) == 100
+    ), "We should not remove the score associated with GTC staking stamps"
