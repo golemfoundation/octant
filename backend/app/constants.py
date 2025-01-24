@@ -899,6 +899,7 @@ GUEST_LIST = {
     "0x8bfcf8cb383149d4ef37e7a609cec195cdcbe099",
     "0xa515f7fb260095eebc860425493b8761b4fc9abd",
     "0xaa95ca26c92b0634df7a1a1504f579f13bfb7f9d",
+    "0x90c32e6b29794fd7f5bba2bbee74e924078b3f9b",
 }
 
 TIMEOUT_LIST = {
@@ -929,7 +930,6 @@ TIMEOUT_LIST = {
     "0x86e6b55bb954e1cfab567f9582e0fa580bb0290d",
     "0xfef75b27d4ae3d5228bcc2912f9cdceafe5f82e3",
     "0xc4f91cdd498a30f8ed1dea3883cba314a7a2a022",
-    "0x90c32e6b29794fd7f5bba2bbee74e924078b3f9b",
     "0x051010142a0b9de7f0fd8fb31d085407287f6381",
     "0xd1825dd9a5e49791fb7961ac3c4170deed5710b4",
     "0xbea26de685ef828b60ca53b40ecc9bab35645fdf",
