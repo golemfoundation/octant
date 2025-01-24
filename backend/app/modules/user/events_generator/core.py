@@ -45,6 +45,18 @@ def unify_deposit_balances(
     Unify deposit balance for each event in the list of events. Events are expected to be sorted by timestamp.
     The first event is taken from deposits, but it already includes deposit from Sablier from the past.
 
+    Scenario 1:
+    The user unlocks amount X from Sablier, then locks the same amount X in the Octant contract within the grace period.
+    ==> Such an unlock and lock have no effect and are considered transparent.
+
+    Scenario 2:
+    The user unlocks amount X from Sablier, then locks the amount X - 100 in the Octant contract within the grace period.
+    ==> We treat such events as they occur, meaning a normal unlock of X and a normal lock of X - 100.
+
+    Scenario 3:
+    The user unlocks amount X from Sablier, then locks the amount X + 100 (in a directly subsequent lock) in the Octant contract within the grace period.
+    ==> This unlock should be treated as transparent and only recording the lock for the amount of X + 100 - X = 100, with the timestamp of when the lock occurred.
+
     Returns:
         List[DepositEvent]: A list of events with adjusted `deposit_before` and `deposit_after`.
     """
@@ -75,5 +87,4 @@ def unify_deposit_balances(
     modified_events_with_grace_period = _remove_redundant_events_within_grace_period(
         modified_events, sablier_unlock_grace_period
     )
-    print(modified_events_with_grace_period, flush=True)
     return modified_events_with_grace_period
