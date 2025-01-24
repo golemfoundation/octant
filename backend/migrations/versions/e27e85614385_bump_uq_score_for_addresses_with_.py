@@ -827,6 +827,7 @@ GUEST_LIST = {
     "0x8bfcf8cb383149d4ef37e7a609cec195cdcbe099",
     "0xa515f7fb260095eebc860425493b8761b4fc9abd",
     "0xaa95ca26c92b0634df7a1a1504f579f13bfb7f9d",
+    "0x90c32e6b29794fd7f5bba2bbee74e924078b3f9b",
 }
 
 
