@@ -34,6 +34,4 @@ export default defineConfig({
   responseTimeout: 600000,
   taskTimeout: 600000,
   video: true,
-  viewportHeight: 1080,
-  viewportWidth: 1920,
 });

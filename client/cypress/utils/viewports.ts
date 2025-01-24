@@ -52,3 +52,18 @@ const viewports: Viewports = {
 };
 
 export default viewports;
+
+export const getViewports = (): {
+  isDesktop: boolean;
+  isLargeDesktop: boolean;
+  isMobile: boolean;
+  isTablet: boolean;
+} => {
+  const viewportWidth = Cypress.config('viewportWidth');
+  return {
+    isDesktop: viewportWidth === 1280,
+    isLargeDesktop: viewportWidth >= 1280,
+    isMobile: viewportWidth === 390,
+    isTablet: viewportWidth === 755,
+  };
+};

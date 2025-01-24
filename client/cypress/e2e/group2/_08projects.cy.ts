@@ -10,7 +10,7 @@ import {
   changeMainValueToCryptoToggle,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
-import viewports from 'cypress/utils/viewports';
+import { getViewports } from 'cypress/utils/viewports';
 import { durationOfTransitionMobile } from 'src/components/ui/InputSelect/InputSelect';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -153,186 +153,184 @@ function removeProjectFromAllocate(
     : cy.get('[data-test=AllocationDrawer__closeButton]').click();
 }
 
-Object.values(viewports).forEach(
-  ({ device, viewportWidth, viewportHeight, isMobile, isTablet }) => {
-    describe(`projects: ${device}`, { viewportHeight, viewportWidth }, () => {
-      let projectNames: string[] = [];
+const { isMobile, isTablet } = getViewports();
 
-      beforeEach(() => {
-        mockCoinPricesServer();
-        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-        visitWithLoader(ROOT_ROUTES.projects.absolute);
-        checkProjectsViewLoaded();
+describe(`projects:`, () => {
+  let projectNames: string[] = [];
 
-        /**
-         * This could be done in before hook, but CY wipes the state after each test
-         * (could be disabled, but creates other problems).
-         *
-         * Needs to be done for each test, because each has different default "random" order for projects.
-         */
-        projectNames = getNamesOfProjects();
-      });
+  beforeEach(() => {
+    mockCoinPricesServer();
+    localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
+    visitWithLoader(ROOT_ROUTES.projects.absolute);
+    checkProjectsViewLoaded();
 
-      it('header is visible', () => {
-        cy.get('[data-test^=ProjectsView__ViewTitle]').should('be.visible');
-      });
+    /**
+     * This could be done in before hook, but CY wipes the state after each test
+     * (could be disabled, but creates other problems).
+     *
+     * Needs to be done for each test, because each has different default "random" order for projects.
+     */
+    projectNames = getNamesOfProjects();
+  });
 
-      it('user is able to see all the projects in the view', () => {
-        for (let i = 0; i < projectNames.length; i++) {
-          cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
-          checkProjectItemElements(i, projectNames[i]);
-        }
-      });
+  it('header is visible', () => {
+    cy.get('[data-test^=ProjectsView__ViewTitle]').should('be.visible');
+  });
 
-      it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
-        // This test checks the first and the last elements only to save time.
-        cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+  it('user is able to see all the projects in the view', () => {
+    for (let i = 0; i < projectNames.length; i++) {
+      cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
+      checkProjectItemElements(i, projectNames[i]);
+    }
+  });
 
-        addProjectToAllocate(0, 0, isMobile || isTablet);
-        addProjectToAllocate(projectNames.length - 1, 1, isMobile || isTablet);
-        removeProjectFromAllocate(projectNames.length, 2, 0, isMobile || isTablet);
-        removeProjectFromAllocate(
-          projectNames.length,
-          1,
-          projectNames.length - 1,
-          isMobile || isTablet,
-        );
-      });
+  it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
+    // This test checks the first and the last elements only to save time.
+    cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
 
-      it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
-        cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
-        addProjectToAllocate(0, 0, isMobile || isTablet);
+    addProjectToAllocate(0, 0, isMobile || isTablet);
+    addProjectToAllocate(projectNames.length - 1, 1, isMobile || isTablet);
+    removeProjectFromAllocate(projectNames.length, 2, 0, isMobile || isTablet);
+    removeProjectFromAllocate(
+      projectNames.length,
+      1,
+      projectNames.length - 1,
+      isMobile || isTablet,
+    );
+  });
 
-        const isNavbarVisible = isMobile || isTablet;
-        if (isNavbarVisible) {
-          visitWithLoader(
-            ROOT_ROUTES.allocation.absolute,
-            isNavbarVisible ? ROOT_ROUTES.allocation.absolute : ROOT_ROUTES.home.absolute,
-          );
-          cy.get('[data-test=AllocationView]').should('be.visible');
-        } else {
-          cy.get('[data-test=LayoutTopBar__allocationButton]').click();
-          cy.get('[data-test=AllocationDrawer]').should('be.visible');
-        }
+  it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
+    cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+    addProjectToAllocate(0, 0, isMobile || isTablet);
 
-        cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
-        cy.get('[data-test=AllocationItem]').then(el => {
-          const { x } = el[0].getBoundingClientRect();
-          cy.get('[data-test=AllocationItem]')
-            .trigger('pointerdown')
-            .trigger('pointermove', { pageX: x - 20 })
-            .trigger('pointerup', { pageX: x - 40 });
-          cy.wait(500);
-          cy.get('[data-test=AllocationItem__removeButton]').should('be.visible');
-          cy.get('[data-test=AllocationItem__removeButton]').click();
-          cy.get('[data-test=AllocationItem__removeButton]').should('not.exist');
-          cy.get('[data-test=AllocationItem]').should('not.exist');
-          cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
-        });
-      });
+    const isNavbarVisible = isMobile || isTablet;
+    if (isNavbarVisible) {
+      visitWithLoader(
+        ROOT_ROUTES.allocation.absolute,
+        isNavbarVisible ? ROOT_ROUTES.allocation.absolute : ROOT_ROUTES.home.absolute,
+      );
+      cy.get('[data-test=AllocationView]').should('be.visible');
+    } else {
+      cy.get('[data-test=LayoutTopBar__allocationButton]').click();
+      cy.get('[data-test=AllocationDrawer]').should('be.visible');
+    }
 
-      it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
-        changeMainValueToCryptoToggle(!isMobile && !isTablet, 'crypto');
-        visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.get('[data-test=ProjectRewards__currentTotal__number]')
-          .first()
-          .invoke('text')
-          .should('eq', '0 ETH');
-      });
-
-      it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
-        changeMainValueToCryptoToggle(!isMobile && !isTablet, 'fiat');
-        visitWithLoader(ROOT_ROUTES.projects.absolute);
-
-        cy.get('[data-test=ProjectRewards__currentTotal__number]')
-          .first()
-          .invoke('text')
-          .should('eq', '$0.00');
-      });
-
-      it('every sorting option is clickable', () => {
-        // @ts-expect-error I don't want to define entire TFunction here.
-        const orderOptionsValues = ORDER_OPTIONS((key: string) => {}).map(element => element.value);
-        orderOptionsValues.forEach(orderOptionsValue => {
-          cy.get('[data-test=ProjectsView__InputSelect]').click();
-          // Wait for animation to show / hide menu & overflow.
-          cy.wait(durationOfTransitionMobile * 1000 * 2);
-          cy.get(`[data-test=ProjectsView__InputSelect__Option--${orderOptionsValue}]`).click();
-          // Wait for animation to show / hide menu & overflow.
-          cy.wait(durationOfTransitionMobile * 1000 * 2);
-        });
-      });
-
-      it('search field -- results should show project', () => {
-        /**
-         * We search for projects name having "a" letter inside and from Epoch 1.
-         *
-         * Initially we implemented getting here actual name from the current epoch list,
-         * but BE requires migrations to be done to have results available.
-         *
-         * These migrations do not happen automatically when epoch is changed,
-         * and epochs do not change in the BE at all actually.
-         *
-         * When we move time in E2E we move them in contracts only.
-         *
-         * Assumption here is that any project in current epoch will have "a" letter in their name,
-         * which is very likely.
-         */
-        cy.get('[data-test=ProjectsList__InputText]').clear().type(`a Epoch 1`);
-        cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
-      });
-
-      it('search field -- no results should show no results image & text', () => {
-        cy.get('[data-test=ProjectsList__InputText]')
-          .clear()
-          .type('there-is-no-way-there-will-ever-be-a-project-with-such-a-name');
-        cy.get('[data-test=ProjectsSearchResults__noSearchResults]').should('be.visible');
-        cy.get('[data-test=ProjectsSearchResults__noSearchResults__Img]').should('be.visible');
-      });
+    cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
+    cy.get('[data-test=AllocationItem]').then(el => {
+      const { x } = el[0].getBoundingClientRect();
+      cy.get('[data-test=AllocationItem]')
+        .trigger('pointerdown')
+        .trigger('pointermove', { pageX: x - 20 })
+        .trigger('pointerup', { pageX: x - 40 });
+      cy.wait(500);
+      cy.get('[data-test=AllocationItem__removeButton]').should('be.visible');
+      cy.get('[data-test=AllocationItem__removeButton]').click();
+      cy.get('[data-test=AllocationItem__removeButton]').should('not.exist');
+      cy.get('[data-test=AllocationItem]').should('not.exist');
+      cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
+  });
 
-    describe(`projects (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
-      let projectNames: string[] = [];
+  it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
+    changeMainValueToCryptoToggle(!isMobile && !isTablet, 'crypto');
+    visitWithLoader(ROOT_ROUTES.projects.absolute);
+    cy.get('[data-test=ProjectRewards__currentTotal__number]')
+      .first()
+      .invoke('text')
+      .should('eq', '0 ETH');
+  });
 
-      before(() => {
-        cy.clearLocalStorage();
+  it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
+    changeMainValueToCryptoToggle(!isMobile && !isTablet, 'fiat');
+    visitWithLoader(ROOT_ROUTES.projects.absolute);
 
-        /**
-         * Global Metamask setup done by Synpress is not always done.
-         * Since Synpress needs to have valid provider to fetch the data from contracts,
-         * setupMetamask is required in each test suite.
-         */
-        cy.setupMetamask();
-      });
+    cy.get('[data-test=ProjectRewards__currentTotal__number]')
+      .first()
+      .invoke('text')
+      .should('eq', '$0.00');
+  });
 
-      beforeEach(() => {
-        mockCoinPricesServer();
-        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-        visitWithLoader(ROOT_ROUTES.projects.absolute);
-        connectWallet({ isPatronModeEnabled: true });
-        checkProjectsViewLoaded();
-
-        /**
-         * This could be done in before hook, but CY wipes the state after each test
-         * (could be disabled, but creates other problems).
-         *
-         * Needs to be done for each test, because each has different default "random" order for projects.
-         */
-        projectNames = getNamesOfProjects();
-      });
-
-      after(() => {
-        cy.disconnectMetamaskWalletFromAllDapps();
-      });
-
-      it('button "add to allocate" is disabled', () => {
-        for (let i = 0; i < projectNames.length; i++) {
-          cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
-          checkProjectItemElements(i, projectNames[i], true);
-        }
-      });
+  it('every sorting option is clickable', () => {
+    // @ts-expect-error I don't want to define entire TFunction here.
+    const orderOptionsValues = ORDER_OPTIONS((key: string) => {}).map(element => element.value);
+    orderOptionsValues.forEach(orderOptionsValue => {
+      cy.get('[data-test=ProjectsView__InputSelect]').click();
+      // Wait for animation to show / hide menu & overflow.
+      cy.wait(durationOfTransitionMobile * 1000 * 2);
+      cy.get(`[data-test=ProjectsView__InputSelect__Option--${orderOptionsValue}]`).click();
+      // Wait for animation to show / hide menu & overflow.
+      cy.wait(durationOfTransitionMobile * 1000 * 2);
     });
-  },
-);
+  });
+
+  it('search field -- results should show project', () => {
+    /**
+     * We search for projects name having "a" letter inside and from Epoch 1.
+     *
+     * Initially we implemented getting here actual name from the current epoch list,
+     * but BE requires migrations to be done to have results available.
+     *
+     * These migrations do not happen automatically when epoch is changed,
+     * and epochs do not change in the BE at all actually.
+     *
+     * When we move time in E2E we move them in contracts only.
+     *
+     * Assumption here is that any project in current epoch will have "a" letter in their name,
+     * which is very likely.
+     */
+    cy.get('[data-test=ProjectsList__InputText]').clear().type(`a Epoch 1`);
+    cy.get('[data-test^=ProjectsSearchResults__ProjectsListItem]').should('have.length.gt', 1);
+  });
+
+  it('search field -- no results should show no results image & text', () => {
+    cy.get('[data-test=ProjectsList__InputText]')
+      .clear()
+      .type('there-is-no-way-there-will-ever-be-a-project-with-such-a-name');
+    cy.get('[data-test=ProjectsSearchResults__noSearchResults]').should('be.visible');
+    cy.get('[data-test=ProjectsSearchResults__noSearchResults__Img]').should('be.visible');
+  });
+});
+
+describe(`projects (patron mode):`, () => {
+  let projectNames: string[] = [];
+
+  before(() => {
+    cy.clearLocalStorage();
+
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
+
+  beforeEach(() => {
+    mockCoinPricesServer();
+    localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
+    visitWithLoader(ROOT_ROUTES.projects.absolute);
+    connectWallet({ isPatronModeEnabled: true });
+    checkProjectsViewLoaded();
+
+    /**
+     * This could be done in before hook, but CY wipes the state after each test
+     * (could be disabled, but creates other problems).
+     *
+     * Needs to be done for each test, because each has different default "random" order for projects.
+     */
+    projectNames = getNamesOfProjects();
+  });
+
+  after(() => {
+    cy.disconnectMetamaskWalletFromAllDapps();
+  });
+
+  it('button "add to allocate" is disabled', () => {
+    for (let i = 0; i < projectNames.length; i++) {
+      cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).scrollIntoView();
+      checkProjectItemElements(i, projectNames[i], true);
+    }
+  });
+});

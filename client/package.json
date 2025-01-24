@@ -31,9 +31,13 @@
     "sourcemaps:remove": "rimraf dist/**/*.map",
     "synpress:open": "TZ=Europe/Warsaw synpress open --configFile synpress.config.ts",
     "synpress:run": "yarn synpress:run:group-1 && yarn synpress:run:group-2 && yarn synpress:run:group-3",
-    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts'",
-    "synpress:run:group-2": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group2/*.cy.ts'",
-    "synpress:run:group-3": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group3/*.cy.ts'"
+    "synpress:run:mobile": "export VIEWPORT='--config viewportWidth=390,viewportHeight=844' && yarn synpress:run",
+    "synpress:run:tablet": "export VIEWPORT='--config viewportWidth=755,viewportHeight=1106' && yarn synpress:run",
+    "synpress:run:desktop": "export VIEWPORT='--config viewportWidth=1280,viewportHeight=720' && yarn synpress:run",
+    "synpress:run:large-desktop": "export VIEWPORT='--config viewportWidth=1920,viewportHeight=1080' && yarn synpress:run",
+    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts' $VIEWPORT",
+    "synpress:run:group-2": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group2/*.cy.ts' $VIEWPORT",
+    "synpress:run:group-3": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group3/*.cy.ts' $VIEWPORT"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
