@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import json
 from typing import Optional
 
@@ -22,14 +23,15 @@ def determine_antisybil_score(
     if score is None:
         return None
 
-    potential_score = _apply_gtc_staking_stamp_nullification(score.score, score)
+    now = datetime.now(timezone.utc)
+    potential_score = _apply_gtc_staking_stamp_nullification(score.score, score, now)
 
     if user_address.lower() in timeout_list:
         return AntisybilStatusDTO(
             score=0.0, expires_at=score.expires_at, is_on_timeout_list=True
         )
     elif user_address.lower() in GUEST_LIST and not _has_guest_stamp_applied_by_gp(
-        score
+        score, now
     ):
         return AntisybilStatusDTO(
             score=potential_score + 21.0,
@@ -46,23 +48,38 @@ def _get_provider(stamp) -> str:
     return stamp["credential"]["credentialSubject"]["provider"]
 
 
-def _has_guest_stamp_applied_by_gp(score: GPStamps) -> bool:
+def _is_not_expired(stamp, now: datetime) -> bool:
+    expiration_date = datetime.fromisoformat(stamp["credential"]["expirationDate"])
+    return expiration_date > now
+
+
+def _has_guest_stamp_applied_by_gp(score: GPStamps, now: datetime) -> bool:
     all_stamps = json.loads(score.stamps)
     stamps = [
         stamp
         for stamp in all_stamps
         if _get_provider(stamp) in GUEST_LIST_STAMP_PROVIDERS
+        and _is_not_expired(stamp, now)
     ]
     return len(stamps) > 0
 
 
-def _apply_gtc_staking_stamp_nullification(score: int, stamps: GPStamps) -> int:
+def _apply_gtc_staking_stamp_nullification(
+    score: int, stamps: GPStamps, now: datetime
+) -> int:
     """Take score and stamps as returned by Passport and remove score associated with GTC staking"""
 
-    delta = 0
     all_stamps = json.loads(stamps.stamps)
-    providers = [_get_provider(stamp) for stamp in all_stamps]
-    for provider in providers:
-        if provider in GTC_STAKING_STAMP_PROVIDERS_AND_SCORES.keys():
-            delta = delta + GTC_STAKING_STAMP_PROVIDERS_AND_SCORES[provider]
+    delta = 0
+
+    # Consider only stamps that are not expired
+    for stamp in all_stamps:
+        expiration_date = datetime.fromisoformat(stamp["credential"]["expirationDate"])
+
+        if expiration_date < now:
+            continue
+
+        provider = stamp["credential"]["credentialSubject"]["provider"]
+        delta += GTC_STAKING_STAMP_PROVIDERS_AND_SCORES.get(provider, 0)
+
     return score - delta
