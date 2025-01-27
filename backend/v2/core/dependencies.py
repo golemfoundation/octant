@@ -10,6 +10,7 @@ from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
 
 from app.shared.blockchain_types import ChainTypes
+from v2.core.logic import compare_blockchain_types
 
 
 class OctantSettings(BaseSettings):
@@ -110,9 +111,11 @@ class ChainSettings(OctantSettings):
         description="The chain id to use for the signature verification.",
     )
 
-    @property
-    def is_mainnet(self) -> bool:
-        return self.chain_id == ChainTypes.MAINNET
+    is_mainnet: bool = Field(
+        default_factory=lambda: compare_blockchain_types(
+            Field(validation_alias="chain_id"), ChainTypes.MAINNET
+        )
+    )
 
 
 def get_chain_settings() -> ChainSettings:

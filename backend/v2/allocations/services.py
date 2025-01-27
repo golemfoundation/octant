@@ -10,7 +10,7 @@ from v2.allocations.repositories import (
 from v2.allocations.schemas import AllocationWithUserUQScore, UserAllocationRequest
 from v2.allocations.validators import SignatureVerifier
 from v2.matched_rewards.services import MatchedRewardsEstimator
-from v2.project_rewards.capped_quadriatic import cqf_simulate_leverage
+from v2.project_rewards.capped_quadratic import cqf_simulate_leverage
 from v2.projects.contracts import ProjectsContracts
 from v2.uniqueness_quotients.dependencies import UQScoreGetter
 from v2.users.repositories import get_user_by_address

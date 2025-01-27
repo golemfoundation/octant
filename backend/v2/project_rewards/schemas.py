@@ -20,7 +20,7 @@ class EstimatedProjectRewardsResponseV1(OctantModel):
 
 class EstimatedBudgetByEpochRequestV1(OctantModel):
     number_of_epochs: int = Field(
-        ..., description="Number of epochs when GLM are locked", ge=0
+        ..., description="Number of epochs when GLM are locked", gt=0
     )
     glm_amount: BigInteger = Field(
         ..., description="Amount of estimated GLM locked in wei", ge=0
@@ -42,7 +42,7 @@ class EstimatedBudgetByDaysRequestV1(OctantModel):
 
     @property
     def lock_duration_sec(self) -> int:
-        return self.days * 86400  # 24hours * 60minutes * 60seconds
+        return self.days * 24 * 60 * 60
 
 
 class RewardsMerkleTreeLeafV1(OctantModel):

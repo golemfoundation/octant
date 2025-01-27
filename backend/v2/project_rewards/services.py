@@ -19,9 +19,9 @@ from v2.project_rewards.schemas import (
 )
 from v2.allocations.repositories import get_allocations_with_user_uqs
 from v2.matched_rewards.services import MatchedRewardsEstimator
-from v2.project_rewards.capped_quadriatic import (
-    CappedQuadriaticFunding,
-    capped_quadriatic_funding,
+from v2.project_rewards.capped_quadratic import (
+    CappedQuadraticFunding,
+    capped_quadratic_funding,
 )
 from v2.projects.contracts import ProjectsContracts
 
@@ -36,7 +36,7 @@ class ProjectRewardsEstimator:
     # Parameters
     epoch_number: int
 
-    async def get(self) -> CappedQuadriaticFunding:
+    async def get(self) -> CappedQuadraticFunding:
         # Gather all the necessary data for the calculation
         all_projects = await self.projects_contracts.get_project_addresses(
             self.epoch_number
@@ -49,7 +49,7 @@ class ProjectRewardsEstimator:
         )
 
         # Calculate using the Capped Quadratic Funding formula
-        return capped_quadriatic_funding(
+        return capped_quadratic_funding(
             project_addresses=all_projects,
             allocations=allocations,
             matched_rewards=matched_rewards,

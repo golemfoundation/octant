@@ -8,7 +8,7 @@ from app.exceptions import (
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from app.modules.staking.proceeds.core import estimate_staking_proceeds
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator, GetMatchedRewardsEstimatorInAW, get_matched_rewards_estimator
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.glms.dependencies import GetGLMBalanceOfDeposits
 from v2.project_rewards.user_events import (
@@ -79,7 +79,7 @@ async def get_user_budget_for_epoch_v1(
         epoch_number,
     )
 
-    if not budget:
+    if budget is None:
         response.status_code = status.HTTP_204_NO_CONTENT
         return None
 
@@ -120,7 +120,6 @@ async def get_user_budget_for_upcoming_epoch_v1(
 
     # BEGIN: Calculate pending snapshot
     eth_proceeds = estimate_staking_proceeds(epoch_end - epoch_start)
-
     # Based on all deposit events, calculate effective deposits
     events = await deposit_events_repository.get_all_users_events(
         epoch_number, epoch_start, epoch_end
@@ -173,8 +172,8 @@ async def get_epoch_budgets_v1(
 async def get_estimated_budget_v1(
     session: GetSession,
     epoch_contracts: GetEpochsContracts,
+    # Parameters
     glm_balance: GetGLMBalanceOfDeposits,
-    matched_rewards_estimator: GetMatchedRewardsEstimator,
     request: EstimatedBudgetByEpochRequestV1,
 ) -> UserBudgetWithMatchedFundingResponseV1:
     """
@@ -222,13 +221,19 @@ async def get_estimated_budget_v1(
 
     # Matching fund is calculated based on the last epoch's leverage
     epoch_number = await epoch_contracts.get_finalized_epoch()
-    rewards_leverage = await get_rewards_leverage_v1(
-        session, epoch_contracts, epoch_number, matched_rewards_estimator
-    )
+
+    # Calculate the leverage based on the last finalized epoch
+    finalized_snapshot = await get_finalized_epoch_snapshot(session, epoch_number)
+    if finalized_snapshot is None:
+        raise MissingSnapshot()
+    matched_rewards = int(finalized_snapshot.matched_rewards)
+
+    allocations_sum = await sum_allocations_by_epoch(session, epoch_number)
+    leverage = matched_rewards / allocations_sum if allocations_sum else 0
 
     return UserBudgetWithMatchedFundingResponseV1(
         budget=epochs_budget,
-        matched_funding=int(epochs_budget * rewards_leverage.leverage),
+        matched_funding=int(epochs_budget * leverage),
     )
 
 
@@ -347,8 +352,9 @@ async def get_estimated_budget_by_days_v1(
 async def get_rewards_leverage_v1(
     session: GetSession,
     epochs_contracts: GetEpochsContracts,
-    epoch_number: int,
     matched_rewards_estimator: GetMatchedRewardsEstimator,
+    # Parameters
+    epoch_number: int,
 ) -> RewardsLeverageResponseV1:
     """
     Returns leverage for a given epoch.
@@ -356,8 +362,6 @@ async def get_rewards_leverage_v1(
     For finalized epochs it returns the leverage based on the data from the finalized snapshot.
     For pending and finalizing epochs it returns the leverage based on the estimated matched rewards of pending epoch.
     """
-
-    print(f"Getting leverage for epoch {epoch_number}")
 
     epoch_state = await get_epoch_state(session, epochs_contracts, epoch_number)
 
