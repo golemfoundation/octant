@@ -111,13 +111,18 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   }, [isDesktop, pathname, isSettingsDrawerOpen]);
 
   useEffect(() => {
-    if (pathname !== ROOT_ROUTES.allocation.absolute || !isDesktop) {
+    if (
+      pathname !== ROOT_ROUTES.allocation.absolute ||
+      !isDesktop ||
+      isPatronMode ||
+      isProjectAdminMode
+    ) {
       return;
     }
 
     setIsAllocationDrawerOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDesktop, pathname]);
+  }, [isDesktop, pathname, isPatronMode, isProjectAdminMode]);
 
   useEffect(() => {
     if (isAllocationDrawerOpen && pathname !== ROOT_ROUTES.allocation.absolute && !isDesktop) {
@@ -238,7 +243,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           >
             <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
           </div>
-          {!isProjectAdminMode && !isPatronMode && (
+          {!(isProjectAdminMode || isPatronMode) && (
             <div
               className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
               data-test={`${dataTestRoot}__allocationButton`}
@@ -267,41 +272,43 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           >
             <Settings />
           </Drawer>
-          <Drawer
-            CustomCloseButton={
-              <div
-                ref={closeButtonRef}
-                className={cx(
-                  styles.customCloseButton,
-                  isCloseButtonExpanded && styles.isCloseButtonExpanded,
-                )}
-                data-test="AllocationDrawer__closeButton"
-                onClick={() => setIsAllocationDrawerOpen(false)}
-              >
-                <AnimatePresence>
-                  {isCloseButtonExpanded && (
-                    <motion.div
-                      animate={{ opacity: 1 }}
-                      className={styles.customCloseButtonText}
-                      exit={{ opacity: 0 }}
-                      initial={{ opacity: 0 }}
-                      transition={{ delay: 0.25 }}
-                    >
-                      {t('closeDrawerWithArrow')}
-                    </motion.div>
+          {!(isPatronMode || isProjectAdminMode) && (
+            <Drawer
+              CustomCloseButton={
+                <div
+                  ref={closeButtonRef}
+                  className={cx(
+                    styles.customCloseButton,
+                    isCloseButtonExpanded && styles.isCloseButtonExpanded,
                   )}
-                </AnimatePresence>
-                <Svg classNameSvg={styles.customCloseButtonSvg} img={cross} size={1} />
-              </div>
-            }
-            dataTest="AllocationDrawer"
-            isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
-            onClose={() => setIsAllocationDrawerOpen(false)}
-            onMouseLeave={() => setIsCloseButtonExpanded(false)}
-            onMouseOver={() => setIsCloseButtonExpanded(true)}
-          >
-            <Allocation />
-          </Drawer>
+                  data-test="AllocationDrawer__closeButton"
+                  onClick={() => setIsAllocationDrawerOpen(false)}
+                >
+                  <AnimatePresence>
+                    {isCloseButtonExpanded && (
+                      <motion.div
+                        animate={{ opacity: 1 }}
+                        className={styles.customCloseButtonText}
+                        exit={{ opacity: 0 }}
+                        initial={{ opacity: 0 }}
+                        transition={{ delay: 0.25 }}
+                      >
+                        {t('closeDrawerWithArrow')}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Svg classNameSvg={styles.customCloseButtonSvg} img={cross} size={1} />
+                </div>
+              }
+              dataTest="AllocationDrawer"
+              isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
+              onClose={() => setIsAllocationDrawerOpen(false)}
+              onMouseLeave={() => setIsCloseButtonExpanded(false)}
+              onMouseOver={() => setIsCloseButtonExpanded(true)}
+            >
+              <Allocation />
+            </Drawer>
+          )}
         </>
       )}
     </div>

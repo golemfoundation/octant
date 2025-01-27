@@ -30,6 +30,7 @@ Object.values(viewports).forEach(
       });
 
       beforeEach(() => {
+        cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
@@ -302,6 +303,24 @@ Object.values(viewports).forEach(
           cy.get(`[data-test=LayoutNavbar__Button--home]`).click({ force: true });
           cy.get('[data-test=HomeGridVideoBar]').should('be.visible');
         }
+      });
+
+      it('"Enable patron mode" option is visible only when wallet is connected', () => {
+        cy.wait(500);
+        cy.get('[data-test=SettingsPatronModeBox]').should('not.exist');
+
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=SettingsDrawer__closeButton]').click();
+          cy.wait(500);
+        }
+
+        connectWallet({ isPatronModeEnabled: false });
+        cy.wait(2000);
+
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=LayoutTopBar__settingsButton]').click();
+        }
+        cy.get('[data-test=SettingsPatronModeBox]').should('be.visible');
       });
     });
   },
