@@ -8,10 +8,6 @@ from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.modules.dto import OctantRewardsDTO
 from app.modules.octant_rewards.core import calculate_rewards
-from v2.project_rewards.user_events import (
-    calculate_effective_deposits,
-    simulate_user_events,
-)
 from v2.project_rewards.repositories import get_rewards_for_epoch
 from v2.project_rewards.schemas import (
     RewardsMerkleTreeLeafV1,
@@ -24,6 +20,60 @@ from v2.project_rewards.capped_quadratic import (
     capped_quadratic_funding,
 )
 from v2.projects.contracts import ProjectsContracts
+
+
+from typing import Dict
+
+from app.engine.user.effective_deposit import (
+    DepositEvent,
+    EventType,
+    UserDeposit,
+    UserEffectiveDepositPayload,
+)
+from app.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
+
+
+def calculate_effective_deposits(
+    start_sec: int,
+    end_sec: int,
+    events: Dict[str, list[DepositEvent]],
+) -> tuple[list[UserDeposit], int]:
+    # TODO: We can do this better and nicer
+    effective_deposit_calculator = DefaultWeightedAverageEffectiveDeposit()
+    payload = UserEffectiveDepositPayload(
+        epoch_start=start_sec,
+        epoch_end=end_sec,
+        lock_events_by_addr=events,
+    )
+
+    return effective_deposit_calculator.calculate_users_effective_deposits(payload)
+
+
+def simulate_user_events(
+    end_sec: int, lock_duration: int, remaining_sec: int, glm_amount: int
+) -> list[DepositEvent]:
+    user_events = [
+        DepositEvent(
+            user=ZERO_ADDRESS,
+            type=EventType.LOCK,
+            timestamp=end_sec - remaining_sec,
+            amount=glm_amount,
+            deposit_before=0,
+        )
+    ]
+    if lock_duration < remaining_sec:
+        user_events.append(
+            DepositEvent(
+                user=ZERO_ADDRESS,
+                type=EventType.UNLOCK,
+                timestamp=end_sec - remaining_sec + lock_duration,
+                amount=glm_amount,
+                deposit_before=glm_amount,
+            )
+        )
+    return user_events
 
 
 @dataclass
@@ -113,18 +163,16 @@ def calculate_octant_rewards(
     settings = OctantRewardsSettings()
     rewards = calculate_rewards(settings, eth_proceeds, total_effective_deposit)
 
-    # fmt: off
     return OctantRewardsDTO(
-        staking_proceeds            = eth_proceeds,
-        locked_ratio                = rewards.locked_ratio,
-        total_effective_deposit     = total_effective_deposit,
-        total_rewards               = rewards.total_rewards,
-        vanilla_individual_rewards  = rewards.vanilla_individual_rewards,
-        operational_cost            = rewards.operational_cost,
-        ppf                         = rewards.ppf_value,
-        community_fund              = rewards.community_fund,
+        staking_proceeds=eth_proceeds,
+        locked_ratio=rewards.locked_ratio,
+        total_effective_deposit=total_effective_deposit,
+        total_rewards=rewards.total_rewards,
+        vanilla_individual_rewards=rewards.vanilla_individual_rewards,
+        operational_cost=rewards.operational_cost,
+        ppf=rewards.ppf_value,
+        community_fund=rewards.community_fund,
     )
-    # fmt: on
 
 
 def simulate_user_effective_deposits(

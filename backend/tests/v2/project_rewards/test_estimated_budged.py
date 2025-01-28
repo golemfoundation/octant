@@ -1,14 +1,11 @@
-from unittest.mock import MagicMock
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from v2.matched_rewards.services import MatchedRewardsEstimator
 from v2.glms.dependencies import get_glm_balance_of_deposits
 from tests.v2.factories import FactoriesAggregator
 from tests.v2.fake_contracts.helpers import FakeEpochsContractDetails
-from tests.v2.fake_contracts.conftest import fake_epochs_contract_factory, FakeEpochsContractCallable
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimatorInAW, get_matched_rewards_estimator_only_in_aw
+from tests.v2.fake_contracts.conftest import FakeEpochsContractCallable
 from fastapi import FastAPI
 
 
@@ -36,17 +33,15 @@ async def test_estimates_budget_for_single_epoch(
             finalized_epoch=finalized_epoch,
             current_epoch=finalized_epoch + 1,
             pending_epoch=None,
-            future_epoch_props=(0, 0, epoch_start, epoch_duration)
+            future_epoch_props=(0, 0, epoch_start, epoch_duration),
         )
     )
 
     # Create pending epoch snapshot
-    pending_snapshot = await factories.pending_snapshots.create(
-        epoch=finalized_epoch
-    )
+    await factories.pending_snapshots.create(epoch=finalized_epoch)
 
     # finalize epoch snapshot
-    finalized_snapshot = await factories.finalized_snapshots.create(
+    await factories.finalized_snapshots.create(
         epoch=finalized_epoch,
     )
 
@@ -58,20 +53,16 @@ async def test_estimates_budget_for_single_epoch(
     # rewards_estimator_mock.get.return_value = leverage
     # fast_app.dependency_overrides[get_matched_rewards_estimator] = lambda: rewards_estimator_mock
 
-    request_data = {
-        "glm_amount": str(glm_amount),
-        "number_of_epochs": 1
-    }
+    request_data = {"glm_amount": str(glm_amount), "number_of_epochs": 1}
 
     async with fast_client as client:
         resp = await client.post("/rewards/estimated_budget", json=request_data)
-        
-        print("resp", resp.json())
+
         assert resp.status_code == 200
         response = resp.json()
         assert response["budget"] != "0"
         assert response["matchedFunding"] == "0"
-        
+
 
 @pytest.mark.asyncio
 async def test_estimates_budget_for_multiple_epochs(
@@ -101,10 +92,8 @@ async def test_estimates_budget_for_multiple_epochs(
         epoch=finalized_epoch,
     )
 
-        # Create pending epoch snapshot
-    pending_snapshot = await factories.pending_snapshots.create(
-        epoch=finalized_epoch
-    )
+    # Create pending epoch snapshot
+    await factories.pending_snapshots.create(epoch=finalized_epoch)
 
     # finalize epoch snapshot
     finalized_snapshot = await factories.finalized_snapshots.create(
@@ -115,7 +104,7 @@ async def test_estimates_budget_for_multiple_epochs(
     fake_epochs_contract_factory(
         FakeEpochsContractDetails(
             finalized_epoch=finalized_epoch,
-            future_epoch_props=(0, 0, epoch_start, epoch_duration)
+            future_epoch_props=(0, 0, epoch_start, epoch_duration),
         )
     )
 
@@ -127,52 +116,42 @@ async def test_estimates_budget_for_multiple_epochs(
     # rewards_estimator_mock.get.return_value = leverage
     # fast_app.dependency_overrides[GetMatchedRewardsEstimatorInAW] = lambda: rewards_estimator_mock
 
-    request_data = {
-        "glm_amount": str(glm_amount),
-        "number_of_epochs": number_of_epochs
-    }
+    request_data = {"glm_amount": str(glm_amount), "number_of_epochs": number_of_epochs}
 
     async with fast_client as client:
         resp = await client.post("/rewards/estimated_budget", json=request_data)
-        print("result", resp.json())
-        
+
         assert resp.status_code == 200
         result = resp.json()
-        
+
         assert result["budget"] != "0"
         assert result["matchedFunding"] != "0"
-        leverage = int(finalized_snapshot.matched_rewards) / (int(alice_allocation.amount) + int(bob_allocation.amount))
+        leverage = int(finalized_snapshot.matched_rewards) / (
+            int(alice_allocation.amount) + int(bob_allocation.amount)
+        )
         assert int(result["matchedFunding"]) == int(int(result["budget"]) * leverage)
 
         one_epoch_budget = int(result["budget"])
         one_epoch_matched_funding = int(result["matchedFunding"])
 
         # Test two epochs
-        request_data = {
-            "glm_amount": str(glm_amount),
-            "number_of_epochs": 2
-        }
+        request_data = {"glm_amount": str(glm_amount), "number_of_epochs": 2}
 
         resp = await client.post("/rewards/estimated_budget", json=request_data)
-        
+
         assert resp.status_code == 200
         result = resp.json()
-        print("result", result)
         assert int(result["budget"]) != "0"
         assert int(result["matchedFunding"]) != "0"
 
         assert int(result["budget"]) == one_epoch_budget * 2
         assert int(result["matchedFunding"]) == one_epoch_matched_funding * 2
 
-
         # Test zero GLM amount
-        request_data = {
-            "glm_amount": str(0),
-            "number_of_epochs": 1
-        }
+        request_data = {"glm_amount": str(0), "number_of_epochs": 1}
 
         resp = await client.post("/rewards/estimated_budget", json=request_data)
-        
+
         assert resp.status_code == 200
         result = resp.json()
         assert int(result["budget"]) == 0
@@ -186,22 +165,22 @@ async def test_validates_request_parameters(
     """Should validate request parameters"""
     async with fast_client as client:
         # Test negative GLM amount
-        resp = await client.post("/rewards/estimated_budget", json={
-            "glm_amount": "-1000",
-            "number_of_epochs": 1
-        })
+        resp = await client.post(
+            "/rewards/estimated_budget",
+            json={"glm_amount": "-1000", "number_of_epochs": 1},
+        )
         assert resp.status_code == 422
 
         # Test zero epochs
-        resp = await client.post("/rewards/estimated_budget", json={
-            "glm_amount": "1000",
-            "number_of_epochs": 0
-        })
+        resp = await client.post(
+            "/rewards/estimated_budget",
+            json={"glm_amount": "1000", "number_of_epochs": 0},
+        )
         assert resp.status_code == 422
 
         # Test negative epochs
-        resp = await client.post("/rewards/estimated_budget", json={
-            "glm_amount": "1000",
-            "number_of_epochs": -1
-        })
+        resp = await client.post(
+            "/rewards/estimated_budget",
+            json={"glm_amount": "1000", "number_of_epochs": -1},
+        )
         assert resp.status_code == 422

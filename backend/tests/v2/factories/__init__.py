@@ -7,6 +7,7 @@ from tests.v2.factories.users import UserFactorySet
 from tests.v2.factories.budgets import BudgetFactorySet
 from tests.v2.factories.pending_snapshots import PendingEpochSnapshotFactorySet
 from tests.v2.factories.finalized_snapshots import FinalizedEpochSnapshotFactorySet
+from tests.v2.factories.patrons import PatronModeEventFactorySet
 from dataclasses import dataclass
 
 
@@ -29,6 +30,7 @@ class FactoriesAggregator:
     budgets: BudgetFactorySet
     pending_snapshots: PendingEpochSnapshotFactorySet
     finalized_snapshots: FinalizedEpochSnapshotFactorySet
+    patrons: PatronModeEventFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -41,3 +43,4 @@ class FactoriesAggregator:
         self.budgets = BudgetFactorySet(fast_session)
         self.pending_snapshots = PendingEpochSnapshotFactorySet(fast_session)
         self.finalized_snapshots = FinalizedEpochSnapshotFactorySet(fast_session)
+        self.patrons = PatronModeEventFactorySet(fast_session)

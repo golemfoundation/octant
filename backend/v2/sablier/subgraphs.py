@@ -114,9 +114,9 @@ class SablierSubgraph:
             "tokenAddress": self.token_address,
         }
 
+        streams = await self._fetch_streams(query, variables)
         # Cache into file to avoid rate limiting
         if not os.path.exists("sablier_streams.json"):
-            streams = await self._fetch_streams(query, variables)
             with open("sablier_streams.json", "w") as f:
                 json.dump(streams, f)
         else:

@@ -5,7 +5,7 @@ from app.constants import (
     SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
     TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
 )
-from v2.deposits.repositories import DepositEventsRepository
+from v2.deposits.services import DepositEventsStore
 from v2.epochs.dependencies import GetEpochsSubgraph
 from v2.sablier.dependencies import GetSablierSubgraph
 from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings, Web3
@@ -31,14 +31,14 @@ def get_deposit_events_repository(
     epochs_subgraph: GetEpochsSubgraph,
     sublier_subgraph: GetSablierSubgraph,
     chain_settings: GetChainSettings,
-) -> DepositEventsRepository:
+) -> DepositEventsStore:
     sablier_unlock_grace_period = (
         SABLIER_UNLOCK_GRACE_PERIOD_24_HRS
         if chain_settings.is_mainnet
         else TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN
     )
 
-    return DepositEventsRepository(
+    return DepositEventsStore(
         session,
         epochs_subgraph,
         sublier_subgraph,
@@ -49,5 +49,5 @@ def get_deposit_events_repository(
 # Annotated dependencies
 GetDepositsContracts = Annotated[DepositsContracts, Depends(get_deposits_contracts)]
 GetDepositEventsRepository = Annotated[
-    DepositEventsRepository, Depends(get_deposit_events_repository)
+    DepositEventsStore, Depends(get_deposit_events_repository)
 ]

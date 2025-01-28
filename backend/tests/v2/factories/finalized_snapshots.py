@@ -1,7 +1,6 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import FinalizedEpochSnapshot
 from tests.v2.factories.base import FactorySetBase
@@ -17,7 +16,9 @@ class FinalizedEpochSnapshotFactory(AsyncSQLAlchemyFactory):
     matched_rewards = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
     patrons_rewards = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
     leftover = LazyAttribute(lambda _: str(random.randint(1, 100) * 10**18))
-    withdrawals_merkle_root = LazyAttribute(lambda _: "0x" + "".join(random.choices("0123456789abcdef", k=64)))
+    withdrawals_merkle_root = LazyAttribute(
+        lambda _: "0x" + "".join(random.choices("0123456789abcdef", k=64))
+    )
     total_withdrawals = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
 
 
@@ -63,4 +64,4 @@ class FinalizedEpochSnapshotFactorySet(FactorySetBase):
             factory_kwargs["total_withdrawals"] = str(total_withdrawals)
 
         snapshot = await FinalizedEpochSnapshotFactory.create(**factory_kwargs)
-        return snapshot 
+        return snapshot

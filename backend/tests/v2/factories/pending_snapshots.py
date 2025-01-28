@@ -1,7 +1,6 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import PendingEpochSnapshot
 from tests.v2.factories.base import FactorySetBase
@@ -15,10 +14,14 @@ class PendingEpochSnapshotFactory(AsyncSQLAlchemyFactory):
 
     epoch = None
     eth_proceeds = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
-    total_effective_deposit = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
+    total_effective_deposit = LazyAttribute(
+        lambda _: str(random.randint(1, 1000) * 10**18)
+    )
     locked_ratio = LazyAttribute(lambda _: str(random.randint(1, 100)))
     total_rewards = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
-    vanilla_individual_rewards = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
+    vanilla_individual_rewards = LazyAttribute(
+        lambda _: str(random.randint(1, 1000) * 10**18)
+    )
     operational_cost = LazyAttribute(lambda _: str(random.randint(1, 100) * 10**18))
     ppf = LazyAttribute(lambda _: str(random.randint(1, 100) * 10**18))
     community_fund = LazyAttribute(lambda _: str(random.randint(1, 100) * 10**18))
@@ -69,7 +72,9 @@ class PendingEpochSnapshotFactorySet(FactorySetBase):
         if total_rewards is not None:
             factory_kwargs["total_rewards"] = str(total_rewards)
         if vanilla_individual_rewards is not None:
-            factory_kwargs["vanilla_individual_rewards"] = str(vanilla_individual_rewards)
+            factory_kwargs["vanilla_individual_rewards"] = str(
+                vanilla_individual_rewards
+            )
         if operational_cost is not None:
             factory_kwargs["operational_cost"] = str(operational_cost)
         if ppf is not None:
@@ -78,4 +83,4 @@ class PendingEpochSnapshotFactorySet(FactorySetBase):
             factory_kwargs["community_fund"] = str(community_fund)
 
         snapshot = await PendingEpochSnapshotFactory.create(**factory_kwargs)
-        return snapshot 
+        return snapshot

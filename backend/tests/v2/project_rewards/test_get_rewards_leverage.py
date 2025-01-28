@@ -5,14 +5,12 @@ from unittest.mock import MagicMock
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.context.epoch_state import EpochState
-from app.exceptions import InvalidEpoch, MissingSnapshot, NotImplementedForGivenEpochState
+from app.exceptions import InvalidEpoch, NotImplementedForGivenEpochState
 from v2.matched_rewards.services import MatchedRewardsEstimator
 from tests.v2.factories import FactoriesAggregator
 from tests.v2.fake_contracts.helpers import FakeEpochsContractDetails
 from tests.v2.fake_contracts.conftest import FakeEpochsContractCallable
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator, get_matched_rewards_estimator
-from tests.v2.fake_contracts.conftest import fake_epochs_contract_factory, FakeEpochsContractCallable
+from v2.matched_rewards.dependencies import get_matched_rewards_estimator
 
 
 @pytest.mark.asyncio
@@ -36,7 +34,7 @@ async def test_returns_leverage_for_finalized_epoch(
     )
 
     # Create pending snapshot
-    pending_snapshot = await factories.pending_snapshots.create(
+    await factories.pending_snapshots.create(
         epoch=epoch_number,
     )
 
@@ -56,7 +54,9 @@ async def test_returns_leverage_for_finalized_epoch(
         resp = await client.get(f"rewards/leverage/{epoch_number}")
         assert resp.status_code == HTTPStatus.OK
         resp_leverage = int(resp.json()["leverage"])
-        expected_leverage = int(int(finalized_snapshot.matched_rewards) / int(alice_allocation.amount))
+        expected_leverage = int(
+            int(finalized_snapshot.matched_rewards) / int(alice_allocation.amount)
+        )
         assert resp_leverage == expected_leverage
 
 
@@ -83,7 +83,7 @@ async def test_returns_leverage_for_pending_epoch(
     )
 
     # Create pending snapshot
-    pending_snapshot = await factories.pending_snapshots.create(
+    await factories.pending_snapshots.create(
         epoch=epoch_number,
     )
 
@@ -97,7 +97,9 @@ async def test_returns_leverage_for_pending_epoch(
     # Mock rewards estimator
     rewards_estimator = MagicMock(spec=MatchedRewardsEstimator)
     rewards_estimator.get.return_value = estimated_rewards
-    fast_app.dependency_overrides[get_matched_rewards_estimator] = lambda: rewards_estimator
+    fast_app.dependency_overrides[
+        get_matched_rewards_estimator
+    ] = lambda: rewards_estimator
 
     async with fast_client as client:
         resp = await client.get(f"rewards/leverage/{epoch_number}")
@@ -126,12 +128,12 @@ async def test_returns_zero_leverage_when_no_allocations(
     )
 
     # Create pending snapshot
-    pending_snapshot = await factories.pending_snapshots.create(
+    await factories.pending_snapshots.create(
         epoch=epoch_number,
     )
 
     # Create finalized snapshot
-    finalized_snapshot = await factories.finalized_snapshots.create(
+    await factories.finalized_snapshots.create(
         epoch=epoch_number,
         matched_rewards=matched_rewards,
     )
@@ -188,4 +190,4 @@ async def test_raises_error_for_invalid_epoch_state(
     async with fast_client as client:
         resp = await client.get(f"rewards/leverage/{epoch_number}")
         assert resp.status_code == HTTPStatus.BAD_REQUEST
-        assert resp.json() == {"message": NotImplementedForGivenEpochState.description} 
+        assert resp.json() == {"message": NotImplementedForGivenEpochState.description}

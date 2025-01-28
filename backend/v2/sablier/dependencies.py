@@ -28,7 +28,7 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
     Based on the chain type (mainnet or sepolia), return the appropriate SablierSubgraph.
     """
 
-    sablier_settings = SablierSubgraphSettings()
+    sablier_settings = SablierSubgraphSettings()  # type: ignore[call-arg]
 
     if chain_settings.chain_id == ChainTypes.MAINNET:
         return SablierSubgraph(

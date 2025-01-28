@@ -8,12 +8,11 @@ from app.exceptions import (
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from app.modules.staking.proceeds.core import estimate_staking_proceeds
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator, GetMatchedRewardsEstimatorInAW, get_matched_rewards_estimator
+from v2.matched_rewards.dependencies import (
+    GetMatchedRewardsEstimator,
+)
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.glms.dependencies import GetGLMBalanceOfDeposits
-from v2.project_rewards.user_events import (
-    calculate_effective_deposits,
-)
 from v2.allocations.repositories import (
     get_donors_for_epoch,
     sum_allocations_by_epoch,
@@ -37,6 +36,7 @@ from v2.user_patron_mode.repositories import (
 )
 from v2.core.dependencies import GetCurrentTimestamp, GetSession
 from v2.project_rewards.services import (
+    calculate_effective_deposits,
     calculate_octant_rewards,
     calculate_user_budget,
     get_rewards_merkle_tree_for_epoch,

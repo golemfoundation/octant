@@ -106,8 +106,8 @@ def capped_quadratic_funding(
 
     return CappedQuadraticFunding(
         project_fundings=project_fundings,
-        amounts_total=amounts_total,
-        matched_total=matched_total,
+        allocations_total_for_all_projects=amounts_total,
+        matched_total_for_all_projects=matched_total,
     )
 
 

@@ -1,7 +1,6 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models import Budget, User
 from tests.v2.factories.base import FactorySetBase
@@ -16,7 +15,9 @@ class BudgetFactory(AsyncSQLAlchemyFactory):
 
     user_id = None
     epoch = None
-    budget = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))  # Random amount in wei
+    budget = LazyAttribute(
+        lambda _: str(random.randint(1, 1000) * 10**18)
+    )  # Random amount in wei
 
 
 class BudgetFactorySet(FactorySetBase):
@@ -51,4 +52,4 @@ class BudgetFactorySet(FactorySetBase):
             factory_kwargs["budget"] = str(amount)
 
         budget = await BudgetFactory.create(**factory_kwargs)
-        return budget 
+        return budget

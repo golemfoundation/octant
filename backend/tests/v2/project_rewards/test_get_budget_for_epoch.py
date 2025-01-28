@@ -58,7 +58,7 @@ async def test_returns_zero_budget_when_amount_is_zero(
 
     # Given: a user with zero budget
     alice = await factories.users.get_or_create_alice()
-    budget = await factories.budgets.create(user=alice, epoch=1, amount=0)
+    await factories.budgets.create(user=alice, epoch=1, amount=0)
 
     async with fast_client as client:
         resp = await client.get(f"rewards/budget/{alice.address}/epoch/1")
