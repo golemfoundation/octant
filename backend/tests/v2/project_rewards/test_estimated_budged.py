@@ -161,6 +161,7 @@ async def test_estimates_budget_for_multiple_epochs(
 @pytest.mark.asyncio
 async def test_validates_request_parameters(
     fast_client: AsyncClient,
+    fast_session: AsyncSession,
 ):
     """Should validate request parameters"""
     async with fast_client as client:
