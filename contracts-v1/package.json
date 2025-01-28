@@ -6,7 +6,7 @@
     "clean": "npx hardhat clean",
     "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile",
     "deploy:goerli": "npx hardhat --network goerli deploy --tags testnet",
-    "deploy:sepolia": "npx hardhat --network sepolia deploy --tags testnet --gasprice 1.5x",
+    "deploy:sepolia": "npx hardhat --network sepolia deploy --tags testnet --gasprice 10000000000",
     "deploy:localhost": "npx hardhat --network localhost deploy --tags local",
     "deploy:sepolia:epoch1": "npx hardhat --network sepolia deploy --tags epoch1",
     "deploy:mainnet:epoch1": "npx hardhat --network mainnet deploy --tags epoch1",
