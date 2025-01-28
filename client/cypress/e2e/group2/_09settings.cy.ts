@@ -24,9 +24,8 @@ chai.use(chaiColors);
 
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }) => {
-    describe(`[AW IS CLOSED] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
+    describe(`[AW IS OPEN] Settings: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
-        cy.clearLocalStorage();
         beforeSetup();
       });
 
@@ -39,6 +38,10 @@ Object.values(viewports).forEach(
           ROOT_ROUTES.settings.absolute,
           isLargeDesktop || isDesktop ? ROOT_ROUTES.home.absolute : ROOT_ROUTES.settings.absolute,
         );
+      });
+
+      afterEach(() => {
+        cy.clearLocalStorage();
       });
 
       if (isLargeDesktop || isDesktop) {
@@ -183,6 +186,53 @@ Object.values(viewports).forEach(
         });
       });
 
+      it('"Always show onboarding" option toggle works', () => {
+        connectWallet({ isPatronModeEnabled: false });
+        cy.wait(2500);
+
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=LayoutTopBar__settingsButton]').click({ force: true });
+        }
+
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check({ force: true });
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
+        cy.getAllLocalStorage().then(() => {
+          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
+        });
+        cy.reload();
+        cy.wait(500);
+        cy.get('[data-test=ModalOnboarding]').should('be.visible');
+        cy.get('[data-test=ModalOnboarding__Button]').click();
+
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=LayoutTopBar__settingsButton]').click();
+        } else {
+          cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
+        }
+
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('not.be.checked');
+        cy.getAllLocalStorage().then(() => {
+          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
+        });
+        cy.reload();
+        cy.get('[data-test=ModalOnboarding]').should('not.exist');
+
+        if (isLargeDesktop || isDesktop) {
+          cy.get('[data-test=LayoutTopBar__settingsButton]').click();
+        } else {
+          cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
+        }
+
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
+        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
+        cy.getAllLocalStorage().then(() => {
+          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
+        });
+
+        cy.disconnectMetamaskWalletFromAllDapps();
+      });
+
       it('"Choose a display currency" option works', () => {
         for (let i = 0; i < DISPLAY_CURRENCIES.length - 1; i++) {
           const displayCurrency = DISPLAY_CURRENCIES[i];
@@ -252,51 +302,6 @@ Object.values(viewports).forEach(
           cy.get(`[data-test=LayoutNavbar__Button--home]`).click({ force: true });
           cy.get('[data-test=HomeGridVideoBar]').should('be.visible');
         }
-      });
-
-      it('"Always show onboarding" option toggle works', () => {
-        connectWallet({ isPatronModeEnabled: false });
-
-        if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=LayoutTopBar__settingsButton]').click({ force: true });
-        }
-
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check({ force: true });
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
-        cy.getAllLocalStorage().then(() => {
-          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
-        });
-        cy.reload();
-        cy.get('[data-test=ModalOnboarding]').should('be.visible');
-        cy.get('[data-test=ModalOnboarding__Button]').click();
-
-        if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-        } else {
-          cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
-        }
-
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('not.be.checked');
-        cy.getAllLocalStorage().then(() => {
-          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
-        });
-        cy.reload();
-        cy.get('[data-test=ModalOnboarding]').should('not.exist');
-
-        if (isLargeDesktop || isDesktop) {
-          cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-        } else {
-          cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
-        }
-
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click({ force: true });
-        cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
-        cy.getAllLocalStorage().then(() => {
-          expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
-        });
-
-        cy.disconnectMetamaskWalletFromAllDapps();
       });
     });
   },

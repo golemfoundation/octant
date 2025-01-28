@@ -41,6 +41,7 @@ const durationOfTransition = 0.1;
 
 const Modal: FC<ModalProps> = ({
   Image,
+  id,
   bodyClassName,
   children,
   className,
@@ -108,6 +109,7 @@ const Modal: FC<ModalProps> = ({
           )}
           data-test={dataTest}
           exit="showHide"
+          id={id}
           initial="showHide"
           onAnimationComplete={definition => {
             if (definition === 'showHide') {

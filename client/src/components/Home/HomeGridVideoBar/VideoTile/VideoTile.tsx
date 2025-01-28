@@ -81,6 +81,7 @@ const VideoTile = ({ title, url, isDragging, style }, ref) => {
         ref(el);
       }}
       className={cx(styles.root, isInView && styles.isInView)}
+      data-test="VideoTile"
       style={style}
     >
       <div
@@ -114,14 +115,16 @@ const VideoTile = ({ title, url, isDragging, style }, ref) => {
               <motion.div
                 animate={{ opacity: 1 }}
                 className={cx(styles.videoOverlay, styles.isOpen)}
+                data-test="VideoTile__videoBox__overlay"
                 initial={{ opacity: 0 }}
                 onClick={() => setIsVideoBoxOpen(false)}
               />
             )}
-            <div className={styles.videoBox}>
+            <div className={styles.videoBox} data-test="VideoTile__videoBox">
               {!isMobile && (
                 <motion.div
                   className={styles.closeButton}
+                  data-test="VideoTile__videoBox__closeButton"
                   initial={{ width: '4rem' }}
                   onClick={() => {
                     setIsVideoBoxOpen(false);
@@ -138,6 +141,7 @@ const VideoTile = ({ title, url, isDragging, style }, ref) => {
                       <motion.div
                         animate={{ opacity: 1 }}
                         className={styles.closeButtonText}
+                        data-test="VideoTile__videoBox__closeButtonText"
                         exit={{ opacity: 0 }}
                         initial={{ opacity: 0 }}
                       >
@@ -145,7 +149,7 @@ const VideoTile = ({ title, url, isDragging, style }, ref) => {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  <Svg img={cross} size={1} />
+                  <Svg dataTest="VideoTile__videoBox__closeButton__Svg" img={cross} size={1} />
                 </motion.div>
               )}
               <iframe
@@ -153,6 +157,7 @@ const VideoTile = ({ title, url, isDragging, style }, ref) => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;"
                 allowFullScreen
                 className={styles.video}
+                data-test="VideoTile__videoBox__videoIframe"
                 onLoad={() => {
                   playerRef.current = new Player(videoIframeRef.current as HTMLIFrameElement);
                   if (isMobile) {

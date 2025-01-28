@@ -40,7 +40,7 @@ const getRewards = ({
   rewardsEstimated: ResponseRewards | undefined;
   rewardsPast: ResponseRewards | undefined;
 }): ResponseRewards['rewards'] | undefined => {
-  if (epoch === currentEpoch && isDecisionWindowOpen) {
+  if (epoch === currentEpoch! - 1 && isDecisionWindowOpen) {
     return rewardsEstimated?.rewards;
   }
   if (epoch !== currentEpoch) {

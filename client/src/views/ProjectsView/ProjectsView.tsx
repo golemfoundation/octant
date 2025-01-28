@@ -212,7 +212,7 @@ const ProjectsView = (): ReactElement => {
 
   return (
     <div className={styles.root} data-test="ProjectsView">
-      <ViewTitle className={styles.viewTitle}>
+      <ViewTitle className={styles.viewTitle} dataTest="ProjectsView__ViewTitle">
         {t('viewTitle', {
           epochNumber:
             isDecisionWindowOpen ||
@@ -235,6 +235,7 @@ const ProjectsView = (): ReactElement => {
         />
         <InputSelect
           className={styles.inputOrder}
+          dataTest="ProjectsView__InputSelect"
           onChange={option => setOrderOption(option!.value as OrderOption)}
           // TODO OCT-1952: settle on when & how randomised order should work.
           options={
