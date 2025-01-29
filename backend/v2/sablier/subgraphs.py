@@ -55,14 +55,11 @@ class SablierSubgraph:
         while has_more:
             variables.update({"limit": limit, "skip": skip})
 
-            # logger.debug(f"[Sablier Subgraph] Querying streams with skip: {skip}")
             result = await self.gql_client.execute_async(
                 gql(query), variable_values=variables
             )
 
             streams = result.get("streams", [])
-
-            # app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
 
             for stream in streams:
                 actions = stream.get("actions", [])
@@ -114,12 +111,4 @@ class SablierSubgraph:
             "tokenAddress": self.token_address,
         }
 
-        streams = await self._fetch_streams(query, variables)
-        # Cache into file to avoid rate limiting
-        if not os.path.exists("sablier_streams.json"):
-            with open("sablier_streams.json", "w") as f:
-                json.dump(streams, f)
-        else:
-            with open("sablier_streams.json", "r") as f:
-                streams = json.load(f)
-        return streams
+        return await self._fetch_streams(query, variables)
