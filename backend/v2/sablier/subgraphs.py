@@ -1,6 +1,4 @@
 import logging
-import os
-from flask import json
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.client import log as requests_logger
