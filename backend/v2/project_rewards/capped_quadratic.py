@@ -10,8 +10,8 @@ from v2.project_rewards.schemas import ProjectFundingSummaryV1
 
 class CappedQuadraticFunding(NamedTuple):
     project_fundings: dict[Address, ProjectFundingSummaryV1]
-    allocations_total_for_all_projects: Decimal  # Sum of all allocation amounts for all projects
-    matched_total_for_all_projects: Decimal  # Sum of all matched rewards for all projects
+    allocations_total_for_all_projects: Decimal
+    matched_total_for_all_projects: Decimal
 
 
 MR_FUNDING_CAP_PERCENT = Decimal("0.2")
