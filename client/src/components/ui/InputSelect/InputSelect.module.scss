@@ -38,7 +38,6 @@
   }
 
   .chevron {
-    pointer-events: none;
     margin: 0 1.8rem 0 1rem;
     width: 3.6rem;
 
@@ -48,10 +47,6 @@
           stroke: $color-octant-grey5;
         }
       }
-    }
-
-    &:not(.isMenuOpen) {
-      pointer-events: none;
     }
 
     &.isMenuOpen {
