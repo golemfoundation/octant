@@ -8,7 +8,12 @@ from pydantic import field_validator
 
 from app.exceptions import InvalidEpoch
 from app.modules.staking.proceeds.core import ESTIMATED_STAKING_REWARDS_RATE
-from v2.core.dependencies import OctantSettings, Web3
+from app.context.epoch_state import EpochState
+from v2.epoch_snapshots.repositories import (
+    get_finalized_epoch_snapshot,
+    get_pending_epoch_snapshot,
+)
+from v2.core.dependencies import GetSession, OctantSettings, Web3
 from v2.core.exceptions import AllocationWindowClosed
 from v2.core.transformers import transform_to_checksum_address
 from v2.core.types import Address
@@ -79,6 +84,34 @@ async def get_rewards_rate(epoch_number: int) -> float:
         raise InvalidEpoch()
 
     return ESTIMATED_STAKING_REWARDS_RATE
+
+
+async def get_epoch_state(
+    session: GetSession, epochs_contracts: GetEpochsContracts, epoch_number: int
+) -> EpochState:
+    current_epoch_number = await epochs_contracts.get_current_epoch()
+    if epoch_number > current_epoch_number:
+        return EpochState.FUTURE
+
+    if epoch_number == current_epoch_number:
+        return EpochState.CURRENT
+
+    pending_epoch_number = await epochs_contracts.get_pending_epoch()
+    pending_snapshot = await get_pending_epoch_snapshot(session, epoch_number)
+    if epoch_number == pending_epoch_number:
+        if pending_snapshot is None:
+            return EpochState.PRE_PENDING
+        else:
+            return EpochState.PENDING
+
+    if pending_snapshot is None:
+        raise InvalidEpoch()
+
+    finalized_snapshot = await get_finalized_epoch_snapshot(session, epoch_number)
+    if finalized_snapshot is None:
+        return EpochState.FINALIZING
+    else:
+        return EpochState.FINALIZED
 
 
 GetEpochsSubgraph = Annotated[

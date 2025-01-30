@@ -97,13 +97,20 @@ async def get_projects_metadata_getter(
 
 
 async def get_projects_details_getter(
-    session: GetSession, epochs: EpochsParameter, search_phrases: SearchPhrasesParameter
+    session: GetSession,
+    epochs: EpochsParameter,
+    search_phrases_param: SearchPhrasesParameter,
 ) -> ProjectsDetailsGetter:
-    epoch_numbers, search_phrases = process_search_params(epochs, search_phrases)
+    epoch_numbers, search_phrases = process_search_params(epochs, search_phrases_param)
     return ProjectsDetailsGetter(
         session=session, epoch_numbers=epoch_numbers, search_phrases=search_phrases
     )
 
+
+GetProjectsAllocationThresholdGetter = Annotated[
+    ProjectsAllocationThresholdGetter,
+    Depends(get_projects_allocation_threshold_getter),
+]
 
 GetProjectsContracts = Annotated[
     ProjectsContracts,
