@@ -263,7 +263,9 @@ Object.values(viewports).forEach(
             cy.get(`[data-test=LayoutNavbar__Button--settings]`).click();
             checkLocationWithLoader(ROOT_ROUTES.settings.absolute);
           }
+          cy.wait(500);
           cy.get('[data-test=SettingsCurrencyBox__InputSelect--currency]').click();
+          cy.wait(500);
           cy.get(
             `[data-test=SettingsCurrencyBox__InputSelect--currency__Option--${nextDisplayCurrency}]`,
           ).click();
