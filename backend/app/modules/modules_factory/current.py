@@ -53,11 +53,15 @@ from app.constants import (
     TIMEOUT_LIST,
     SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
     TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+    GUEST_LIST_NOT_MAINNET,
 )
 from app.modules.projects.details.service.projects_details import (
     StaticProjectsDetailsService,
 )
 from app.modules.user.winnings.service.raffle import RaffleWinningsService
+from migrations.versions.e27e85614385_bump_uq_score_for_addresses_with_ import (
+    GUEST_LIST,
+)
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
@@ -120,7 +124,10 @@ class CurrentServices(Model):
         user_withdrawals = FinalizedWithdrawals()
 
         timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
-        user_antisybil_service = GitcoinPassportAntisybil(timeout_list=timeout_list)
+        guest_list = GUEST_LIST if is_mainnet else GUEST_LIST_NOT_MAINNET
+        user_antisybil_service = GitcoinPassportAntisybil(
+            timeout_list=timeout_list, guest_list=guest_list
+        )
 
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
@@ -154,7 +161,9 @@ class CurrentServices(Model):
         )
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
+            antisybil=GitcoinPassportAntisybil(
+                timeout_list=timeout_list, guest_list=guest_list
+            ),
             budgets=user_budgets,
             uq_threshold=uq_threshold,
         )

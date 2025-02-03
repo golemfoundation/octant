@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 
 from app import exceptions, db
+from app.constants import GUEST_LIST
 from app.exceptions import UserNotFound
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
@@ -24,7 +25,7 @@ def test_antisybil_service(
 ):
     context = get_context(4)
 
-    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST)
+    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST, guest_list=GUEST_LIST)
 
     unknown_address = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
     try:
@@ -54,7 +55,7 @@ def test_gtc_staking_stamp_nullification(
     mock_users_db,
 ):
     context = get_context(4)
-    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST)
+    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST, guest_list=GUEST_LIST)
     _, _, carol = mock_users_db
     score, expires_at, stamps = service.fetch_antisybil_status(context, carol.address)
     service.update_antisybil_status(context, carol.address, score, expires_at, stamps)
@@ -68,13 +69,14 @@ def test_guest_stamp_score_bump_for_both_gp_and_octant_side_application(
     patch_gitcoin_passport_issue_address_for_scoring,
     patch_gitcoin_passport_fetch_score,
     patch_gitcoin_passport_fetch_stamps,
-    patch_guest_list_for_scoring,
     mock_users_db,
 ):
     context = get_context(4)
 
-    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST)
     alice, bob, _ = mock_users_db
+    service = GitcoinPassportAntisybil(
+        timeout_list=TIMEOUT_LIST, guest_list={alice.address.lower()}
+    )
 
     score, expires_at, stamps = service.fetch_antisybil_status(context, bob.address)
 
@@ -111,7 +113,7 @@ def test_antisybil_cant_be_update_when_address_is_delegated(alice, bob):
     database.score_delegation.save_delegation(primary, secondary, both)
     db.session.commit()
 
-    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST)
+    service = GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST, guest_list=GUEST_LIST)
 
     with pytest.raises(exceptions.AddressAlreadyDelegated):
         service.update_antisybil_status(
@@ -131,7 +133,8 @@ def test_antisybil_score_is_nullified_when_address_on_timeout_list(
     context = get_context(4)
 
     service = GitcoinPassportAntisybil(
-        timeout_list={"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"}
+        timeout_list={"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"},
+        guest_list=GUEST_LIST,
     )
     alice, _, _ = mock_users_db
     timeout_address = alice.address
@@ -153,7 +156,8 @@ def test_fetch_antisybil_return_0_when_address_on_timeout_list(
     context = get_context(4)
 
     service = GitcoinPassportAntisybil(
-        timeout_list={"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}
+        timeout_list={"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},
+        guest_list=GUEST_LIST,
     )
     alice, _, _ = mock_users_db
     timeout_address = alice.address

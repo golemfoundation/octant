@@ -18,6 +18,7 @@
   flex: 1;
   cursor: pointer;
   justify-content: space-between;
+  user-select: none; // Selecting text in selected option sometimes messes with clicking.
 
   .labelWrapper {
     display: flex;
@@ -106,7 +107,7 @@
 }
 
 .overlay {
-  position: absolute;
+  @include overlay(100%, 100%, false);
 
   @media #{$tablet-down} {
     &.isVariantFullWidthOnMobile {

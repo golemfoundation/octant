@@ -48,29 +48,6 @@ const InputSelect: FC<InputSelectProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => () => setDocumentOverflowModal(false, durationOfTransition * 1000), []);
 
-  useEffect(() => {
-    if (!isMenuOpen || !isDesktop) {
-      return;
-    }
-
-    const listener = e => {
-      if (
-        ref.current &&
-        refChevron.current &&
-        ref.current.contains(e.target) &&
-        !refChevron.current.contains(e.target)
-      ) {
-        return;
-      }
-
-      setIsMenuOpen(false);
-    };
-
-    document.addEventListener('click', listener);
-
-    return () => document.removeEventListener('click', listener);
-  }, [isMenuOpen, isDesktop]);
-
   const isVariantFullWidthOnMobile = ['overselect', 'belowselect'].includes(variant);
 
   return (

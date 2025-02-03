@@ -1,18 +1,17 @@
-from datetime import datetime, timezone
 import json
+from datetime import datetime, timezone
 from typing import Optional
 
-from app.modules.user.antisybil.dto import AntisybilStatusDTO
 from app.constants import (
-    GUEST_LIST,
     GUEST_LIST_STAMP_PROVIDERS,
     GTC_STAKING_STAMP_PROVIDERS_AND_SCORES,
 )
 from app.infrastructure.database.models import GPStamps
+from app.modules.user.antisybil.dto import AntisybilStatusDTO
 
 
 def determine_antisybil_score(
-    score: GPStamps, user_address: str, timeout_list: set
+    score: GPStamps, user_address: str, timeout_list: set, guest_list: set
 ) -> Optional[AntisybilStatusDTO]:
     """
     Determine the antisybil score for a user.
@@ -30,7 +29,7 @@ def determine_antisybil_score(
         return AntisybilStatusDTO(
             score=0.0, expires_at=score.expires_at, is_on_timeout_list=True
         )
-    elif user_address.lower() in GUEST_LIST and not _has_guest_stamp_applied_by_gp(
+    elif user_address.lower() in guest_list and not _has_guest_stamp_applied_by_gp(
         score, now
     ):
         return AntisybilStatusDTO(
