@@ -99,6 +99,7 @@
 .newsletterAndLanguageSelector {
   width: 100%;
   display: flex;
+  flex-direction: row-reverse;
   align-items: flex-end;
 }
 
