@@ -24,6 +24,7 @@ from app.pydantic import Model
 
 class GitcoinPassportAntisybil(Model):
     timeout_list: set
+    guest_list: set
 
     def get_antisybil_status(
         self, _: Context, user_address: str
@@ -37,7 +38,9 @@ class GitcoinPassportAntisybil(Model):
             )
             raise ex
 
-        return determine_antisybil_score(score, user_address, self.timeout_list)
+        return determine_antisybil_score(
+            score, user_address, self.timeout_list, self.guest_list
+        )
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str

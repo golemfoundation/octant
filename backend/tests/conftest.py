@@ -1145,15 +1145,6 @@ def patch_gitcoin_passport_fetch_stamps(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_guest_list_for_scoring(monkeypatch, alice):
-    MOCK_GUEST_LIST = [alice.address.lower()]
-    monkeypatch.setattr(
-        "app.modules.user.antisybil.core.GUEST_LIST",
-        MOCK_GUEST_LIST,
-    )
-
-
-@pytest.fixture(scope="function")
 def patch_etherscan_transactions_api(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_transactions",

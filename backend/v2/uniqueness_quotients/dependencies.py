@@ -7,6 +7,7 @@ from app.constants import (
     TIMEOUT_LIST_NOT_MAINNET,
     UQ_THRESHOLD_MAINNET,
     UQ_THRESHOLD_NOT_MAINNET,
+    GUEST_LIST_NOT_MAINNET,
 )
 from app.shared.blockchain_types import ChainTypes
 from fastapi import Depends
@@ -52,7 +53,11 @@ def get_uq_score_getter(
 
     address_set_validator = TypeAdapter(set[Address])
     timeout_set = address_set_validator.validate_python(timeout_list)
-    guest_set = address_set_validator.validate_python(GUEST_LIST)
+
+    if is_mainnet:
+        guest_set = address_set_validator.validate_python(GUEST_LIST)
+    else:
+        guest_set = address_set_validator.validate_python(GUEST_LIST_NOT_MAINNET)
 
     return UQScoreGetter(
         session=session,
