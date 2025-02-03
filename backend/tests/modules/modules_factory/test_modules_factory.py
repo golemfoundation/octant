@@ -1,4 +1,4 @@
-from app.constants import UQ_THRESHOLD_MAINNET, TIMEOUT_LIST
+from app.constants import UQ_THRESHOLD_MAINNET, TIMEOUT_LIST, GUEST_LIST
 from app.modules.dto import SignatureOpType
 from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.current import CurrentServices
@@ -154,7 +154,9 @@ def test_pending_services_factory():
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(timeout_list=TIMEOUT_LIST),
+        antisybil=GitcoinPassportAntisybil(
+            timeout_list=TIMEOUT_LIST, guest_list=GUEST_LIST
+        ),
         budgets=saved_user_budgets,
         uq_threshold=UQ_THRESHOLD_MAINNET,
     )
