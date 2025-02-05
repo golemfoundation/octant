@@ -4,6 +4,8 @@ from eth_utils import to_checksum_address
 
 # Epoch to use
 epoch_number = 6
+# Multiplier for ETH allocations / Patron donations:
+eth_donation_amount_multiplier = 2000
 # Dictionary to store address -> totalPoints mapping
 address_points = {}
 # Dictionary to store address -> total allocation amount (in WEI)
@@ -71,10 +73,10 @@ with open('leaderboard-guild.csv', mode='r') as csvfile:
         address_allocations_eth[checksum_address] = capped_eth_amount
 
         # Calculate final points
-        # total = total_points + (eth_value * 2000) if total_points > 0 and eth_value > 0
+        # total = total_points + (eth_value * eth_donation_amount_multiplier) if total_points > 0 and eth_value > 0
         # total = 0 otherwise
         if total_points > 0 and capped_eth_amount > 0:
-            final_total = total_points + (capped_eth_amount * 2000)
+            final_total = total_points + (capped_eth_amount * eth_donation_amount_multiplier)
         else:
             final_total = 0
 
