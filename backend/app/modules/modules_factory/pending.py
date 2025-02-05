@@ -5,6 +5,8 @@ from app.constants import (
     UQ_THRESHOLD_NOT_MAINNET,
     TIMEOUT_LIST,
     TIMEOUT_LIST_NOT_MAINNET,
+    GUEST_LIST_NOT_MAINNET,
+    GUEST_LIST,
 )
 from app.modules.dto import SignatureOpType
 from app.modules.modules_factory.protocols import (
@@ -109,8 +111,11 @@ class PendingServices(Model):
         is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
+        guest_list = GUEST_LIST if is_mainnet else GUEST_LIST_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
+            antisybil=GitcoinPassportAntisybil(
+                timeout_list=timeout_list, guest_list=guest_list
+            ),
             budgets=saved_user_budgets,
             uq_threshold=uq_threshold,
         )

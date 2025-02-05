@@ -2,6 +2,15 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST_NOT_MAINNET,
+    TIMEOUT_LIST,
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+    GUEST_LIST_NOT_MAINNET,
+)
 from app.modules.dto import SignatureOpType
 from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.protocols import (
@@ -23,6 +32,9 @@ from app.modules.multisig_signatures.service.offchain import OffchainMultisigSig
 from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
 )
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
+)
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )
@@ -35,30 +47,20 @@ from app.modules.staking.proceeds.service.estimated import EstimatedStakingProce
 from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.sablier_streams.service.sablier_streams import UserSablierStreamsService
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
-from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import (
-    UQ_THRESHOLD_MAINNET,
-    UQ_THRESHOLD_NOT_MAINNET,
-    TIMEOUT_LIST_NOT_MAINNET,
-    TIMEOUT_LIST,
-    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
-    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
-)
-from app.modules.projects.details.service.projects_details import (
-    StaticProjectsDetailsService,
-)
-from app.modules.user.sablier_streams.service.sablier_streams import (
-    UserSablierStreamsService,
+from migrations.versions.e27e85614385_bump_uq_score_for_addresses_with_ import (
+    GUEST_LIST,
 )
 
 
@@ -122,7 +124,10 @@ class CurrentServices(Model):
         user_withdrawals = FinalizedWithdrawals()
 
         timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
-        user_antisybil_service = GitcoinPassportAntisybil(timeout_list=timeout_list)
+        guest_list = GUEST_LIST if is_mainnet else GUEST_LIST_NOT_MAINNET
+        user_antisybil_service = GitcoinPassportAntisybil(
+            timeout_list=timeout_list, guest_list=guest_list
+        )
 
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
@@ -156,7 +161,9 @@ class CurrentServices(Model):
         )
         uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(timeout_list=timeout_list),
+            antisybil=GitcoinPassportAntisybil(
+                timeout_list=timeout_list, guest_list=guest_list
+            ),
             budgets=user_budgets,
             uq_threshold=uq_threshold,
         )
