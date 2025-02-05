@@ -23,7 +23,7 @@ if patrons_response.status_code == 200:
     patrons = [to_checksum_address(addr) for addr in patrons_response.json().get('patrons', [])]
 
 # Read the CSV file and convert addresses to checksum format
-with open('raffle-weights/leaderboard-guild.csv', mode='r') as csvfile:
+with open('leaderboard-guild.csv', mode='r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in list(reader):
         original_address = row['address']
@@ -83,7 +83,7 @@ with open('raffle-weights/leaderboard-guild.csv', mode='r') as csvfile:
         print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Patron: {checksum_address in patrons}")
 
 # Write results to new CSV file (only non-zero weights)
-output_file = 'raffle-weights/raffle_weights_output.csv'
+output_file = 'raffle_weights_output.csv'
 with open(output_file, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     # Write header
