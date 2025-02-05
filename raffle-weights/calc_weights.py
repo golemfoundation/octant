@@ -16,14 +16,14 @@ final_points = {}
 WEI_TO_ETH = 1_000_000_000_000_000_000  # 1 ETH = 1,000,000,000,000,000,000 WEI
 MAX_ETH = 0.1  # Maximum ETH cap
 
-# Get list of donors for epoch 5
+# Get list of patrons for epoch
 patrons_response = requests.get(f"https://backend.mainnet.octant.app/flask/user/patrons/{epoch_number}")
-donors = []
+patrons = []
 if patrons_response.status_code == 200:
-    donors = [to_checksum_address(addr) for addr in patrons_response.json().get('patrons', [])]
+    patrons = [to_checksum_address(addr) for addr in patrons_response.json().get('patrons', [])]
 
 # Read the CSV file and convert addresses to checksum format
-with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
+with open('raffle-weights/leaderboard-guild.csv', mode='r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in list(reader):
         original_address = row['address']
@@ -45,7 +45,7 @@ with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
 
         if response.status_code == 200:
             allocations = response.json().get('allocations', [])
-            if not allocations and checksum_address in donors:
+            if not allocations and checksum_address in patrons:
                 # This is a donor with no allocations, get their budget
                 budget_url = f"https://backend.mainnet.octant.app/flask/rewards/budget/{checksum_address}/epoch/{epoch_number}"
                 budget_response = requests.get(budget_url)
@@ -80,7 +80,7 @@ with open('raffle-weights/leaderboard-62254-33064.csv', mode='r') as csvfile:
 
         final_points[checksum_address] = final_total
 
-        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Donor: {checksum_address in donors}")
+        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Donor: {checksum_address in patrons}")
 
 # Write results to new CSV file (only non-zero weights)
 output_file = 'raffle-weights/raffle_weights_output.csv'
