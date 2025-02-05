@@ -614,11 +614,8 @@ class Client:
         return json.loads(rv.text), rv.status_code
 
     def pending_snapshot(self):
-        rv = self._flask_client.post("/snapshots/pending")
-        current_app.logger.debug(
-            f"Request to /snapshots/pending [{rv.status_code}] returned text {rv.text}"
-        )
-        return json.loads(rv.text)
+        rv = self._flask_client.post("/snapshots/pending").text
+        return json.loads(rv)
 
     def pending_snapshot_simulate(self):
         rv = self._flask_client.get("/snapshots/pending/simulate")

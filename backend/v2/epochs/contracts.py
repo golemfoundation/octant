@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Dict, Optional
 
 from v2.core.contracts import SmartContract
 from web3 import exceptions
@@ -49,7 +49,7 @@ class EpochsContract(SmartContract):
         logging.debug("[Epochs contract] Checking epoch duration")
         return await self.contract.functions.getEpochDuration().call()
 
-    async def get_future_epoch_props(self) -> list[int]:
+    async def get_future_epoch_props(self) -> Dict:
         logging.debug("[Epochs contract] Getting epoch props index")
         index = await self.contract.functions.epochPropsIndex().call()
         logging.debug("[Epochs contract] Getting next epoch props")

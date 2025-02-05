@@ -20,7 +20,7 @@ class UserFactory(AsyncSQLAlchemyFactory):
 class UserFactorySet(FactorySetBase):
     _factories = {"user": UserFactory}
 
-    async def create(self, address: Address | None = None) -> User:
+    async def create(self, address: Address) -> User:
         factory_kwargs = {}
 
         if address is not None:

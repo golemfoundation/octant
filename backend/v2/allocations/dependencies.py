@@ -5,7 +5,7 @@ from v2.allocations.services import Allocator
 from v2.allocations.validators import SignatureVerifier
 from v2.core.dependencies import GetChainSettings, GetSession
 from v2.epochs.dependencies import GetEpochsSubgraph, GetOpenAllocationWindowEpochNumber
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimatorInAW
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
 from v2.projects.dependencies import GetProjectsContracts
 from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 
@@ -30,7 +30,7 @@ async def get_allocator(
     signature_verifier: GetSignatureVerifier,
     uq_score_getter: GetUQScoreGetter,
     projects_contracts: GetProjectsContracts,
-    matched_rewards_estimator: GetMatchedRewardsEstimatorInAW,
+    matched_rewards_estimator: GetMatchedRewardsEstimator,
 ) -> Allocator:
     return Allocator(
         session,

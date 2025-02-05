@@ -14,7 +14,7 @@ class ERC20(SmartContract):
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
     def transfer(self, sender, receiver: str, amount: int):
-        nonce = self.w3.eth.get_transaction_count(sender.address, "pending")
+        nonce = self.w3.eth.get_transaction_count(sender.address)
         transaction = self.contract.functions.transfer(
             receiver, amount
         ).build_transaction({"from": sender.address, "nonce": nonce})
@@ -26,7 +26,7 @@ class ERC20(SmartContract):
         print("owner address: ", owner.address)
         print("owner key: ", owner.key)
         print("benefactor of lock: ", benefactor)
-        nonce = self.w3.eth.get_transaction_count(owner.address, "pending")
+        nonce = self.w3.eth.get_transaction_count(owner.address)
         transaction = self.contract.functions.approve(
             benefactor, wad
         ).build_transaction({"from": owner.address, "nonce": nonce})

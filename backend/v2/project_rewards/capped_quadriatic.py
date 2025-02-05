@@ -5,24 +5,24 @@ from typing import Dict, NamedTuple
 
 from v2.allocations.schemas import AllocationWithUserUQScore
 from v2.core.types import Address
-from v2.project_rewards.schemas import ProjectFundingSummaryV1
+from v2.project_rewards.schemas import ProjectFundingSummary
 
 
-class CappedQuadraticFunding(NamedTuple):
-    project_fundings: dict[Address, ProjectFundingSummaryV1]
-    allocations_total_for_all_projects: Decimal
-    matched_total_for_all_projects: Decimal
+class CappedQuadriaticFunding(NamedTuple):
+    project_fundings: dict[Address, ProjectFundingSummary]
+    amounts_total: Decimal  # Sum of all allocation amounts for all projects
+    matched_total: Decimal  # Sum of all matched rewards for all projects
 
 
 MR_FUNDING_CAP_PERCENT = Decimal("0.2")
 
 
-def capped_quadratic_funding(
+def capped_quadriatic_funding(
     allocations: list[AllocationWithUserUQScore],
     matched_rewards: int,
     project_addresses: list[str],
     MR_FUNDING_CAP_PERCENT: Decimal = MR_FUNDING_CAP_PERCENT,
-) -> CappedQuadraticFunding:
+) -> CappedQuadriaticFunding:
     """
     Calculate capped quadratic funding based on a list of allocations.
 
@@ -33,7 +33,7 @@ def capped_quadratic_funding(
         MR_FUNDING_CAP_PERCENT (float, optional): The maximum percentage of matched rewards that any single project can receive. Defaults to MR_FUNDING_CAP_PERCENT.
 
     Returns:
-        CappedQuadraticFunding: A named tuple containing the total and per-project amounts and matched rewards.
+        CappedQuadriaticFunding: A named tuple containing the total and per-project amounts and matched rewards.
     """
 
     # Group allocations by project
@@ -96,7 +96,7 @@ def capped_quadratic_funding(
         matched_total += matched_capped
 
     project_fundings = {
-        project_address: ProjectFundingSummaryV1(
+        project_address: ProjectFundingSummary(
             address=project_address,
             allocated=int(amount_by_project[project_address]),
             matched=int(matched_by_project[project_address]),
@@ -104,10 +104,10 @@ def capped_quadratic_funding(
         for project_address in project_addresses
     }
 
-    return CappedQuadraticFunding(
+    return CappedQuadriaticFunding(
         project_fundings=project_fundings,
-        allocations_total_for_all_projects=amounts_total,
-        matched_total_for_all_projects=matched_total,
+        amounts_total=amounts_total,
+        matched_total=matched_total,
     )
 
 
@@ -121,8 +121,8 @@ def cqf_calculate_total_leverage(matched_rewards: int, total_allocated: int) -> 
 def cqf_calculate_individual_leverage(
     new_allocations_amount: int,
     project_addresses: list[Address],
-    before_allocation: CappedQuadraticFunding,
-    after_allocation: CappedQuadraticFunding,
+    before_allocation: CappedQuadriaticFunding,
+    after_allocation: CappedQuadriaticFunding,
 ) -> float:
     """Calculate the leverage of a user's new allocations in capped quadratic funding.
 
@@ -174,13 +174,13 @@ def cqf_simulate_leverage(
     ]
 
     # Calculate capped quadratic funding before and after the user's allocation
-    before_allocation = capped_quadratic_funding(
+    before_allocation = capped_quadriatic_funding(
         allocations_without_user,
         matched_rewards,
         project_addresses,
         MR_FUNDING_CAP_PERCENT,
     )
-    after_allocation = capped_quadratic_funding(
+    after_allocation = capped_quadriatic_funding(
         allocations_without_user + new_allocations,
         matched_rewards,
         project_addresses,

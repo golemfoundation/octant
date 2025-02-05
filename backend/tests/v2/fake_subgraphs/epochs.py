@@ -1,7 +1,5 @@
-from pydantic import TypeAdapter
 from app import exceptions
 from app.context.epoch.details import EpochDetails
-from v2.epochs.subgraphs import EpochSubgraphItem
 from tests.v2.fake_subgraphs.helpers import FakeEpochEventDetails
 from v2.core.exceptions import EpochsNotFound
 
@@ -14,19 +12,6 @@ class FakeEpochsSubgraph:
         self.epochs_events = map(
             lambda epoch_event: epoch_event.to_dict(), epochs_events
         )
-
-    async def fetch_epoch_by_number(self, epoch_number: int) -> EpochSubgraphItem:
-        """
-        Simulate fetching epoch details by epoch number.
-        """
-        matching_epochs = [
-            epoch for epoch in self.epochs_events if epoch["epoch"] == epoch_number
-        ]
-
-        if not matching_epochs:
-            raise exceptions.EpochNotIndexed(epoch_number)
-
-        return TypeAdapter(EpochSubgraphItem).validate_python(matching_epochs[0])
 
     async def get_epoch_by_number(self, epoch_number: int) -> EpochDetails:
         """

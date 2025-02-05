@@ -1,7 +1,6 @@
 from decimal import Decimal
 
 from pydantic import Field
-
 from v2.core.types import Address, BigInteger, OctantModel
 
 
@@ -66,16 +65,16 @@ class UserAllocationsResponseV1(OctantModel):
     is_manually_edited: bool | None
 
 
+class SimulateAllocationPayloadV1(OctantModel):
+    allocations: list[AllocationRequestV1]
+
+
 class ProjectMatchedRewardsV1(OctantModel):
     address: Address
     value: BigInteger
 
 
-class SimulateAllocationPayloadV1(OctantModel):
-    allocations: list[AllocationRequestV1]
-
-
 class SimulateAllocationResponseV1(OctantModel):
     leverage: Decimal
-    threshold: BigInteger | None
+    threshold: int
     matched: list[ProjectMatchedRewardsV1]

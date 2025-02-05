@@ -28,7 +28,7 @@ def get_matched_rewards_estimator_settings() -> MatchedRewardsEstimatorSettings:
     return MatchedRewardsEstimatorSettings()
 
 
-async def get_matched_rewards_estimator_only_in_aw(
+async def get_matched_rewards_estimator(
     epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     epochs_subgraph: Annotated[EpochsSubgraph, Depends(get_epochs_subgraph)],
@@ -46,30 +46,6 @@ async def get_matched_rewards_estimator_only_in_aw(
         epoch_number=epoch_number,
     )
 
-
-async def get_matched_rewards_estimator(
-    epoch_number: int,
-    session: GetSession,
-    epochs_subgraph: Annotated[EpochsSubgraph, Depends(get_epochs_subgraph)],
-    settings: Annotated[
-        MatchedRewardsEstimatorSettings,
-        Depends(get_matched_rewards_estimator_settings),
-    ],
-) -> MatchedRewardsEstimator:
-    return MatchedRewardsEstimator(
-        session=session,
-        epochs_subgraph=epochs_subgraph,
-        tr_percent=settings.TR_PERCENT,
-        ire_percent=settings.IRE_PERCENT,
-        matched_rewards_percent=settings.MATCHED_REWARDS_PERCENT,
-        epoch_number=epoch_number,
-    )
-
-
-GetMatchedRewardsEstimatorInAW = Annotated[
-    MatchedRewardsEstimator,
-    Depends(get_matched_rewards_estimator_only_in_aw),
-]
 
 GetMatchedRewardsEstimator = Annotated[
     MatchedRewardsEstimator,
