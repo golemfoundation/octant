@@ -133,6 +133,9 @@ class SablierStreamsService(Protocol):
     ) -> List[UserStreamsDTO]:
         ...
 
+    def get_all_sablier_streams(self, context: Context) -> List[UserStreamsDTO]:
+        ...
+
 
 @runtime_checkable
 class PendingSnapshots(Protocol):

@@ -15,7 +15,10 @@ from app.modules.user.tos.controller import (
     post_user_terms_of_service_consent,
     get_user_terms_of_service_consent_status,
 )
-from app.modules.user.sablier_streams.controller import get_sablier_streams
+from app.modules.user.sablier_streams.controller import (
+    get_sablier_streams,
+    get_all_sablier_streams,
+)
 from app.settings import config
 
 ns = Namespace("user", description="Octant user settings")
@@ -116,6 +119,9 @@ user_stream_model = api.model(
         "remainingAmount": fields.String(
             required=True,
             description="Remaining amount in WEI",
+        ),
+        "recipientAddress": fields.String(
+            required=True, description="Recipient address"
         ),
     },
 )
@@ -378,6 +384,33 @@ class SablierStreams(OctantResource):
                     "dateAvailableForWithdrawal": stream.date_available_for_withdrawal,
                     "isCancelled": stream.is_cancelled,
                     "remainingAmount": stream.remaining_amount,
+                    "recipientAddress": stream.recipient_address,
+                }
+                for stream in sablier_streams
+            ]
+        }
+
+
+@ns.route("/sablier-streams/all")
+@ns.doc(
+    description="Returns an array of all streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.",
+)
+class AllSablierStreams(OctantResource):
+    @ns.marshal_with(user_streams_model)
+    @ns.response(200, "All streams from Sablier retrieved successfully")
+    def get(self):
+        app.logger.debug("Getting all sablier streams.")
+        sablier_streams = get_all_sablier_streams()
+        app.logger.debug(f"Retrieved {len(sablier_streams)} sablier streams.")
+
+        return {
+            "sablierStreams": [
+                {
+                    "amount": stream.amount,
+                    "dateAvailableForWithdrawal": stream.date_available_for_withdrawal,
+                    "isCancelled": stream.is_cancelled,
+                    "remainingAmount": stream.remaining_amount,
+                    "recipientAddress": stream.recipient_address,
                 }
                 for stream in sablier_streams
             ]

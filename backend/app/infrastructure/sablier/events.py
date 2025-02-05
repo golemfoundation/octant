@@ -25,6 +25,7 @@ class SablierStream(TypedDict):
     canceled: bool
     endTime: str
     depositAmount: str
+    recipient: str
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
@@ -54,6 +55,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
             is_cancelled = stream.get("canceled")
             end_time = stream.get("endTime")
             deposit_amount = stream.get("depositAmount")
+            recipient = stream.get("recipient")
 
             all_streams.append(
                 SablierStream(
@@ -62,6 +64,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
                     canceled=is_cancelled,
                     endTime=end_time,
                     depositAmount=deposit_amount,
+                    recipient=recipient,
                 )
             )
 
@@ -96,6 +99,7 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
             canceled
             endTime
             depositAmount
+            recipient
             actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
               category
               addressA
@@ -136,6 +140,10 @@ def get_all_streams_history() -> List[SablierStream]:
           ) {
             id
             intactAmount
+            canceled
+            endTime
+            depositAmount
+            recipient
             actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
               category
               addressA

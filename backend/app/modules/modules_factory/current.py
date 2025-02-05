@@ -54,7 +54,9 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.sablier_streams.service.sablier_streams import UserSablierStreamsService
+from app.modules.user.sablier_streams.service.sablier_streams import (
+    UserSablierStreamsService,
+)
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
