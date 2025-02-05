@@ -46,7 +46,7 @@ with open('raffle-weights/leaderboard-guild.csv', mode='r') as csvfile:
         if response.status_code == 200:
             allocations = response.json().get('allocations', [])
             if not allocations and checksum_address in patrons:
-                # This is a donor with no allocations, get their budget
+                # This is a patron with no allocations, get their budget
                 budget_url = f"https://backend.mainnet.octant.app/flask/rewards/budget/{checksum_address}/epoch/{epoch_number}"
                 budget_response = requests.get(budget_url)
                 if budget_response.status_code == 200:
@@ -80,7 +80,7 @@ with open('raffle-weights/leaderboard-guild.csv', mode='r') as csvfile:
 
         final_points[checksum_address] = final_total
 
-        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Donor: {checksum_address in patrons}")
+        print(f"Address: {checksum_address}, Weight: {final_total:.4f}, Points: {total_points}, Eth: {eth_amount:.4f}, Patron: {checksum_address in patrons}")
 
 # Write results to new CSV file (only non-zero weights)
 output_file = 'raffle-weights/raffle_weights_output.csv'
