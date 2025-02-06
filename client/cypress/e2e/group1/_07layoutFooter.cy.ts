@@ -96,7 +96,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         .invoke('attr', 'href')
         .should(
           'eq',
-          'https://www.figma.com/community/file/1295533951881708349/octant-brand-assets',
+          'https://www.figma.com/community/file/1461055351522080911/octant-brand-kit',
         );
       cy.get('[data-test=LayoutFooter__link--brandAssets]')
         .invoke('attr', 'target')
