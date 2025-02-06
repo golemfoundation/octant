@@ -1,5 +1,5 @@
 export const BRAND_ASSETS_FIGMA_LINK =
-  'https://www.figma.com/community/file/1295533951881708349/octant-brand-assets';
+  'https://www.figma.com/community/file/1461055351522080911/octant-brand-kit';
 export const GOLEM_FOUNDATION_LINK = 'https://golem.foundation/';
 export const OCTANT_DOCS = 'https://docs.octant.app/';
 export const DISCORD_LINK = 'https://discord.gg/octant';
