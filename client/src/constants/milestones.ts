@@ -251,5 +251,20 @@ export default function getMilestones(): Milestone[] {
       id: 'e7-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 7 }),
     },
+    {
+      from: new Date('2025-01-30T00:00:00+0100'),
+      href: 'https://octant.fillout.com/epoch-7-climate-round-applications',
+      id: 'e7-applications-open',
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      to: new Date('2025-02-15T13:00+0100'),
+    },
+    {
+      from: new Date('2025-04-11T18:00:00+0200'),
+      id: 'e7-allocation-window',
+      isAllocationWindowMilestone: true,
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2025-04-25T18:00:00+0200'),
+    },
   ];
 }
