@@ -1,0 +1,12 @@
+certifi==2025.1.31
+charset-normalizer==3.4.1
+cytoolz==1.0.1
+eth-hash==0.7.1
+eth-typing==5.1.0
+eth-utils==5.2.0
+idna==3.10
+pycryptodome==3.21.0
+requests==2.32.3
+toolz==1.0.0
+typing_extensions==4.12.2
+urllib3==2.3.0
