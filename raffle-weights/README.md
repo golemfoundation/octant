@@ -14,7 +14,7 @@ In order to run it `leaderboard-guild.csv` is required with following columns: `
 7. Verify python is installed by running command `python3 --version`.
 8. Run `python3 -m venv .venv`.
 9. Run `source .venv/bin/activate`.
-10. Install dependencies by running `pip install csv && pip install requests && pip install eth_utils && pip install eth-hash[pycryptodome]`.
+10. Run `pip install -r requirements.txt` to install dependencies.
 11. Run `python3 calc_weights.py`.
 12. Wait for the script to finish (last line of the output should be "Results have been written to raffle_weights_output.csv".
 13. `raffle_weights_output.csv` is now filled with input data for the Raffle.
