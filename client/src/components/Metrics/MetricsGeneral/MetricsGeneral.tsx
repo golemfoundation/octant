@@ -9,6 +9,7 @@ import MetricsGeneralGridWalletsWithGlmLocked from 'components/Metrics/MetricsGe
 import MetricsGrid from 'components/Metrics/MetricsGrid';
 import MetricsSectionHeader from 'components/Metrics/MetricsSectionHeader';
 import { METRICS_GENERAL_ID } from 'constants/domElementsIds';
+import useAllSablierStreamsSum from 'hooks/queries/useAllSablierStreams';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
@@ -34,6 +35,7 @@ const MetricsGeneral = (): ReactElement => {
   const { isFetching: isFetchingAllProjects } = useAllProjects();
   const { isFetching: isFetchingProjectsEpoch } = useProjectsEpoch();
   const { isFetching: isFetchingLockedsData } = useLockedsData();
+  const { isFetching: isFetchingAllSablierStreamsSum } = useAllSablierStreamsSum();
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =
@@ -41,7 +43,8 @@ const MetricsGeneral = (): ReactElement => {
     isFetchingLockedSummaryLatest ||
     isFetchingCryptoValues ||
     isFetchingAllProjects ||
-    isFetchingProjectsEpoch;
+    isFetchingProjectsEpoch ||
+    isFetchingAllSablierStreamsSum;
 
   return (
     <div className={styles.root} data-test={dataTestRoot} id={METRICS_GENERAL_ID}>

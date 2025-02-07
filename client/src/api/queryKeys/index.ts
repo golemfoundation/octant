@@ -22,8 +22,8 @@ export const ROOTS: Root = {
   projectsDonors: 'projectsDonors',
   projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
-  raffleWinnings: 'raffleWinnings',
   rewardsRate: 'rewardsRate',
+  sablierStreams: 'sablierStreams',
   searchResultsDetails: 'searchResultsDetails',
   upcomingBudget: 'upcomingBudget',
   uqScore: 'uqScore',
@@ -33,6 +33,7 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  allSablierStreams: ['allSablierStreams'],
   antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
@@ -75,8 +76,8 @@ export const QUERY_KEYS: QueryKeys = {
   ],
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'],
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'],
-  raffleWinnings: userAddress => [ROOTS.raffleWinnings, userAddress],
   rewardsRate: epochNumber => [ROOTS.rewardsRate, epochNumber.toString()],
+  sablierStreams: userAddress => [ROOTS.sablierStreams, userAddress],
   searchResults: ['searchResults'],
   searchResultsDetails: (address, epoch) => [ROOTS.searchResultsDetails, address, epoch.toString()],
   syncStatus: ['syncStatus'],

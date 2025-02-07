@@ -15,7 +15,10 @@ from app.modules.user.tos.controller import (
     post_user_terms_of_service_consent,
     get_user_terms_of_service_consent_status,
 )
-from app.modules.user.winnings.controller import get_user_winnings
+from app.modules.user.sablier_streams.controller import (
+    get_sablier_streams,
+    get_all_sablier_streams,
+)
 from app.settings import config
 
 ns = Namespace("user", description="Octant user settings")
@@ -98,8 +101,8 @@ uq_score_model = api.model(
     },
 )
 
-user_winning_model = api.model(
-    "UserWinning",
+user_stream_model = api.model(
+    "UserStream",
     {
         "amount": fields.String(
             required=True,
@@ -107,18 +110,29 @@ user_winning_model = api.model(
         ),
         "dateAvailableForWithdrawal": fields.String(
             required=True,
-            description="Date when winning is available for withdrawal as unix timestamp",
+            description="Date when stream is available for withdrawal as unix timestamp",
+        ),
+        "isCancelled": fields.Boolean(
+            required=True,
+            description="Flag indicating whether stream is cancelled",
+        ),
+        "remainingAmount": fields.String(
+            required=True,
+            description="Remaining amount in WEI",
+        ),
+        "recipientAddress": fields.String(
+            required=True, description="Recipient address"
         ),
     },
 )
 
-user_winnings_model = api.model(
-    "UserWinnings",
+user_streams_model = api.model(
+    "SablierStreams",
     {
-        "winnings": fields.List(
-            fields.Nested(user_winning_model),
+        "sablierStreams": fields.List(
+            fields.Nested(user_stream_model),
             required=True,
-            description="User winnings",
+            description="User's sablier streams",
         ),
     },
 )
@@ -344,29 +358,60 @@ class AllUQScores(OctantResource):
         }
 
 
-@ns.route("/<string:user_address>/raffle/winnings")
+@ns.route("/<string:user_address>/sablier-streams")
 @ns.doc(
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
     }
 )
-class UserWinnings(OctantResource):
+class SablierStreams(OctantResource):
     @ns.doc(
-        description="Returns an array of user's winnings with amounts and availability dates",
+        description="Returns an array of user's streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.",
     )
-    @ns.marshal_with(user_winnings_model)
-    @ns.response(200, "User's winnings retrieved successfully")
+    @ns.marshal_with(user_streams_model)
+    @ns.response(200, "User's streams from Sablier retrieved successfully")
     def get(self, user_address: str):
-        app.logger.debug(f"Getting winnings for user {user_address}.")
-        winnings = get_user_winnings(user_address)
-        app.logger.debug(f"Retrieved {len(winnings)} winnings for user {user_address}.")
+        app.logger.debug(f"Getting sablier streams for user {user_address}.")
+        sablier_streams = get_sablier_streams(user_address)
+        app.logger.debug(
+            f"Retrieved {len(sablier_streams)} sablier streams for user {user_address}."
+        )
 
         return {
-            "winnings": [
+            "sablierStreams": [
                 {
-                    "amount": winning.amount,
-                    "dateAvailableForWithdrawal": winning.date_available_for_withdrawal,
+                    "amount": stream.amount,
+                    "dateAvailableForWithdrawal": stream.date_available_for_withdrawal,
+                    "isCancelled": stream.is_cancelled,
+                    "remainingAmount": stream.remaining_amount,
+                    "recipientAddress": stream.recipient_address,
                 }
-                for winning in winnings
+                for stream in sablier_streams
+            ]
+        }
+
+
+@ns.route("/sablier-streams/all")
+@ns.doc(
+    description="Returns an array of all streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.",
+)
+class AllSablierStreams(OctantResource):
+    @ns.marshal_with(user_streams_model)
+    @ns.response(200, "All streams from Sablier retrieved successfully")
+    def get(self):
+        app.logger.debug("Getting all sablier streams.")
+        sablier_streams = get_all_sablier_streams()
+        app.logger.debug(f"Retrieved {len(sablier_streams)} sablier streams.")
+
+        return {
+            "sablierStreams": [
+                {
+                    "amount": stream.amount,
+                    "dateAvailableForWithdrawal": stream.date_available_for_withdrawal,
+                    "isCancelled": stream.is_cancelled,
+                    "remainingAmount": stream.remaining_amount,
+                    "recipientAddress": stream.recipient_address,
+                }
+                for stream in sablier_streams
             ]
         }

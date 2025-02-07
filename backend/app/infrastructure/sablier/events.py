@@ -22,13 +22,10 @@ class SablierStream(TypedDict):
     id: str
     actions: List[SablierAction]
     intactAmount: str
-
-
-class SablierStreamForTrackingWinner(TypedDict):
-    id: str
+    canceled: bool
     endTime: str
     depositAmount: str
-    intactAmount: str
+    recipient: str
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
@@ -55,8 +52,20 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
         for stream in streams:
             actions = stream.get("actions", [])
             final_intact_amount = stream.get("intactAmount", 0)
+            is_cancelled = stream.get("canceled")
+            end_time = stream.get("endTime")
+            deposit_amount = stream.get("depositAmount")
+            recipient = stream.get("recipient")
+
             all_streams.append(
-                SablierStream(actions=actions, intactAmount=final_intact_amount)
+                SablierStream(
+                    actions=actions,
+                    intactAmount=final_intact_amount,
+                    canceled=is_cancelled,
+                    endTime=end_time,
+                    depositAmount=deposit_amount,
+                    recipient=recipient,
+                )
             )
 
         if len(streams) < limit:
@@ -70,6 +79,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
 def get_user_events_history(user_address: str) -> List[SablierStream]:
     """
     Get all the locks and unlocks for a user.
+    Query used for computing user's effective deposit and getting all sablier streams from an endpoint.
     """
     query = """
         query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
@@ -86,6 +96,10 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
           ) {
             id
             intactAmount
+            canceled
+            endTime
+            depositAmount
+            recipient
             actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
               category
               addressA
@@ -126,6 +140,10 @@ def get_all_streams_history() -> List[SablierStream]:
           ) {
             id
             intactAmount
+            canceled
+            endTime
+            depositAmount
+            recipient
             actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
               category
               addressA
@@ -144,40 +162,6 @@ def get_all_streams_history() -> List[SablierStream]:
     }
 
     return fetch_streams(query, variables)
-
-
-def get_streams_with_create_events_to_user(
-    user_address: str,
-) -> List[SablierStreamForTrackingWinner]:
-    """
-    Get all the create events for a user.
-    """
-    query = """
-        query GetCreateEvents($sender: String!, $recipient: String!, $tokenAddress: String!) {
-          streams(
-            where: {
-              sender: $sender
-              recipient: $recipient
-              asset_: {address: $tokenAddress}
-              transferable: false
-            }
-            orderBy: timestamp
-          ) {
-            id
-            intactAmount
-            endTime
-            depositAmount
-          }
-        }
-    """
-    variables = {
-        "sender": _get_sender(),
-        "recipient": user_address,
-        "tokenAddress": _get_token_address(),
-    }
-
-    result = gql_sablier_factory.build().execute(gql(query), variable_values=variables)
-    return result.get("streams", [])
 
 
 def _get_sender():

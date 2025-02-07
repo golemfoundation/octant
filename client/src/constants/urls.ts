@@ -16,3 +16,4 @@ export const TIME_OUT_LIST_DISPUTE_FORM = 'https://octant.fillout.com/t/wLNsbSGJ
 export const SYBIL_ATTACK_EXPLANATION = 'https://chain.link/education-hub/sybil-attack';
 export const PRIVACY_POLICY = 'https://docs.octant.app/privacy-policy.html';
 export const KARMA_GAP = 'https://gap.karmahq.xyz';
+export const SABLIER_APP_LINK = 'https://app.sablier.com/';
