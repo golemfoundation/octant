@@ -4,13 +4,14 @@ from app.infrastructure.database.models import Budget, PatronModeEvent, User
 from sqlalchemy import Numeric, cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from v2.core.types import Address
+from v2.core.types import Address, BigInteger
 from v2.users.repositories import get_user_by_address
+from v2.core.transformers import transform_to_checksum_address
 
 
 async def get_all_patrons_at_timestamp(
     session: AsyncSession, dt: datetime
-) -> list[str]:
+) -> list[Address]:
     """
     Get all the user addresses that at given timestamp have patron_mode_enabled=True.
     """
@@ -27,7 +28,7 @@ async def get_all_patrons_at_timestamp(
         )
     )
 
-    return [row[0] for row in results.all()]
+    return [transform_to_checksum_address(row[0]) for row in results.all()]
 
 
 async def get_budget_sum_by_users_addresses_and_epoch(
@@ -85,6 +86,24 @@ async def get_budget_by_user_address_and_epoch(
         return None
 
     return int(budget)
+
+
+async def get_all_users_budgets_by_epoch(
+    session: AsyncSession, epoch_number: int
+) -> dict[Address, BigInteger]:
+    """
+    Get all budgets for a given epoch.
+    """
+    results = await session.execute(
+        select(Budget.budget, User.address)
+        .join(Budget.user)
+        .where(Budget.epoch == epoch_number)
+        .order_by(User.address)
+    )
+    return {
+        transform_to_checksum_address(row.address): int(row.budget)
+        for row in results.all()
+    }
 
 
 async def user_is_patron_with_budget(

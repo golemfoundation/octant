@@ -21,7 +21,10 @@ class Timestamp:
         return self.timestamp_us() / 10**6
 
     def datetime(self) -> DateTime:
-        return DateTime.fromtimestamp(self.timestamp_s())
+        # Make sure the timestamp is in UTC and not local
+        utc_timestamp = DateTime.fromtimestamp(self.timestamp_s(), timezone.utc)
+        # Remove timezone info
+        return utc_timestamp.replace(tzinfo=None)
 
     def to_isoformat(self):
         return self.datetime().isoformat()

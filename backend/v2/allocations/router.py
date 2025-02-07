@@ -1,5 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Query
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
+from v2.projects.dependencies import GetProjectsContracts
+from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
+from v2.allocations.services import simulate_allocation
+from v2.epochs.dependencies import GetOpenAllocationWindowEpochNumber
 from v2.allocations.repositories import (
     get_all_allocations_for_epoch,
     get_allocations_by_user,
@@ -15,6 +20,8 @@ from v2.allocations.schemas import (
     EpochAllocationsResponseV1,
     EpochDonorsResponseV1,
     ProjectAllocationV1,
+    SimulateAllocationPayloadV1,
+    SimulateAllocationResponseV1,
     UserAllocationNonceV1,
     UserAllocationRequest,
     UserAllocationRequestV1,
@@ -83,15 +90,29 @@ async def get_all_allocations_for_epoch_v1(
     return EpochAllocationsResponseV1(allocations=donations)
 
 
-# @api.post("/leverage/{user_address}")
-# async def simulate_allocation_v1(
-#     user_address: Address, payload: SimulateAllocationPayloadV1
-# ) -> None:
-#     """
-#     Simulates an allocation and get the expected leverage, threshold and matched rewards.
-#     """
-#     # TODO: implement
-#     pass
+@api.post("/leverage/{user_address}")
+async def simulate_allocation_v1(
+    session: GetSession,
+    projects_contracts: GetProjectsContracts,
+    matched_rewards_estimator: GetMatchedRewardsEstimator,
+    uq_score_getter: GetUQScoreGetter,
+    pending_epoch_number: GetOpenAllocationWindowEpochNumber,
+    # Request Parameters
+    user_address: Address,
+    payload: SimulateAllocationPayloadV1,
+) -> SimulateAllocationResponseV1:
+    """
+    Simulates an allocation and get the expected leverage, threshold and matched rewards.
+    """
+    return await simulate_allocation(
+        session,
+        projects_contracts,
+        matched_rewards_estimator,
+        uq_score_getter,
+        pending_epoch_number,
+        user_address,
+        payload.allocations,
+    )
 
 
 @api.get("/project/{project_address}/epoch/{epoch_number}")
