@@ -33,6 +33,7 @@ export type Root = {
 };
 
 export type QueryKeys = {
+  allSablierStreams: ['allSablierStreams'];
   antisybilStatus: (userAddress: string) => [Root['antisybilStatus'], string];
   blockNumber: ['blockNumber'];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];

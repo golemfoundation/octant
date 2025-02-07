@@ -33,6 +33,7 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  allSablierStreams: ['allSablierStreams'],
   antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],

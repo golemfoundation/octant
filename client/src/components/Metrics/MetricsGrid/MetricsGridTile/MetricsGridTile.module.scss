@@ -59,12 +59,12 @@
       font-size: $font-size-12;
       color: $color-octant-green;
       font-weight: $font-weight-bold;
-      height: 2.4rem;
+      min-height: 2.4rem;
       align-items: center;
       display: flex;
       border-radius: $border-radius-08;
       background: $color-octant-grey6;
-      padding: 0 0.6rem;
+      padding: 0.2rem 0.6rem;
     }
   }
 }
