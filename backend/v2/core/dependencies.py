@@ -111,11 +111,9 @@ class ChainSettings(OctantSettings):
         description="The chain id to use for the signature verification.",
     )
 
-    is_mainnet: bool = Field(
-        default_factory=lambda: compare_blockchain_types(
-            Field(validation_alias="chain_id"), ChainTypes.MAINNET
-        )
-    )
+    @property
+    def is_mainnet(self) -> bool:
+        return compare_blockchain_types(self.chain_id, ChainTypes.MAINNET)
 
 
 def get_chain_settings() -> ChainSettings:
