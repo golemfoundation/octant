@@ -1,5 +1,5 @@
-from functools import lru_cache
 import time
+from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends

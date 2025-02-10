@@ -30,10 +30,9 @@ class ProjectsSettings(OctantSettings):
         validation_alias="proposals_contract_address",
         default=DEFAULT_PROJECTS_CONTRACT_ADDRESS,
     )
-    is_mainnet: bool = Field(
-        default_factory=lambda: compare_blockchain_types(
-            Field(validation_alias="chain_id"), ChainTypes.MAINNET
-        )
+    chain_id: int = Field(
+        default=11155111,
+        description="The chain id to use for the signature verification.",
     )
     mainnet_project_cids_raw: str = Field(
         validation_alias="mainnet_proposal_cids", default=DEFAULT_MAINNET_PROJECT_CIDS
@@ -42,6 +41,10 @@ class ProjectsSettings(OctantSettings):
     @property
     def mainnet_project_cids(self) -> list[str]:
         return self.mainnet_project_cids_raw.split(",")
+
+    @property
+    def is_mainnet(self) -> bool:
+        return compare_blockchain_types(self.chain_id, ChainTypes.MAINNET)
 
 
 class ProjectsAllocationThresholdSettings(OctantSettings):
