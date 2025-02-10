@@ -107,6 +107,7 @@ async def get_db_session(
 
 class ChainSettings(OctantSettings):
     chain_id: int = Field(
+        validation_alias="chain_id",
         default=11155111,
         description="The chain id to use for the signature verification.",
     )
