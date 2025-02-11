@@ -1,5 +1,5 @@
-from functools import lru_cache
 import time
+from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
@@ -107,15 +107,14 @@ async def get_db_session(
 
 class ChainSettings(OctantSettings):
     chain_id: int = Field(
+        validation_alias="chain_id",
         default=11155111,
         description="The chain id to use for the signature verification.",
     )
 
-    is_mainnet: bool = Field(
-        default_factory=lambda: compare_blockchain_types(
-            Field(validation_alias="chain_id"), ChainTypes.MAINNET
-        )
-    )
+    @property
+    def is_mainnet(self) -> bool:
+        return compare_blockchain_types(self.chain_id, ChainTypes.MAINNET)
 
 
 def get_chain_settings() -> ChainSettings:
