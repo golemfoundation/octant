@@ -35,7 +35,7 @@ const MetricsGeneralGridTotalGlmLockedAndTotalSupply: FC<
   const lockedRatioRounded = roundLockedRatio(lockedSummaryLatest?.lockedRatio);
 
   const lockedGlmTotalValue = useMemo(() => {
-    if (!allSablierStreamsSum || !lockedSummaryLatest?.lockedTotal) {
+    if (allSablierStreamsSum === undefined || !lockedSummaryLatest?.lockedTotal) {
       return '';
     }
 
