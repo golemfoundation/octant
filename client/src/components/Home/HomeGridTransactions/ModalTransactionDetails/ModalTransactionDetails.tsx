@@ -23,7 +23,7 @@ const ModalTransactionDetails: FC<ModalTransactionDetailsProps> = ({
     switch (type) {
       case 'patron_mode_donation':
         return i18n.t(
-          'components.home.historyItem.homeGridTransactions.transactionsListItem.epochDonation',
+          'components.home.homeGridTransactions.transactionsListItem.epochDonation',
           {
             epoch: epochTimestampHappenedIn,
           },
