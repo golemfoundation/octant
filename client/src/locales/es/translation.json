@@ -449,7 +449,7 @@
       "totalEthStaked": "Total de ETH en staking",
       "totalGlmLocked": "Total de GLM bloqueado",
       "of1BTotalSupply": "de 1B de suministro total",
-      "cumulativeGlmLocked": "GLM bloqueado acumulado",
+      "cumulativeGlmLocked": "GLM acumulado en contrato",
       "walletsWithGlmLocked": "Monederos con GLM bloqueado",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total desde E0",
       "belowThreshold": "Por debajo del umbral",

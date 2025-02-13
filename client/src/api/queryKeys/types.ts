@@ -22,8 +22,8 @@ export type Root = {
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
-  raffleWinnings: 'raffleWinnings';
   rewardsRate: 'rewardsRate';
+  sablierStreams: 'sablierStreams';
   searchResultsDetails: 'searchResultsDetails';
   upcomingBudget: 'upcomingBudget';
   uqScore: 'uqScore';
@@ -33,6 +33,7 @@ export type Root = {
 };
 
 export type QueryKeys = {
+  allSablierStreams: ['allSablierStreams'];
   antisybilStatus: (userAddress: string) => [Root['antisybilStatus'], string];
   blockNumber: ['blockNumber'];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
@@ -75,8 +76,8 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
-  raffleWinnings: (userAddress: string) => [Root['raffleWinnings'], string];
   rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
+  sablierStreams: (userAddress: string) => [Root['sablierStreams'], string];
   searchResults: ['searchResults'];
   searchResultsDetails: (
     address: string,
