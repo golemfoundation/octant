@@ -124,3 +124,22 @@ async def user_is_patron_with_budget(
         session, user_address, epoch_number
     )
     return budget is not None
+
+
+async def get_budgets_by_users_addresses_and_epoch(
+    session: AsyncSession, users_addresses: list[Address], epoch_number: int
+) -> dict[Address, BigInteger]:
+    """
+    Get all budgets for a given epoch.
+    """
+
+    results = await session.execute(
+        select(Budget.budget, User.address)
+        .join(User)
+        .where(User.address.in_(users_addresses), Budget.epoch == epoch_number)
+        .order_by(User.address)
+    )
+    return {
+        transform_to_checksum_address(row.address): int(row.budget)
+        for row in results.all()
+    }
