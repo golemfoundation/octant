@@ -24,17 +24,19 @@ const RaffleWinnerBadge: FC<RaffleWinnerBadgeProps> = ({ isVisible }) => {
   const { data: depositsValue } = useDepositValue();
   const { data: userSablierStreams } = useUserSablierStreams();
 
+  const isSablierStreamCancelled = userSablierStreams?.sablierStreams.some(
+    ({ isCancelled }) => isCancelled,
+  );
+
   const userSablierStreamsSumFormatted = userSablierStreams
     ? getValuesToDisplay({
         cryptoCurrency: 'golem',
         showFiatPrefix: false,
-        valueCrypto: userSablierStreams.sumAvailable,
+        valueCrypto: isSablierStreamCancelled
+          ? userSablierStreams.sum
+          : userSablierStreams.sumAvailable,
       })
     : undefined;
-
-  const isSablierStreamCancelled = userSablierStreams?.sablierStreams.some(
-    ({ isCancelled }) => isCancelled,
-  );
 
   const userSablierStreamsSumFloat = userSablierStreamsSumFormatted
     ? parseFloat(userSablierStreamsSumFormatted.primary.replace(/\s/g, ''))
