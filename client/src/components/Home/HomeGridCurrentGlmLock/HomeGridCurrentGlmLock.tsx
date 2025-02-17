@@ -46,7 +46,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
     !!userSablierStreams &&
     (userSablierStreams.sumAvailable > 0 ||
       (userSablierStreams.sablierStreams.some(({ isCancelled }) => isCancelled) &&
-        userSablierStreams.sumAvailable > 0));
+        userSablierStreams.sum > 0));
 
   const buttonText = useMemo(() => {
     if (userSablierStreams && userSablierStreams.sumAvailable > 0n) {
