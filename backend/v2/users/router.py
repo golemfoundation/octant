@@ -60,12 +60,6 @@ async def get_uq_for_user_and_epoch_v1(
     Returns user's uniqueness quotient score for given epoch
     """
 
-    # if (
-    #     context.epoch_state == EpochState.FINALIZED
-    #     or context.epoch_state == EpochState.FUTURE
-    # ):
-    #     raise NotImplementedForGivenEpochState()
-
     uq_score = await uq_score_getter.get_or_calculate(
         epoch_number,
         user_address,
@@ -84,9 +78,6 @@ async def get_all_uqs_for_epoch_v1(
     """
     Returns all uniqueness quotient scores for all users (that have a UQ score stored) for given epoch
     """
-
-    # if context.epoch_state > EpochState.PENDING:
-    #     raise NotImplementedForGivenEpochState()
 
     all_uqs = await get_all_uqs_by_epoch(session, epoch_number)
 

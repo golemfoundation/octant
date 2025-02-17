@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import Optional
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
-from factory import LazyAttribute, SubFactory
+from factory import SubFactory
 from sqlalchemy import select
 
 from app.infrastructure.database.models import UniquenessQuotient, User
@@ -16,8 +16,8 @@ class UniquenessQuotientFactory(AsyncSQLAlchemyFactory):
         sqlalchemy_session_persistence = "commit"
 
     user = SubFactory(UserFactory)
-    epoch = LazyAttribute(lambda _: 1)  # Default epoch
-    score = LazyAttribute(lambda _: str(Decimal("1.0")))  # Default score
+    epoch = 1
+    score = "1.0"
 
 
 class UniquenessQuotientFactorySet(FactorySetBase):
