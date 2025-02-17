@@ -1,16 +1,21 @@
 import logging
 
+from v2.core.types import Address
+from v2.core.transformers import transform_to_checksum_address
 from v2.core.contracts import SmartContract
 
 
 class ProjectsContracts(SmartContract):
-    async def get_project_addresses(self, epoch_number: int) -> list[str]:
+    async def get_project_addresses(self, epoch_number: int) -> list[Address]:
         logging.debug(
             f"[Projects contract] Getting project addresses for epoch: {epoch_number}"
         )
-        return await self.contract.functions.getProposalAddresses(epoch_number).call()
+        addresses = await self.contract.functions.getProposalAddresses(
+            epoch_number
+        ).call()
+        return [transform_to_checksum_address(address) for address in addresses]
 
-    async def get_project_cid(self):
+    async def get_project_cid(self) -> str:
         logging.debug("[Projects contract] Getting projects CID")
         return await self.contract.functions.cid().call()
 

@@ -1,3 +1,4 @@
+import time
 from functools import lru_cache
 from typing import Annotated, AsyncGenerator
 
@@ -7,6 +8,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from web3 import AsyncHTTPProvider, AsyncWeb3
 from web3.middleware import async_geth_poa_middleware
+
+from app.shared.blockchain_types import ChainTypes
+from v2.core.logic import compare_blockchain_types
 
 
 class OctantSettings(BaseSettings):
@@ -33,13 +37,13 @@ def get_w3(
 
 class DatabaseSettings(OctantSettings):
     """
-    Values below are the defaults for the database with max_connetions = 100 and backend pods = 3.
+    Values below are the defaults for the pod which can serve up to 100 connections.
     """
 
     db_uri: str = Field(..., alias="db_uri")
 
-    pg_pool_size: int = Field(20, alias="sqlalchemy_connection_pool_size")
-    pg_max_overflow: int = Field(13, alias="sqlalchemy_connection_pool_max_overflow")
+    pg_pool_size: int = Field(67, alias="sqlalchemy_connection_pool_size")
+    pg_max_overflow: int = Field(33, alias="sqlalchemy_connection_pool_max_overflow")
     pg_pool_timeout: int = 60
     pg_pool_recycle: int = 30 * 60  # 30 minutes
     pg_pool_pre_ping: bool = True
@@ -103,9 +107,14 @@ async def get_db_session(
 
 class ChainSettings(OctantSettings):
     chain_id: int = Field(
+        validation_alias="chain_id",
         default=11155111,
         description="The chain id to use for the signature verification.",
     )
+
+    @property
+    def is_mainnet(self) -> bool:
+        return compare_blockchain_types(self.chain_id, ChainTypes.MAINNET)
 
 
 def get_chain_settings() -> ChainSettings:
@@ -127,7 +136,12 @@ def get_socketio_settings() -> SocketioSettings:
     return SocketioSettings()  # type: ignore[call-arg]
 
 
+def get_current_timestamp() -> int:
+    return int(time.time())
+
+
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]
 GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
 Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 GetSession = Annotated[AsyncSession, Depends(get_db_session)]
+GetCurrentTimestamp = Annotated[int, Depends(get_current_timestamp)]

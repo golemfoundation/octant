@@ -2,11 +2,19 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
+from app.constants import (
+    UQ_THRESHOLD_MAINNET,
+    UQ_THRESHOLD_NOT_MAINNET,
+    TIMEOUT_LIST_NOT_MAINNET,
+    TIMEOUT_LIST,
+    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
+    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+    GUEST_LIST_NOT_MAINNET,
+)
 from app.modules.dto import SignatureOpType
 from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.protocols import (
     OctantRewards,
-    WinningsService,
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
     HistoryService,
@@ -17,11 +25,15 @@ from app.modules.modules_factory.protocols import (
     ScoreDelegation,
     UniquenessQuotients,
     ProjectsDetailsService,
+    SablierStreamsService,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
+)
+from app.modules.projects.details.service.projects_details import (
+    StaticProjectsDetailsService,
 )
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
@@ -35,30 +47,20 @@ from app.modules.staking.proceeds.service.estimated import EstimatedStakingProce
 from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.sablier_streams.service.sablier_streams import (
+    UserSablierStreamsService,
+)
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
-from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from app.constants import (
-    UQ_THRESHOLD_MAINNET,
-    UQ_THRESHOLD_NOT_MAINNET,
-    TIMEOUT_LIST_NOT_MAINNET,
-    TIMEOUT_LIST,
-    SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
-    TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
-    GUEST_LIST_NOT_MAINNET,
-)
-from app.modules.projects.details.service.projects_details import (
-    StaticProjectsDetailsService,
-)
-from app.modules.user.winnings.service.raffle import RaffleWinningsService
 from migrations.versions.e27e85614385_bump_uq_score_for_addresses_with_ import (
     GUEST_LIST,
 )
@@ -74,7 +76,7 @@ class CurrentServices(Model):
     user_tos_service: UserTos
     user_antisybil_service: GitcoinPassportAntisybil
     octant_rewards_service: OctantRewards
-    user_winnings_service: WinningsService
+    sablier_streams_service: SablierStreamsService
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
     multisig_signatures_service: MultisigSignatures
@@ -177,7 +179,7 @@ class CurrentServices(Model):
             multisig_signatures_service=multisig_signatures,
             user_tos_service=user_tos,
             user_antisybil_service=user_antisybil_service,
-            user_winnings_service=RaffleWinningsService(),
+            sablier_streams_service=UserSablierStreamsService(),
             projects_metadata_service=StaticProjectsMetadataService(),
             projects_details_service=StaticProjectsDetailsService(),
             user_budgets_service=user_budgets,

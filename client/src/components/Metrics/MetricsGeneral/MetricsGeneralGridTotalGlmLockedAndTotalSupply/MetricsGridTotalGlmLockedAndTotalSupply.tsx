@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import ProgressBar from 'components/ui/ProgressBar';
+import useAllSablierStreamsSum from 'hooks/queries/useAllSablierStreams';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useSettingsStore from 'store/settings/store';
@@ -20,6 +21,7 @@ const MetricsGeneralGridTotalGlmLockedAndTotalSupply: FC<
 > = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: lockedSummaryLatest } = useLockedSummaryLatest();
+  const { data: allSablierStreamsSum } = useAllSablierStreamsSum();
   const {
     data: { displayCurrency },
   } = useSettingsStore(({ data }) => ({
@@ -33,18 +35,20 @@ const MetricsGeneralGridTotalGlmLockedAndTotalSupply: FC<
   const lockedRatioRounded = roundLockedRatio(lockedSummaryLatest?.lockedRatio);
 
   const lockedGlmTotalValue = useMemo(() => {
-    if (!lockedSummaryLatest?.lockedTotal) {
+    if (allSablierStreamsSum === undefined || !lockedSummaryLatest?.lockedTotal) {
       return '';
     }
 
-    const lockedGlmTotalFloat = parseFloat(formatUnitsBigInt(lockedSummaryLatest?.lockedTotal));
+    const lockedGlmTotalFloat = parseFloat(
+      formatUnitsBigInt(lockedSummaryLatest.lockedTotal + allSablierStreamsSum),
+    );
 
     return getFormattedValueWithSymbolSuffix({
       format: 'millions',
       precision: 3,
       value: lockedGlmTotalFloat,
     });
-  }, [lockedSummaryLatest]);
+  }, [allSablierStreamsSum, lockedSummaryLatest]);
 
   const lockedGlmTotalFiatValue = getValueFiatToDisplay({
     cryptoCurrency: 'golem',

@@ -26,7 +26,7 @@ from v2.epochs.dependencies import (
     get_open_allocation_window_epoch_number,
 )
 from v2.matched_rewards.dependencies import (
-    get_matched_rewards_estimator,
+    get_matched_rewards_estimator_only_in_aw,
     get_matched_rewards_estimator_settings,
 )
 from v2.project_rewards.dependencies import get_project_rewards_estimator
@@ -37,7 +37,9 @@ from v2.projects.dependencies import (
     get_projects_contracts,
     get_projects_settings,
 )
-from v2.projects.services import ProjectsAllocationThresholdGetter
+from v2.projects.services.projects_allocation_threshold_getter import (
+    ProjectsAllocationThresholdGetter,
+)
 from v2.uniqueness_quotients.dependencies import (
     get_uq_score_getter,
     get_uq_score_settings,
@@ -72,7 +74,7 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
                 projects_contracts,
                 get_projects_allocation_threshold_settings(),
             )
-            estimated_matched_rewards = await get_matched_rewards_estimator(
+            estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
                 session,
                 epochs_subgraph,
@@ -129,7 +131,7 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 projects_contracts,
                 get_projects_allocation_threshold_settings(),
             )
-            estimated_matched_rewards = await get_matched_rewards_estimator(
+            estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
                 session,
                 epochs_subgraph,

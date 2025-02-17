@@ -4,7 +4,7 @@ import pytest
 
 from app.engine.user.effective_deposit import DepositEvent, EventType, DepositSource
 from app.modules.user.events_generator.core import unify_deposit_balances
-from tests.helpers.constants import TWENTY_FOUR_HOURS_PERIOD
+from tests.helpers.constants import TWENTY_FOUR_HOURS_PERIOD, FIFTEEN_MINUTES_PERIOD
 
 
 @pytest.mark.parametrize(
@@ -234,23 +234,7 @@ def test_unify_deposit_balances(
     Test the unify_deposit_balances function with various event orders and types.
     """
     result = unify_deposit_balances(events, TWENTY_FOUR_HOURS_PERIOD)
-    assert len(result) == len(
-        expected
-    ), "Number of events in result does not match expected."
-    for r, e in zip(result, expected):
-        assert (
-            r.deposit_before == e.deposit_before
-        ), f"deposit_before mismatch: {r.deposit_before} != {e.deposit_before}"
-        assert (
-            r.deposit_after == e.deposit_after
-        ), f"deposit_after mismatch: {r.deposit_after} != {e.deposit_after}"
-        assert r.amount == e.amount, f"amount mismatch: {r.amount} != {e.amount}"
-        assert r.type == e.type, f"type mismatch: {r.type} != {e.type}"
-        assert r.source == e.source, f"source mismatch: {r.source} != {e.source}"
-        assert r.user == e.user, f"user mismatch: {r.user} != {e.user}"
-        assert (
-            r.timestamp == e.timestamp
-        ), f"timestamp mismatch: {r.timestamp} != {e.timestamp}"
+    _validate(result, expected)
 
 
 @pytest.mark.parametrize(
@@ -433,23 +417,7 @@ def test_unify_deposit_balances(
 )
 def test_unify_deposit_balances_with_grace_periods_scenarios(events, expected):
     result = unify_deposit_balances(events, TWENTY_FOUR_HOURS_PERIOD)
-    assert len(result) == len(
-        expected
-    ), "Number of events in result does not match expected."
-    for r, e in zip(result, expected):
-        assert (
-            r.deposit_before == e.deposit_before
-        ), f"deposit_before mismatch: {r.deposit_before} != {e.deposit_before}"
-        assert (
-            r.deposit_after == e.deposit_after
-        ), f"deposit_after mismatch: {r.deposit_after} != {e.deposit_after}"
-        assert r.amount == e.amount, f"amount mismatch: {r.amount} != {e.amount}"
-        assert r.type == e.type, f"type mismatch: {r.type} != {e.type}"
-        assert r.source == e.source, f"source mismatch: {r.source} != {e.source}"
-        assert r.user == e.user, f"user mismatch: {r.user} != {e.user}"
-        assert (
-            r.timestamp == e.timestamp
-        ), f"timestamp mismatch: {r.timestamp} != {e.timestamp}"
+    _validate(result, expected)
 
 
 @pytest.mark.parametrize(
@@ -493,7 +461,101 @@ def test_unify_deposit_balances_with_grace_periods_scenarios(events, expected):
 )
 def test_unify_deposit_does_not_remove_when_out_of_the_grace_period(expected):
     result = unify_deposit_balances(expected, TWENTY_FOUR_HOURS_PERIOD)
-    assert len(result) == len(expected)
+    _validate(result, expected)
+
+
+@pytest.mark.parametrize(
+    "events, expected",
+    [
+        (
+            [
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.LOCK,
+                    timestamp=1737366360,
+                    amount=0,
+                    deposit_before=10000000000000000000000,
+                    source=DepositSource.OCTANT,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.UNLOCK,
+                    timestamp=1737382716,
+                    amount=3000000000000000000000,
+                    deposit_before=10000000000000000000000,
+                    source=DepositSource.SABLIER,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.UNLOCK,
+                    timestamp=1737382764,
+                    amount=3000000000000000000000,
+                    deposit_before=7000000000000000000000,
+                    source=DepositSource.SABLIER,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.LOCK,
+                    timestamp=1737382884,
+                    amount=6000000000000000000000,
+                    deposit_before=0,
+                    source=DepositSource.OCTANT,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.UNLOCK,
+                    timestamp=1737382968,
+                    amount=4000000000000000000000,
+                    deposit_before=4000000000000000000000,
+                    source=DepositSource.SABLIER,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.LOCK,
+                    timestamp=1737383712,
+                    amount=4000000000000000000000,
+                    deposit_before=6000000000000000000000,
+                    source=DepositSource.OCTANT,
+                ),
+            ],
+            [
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.LOCK,
+                    timestamp=1737366360,
+                    amount=0,
+                    deposit_before=10000000000000000000000,
+                    source=DepositSource.OCTANT,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.UNLOCK,
+                    timestamp=1737382716,
+                    amount=3000000000000000000000,
+                    deposit_before=10000000000000000000000,
+                    source=DepositSource.SABLIER,
+                ),
+                DepositEvent(
+                    user="0x123",
+                    type=EventType.LOCK,
+                    timestamp=1737382884,
+                    amount=3000000000000000000000,
+                    deposit_before=7000000000000000000000,
+                ),
+            ],
+        ),
+    ],
+)
+def test_unify_deposit_for_a_corner_case1(events, expected):
+    result = unify_deposit_balances(events, FIFTEEN_MINUTES_PERIOD)
+
+    _validate(result, expected)
+
+
+def _validate(result, expected):
+    assert len(result) == len(
+        expected
+    ), "Number of events in result does not match expected."
 
     for r, e in zip(result, expected):
         assert (

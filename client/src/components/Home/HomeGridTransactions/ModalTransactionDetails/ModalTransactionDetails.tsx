@@ -22,12 +22,9 @@ const ModalTransactionDetails: FC<ModalTransactionDetailsProps> = ({
   const header = useMemo(() => {
     switch (type) {
       case 'patron_mode_donation':
-        return i18n.t(
-          'components.home.historyItem.homeGridTransactions.transactionsListItem.epochDonation',
-          {
-            epoch: epochTimestampHappenedIn,
-          },
-        );
+        return i18n.t('components.home.homeGridTransactions.transactionsListItem.epochDonation', {
+          epoch: epochTimestampHappenedIn,
+        });
       case 'lock':
         return i18n.t('common.lockedGLM');
       case 'unlock':
