@@ -646,10 +646,16 @@ class Client:
 
     def get_epoch_info(self, epoch):
         rv = self._flask_client.get(f"/epochs/info/{epoch}")
+        current_app.logger.debug(
+            f"Request to /epochs/info/{epoch} [{rv.status_code}] returned text {rv.text}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective_estimated(self):
         rv = self._flask_client.get("/deposits/total_effective/estimated")
+        current_app.logger.debug(
+            f"Request to /deposits/total_effective/estimated [{rv.status_code}] returned text {rv.text}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective(self, epoch: int):
@@ -837,10 +843,16 @@ class Client:
 
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
+        current_app.logger.debug(
+            f"Request to get /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
+        current_app.logger.debug(
+            f"Request to put /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
+        )
         return rv.text, rv.status_code
 
     def get_chain_info(self) -> tuple[dict, int]:
@@ -876,6 +888,9 @@ class Client:
                 "secondaryAddrSignature": secondary_address_signature,
             },
         )
+        current_app.logger.debug(
+            f"Request to /delegate [{rv.status_code}] returned text {rv.text}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def delegation_recalculate(
@@ -893,6 +908,9 @@ class Client:
                 "primaryAddrSignature": primary_address_signature,
                 "secondaryAddrSignature": secondary_address_signature,
             },
+        )
+        current_app.logger.debug(
+            f"Request to /delegation/recalculate [{rv.status_code}] returned text {rv.text}"
         )
         return json.loads(rv.text), rv.status_code
 
