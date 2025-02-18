@@ -256,7 +256,7 @@ export default function getMilestones(): Milestone[] {
       href: 'https://octant.fillout.com/epoch-7-climate-round-applications',
       id: 'e7-applications-open',
       label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
-      to: new Date('2025-02-15T13:00+0100'),
+      to: new Date('2025-02-14T08:59+0100'), // February 13, 11:59 pm PST
     },
     {
       from: new Date('2025-04-11T18:00:00+0200'),
