@@ -10,6 +10,8 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
+const SYNPRESS_LOCKED_GLMS_BEFORE_LOCK = 'SYNPRESS_LOCKED_GLMS_BEFORE_LOCK';
+
 chai.use(chaiColors);
 Object.values(viewports).forEach(
   ({ device, viewportWidth, viewportHeight, isLargeDesktop, isDesktop }, idx) => {
@@ -118,8 +120,7 @@ Object.values(viewports).forEach(
         cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]').then($elPrev => {
           const amountToLock = 1000;
-          const lockedGlms = parseInt($elPrev.text(), 10);
-
+          sessionStorage.setItem(SYNPRESS_LOCKED_GLMS_BEFORE_LOCK, $elPrev.text());
           cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
           cy.get('[data-test=LockGlmTabs__Button]').should('have.text', 'Lock');
@@ -154,11 +155,18 @@ Object.values(viewports).forEach(
             timeout: 60000,
           }).should('not.exist');
           cy.wait(1000);
+          cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]')
+            .invoke('text')
+            .should('not.eq', '0 GLM');
           cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]', {
             timeout: 60000,
           }).then($elNext => {
             const lockedGlmsAfterLock = parseInt($elNext.text(), 10);
-            expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+            const lockedGlmsBeforeLock = parseInt(
+              sessionStorage.getItem(SYNPRESS_LOCKED_GLMS_BEFORE_LOCK)!,
+              10,
+            );
+            expect(lockedGlmsBeforeLock + amountToLock).to.be.eq(lockedGlmsAfterLock);
           });
           cy.get('[data-test=HomeGridTransactions]').scrollIntoView({
             offset: { left: 0, top: -100 },
