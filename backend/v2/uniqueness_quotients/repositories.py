@@ -5,6 +5,7 @@ from app.infrastructure.database.models import GPStamps, UniquenessQuotient, Use
 from eth_utils import to_checksum_address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
@@ -64,3 +65,17 @@ async def get_gp_stamps_by_address(
     )
 
     return result
+
+
+async def get_all_uqs_by_epoch(
+    session: AsyncSession, epoch_number: int
+) -> list[UniquenessQuotient]:
+    """Returns UniquenessQuotient of all saved records for a given epoch."""
+
+    results = await session.scalars(
+        select(UniquenessQuotient)
+        .options(joinedload(UniquenessQuotient.user))
+        .filter(UniquenessQuotient.epoch == epoch_number)
+    )
+
+    return list(results.all())

@@ -78,6 +78,7 @@ async def allocate(
     user_uq_score = await uq_score_getter.get_or_calculate(
         epoch_number=epoch_number,
         user_address=request.user_address,
+        should_save=True,
     )
 
     # Calculate leverage by simulating the allocation
@@ -145,6 +146,7 @@ async def simulate_allocation(
     user_uq_score = await uq_score_getter.get_or_calculate(
         epoch_number=epoch_number,
         user_address=user_address,
+        should_save=False,
     )
     new_allocations_with_uq = [
         AllocationWithUserUQScore(

@@ -27,7 +27,7 @@ class UQScoreGetter:
     timeout_list: set[Address]
 
     async def get_or_calculate(
-        self, epoch_number: int, user_address: Address
+        self, epoch_number: int, user_address: Address, *, should_save: bool
     ) -> Decimal:
         """Get or calculate the UQ score for a user in a given epoch.
         If the UQ score is already calculated, it will be returned.
@@ -44,10 +44,11 @@ class UQScoreGetter:
         # Otherwise, calculate the UQ score
         uq_score = await self._calculate_uq_score(user_address)
 
-        # Save the UQ score for future reference
-        await save_uq_score_for_user_address(
-            self.session, user_address, epoch_number, uq_score
-        )
+        if should_save:
+            # Save the UQ score for future reference
+            await save_uq_score_for_user_address(
+                self.session, user_address, epoch_number, uq_score
+            )
 
         return uq_score
 
@@ -80,6 +81,8 @@ async def get_gitcoin_passport_score(
 
     # We have no information about the user's score
     if stamps is None:
+        if user_address in guest_list:
+            return 21.0
         return 0.0
 
     # We remove score associated with GTC staking
