@@ -14,6 +14,7 @@ from v2.uniqueness_quotients.dependencies import (
     GetUQScoreGetter,
 )
 from v2.core.dependencies import GetCurrentDatetime, GetSession
+
 from v2.user_patron_mode.repositories import (
     get_all_patrons_at_timestamp,
     get_budgets_by_users_addresses_and_epoch,
