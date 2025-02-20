@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from tests.v2.factories.gp_scores import GPStampsFactorySet
 from tests.v2.factories.uniqueness_quotients import UniquenessQuotientFactorySet
 from tests.v2.factories.allocation_requests import AllocationRequestFactorySet
 from tests.v2.factories.allocations import AllocationFactorySet
@@ -33,6 +34,7 @@ class FactoriesAggregator:
     finalized_snapshots: FinalizedEpochSnapshotFactorySet
     patrons: PatronModeEventFactorySet
     uniqueness_quotients: UniquenessQuotientFactorySet
+    gp_stamps: GPStampsFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -47,3 +49,4 @@ class FactoriesAggregator:
         self.finalized_snapshots = FinalizedEpochSnapshotFactorySet(fast_session)
         self.patrons = PatronModeEventFactorySet(fast_session)
         self.uniqueness_quotients = UniquenessQuotientFactorySet(fast_session)
+        self.gp_stamps = GPStampsFactorySet(fast_session)
