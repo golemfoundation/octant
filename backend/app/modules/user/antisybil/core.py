@@ -64,8 +64,8 @@ def _has_guest_stamp_applied_by_gp(score: GPStamps, now: datetime) -> bool:
 
 
 def _apply_gtc_staking_stamp_nullification(
-    score: int, stamps: GPStamps, now: datetime
-) -> int:
+    score: float, stamps: GPStamps, now: datetime
+) -> float:
     """Take score and stamps as returned by Passport and remove score associated with GTC staking"""
 
     all_stamps = json.loads(stamps.stamps)

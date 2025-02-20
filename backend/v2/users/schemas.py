@@ -17,3 +17,10 @@ class UserUQResponseV1(OctantModel):
 
 class AllUsersUQResponseV1(OctantModel):
     uqs_info: list[UserUQResponseV1]
+
+
+class AntisybilStatusResponseV1(OctantModel):
+    status: str
+    score: Decimal | None
+    expires_at: str | None  # timestamp
+    is_on_time_out_list: bool | None
