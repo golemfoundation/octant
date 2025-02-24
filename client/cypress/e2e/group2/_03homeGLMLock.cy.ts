@@ -11,6 +11,7 @@ import {
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 const SYNPRESS_LOCKED_GLMS_BEFORE_LOCK = 'SYNPRESS_LOCKED_GLMS_BEFORE_LOCK';
+const SYNPRESS_LOCKED_GLMS_BEFORE_UNLOCK = 'SYNPRESS_LOCKED_GLMS_BEFORE_UNLOCK';
 
 chai.use(chaiColors);
 Object.values(viewports).forEach(
@@ -210,7 +211,7 @@ Object.values(viewports).forEach(
         cy.wait(1000);
         cy.get('[data-test=HomeGridCurrentGlmLock--current__primary]').then($elPrev => {
           const amountToUnlock = 1;
-          const lockedGlms = parseInt($elPrev.text(), 10);
+          sessionStorage.setItem(SYNPRESS_LOCKED_GLMS_BEFORE_UNLOCK, $elPrev.text());
 
           cy.get('[data-test=HomeGridCurrentGlmLock__Button]').click();
           cy.get('[data-test=LockGlmTabs__tab--1]').click();
@@ -243,7 +244,11 @@ Object.values(viewports).forEach(
             timeout: 60000,
           }).then($elNext => {
             const lockedGlmsAfterUnlock = parseInt($elNext.text(), 10);
-            expect(lockedGlms - amountToUnlock).to.be.eq(lockedGlmsAfterUnlock);
+            const lockedGlmsBeforeUnlock = parseInt(
+              sessionStorage.getItem(SYNPRESS_LOCKED_GLMS_BEFORE_UNLOCK)!,
+              10,
+            );
+            expect(lockedGlmsBeforeUnlock - amountToUnlock).to.be.eq(lockedGlmsAfterUnlock);
           });
           cy.get('[data-test=HomeGridTransactions]').scrollIntoView({
             offset: { left: 0, top: -100 },
