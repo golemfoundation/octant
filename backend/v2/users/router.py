@@ -1,7 +1,7 @@
 from datetime import timezone
 from fastapi import APIRouter, Response
 
-from app.exceptions import AddressAlreadyDelegated, InvalidEpoch
+from app.exceptions import AddressAlreadyDelegated, InvalidEpoch, UserNotFound
 from v2.delegations.dependencies import GetDelegationService
 from v2.uniqueness_quotients.repositories import (
     add_gp_stamps,
@@ -117,13 +117,7 @@ async def get_antisybil_status_for_user_v1(
     # If the user has no stamps, we return an unknown status
     gp_stamps = await get_gp_stamps_by_address(session, user_address)
     if gp_stamps is None:
-        response.status_code = 404
-        return AntisybilStatusResponseV1(
-            status="Unknown",
-            expires_at=None,
-            score=None,
-            is_on_time_out_list=None,
-        )
+        raise UserNotFound()
 
     # If the user has saved stamps, we calculate the UQ score
     score = await uq_score_getter.get_gitcoin_passport_score(user_address)
@@ -147,7 +141,7 @@ async def refresh_antisybil_status_for_user_v1(
     current_datetime: GetCurrentDatetime,
     # Request Parameters
     user_address: Address,
-) -> None:
+):
     """
     Refresh cached antisybil status for a user.
     If the user delegated the score, it will raise an error.

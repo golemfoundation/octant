@@ -64,11 +64,6 @@ async def add_gp_stamps(
     if user is None:
         raise UserNotFound(user_address)
 
-    print("Expires at", expires_at)
-    print(
-        "Expires at timezone", expires_at.astimezone(timezone.utc).replace(tzinfo=None)
-    )
-
     gp_stamps = GPStamps(
         user_id=user.id,
         score=score,
