@@ -140,3 +140,31 @@ async def test_get_antisybil_status_guest_list_user(
             "expiresAt": str(expires_ts),
             "isOnTimeOutList": False,
         }
+
+
+@pytest.mark.asyncio
+async def test_get_antisybil_status_no_gp_stamps(
+    fast_app: FastAPI,
+    fast_client: AsyncClient,
+    fast_session: AsyncSession,
+    factories: FactoriesAggregator,
+):
+    """Should return 404 when user has no GPStamps record"""
+    # Create user but don't create any GPStamps for them
+    alice = await factories.users.get_or_create_alice()
+
+    # Override uq_score_getter with empty lists
+    fake_uq_score_getter = UQScoreGetter(
+        session=fast_session,
+        uq_score_threshold=UQ_THRESHOLD_MAINNET,
+        max_uq_score=MAX_UQ_SCORE,
+        low_uq_score=LOW_UQ_SCORE,
+        null_uq_score=NULLIFIED_UQ_SCORE,
+        guest_list=set(),
+        timeout_list=set(),
+    )
+    fast_app.dependency_overrides[get_uq_score_getter] = lambda: fake_uq_score_getter
+
+    async with fast_client as client:
+        resp = await client.get(f"user/{alice.address}/antisybil-status")
+        assert resp.status_code == HTTPStatus.NOT_FOUND

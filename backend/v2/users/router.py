@@ -1,7 +1,11 @@
 from datetime import timezone
 from fastapi import APIRouter, Response
 
-from app.exceptions import AddressAlreadyDelegated, InvalidEpoch, UserNotFound
+from app.exceptions import (
+    AddressAlreadyDelegated,
+    GPStampsNotFound,
+    InvalidEpoch,
+)
 from v2.delegations.dependencies import GetDelegationService
 from v2.uniqueness_quotients.repositories import (
     add_gp_stamps,
@@ -117,7 +121,7 @@ async def get_antisybil_status_for_user_v1(
     # If the user has no stamps, we return an unknown status
     gp_stamps = await get_gp_stamps_by_address(session, user_address)
     if gp_stamps is None:
-        raise UserNotFound()
+        raise GPStampsNotFound()
 
     # If the user has saved stamps, we calculate the UQ score
     score = await uq_score_getter.get_gitcoin_passport_score(user_address)
