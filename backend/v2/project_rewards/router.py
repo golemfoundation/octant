@@ -451,7 +451,6 @@ async def get_rewards_for_projects_in_epoch_v1(
 
 @api.get("/threshold/{epoch_number}")
 async def get_rewards_threshold_v1(
-    epoch_number: int,
     projects_allocation_threshold_getter: GetProjectsAllocationThresholdGetter,
 ) -> ThresholdResponseV1:
     threshold = await projects_allocation_threshold_getter.get()
