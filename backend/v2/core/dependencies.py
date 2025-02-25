@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import time
 from functools import lru_cache
 from typing import Annotated, AsyncGenerator
@@ -140,8 +141,15 @@ def get_current_timestamp() -> int:
     return int(time.time())
 
 
+def get_current_datetime(
+    current_timestamp: Annotated[int, Depends(get_current_timestamp)]
+) -> datetime:
+    return datetime.fromtimestamp(current_timestamp, timezone.utc)
+
+
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]
 GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
 Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
 GetSession = Annotated[AsyncSession, Depends(get_db_session)]
 GetCurrentTimestamp = Annotated[int, Depends(get_current_timestamp)]
+GetCurrentDatetime = Annotated[datetime, Depends(get_current_datetime)]

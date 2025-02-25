@@ -370,3 +370,11 @@ class InvalidProjectDetailsInput(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class GPStampsNotFound(OctantException):
+    code = 404
+    description = "GP Stamps not found for user or the user does not exist, try fetching them first"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
