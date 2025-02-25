@@ -2,6 +2,7 @@ from decimal import Decimal
 from typing import Annotated
 
 from app.constants import (
+    GC_PASSPORT_SCORER_API,
     GUEST_LIST,
     TIMEOUT_LIST,
     TIMEOUT_LIST_NOT_MAINNET,
@@ -12,6 +13,7 @@ from app.constants import (
 from app.shared.blockchain_types import ChainTypes
 from fastapi import Depends
 from pydantic import Field, TypeAdapter
+from v2.uniqueness_quotients.gitcoin_passport import GitcoinScorerClient
 from v2.core.dependencies import GetChainSettings, GetSession, OctantSettings
 from v2.core.types import Address
 from v2.uniqueness_quotients.services import UQScoreGetter
@@ -70,4 +72,27 @@ def get_uq_score_getter(
     )
 
 
+class GitcoinScorerSettings(OctantSettings):
+    gc_passport_scorer_api_key: str
+    gc_passport_scorer_id: str
+    gc_passport_scorer_base_url: str = GC_PASSPORT_SCORER_API
+
+
+def get_gitcoin_scorer_settings() -> GitcoinScorerSettings:
+    return GitcoinScorerSettings()
+
+
+def get_gitcoin_scorer_client(
+    settings: Annotated[GitcoinScorerSettings, Depends(get_gitcoin_scorer_settings)]
+) -> GitcoinScorerClient:
+    return GitcoinScorerClient(
+        api_key=settings.gc_passport_scorer_api_key,
+        scorer_id=settings.gc_passport_scorer_id,
+        base_url=settings.gc_passport_scorer_base_url,
+    )
+
+
 GetUQScoreGetter = Annotated[UQScoreGetter, Depends(get_uq_score_getter)]
+GetGitcoinScorerClient = Annotated[
+    GitcoinScorerClient, Depends(get_gitcoin_scorer_client)
+]

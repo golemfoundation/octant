@@ -1,16 +1,31 @@
-from fastapi import APIRouter
+from datetime import timezone
+from fastapi import APIRouter, Response
 
-from app.exceptions import InvalidEpoch
-from v2.uniqueness_quotients.repositories import get_all_uqs_by_epoch
+from app.exceptions import (
+    AddressAlreadyDelegated,
+    GPStampsNotFound,
+    InvalidEpoch,
+)
+from v2.delegations.dependencies import GetDelegationService
+from v2.uniqueness_quotients.repositories import (
+    add_gp_stamps,
+    get_all_uqs_by_epoch,
+    get_gp_stamps_by_address,
+)
 from v2.core.types import Address
-from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
-from v2.core.dependencies import GetSession
+from v2.uniqueness_quotients.dependencies import (
+    GetGitcoinScorerClient,
+    GetUQScoreGetter,
+)
+from v2.core.dependencies import GetCurrentDatetime, GetSession
+
 from v2.user_patron_mode.repositories import (
     get_all_patrons_at_timestamp,
     get_budgets_by_users_addresses_and_epoch,
 )
 from v2.users.schemas import (
     AllUsersUQResponseV1,
+    AntisybilStatusResponseV1,
     EpochPatronsResponseV1,
     UQResponseV1,
     UserUQResponseV1,
@@ -88,4 +103,71 @@ async def get_all_uqs_for_epoch_v1(
             )
             for uq in all_uqs
         ]
+    )
+
+
+@api.get("/{user_address}/antisybil-status")
+async def get_antisybil_status_for_user_v1(
+    session: GetSession,
+    uq_score_getter: GetUQScoreGetter,
+    # Request Parameters
+    user_address: Address,
+    response: Response,
+) -> AntisybilStatusResponseV1:
+    """
+    Returns user's antisybil status.
+    """
+
+    # If the user has no stamps, we return an unknown status
+    gp_stamps = await get_gp_stamps_by_address(session, user_address)
+    if gp_stamps is None:
+        raise GPStampsNotFound()
+
+    # If the user has saved stamps, we calculate the UQ score
+    score = await uq_score_getter.get_gitcoin_passport_score(user_address)
+    is_on_timeout_list = user_address in uq_score_getter.timeout_list
+    expires_at = int(gp_stamps.expires_at.replace(tzinfo=timezone.utc).timestamp())
+
+    return AntisybilStatusResponseV1(
+        status="Known",
+        score=score,
+        expires_at=str(expires_at),
+        is_on_time_out_list=is_on_timeout_list,
+    )
+
+
+@api.put("/{user_address}/antisybil-status", status_code=204)
+async def refresh_antisybil_status_for_user_v1(
+    session: GetSession,
+    gitcoin_scorer: GetGitcoinScorerClient,
+    delegations: GetDelegationService,
+    uq_score_getter: GetUQScoreGetter,
+    current_datetime: GetCurrentDatetime,
+    # Request Parameters
+    user_address: Address,
+):
+    """
+    Refresh cached antisybil status for a user.
+    If the user delegated the score, it will raise an error.
+
+    Responses:
+        204: Refresh successful
+        504: Could not refresh antisybil status. Upstream is unavailable.
+    """
+
+    # Delegated addresses should not be refreshed
+    # as they have score already delegated and calling gc scorer does not make sense
+    if await delegations.exists(user_address):
+        raise AddressAlreadyDelegated()
+
+    # Refresh the score (fetch and save stamps)
+    gc_score = await gitcoin_scorer.fetch_score(user_address, current_datetime)
+
+    # We hardcode the score to 0 for addresses on the timeout list
+    # as they are not eligible for any positive score
+    if user_address in uq_score_getter.timeout_list:
+        gc_score.score = 0.0
+
+    await add_gp_stamps(
+        session, user_address, gc_score.score, gc_score.expires_at, gc_score.stamps
     )
