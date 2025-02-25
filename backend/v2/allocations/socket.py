@@ -71,7 +71,6 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
                 epoch_number,
                 session,
                 projects_contracts,
-                get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
@@ -128,7 +127,6 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 epoch_number,
                 session,
                 projects_contracts,
-                get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
