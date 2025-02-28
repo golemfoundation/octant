@@ -14,14 +14,12 @@ class ProjectsAllocationThresholdGetter:
     # Dependencies
     session: AsyncSession
     projects: ProjectsContracts
-    project_count_multiplier: int = 1
 
     async def get(self) -> int:
         return await get_projects_allocation_threshold(
             session=self.session,
             projects=self.projects,
             epoch_number=self.epoch_number,
-            project_count_multiplier=self.project_count_multiplier,
         )
 
 
@@ -31,9 +29,15 @@ async def get_projects_allocation_threshold(
     projects: ProjectsContracts,
     # Arguments
     epoch_number: int,
-    project_count_multiplier: int = 1,
-) -> int:
-    # PROJECTS_COUNT_MULTIPLIER = 1  # TODO: from settings?
+) -> int | None:
+    # We do not use threshold for epoch 4 and above - it's not needed
+    if epoch_number >= 4:
+        return None
+
+    if epoch_number in [1, 2]:
+        project_count_multiplier = 2
+    else:
+        project_count_multiplier = 1
 
     total_allocated = await sum_allocations_by_epoch(session, epoch_number)
     project_addresses = await projects.get_project_addresses(epoch_number)
