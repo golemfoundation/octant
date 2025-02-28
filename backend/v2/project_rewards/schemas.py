@@ -84,7 +84,7 @@ class UpcomingUserBudgetResponseV1(OctantModel):
 
 
 class ThresholdResponseV1(OctantModel):
-    threshold: BigInteger = Field(
+    threshold: BigInteger | None = Field(
         ...,
         description="Threshold, that projects have to pass to be eligible for receiving rewards.",
     )

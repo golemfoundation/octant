@@ -32,8 +32,7 @@ from v2.matched_rewards.dependencies import (
 from v2.project_rewards.dependencies import get_project_rewards_estimator
 from v2.project_rewards.services import ProjectRewardsEstimator
 from v2.projects.dependencies import (
-    get_projects_allocation_threshold_getter,
-    get_projects_allocation_threshold_settings,
+    get_projects_allocation_threshold_getter_in_open_aw,
     get_projects_contracts,
     get_projects_settings,
 )
@@ -68,11 +67,10 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
 
     async with sessionmaker() as session:
         try:
-            threshold_getter = get_projects_allocation_threshold_getter(
+            threshold_getter = get_projects_allocation_threshold_getter_in_open_aw(
                 epoch_number,
                 session,
                 projects_contracts,
-                get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
@@ -125,11 +123,10 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
 
     async with sessionmaker() as session:
         try:
-            threshold_getter = get_projects_allocation_threshold_getter(
+            threshold_getter = get_projects_allocation_threshold_getter_in_open_aw(
                 epoch_number,
                 session,
                 projects_contracts,
-                get_projects_allocation_threshold_settings(),
             )
             estimated_matched_rewards = await get_matched_rewards_estimator_only_in_aw(
                 epoch_number,
