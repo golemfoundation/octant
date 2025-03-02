@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import synpressPlugins from '@synthetixio/synpress/plugins';
 import { defineConfig } from 'cypress';
+import cypressFailFast from 'cypress-fail-fast/plugin';
 import vitePreprocessor from 'cypress-vite';
 /* eslint-enable import/no-extraneous-dependencies */
 import path from 'path';
@@ -25,6 +26,7 @@ export default defineConfig({
       );
 
       synpressPlugins(on, config);
+      cypressFailFast(on, config);
       return config;
     },
     supportFile: 'cypress/support/index.ts',
