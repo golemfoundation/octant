@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import synpressPlugins from '@synthetixio/synpress/plugins';
 import { defineConfig } from 'cypress';
-import vitePreprocessor from 'cypress-vite';
 import cypressFailFast from 'cypress-fail-fast/plugin';
+import vitePreprocessor from 'cypress-vite';
 /* eslint-enable import/no-extraneous-dependencies */
 import path from 'path';
 
