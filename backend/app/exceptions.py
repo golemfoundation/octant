@@ -379,6 +379,7 @@ class GPStampsNotFound(OctantException):
     def __init__(self):
         super().__init__(self.description, self.code)
 
+
 class XRealIpHeaderMissing(OctantException):
     code = 400
     description = "X-Real-IP header is missing"
