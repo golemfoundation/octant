@@ -43,6 +43,8 @@ async def add_user_tos_consent(
     if not user:
         user = User(address=user_address)
         session.add(user)
+        await session.commit()
+        await session.refresh(user)
 
     # Add the consent
     consent = UserConsents(ip=ip_address, user_id=user.id)

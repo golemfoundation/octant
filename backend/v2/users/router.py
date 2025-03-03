@@ -1,4 +1,5 @@
 from datetime import timezone
+from typing import Annotated
 from fastapi import APIRouter, Header, Request, Response
 
 from app.exceptions import (
@@ -7,6 +8,7 @@ from app.exceptions import (
     GPStampsNotFound,
     InvalidEpoch,
     InvalidSignature,
+    XRealIpHeaderMissing,
 )
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from app.modules.user.tos.core import build_consent_message
@@ -211,7 +213,7 @@ async def post_tos_status_for_user_v1(
     user_address: Address,
     payload: TosStatusRequestV1,
     request: Request,
-    x_real_ip: str | None = Header(None, alias="X-Real-IP"),
+    x_real_ip: Annotated[str | None, Header()] = None,
 ) -> TosStatusResponseV1:
     """
     Updates user's Terms of Service status.
@@ -227,6 +229,8 @@ async def post_tos_status_for_user_v1(
 
     # Get the IP address from the request
     if x_headers_settings.x_real_ip_required:
+        if x_real_ip is None:
+            raise XRealIpHeaderMissing()
         ip_address = x_real_ip
     else:
         ip_address = request.client.host
