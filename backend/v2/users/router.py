@@ -1,11 +1,19 @@
 from datetime import timezone
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Header, Request, Response
 
 from app.exceptions import (
     AddressAlreadyDelegated,
+    DuplicateConsent,
     GPStampsNotFound,
     InvalidEpoch,
+    InvalidSignature,
 )
+from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from app.modules.user.tos.core import build_consent_message
+from v2.allocations.repositories import soft_delete_user_allocations_by_epoch
+from v2.crypto.dependencies import GetSignedMessageVerifier
+from v2.users.dependencies import GetXHeadersSettings
+from v2.users.repositories import add_user_tos_consent, get_user_tos_consent_status
 from v2.delegations.dependencies import GetDelegationService
 from v2.uniqueness_quotients.repositories import (
     add_gp_stamps,
@@ -22,15 +30,21 @@ from v2.core.dependencies import GetCurrentDatetime, GetSession
 from v2.user_patron_mode.repositories import (
     get_all_patrons_at_timestamp,
     get_budgets_by_users_addresses_and_epoch,
+    get_user_patron_mode_status,
+    toggle_patron_mode,
 )
 from v2.users.schemas import (
     AllUsersUQResponseV1,
     AntisybilStatusResponseV1,
     EpochPatronsResponseV1,
+    PatronModeRequestV1,
+    PatronModeResponseV1,
+    TosStatusRequestV1,
+    TosStatusResponseV1,
     UQResponseV1,
     UserUQResponseV1,
 )
-from v2.epochs.dependencies import GetEpochsSubgraph
+from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
 
 api = APIRouter(prefix="/user", tags=["user"])
 
@@ -171,3 +185,153 @@ async def refresh_antisybil_status_for_user_v1(
     await add_gp_stamps(
         session, user_address, gc_score.score, gc_score.expires_at, gc_score.stamps
     )
+
+
+# tos status
+@api.get("/{user_address}/tos")
+async def get_tos_status_for_user_v1(
+    session: GetSession,
+    # Request Parameters
+    user_address: Address,
+) -> TosStatusResponseV1:
+    """
+    Returns true if given user has already accepted Terms of Service, false in the other case.
+    """
+
+    status = await get_user_tos_consent_status(session, user_address)
+    return TosStatusResponseV1(accepted=status)
+
+
+@api.post("/{user_address}/tos")
+async def post_tos_status_for_user_v1(
+    session: GetSession,
+    signed_message_verifier: GetSignedMessageVerifier,
+    x_headers_settings: GetXHeadersSettings,
+    # Request Parameters
+    user_address: Address,
+    payload: TosStatusRequestV1,
+    request: Request,
+    x_real_ip: str | None = Header(None, alias="X-Real-IP"),
+) -> TosStatusResponseV1:
+    """
+    Updates user's Terms of Service status.
+    """
+
+    # signature = ns.payload.get("signature")
+    # user_ip = ns.payload.get("x-real-ip")
+
+    # Terms of Service can only be accepted once
+    already_accepted = await get_user_tos_consent_status(session, user_address)
+    if already_accepted:
+        raise DuplicateConsent(user_address)
+
+    # Get the IP address from the request
+    if x_headers_settings.x_real_ip_required:
+        ip_address = x_real_ip
+    else:
+        ip_address = request.client.host
+
+    # Build the message & verify the signature
+    msg_text = build_consent_message(user_address)
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
+    is_valid = await signed_message_verifier.verify(
+        user_address, encoded_msg, payload.signature
+    )
+    if not is_valid:
+        raise InvalidSignature(user_address, payload.signature)
+
+    # self.verifier.verify(
+    #     context, user_address=user_address, consent_signature=consent_signature
+    # )
+
+    # Verifier
+    # def _verify_logic(self, _: Context, **kwargs):
+    #     user_address = kwargs["user_address"]
+    #     consent = database.user_consents.get_last_by_address(user_address)
+    #     if consent is not None:
+    #         raise DuplicateConsent(user_address)
+
+    # def _verify_signature(self, _: Context, **kwargs):
+    #     user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
+
+    #     if not core.verify_signature(user_address, signature):
+    #         raise InvalidSignature(user_address, signature)
+
+    # msg_text = build_consent_message(user_address)
+    # encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
+
+    # return verify_signed_message(user_address, encoded_msg, signature)
+
+    # database.user_consents.add_consent(user_address, ip_address)
+    # db.session.commit()
+
+    await add_user_tos_consent(session, user_address, ip_address)
+
+    return TosStatusResponseV1(accepted=True)
+
+
+@api.get("/{user_address}/patron-mode")
+async def get_patron_mode_for_user_v1(
+    session: GetSession,
+    # Request Parameters
+    user_address: Address,
+) -> PatronModeResponseV1:
+    """
+    Returns true if given user has enabled patron mode, false in the other case.
+    """
+
+    status = await get_user_patron_mode_status(session, user_address)
+    return PatronModeResponseV1(status=status)
+
+
+@api.patch("/{user_address}/patron-mode")
+async def patch_patron_mode_for_user_v1(
+    session: GetSession,
+    current_datetime: GetCurrentDatetime,
+    epochs_contracts: GetEpochsContracts,
+    signed_message_verifier: GetSignedMessageVerifier,
+    # Request Parameters
+    user_address: Address,
+    payload: PatronModeRequestV1,
+):
+    """
+    Toggle user's patron mode status.
+    """
+
+    current_status = await get_user_patron_mode_status(session, user_address)
+
+    # Build the message & verify the signature
+    toggle_msg = "enable" if not current_status else "disable"
+    message = f"Signing this message will {toggle_msg} patron mode for address {user_address}."
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, message)
+    is_valid = await signed_message_verifier.verify(
+        user_address, encoded_msg, payload.signature
+    )
+    if not is_valid:
+        raise InvalidSignature(user_address, payload.signature)
+
+    # if not patron_mode_crypto.verify(user_address, not patron_mode_status, signature):
+    #     raise InvalidSignature(user_address, signature)
+
+    # patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
+
+    next_status = await toggle_patron_mode(session, user_address, current_datetime)
+
+    # This will return None if we are outside of the allocation window
+    epoch_number = await epochs_contracts.get_pending_epoch()
+    if epoch_number is not None:
+        await soft_delete_user_allocations_by_epoch(session, user_address, epoch_number)
+
+    await session.commit()
+
+    return PatronModeResponseV1(status=next_status)
+
+    # try:
+    #     allocations_controller.revoke_previous_allocation(user_address)
+    # except NotInDecisionWindow:
+    #     app.logger.info(
+    #         f"Not in allocation period. Skipped revoking previous allocation for user {user_address}"
+    #     )
+
+    # db.session.commit()
+    # return patron_mode_status
