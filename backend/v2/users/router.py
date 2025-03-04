@@ -189,7 +189,6 @@ async def refresh_antisybil_status_for_user_v1(
     )
 
 
-# tos status
 @api.get("/{user_address}/tos")
 async def get_tos_status_for_user_v1(
     session: GetSession,
@@ -219,9 +218,6 @@ async def post_tos_status_for_user_v1(
     Updates user's Terms of Service status.
     """
 
-    # signature = ns.payload.get("signature")
-    # user_ip = ns.payload.get("x-real-ip")
-
     # Terms of Service can only be accepted once
     already_accepted = await get_user_tos_consent_status(session, user_address)
     if already_accepted:
@@ -237,6 +233,7 @@ async def post_tos_status_for_user_v1(
 
     # Build the message & verify the signature
     msg_text = build_consent_message(user_address)
+    # TODO: At some point we should make this encode function a bit nicer, it's used in multiple places
     encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
     is_valid = await signed_message_verifier.verify(
         user_address, encoded_msg, payload.signature
@@ -244,31 +241,7 @@ async def post_tos_status_for_user_v1(
     if not is_valid:
         raise InvalidSignature(user_address, payload.signature)
 
-    # self.verifier.verify(
-    #     context, user_address=user_address, consent_signature=consent_signature
-    # )
-
-    # Verifier
-    # def _verify_logic(self, _: Context, **kwargs):
-    #     user_address = kwargs["user_address"]
-    #     consent = database.user_consents.get_last_by_address(user_address)
-    #     if consent is not None:
-    #         raise DuplicateConsent(user_address)
-
-    # def _verify_signature(self, _: Context, **kwargs):
-    #     user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
-
-    #     if not core.verify_signature(user_address, signature):
-    #         raise InvalidSignature(user_address, signature)
-
-    # msg_text = build_consent_message(user_address)
-    # encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
-
-    # return verify_signed_message(user_address, encoded_msg, signature)
-
-    # database.user_consents.add_consent(user_address, ip_address)
-    # db.session.commit()
-
+    # Add the consent and commit the session
     await add_user_tos_consent(session, user_address, ip_address)
 
     return TosStatusResponseV1(accepted=True)
@@ -305,8 +278,11 @@ async def patch_patron_mode_for_user_v1(
     current_status = await get_user_patron_mode_status(session, user_address)
 
     # Build the message & verify the signature
-    toggle_msg = "enable" if not current_status else "disable"
+    # If we are currently in patron mode, we want to disable it
+    # If we are not in patron mode, we want to enable it
+    toggle_msg = "disable" if current_status else "enable"
     message = f"Signing this message will {toggle_msg} patron mode for address {user_address}."
+    # TODO: At some point we should make this encode function a bit nicer, it's used in multiple places
     encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, message)
     is_valid = await signed_message_verifier.verify(
         user_address, encoded_msg, payload.signature
@@ -314,28 +290,15 @@ async def patch_patron_mode_for_user_v1(
     if not is_valid:
         raise InvalidSignature(user_address, payload.signature)
 
-    # if not patron_mode_crypto.verify(user_address, not patron_mode_status, signature):
-    #     raise InvalidSignature(user_address, signature)
-
-    # patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
-
+    # Toggle the patron mode and persist the change
     next_status = await toggle_patron_mode(session, user_address, current_datetime)
 
-    # This will return None if we are outside of the allocation window
+    # If we are in the allocation window, we need to revoke all previous allocations
     epoch_number = await epochs_contracts.get_pending_epoch()
     if epoch_number is not None:
         await soft_delete_user_allocations_by_epoch(session, user_address, epoch_number)
 
+    # Let's make sure we return the correct status only if all the operations are successful
     await session.commit()
 
     return PatronModeResponseV1(status=next_status)
-
-    # try:
-    #     allocations_controller.revoke_previous_allocation(user_address)
-    # except NotInDecisionWindow:
-    #     app.logger.info(
-    #         f"Not in allocation period. Skipped revoking previous allocation for user {user_address}"
-    #     )
-
-    # db.session.commit()
-    # return patron_mode_status
