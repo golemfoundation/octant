@@ -1,10 +1,13 @@
 from http import HTTPStatus
+from unittest.mock import AsyncMock
 from fastapi import FastAPI
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.crypto.dependencies import get_signed_message_verifier
+from v2.crypto.signatures import _verify_eoa
 from tests.v2.fake_contracts.helpers import FakeEpochsContractDetails
 from tests.v2.fake_contracts.conftest import FakeEpochsContractCallable
 from tests.v2.factories import FactoriesAggregator
@@ -43,15 +46,30 @@ async def test_get_patron_mode_status_enabled(
         assert resp.json() == {"status": True}
 
 
+async def mock_call(user_addr, encoded_msg, sig):
+    return _verify_eoa(user_addr, encoded_msg, sig)
+
+
+def mock_verifier():
+    mock_verifier = AsyncMock()
+    mock_verifier.verify = mock_call
+    return mock_verifier
+
+
 @pytest.mark.asyncio
 async def test_patch_patron_mode_enable_success(
     fast_app: FastAPI,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should successfully enable patron mode for a user"""
     user, eth_account = await factories.users.create_random_user()
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate valid signature for enabling patron mode
     message = (
@@ -76,10 +94,15 @@ async def test_patch_patron_mode_disable_success(
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should successfully disable patron mode for a user"""
     user, eth_account = await factories.users.create_random_user()
     await factories.patrons.create(user=user, patron_mode_enabled=True)
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate valid signature for disabling patron mode
     message = (
@@ -104,9 +127,14 @@ async def test_patch_patron_mode_invalid_signature(
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should fail when user provides invalid signature"""
     user, eth_account = await factories.users.create_random_user()
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate invalid signature
     message = (
@@ -136,10 +164,15 @@ async def test_message_enable_when_already_enabled(
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should fail when user provides signature for enabling patron mode when already enabled"""
     user, eth_account = await factories.users.create_random_user()
     await factories.patrons.create(user=user, patron_mode_enabled=True)
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate valid signature for enabling patron mode
     message = (
@@ -180,10 +213,15 @@ async def test_patch_patron_mode_wrong_signer(
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should fail when user provides signature from wrong signer"""
     alice, eth_account = await factories.users.create_random_user()
     bob, eth_account_bob = await factories.users.create_random_user()
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate signature with alice's account for bob's address
     message = f"Signing this message will enable patron mode for address {bob.address}."
@@ -216,7 +254,8 @@ async def test_patch_patron_mode_revokes_allocations(
     await factories.allocations.create(user=user, epoch=epoch_number)
     await factories.allocations.create(user=user, epoch=epoch_number)
 
-    # Mock epochs contract to return a pending epoch
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
     fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=epoch_number))
 
     # Generate valid signature for enabling patron mode
