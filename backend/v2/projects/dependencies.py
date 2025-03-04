@@ -48,13 +48,6 @@ class ProjectsSettings(OctantSettings):
         return compare_blockchain_types(self.chain_id, ChainTypes.MAINNET)
 
 
-class ProjectsAllocationThresholdSettings(OctantSettings):
-    project_count_multiplier: int = Field(
-        default=1,
-        description="The multiplier to the number of projects to calculate the allocation threshold.",
-    )
-
-
 def get_projects_settings() -> ProjectsSettings:
     return ProjectsSettings()  # type: ignore[call-arg]
 
@@ -67,22 +60,20 @@ def get_projects_contracts(
     )  # type: ignore[arg-type]
 
 
-def get_projects_allocation_threshold_settings() -> ProjectsAllocationThresholdSettings:
-    return ProjectsAllocationThresholdSettings()
-
-
-def get_projects_allocation_threshold_getter(
+def get_projects_allocation_threshold_getter_in_open_aw(
     epoch_number: GetOpenAllocationWindowEpochNumber,
     session: GetSession,
     projects: GetProjectsContracts,
-    settings: Annotated[
-        ProjectsAllocationThresholdSettings,
-        Depends(get_projects_allocation_threshold_settings),
-    ],
 ) -> ProjectsAllocationThresholdGetter:
-    return ProjectsAllocationThresholdGetter(
-        epoch_number, session, projects, settings.project_count_multiplier
-    )
+    return ProjectsAllocationThresholdGetter(epoch_number, session, projects)
+
+
+def get_projects_allocation_threshold_getter(
+    epoch_number: EpochNumberPath,
+    session: GetSession,
+    projects: GetProjectsContracts,
+) -> ProjectsAllocationThresholdGetter:
+    return ProjectsAllocationThresholdGetter(epoch_number, session, projects)
 
 
 async def get_projects_metadata_getter(
