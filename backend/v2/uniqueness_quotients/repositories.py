@@ -1,10 +1,14 @@
+from datetime import datetime, timezone
 from decimal import Decimal
+import json
 from typing import Optional
 
 from app.infrastructure.database.models import GPStamps, UniquenessQuotient, User
 from eth_utils import to_checksum_address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+from app.exceptions import UserNotFound
 from v2.core.types import Address
 from v2.users.repositories import get_user_by_address
 
@@ -47,6 +51,32 @@ async def save_uq_score_for_user_address(
     await session.commit()
 
 
+async def add_gp_stamps(
+    session: AsyncSession,
+    user_address: Address,
+    score: float,
+    expires_at: datetime,
+    stamps: list[dict],
+) -> GPStamps:
+    """Adds a new GPStamps record to the database."""
+
+    user = await get_user_by_address(session, user_address)
+    if user is None:
+        raise UserNotFound(user_address)
+
+    gp_stamps = GPStamps(
+        user_id=user.id,
+        score=score,
+        expires_at=expires_at.astimezone(timezone.utc).replace(tzinfo=None),
+        stamps=json.dumps(stamps),
+    )
+
+    session.add(gp_stamps)
+    await session.commit()
+
+    return gp_stamps
+
+
 async def get_gp_stamps_by_address(
     session: AsyncSession, user_address: Address
 ) -> GPStamps | None:
@@ -64,3 +94,17 @@ async def get_gp_stamps_by_address(
     )
 
     return result
+
+
+async def get_all_uqs_by_epoch(
+    session: AsyncSession, epoch_number: int
+) -> list[UniquenessQuotient]:
+    """Returns UniquenessQuotient of all saved records for a given epoch."""
+
+    results = await session.scalars(
+        select(UniquenessQuotient)
+        .options(joinedload(UniquenessQuotient.user))
+        .filter(UniquenessQuotient.epoch == epoch_number)
+    )
+
+    return list(results.all())
