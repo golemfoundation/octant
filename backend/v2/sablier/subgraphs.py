@@ -6,6 +6,7 @@ from gql.client import log as requests_logger
 
 import backoff
 from app.infrastructure.sablier.events import SablierStream
+from v2.core.types import Address
 from v2.epochs.subgraphs import BackoffParams
 
 requests_logger.setLevel(logging.WARNING)
@@ -60,10 +61,23 @@ class SablierSubgraph:
             streams = result.get("streams", [])
 
             for stream in streams:
+                # Extract the stream data
                 actions = stream.get("actions", [])
                 final_intact_amount = stream.get("intactAmount", 0)
+                is_cancelled = stream.get("canceled")
+                end_time = stream.get("endTime")
+                deposit_amount = stream.get("depositAmount")
+                recipient = stream.get("recipient")
+
                 all_streams.append(
-                    SablierStream(actions=actions, intactAmount=final_intact_amount)
+                    SablierStream(
+                        actions=actions,
+                        intactAmount=final_intact_amount,
+                        canceled=is_cancelled,
+                        endTime=end_time,
+                        depositAmount=deposit_amount,
+                        recipient=recipient,
+                    )
                 )
 
             if len(streams) < limit:
@@ -92,20 +106,70 @@ class SablierSubgraph:
             ) {
                 id
                 intactAmount
+                canceled
+                endTime
+                depositAmount
+                recipient
                 actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
-                category
-                addressA
-                addressB
-                amountA
-                amountB
-                timestamp
-                hash
+                  category
+                  addressA
+                  addressB
+                  amountA
+                  amountB
+                  timestamp
+                  hash
                 }
-            }
+              }
             }
         """
         variables = {
             "sender": self.sender,
+            "tokenAddress": self.token_address,
+        }
+
+        return await self._fetch_streams(query, variables)
+
+    async def get_user_events_history(
+        self, user_address: Address
+    ) -> list[SablierStream]:
+        """
+        Get all the locks and unlocks for a user.
+        Query used for computing user's effective deposit and getting all sablier streams from an endpoint.
+        """
+        query = """
+            query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
+            streams(
+                where: {
+                sender: $sender
+                recipient: $recipient
+                asset_: {address: $tokenAddress}
+                transferable: false
+                }
+                first: $limit
+                skip: $skip
+                orderBy: timestamp
+            ) {
+                id
+                intactAmount
+                canceled
+                endTime
+                depositAmount
+                recipient
+                actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
+                  category
+                  addressA
+                  addressB
+                  amountA
+                  amountB
+                  timestamp
+                  hash
+                }
+              }
+            }
+        """
+        variables = {
+            "sender": self.sender,
+            "recipient": user_address,
             "tokenAddress": self.token_address,
         }
 
