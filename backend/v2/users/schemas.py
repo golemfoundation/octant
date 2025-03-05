@@ -1,5 +1,5 @@
 from decimal import Decimal
-from v2.core.types import Address, OctantModel
+from v2.core.types import Address, BigInteger, OctantModel
 
 
 class EpochPatronsResponseV1(OctantModel):
@@ -40,3 +40,15 @@ class PatronModeRequestV1(OctantModel):
 
 class PatronModeResponseV1(OctantModel):
     status: bool
+
+
+class SablierStreamItem(OctantModel):
+    amount: BigInteger
+    date_available_for_withdrawal: str
+    is_cancelled: bool
+    remaining_amount: BigInteger
+    recipient_address: Address
+
+
+class SablierStreamsResponseV1(OctantModel):
+    sablier_streams: list[SablierStreamItem]
