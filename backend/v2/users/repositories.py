@@ -1,3 +1,4 @@
+from sqlalchemy import exists
 from app.infrastructure.database.models import User, UserConsents
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -21,14 +22,14 @@ async def get_user_tos_consent_status(
     """Get a user's Terms of Service consent status."""
 
     result = await session.scalar(
-        select(UserConsents)
-        .join(User, User.id == UserConsents.user_id)
-        .filter(User.address == user_address)
-        .order_by(UserConsents.created_at.desc())
-        .limit(1)
+        select(
+            exists().where(
+                UserConsents.user_id == User.id, User.address == user_address
+            )
+        )
     )
 
-    return result is not None
+    return bool(result)
 
 
 async def add_user_tos_consent(

@@ -229,3 +229,37 @@ async def test_post_tos_status_missing_x_real_ip(
         )
         assert resp.status_code == HTTPStatus.BAD_REQUEST
         assert "header is missing" in resp.json()["message"]
+
+
+@pytest.mark.asyncio
+async def test_post_tos_status_required_x_real_ip(
+    fast_app: FastAPI,
+    fast_client: AsyncClient,
+    fast_session: AsyncSession,
+    factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+):
+    """Should successfully accept TOS for a new user"""
+    user, eth_account = await factories.users.create_random_user()
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fast_app.dependency_overrides[get_x_headers_settings] = lambda: XHeadersSettings(
+        x_real_ip_required=True
+    )
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
+
+    # Generate valid signature
+    msg_text = build_consent_message(user.address)
+    signature = eth_account.sign_message(
+        encode_for_signing(EncodingStandardFor.TEXT, msg_text)
+    ).signature.hex()
+
+    async with fast_client as client:
+        resp = await client.post(
+            f"user/{user.address}/tos",
+            json={"signature": signature},
+            headers={"X-Real-IP": "1.1.1.1"},
+        )
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"accepted": True}

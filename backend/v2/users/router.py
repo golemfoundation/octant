@@ -1,6 +1,5 @@
 from datetime import timezone
-from typing import Annotated
-from fastapi import APIRouter, Header, Request, Response
+from fastapi import APIRouter, Response
 
 from app.exceptions import (
     AddressAlreadyDelegated,
@@ -8,14 +7,13 @@ from app.exceptions import (
     GPStampsNotFound,
     InvalidEpoch,
     InvalidSignature,
-    XRealIpHeaderMissing,
 )
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from app.modules.user.tos.core import build_consent_message
 from v2.sablier.dependencies import GetSablierSubgraph
 from v2.allocations.repositories import soft_delete_user_allocations_by_epoch
 from v2.crypto.dependencies import GetSignedMessageVerifier
-from v2.users.dependencies import GetXHeadersSettings
+from v2.users.dependencies import GetXRealIp
 from v2.users.repositories import add_user_tos_consent, get_user_tos_consent_status
 from v2.delegations.dependencies import GetDelegationService
 from v2.uniqueness_quotients.repositories import (
@@ -210,12 +208,10 @@ async def get_tos_status_for_user_v1(
 async def post_tos_status_for_user_v1(
     session: GetSession,
     signed_message_verifier: GetSignedMessageVerifier,
-    x_headers_settings: GetXHeadersSettings,
     # Request Parameters
     user_address: Address,
     payload: TosStatusRequestV1,
-    request: Request,
-    x_real_ip: Annotated[str | None, Header()] = None,
+    x_real_ip: GetXRealIp,
 ) -> TosStatusResponseV1:
     """
     Updates user's Terms of Service status.
@@ -225,14 +221,6 @@ async def post_tos_status_for_user_v1(
     already_accepted = await get_user_tos_consent_status(session, user_address)
     if already_accepted:
         raise DuplicateConsent(user_address)
-
-    # Get the IP address from the request
-    if x_headers_settings.x_real_ip_required:
-        if x_real_ip is None:
-            raise XRealIpHeaderMissing()
-        ip_address = x_real_ip
-    else:
-        ip_address = request.client.host
 
     # Build the message & verify the signature
     msg_text = build_consent_message(user_address)
@@ -245,7 +233,7 @@ async def post_tos_status_for_user_v1(
         raise InvalidSignature(user_address, payload.signature)
 
     # Add the consent and commit the session
-    await add_user_tos_consent(session, user_address, ip_address)
+    await add_user_tos_consent(session, user_address, x_real_ip)
 
     return TosStatusResponseV1(accepted=True)
 
