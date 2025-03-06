@@ -144,7 +144,7 @@ def get_current_timestamp() -> int:
 def get_current_datetime(
     current_timestamp: Annotated[int, Depends(get_current_timestamp)]
 ) -> datetime:
-    return datetime.fromtimestamp(current_timestamp, timezone.utc).replace(tzinfo=None)
+    return datetime.fromtimestamp(current_timestamp, timezone.utc)
 
 
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]

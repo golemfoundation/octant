@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.infrastructure.database.models import Budget, PatronModeEvent, User
 from sqlalchemy import Numeric, cast, func
@@ -175,7 +175,7 @@ async def toggle_patron_mode(
     new_event = PatronModeEvent(
         user_address=user_address,
         patron_mode_enabled=next_status,
-        created_at=created_at,
+        created_at=created_at.astimezone(timezone.utc).replace(tzinfo=None),
     )
     session.add(new_event)
 
