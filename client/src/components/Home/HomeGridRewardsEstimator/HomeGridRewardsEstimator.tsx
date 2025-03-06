@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import GridTile from 'components/shared/Grid/GridTile';
 import InputText from 'components/ui/InputText';
+import { TOURGUIDE_ELEMENT_5 } from 'constants/domElementsIds';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -112,6 +113,7 @@ const HomeGridRewardsEstimator: FC<HomeGridRewardsEstimatorProps> = ({ className
     <GridTile
       className={className}
       dataTest="HomeGridRewardsEstimator"
+      id={TOURGUIDE_ELEMENT_5}
       title={t('rewardsEstimator')}
       titleSuffix={
         <HomeGridRewardsEstimatorUqSelector
