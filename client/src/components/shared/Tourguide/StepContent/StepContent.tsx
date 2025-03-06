@@ -7,7 +7,7 @@ import StepProps from './types';
 
 const StepContent: FC<StepProps> = ({ text, imgSrc }) => (
   <div>
-    <Img className={styles.image} src={imgSrc} />
+    {imgSrc && <Img className={styles.image} src={imgSrc} />}
     <div className={styles.text}>{text}</div>
   </div>
 );

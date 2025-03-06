@@ -55,7 +55,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
             data-test={`${dataTestRoot}__buttons`}
           >
             {tabs.map(
-              ({ key, icon, label, to, isActive, isDisabled = false, isBigIcon = false }) => (
+              ({ key, icon, id, label, to, isActive, isDisabled = false, isBigIcon = false }) => (
                 <Button
                   key={key}
                   className={cx(styles.buttonNavigation, isActive && styles.isActive)}
@@ -79,6 +79,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix }) => {
                       />
                     )
                   }
+                  id={id}
                   isActive={isActive}
                   isDisabled={isDisabled}
                   label={label}

@@ -2,6 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import GridTile from 'components/shared/Grid/GridTile';
+import { TOURGUIDE_ELEMENT_6 } from 'constants/domElementsIds';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectsIpfsWithRewards, {
@@ -58,6 +59,7 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
     <GridTile
       className={className}
       dataTest="HomeGridEpochResults"
+      id={TOURGUIDE_ELEMENT_6}
       onMouseLeave={() => setHighlightedBarAddress(null)}
       title={t(isDecisionWindowOpen && epoch === currentEpoch! - 1 ? 'epochLive' : 'epochResults', {
         epoch,

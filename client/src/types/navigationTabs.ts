@@ -3,6 +3,7 @@ import { Path } from 'utils/routing';
 
 export interface NavigationTab {
   icon: SvgImageConfig;
+  id?: string;
   isActive: boolean;
   isBigIcon?: boolean;
   isDisabled: boolean;

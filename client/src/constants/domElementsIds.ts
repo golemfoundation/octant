@@ -7,3 +7,7 @@ export const MODAL_ONBOARDING_ID = 'ModalOnboarding';
 
 export const HOME_GRID_CURRENT_GLM_CLOCK = 'HomeGridCurrentGlmLock';
 export const CALENDAR = 'Calendar';
+export const TOURGUIDE_ELEMENT_3 = 'TourguideElement3';
+export const TOURGUIDE_ELEMENT_4 = 'TourguideElement4';
+export const TOURGUIDE_ELEMENT_5 = 'TourguideElement5';
+export const TOURGUIDE_ELEMENT_6 = 'TourguideElement6';
