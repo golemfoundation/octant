@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import Joyride from 'react-joyride';
+import { useNavigate } from 'react-router-dom';
 
 import StepContent from 'components/shared/Tourguide/StepContent';
 import TooltipComponent from 'components/shared/Tourguide/TooltipComponent';
@@ -13,15 +14,17 @@ import {
 } from 'constants/domElementsIds';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
 const Handler = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
+  const navigate = useNavigate();
 
   const steps = [
     {
       content: {
-        imgSrc: '/images/tourguide/HomeGridCurrentGlmLock.gif',
+        imgSrc: '/images/tourguide/1.gif',
         text: (
           <div>
             Connect your wallet and click the <strong>Lock GLM</strong> button. Enter the amount of
@@ -34,7 +37,7 @@ const Handler = (): ReactElement => {
     },
     {
       content: {
-        imgSrc: '/images/tourguide/Calendar.gif',
+        imgSrc: '/images/tourguide/2.gif',
         text: (
           <div>
             Keep your GLM locked to earn rewards and use them in the next allocation window. The
@@ -60,7 +63,7 @@ const Handler = (): ReactElement => {
     },
     {
       content: {
-        // imgSrc: '/images/tourguide/4.gif',
+        imgSrc: '/images/tourguide/4.webp',
         text: (
           <div>
             You need to verify yourself as unique in order to receive fund matching for your
@@ -86,13 +89,16 @@ const Handler = (): ReactElement => {
     },
     {
       content: {
-        imgSrc: '/images/tourguide/5.gif',
+        imgSrc: '/images/tourguide/6.gif',
         text: (
           <div>
             Mouse over the chart to see how projects are doing. Click and drag to see more. Click to
             open a project&apross details in a new tab.
           </div>
         ),
+      },
+      data: {
+        onAfterStepIsDone: () => navigate(ROOT_ROUTES.metrics.absolute),
       },
       target: document.getElementById(TOURGUIDE_ELEMENT_6),
       title: 'Estimate your rewards',
@@ -113,6 +119,16 @@ const Handler = (): ReactElement => {
     <div>
       {areAllStepsDOMElementsLoaded && (
         <Joyride
+          callback={args => {
+            // console.log({ args }, args.action);
+            if (
+              args.action === 'next' &&
+              args.status === 'finished' &&
+              args.step?.data?.onAfterStepIsDone
+            ) {
+              args.step.data.onAfterStepIsDone();
+            }
+          }}
           tooltipComponent={TooltipComponent}
           continuous
           // run
