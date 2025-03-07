@@ -12,7 +12,7 @@ from v2.main import app as fastapi_app
 from app.extensions import db
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def fast_app() -> FastAPI:
     return fastapi_app
 
