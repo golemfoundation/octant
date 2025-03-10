@@ -12,6 +12,8 @@ import {
   TOURGUIDE_ELEMENT_5,
   TOURGUIDE_ELEMENT_6,
   TOURGUIDE_ELEMENT_7,
+  TOURGUIDE_ELEMENT_8,
+  TOURGUIDE_ELEMENT_9,
 } from 'constants/domElementsIds';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -105,12 +107,11 @@ const Handler = (): ReactElement => {
           onAfterStepIsDone: () => navigate(ROOT_ROUTES.projects.absolute),
         },
         target: document.getElementById(TOURGUIDE_ELEMENT_6),
-        title: 'Estimate your rewards',
+        title: 'Results chart',
       },
     ],
     [ROOT_ROUTES.projects.absolute]: [
       {
-        
         content: {
           imgSrc: '/images/tourguide/7.gif',
           text: (
@@ -120,14 +121,44 @@ const Handler = (): ReactElement => {
             </div>
           ),
         },
-        
-data: {
+
+        data: {
           onAfterStepIsDone: () => navigate(ROOT_ROUTES.metrics.absolute),
         },
         // TODO: define when available, only during AW.
-isAvailable: true,
+        isAvailable: true,
         target: document.getElementById(TOURGUIDE_ELEMENT_7),
-        title: 'Estimate your rewards',
+        title: 'Add your favourite projects',
+      },
+    ],
+    [ROOT_ROUTES.metrics.absolute]: [
+      {
+        content: {
+          imgSrc: '/images/tourguide/8.gif',
+          text: <div>Browse through archived epoch metrics with these navigation arrows</div>,
+        },
+        isAvailable: true,
+        target: document.getElementById(TOURGUIDE_ELEMENT_8),
+        title: 'Explore previous epochs',
+      },
+      {
+        content: {
+          imgSrc: '/images/tourguide/9.gif',
+          text: (
+            <div>
+              Hover or tap the donut chart segments to see the details of how funds were used for
+              the epoch
+            </div>
+          ),
+        },
+
+        data: {
+          // TODO: redirect OR open drawer...
+          onAfterStepIsDone: () => navigate(ROOT_ROUTES.allocation.absolute),
+        },
+        isAvailable: true,
+        target: document.getElementById(TOURGUIDE_ELEMENT_9),
+        title: 'Funds usage',
       },
     ],
   };

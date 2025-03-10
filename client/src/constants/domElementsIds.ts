@@ -12,3 +12,5 @@ export const TOURGUIDE_ELEMENT_4 = 'TourguideElement4';
 export const TOURGUIDE_ELEMENT_5 = 'TourguideElement5';
 export const TOURGUIDE_ELEMENT_6 = 'TourguideElement6';
 export const TOURGUIDE_ELEMENT_7 = 'TourguideElement7';
+export const TOURGUIDE_ELEMENT_8 = 'TourguideElement8';
+export const TOURGUIDE_ELEMENT_9 = 'TourguideElement9';

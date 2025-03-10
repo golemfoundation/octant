@@ -2,6 +2,7 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 
 import Svg from 'components/ui/Svg';
+import { TOURGUIDE_ELEMENT_8 } from 'constants/domElementsIds';
 import { arrowRight } from 'svg/misc';
 
 import styles from './NavigationArrows.module.scss';
@@ -29,6 +30,7 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
         )}
         data-test={`${dataTest}__leftArrow`}
         disabled={isPrevButtonDisabled}
+        id={TOURGUIDE_ELEMENT_8}
         onClick={() => {
           if (isPrevButtonDisabled) {
             return;

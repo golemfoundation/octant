@@ -5,12 +5,13 @@ import styles from './MetricsGridTile.module.scss';
 import MetricsGridTileProps from './types';
 
 const MetricsGridTile: FC<MetricsGridTileProps> = ({
-  size = 'M',
-  groups,
   className,
   dataTest = 'MetricsGridTile',
+  groups,
+  id,
+  size = 'M',
 }) => (
-  <div className={cx(styles.root, styles[`size--${size}`], className)} data-test={dataTest}>
+  <div className={cx(styles.root, styles[`size--${size}`], className)} data-test={dataTest} id={id}>
     {groups.map((group, idx) => (
       // eslint-disable-next-line react/no-array-index-key
       <div key={`${group.title}__${idx}`} className={styles.group} data-test={`${dataTest}__group`}>
