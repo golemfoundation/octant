@@ -5,7 +5,11 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from v2.delegations.dependencies import DelegationSettings, get_delegation_service
+from v2.delegations.dependencies import (
+    DelegationSettings,
+    get_delegation_service,
+    get_delegation_settings,
+)
 from tests.v2.factories import FactoriesAggregator
 
 
@@ -16,7 +20,11 @@ async def test_recalculate_delegation(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
 ):
-    delegation_settings = DelegationSettings()
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt_secondary="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
     delegation_service = get_delegation_service(fast_session, delegation_settings)
 
     alice = await factories.users.get_or_create_alice()
