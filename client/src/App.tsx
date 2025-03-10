@@ -16,6 +16,8 @@ import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPen
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useOnboardingStore from 'store/onboarding/store';
 
+import TourguideHandler from './components/shared/Tourguide/Handler';
+
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';
 import 'i18n';
@@ -40,7 +42,9 @@ const App = (): ReactElement => {
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
-  if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
+  const isLoadingTest = (isLoading || !isLocalStorageInitialized) && !isSyncingInProgress;
+
+  if (isLoadingTest) {
     return <AppLoader />;
   }
 
@@ -54,6 +58,7 @@ const App = (): ReactElement => {
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>
+      <TourguideHandler />
     </Fragment>
   );
 };
