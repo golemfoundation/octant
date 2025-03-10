@@ -1,5 +1,3 @@
-
-
 from pydantic import Field
 from v2.core.types import Address, OctantModel
 
@@ -24,9 +22,7 @@ class DelegationRequestV1(OctantModel):
 
 
 class DelegationCheckResponseV1(OctantModel):
-    primary: Address | None = Field(
-        description="Address that receives delegated score"
-    )
+    primary: Address | None = Field(description="Address that receives delegated score")
     secondary: Address | None = Field(
         description="Address that donates delegated score"
     )

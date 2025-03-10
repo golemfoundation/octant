@@ -21,18 +21,20 @@ async def find_hashes(session: AsyncSession, hashes: list[str]) -> list[str]:
     """
 
     result = await session.scalars(
-        select(ScoreDelegation.hashed_addr).where(ScoreDelegation.hashed_addr.in_(hashes))
+        select(ScoreDelegation.hashed_addr).where(
+            ScoreDelegation.hashed_addr.in_(hashes)
+        )
     )
 
     return list(set(result))
 
 
 async def save_delegation(
-        session: AsyncSession,
-        primary: Address,
-        secondary: Address,
-        both: Address,
-    ) -> None:
+    session: AsyncSession,
+    primary: Address,
+    secondary: Address,
+    both: Address,
+) -> None:
     """Save a delegation to the database."""
 
     session.add(ScoreDelegation(hashed_addr=primary))
