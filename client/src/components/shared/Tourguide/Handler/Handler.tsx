@@ -19,6 +19,8 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
+import { StepsPerView } from './types';
+
 const Handler = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
 
@@ -26,7 +28,7 @@ const Handler = (): ReactElement => {
   const { data: isPatronMode } = useIsPatronMode();
   const navigate = useNavigate();
 
-  const steps = {
+  const steps: StepsPerView = {
     [ROOT_ROUTES.home.absolute]: [
       {
         content: {
