@@ -15,6 +15,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   className,
   dataTest,
   onClick,
+  id,
   isAddedToAllocate,
   isAllocatedTo,
   isArchivedProject,
@@ -108,6 +109,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
           </Tooltip>
         ) : null
       }
+      id={id}
       isDisabled={isDisabled}
       onClick={() => {
         onClick();

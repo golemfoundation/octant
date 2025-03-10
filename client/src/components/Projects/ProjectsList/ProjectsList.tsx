@@ -70,6 +70,9 @@ const ProjectsList: FC<ProjectsListProps> = ({
                     : `ProjectsView__ProjectsListItem--${index}`
                 }
                 epoch={epoch}
+                isAnchorForTourguide={
+                  projectsIpfsWithRewardsSorted.length > 4 ? index === 5 : index === 0
+                }
                 projectIpfsWithRewards={projectIpfsWithRewards}
               />
             ))

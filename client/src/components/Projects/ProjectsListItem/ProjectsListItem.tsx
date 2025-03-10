@@ -8,6 +8,7 @@ import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
 import Img from 'components/ui/Img';
 import TinyLabel from 'components/ui/TinyLabel';
+import { TOURGUIDE_ELEMENT_7 } from 'constants/domElementsIds';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
@@ -23,6 +24,7 @@ import styles from './ProjectsListItem.module.scss';
 import ProjectsListItemProps from './types';
 
 const ProjectsListItem: FC<ProjectsListItemProps> = ({
+  isAnchorForTourguide,
   className,
   dataTest,
   epoch,
@@ -117,6 +119,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
                     ? 'ProjectsListItem__ButtonAddToAllocate--archive'
                     : 'ProjectsListItem__ButtonAddToAllocate'
                 }
+                id={isAnchorForTourguide ? TOURGUIDE_ELEMENT_7 : undefined}
                 isAddedToAllocate={isAddedToAllocate}
                 isAllocatedTo={isAllocatedTo}
                 isArchivedProject={isArchivedProject}
