@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.infrastructure.database.models import Budget, PatronModeEvent, User
 from sqlalchemy import Numeric, cast, func
