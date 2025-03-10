@@ -22,7 +22,7 @@ async def test_recalculate_delegation(
 ):
     delegation_settings = DelegationSettings(
         delegation_salt_primary="primary_salt",
-        delegation_salt_secondary="secondary_salt",
+        delegation_salt="secondary_salt",
     )
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
     delegation_service = get_delegation_service(fast_session, delegation_settings)
