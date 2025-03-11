@@ -3,8 +3,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import Joyride from 'react-joyride';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import StepContent from 'components/shared/Tourguide/StepContent';
-import TooltipComponent from 'components/shared/Tourguide/TooltipComponent';
+import StepContent from 'components/shared/QuickTour/StepContent';
+import TooltipComponent from 'components/shared/QuickTour/TooltipComponent';
 import {
   CALENDAR,
   HOME_GRID_CURRENT_GLM_CLOCK,

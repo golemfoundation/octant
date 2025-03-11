@@ -16,7 +16,7 @@ import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPen
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useOnboardingStore from 'store/onboarding/store';
 
-import TourguideHandler from './components/shared/Tourguide/Handler';
+import QuickTourHandler from './components/shared/QuickTour/Handler';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';
@@ -58,7 +58,7 @@ const App = (): ReactElement => {
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>
-      <TourguideHandler />
+      <QuickTourHandler />
     </Fragment>
   );
 };
