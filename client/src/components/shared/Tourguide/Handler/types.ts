@@ -8,7 +8,6 @@ export type Step = {
   data?: {
     onAfterStepIsDone?: () => void;
   };
-  isAvailable?: boolean;
   target: HTMLElement | null;
   title: string;
 };
