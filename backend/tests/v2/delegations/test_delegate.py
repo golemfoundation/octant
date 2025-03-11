@@ -48,15 +48,29 @@ async def test_delegate_error_low_uq_score(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
     fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
-    # mock the signature verifier to return True
+    # Mocks
     fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
     fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
-
-    # mock the gitcoin scorer to return a score of 0
+    fake_epochs_contract_factory(FakeEpochsContractDetails(current_epoch=1))
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=1,
+                from_ts=0,
+                to_ts=2000,
+            )
+        ]
+    )
     fast_app.dependency_overrides[
         get_gitcoin_scorer_client
     ] = lambda: mock_gitcoin_scorer(0)
+    events_repository = MagicMock(spec=GetDepositEventsRepository)
+    events_repository.get_all_users_events.return_value = {}
+    fast_app.dependency_overrides[
+        get_deposit_events_repository
+    ] = lambda: events_repository
 
     _, alice_account = await factories.users.create_random_user()
     _, bob_account = await factories.users.create_random_user()
