@@ -20,6 +20,7 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useSettingsStore from 'store/settings/store';
 
 import styles from './Handler.module.scss';
 import { StepsPerView } from './types';
@@ -34,6 +35,10 @@ const Handler = (): ReactElement => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
+
+  const { isQuickTourVisible } = useSettingsStore(state => ({
+    isQuickTourVisible: state.data.isQuickTourVisible,
+  }));
 
   const steps: StepsPerView = {
     [ROOT_ROUTES.home.absolute]: [
@@ -139,7 +144,7 @@ const Handler = (): ReactElement => {
   // Hack around this: https://github.com/gilbarbara/react-joyride/discussions/1049.
   const areAllStepsDOMElementsLoaded = !stepsCurrentView?.some(element => element.target === null);
 
-  if (!areAllStepsDOMElementsLoaded || isProjectAdminMode || isPatronMode) {
+  if (!areAllStepsDOMElementsLoaded || isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
     return <div />;
   }
 
