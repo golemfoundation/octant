@@ -137,7 +137,7 @@ const Handler = (): ReactElement => {
   }));
 
   // Hack around this: https://github.com/gilbarbara/react-joyride/discussions/1049.
-  const areAllStepsDOMElementsLoaded = stepsCurrentView?.some(element => element.target !== null);
+  const areAllStepsDOMElementsLoaded = !stepsCurrentView?.some(element => element.target === null);
 
   if (!areAllStepsDOMElementsLoaded || isProjectAdminMode || isPatronMode) {
     return <div />;
