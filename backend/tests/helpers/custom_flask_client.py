@@ -28,3 +28,9 @@ class CustomFlaskClient(FlaskClient):
         response = super().put(*args, **kwargs)  # Call the original method
         self.log_request("PUT", args[0] if args else "UNKNOWN", response)
         return response
+
+    def patch(self, *args, **kwargs):
+        """Override patch method to include logging."""
+        response = super().patch(*args, **kwargs)  # Call the original method
+        self.log_request("PATCH", args[0] if args else "UNKNOWN", response)
+        return response
