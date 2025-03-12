@@ -8,10 +8,10 @@ from unittest.mock import patch
 @pytest.fixture()
 def payload():
     return ScoreDelegationPayload(
-        primary_addr=USER1_ADDRESS,
-        secondary_addr=USER2_ADDRESS,
-        primary_addr_signature="0x4c7f3b8d06ef3abbe6f5c0762fda01517c62709a3e0bde7ae19a945d3359b0673197db2dabeb20babb9b71c2cbb7e83cfa4cb3078c9bcdc284dcd605ebe89ddc1b",
-        secondary_addr_signature="0x5e7e86d5acea5cc431b8d148842e21584a7afe16b7de3b5586d20f5de97179f549726baa021dcaf6220ee5116c579df9d40375fa58d3480390289df6a088b9ec1b",
+        primary_addr=USER2_ADDRESS,
+        secondary_addr=USER1_ADDRESS,
+        primary_addr_signature="0x42a06ccb1a0ade7bd897687a10f638d32c794ca180df64ba8284933792a21a1165cbe8678970dc3657e09c0c53be1f5965573bffa47b1ec9dc9da191ca6024361b",
+        secondary_addr_signature="0xc464be5ca06fe6a5ffe24cb1f73bf151cafdc9be11648833443859a6ba2dce465303629ed7d3dc08375235290c56b3b7a19e4d7235bc5a903302d0dead5976381b",
     )
 
 
