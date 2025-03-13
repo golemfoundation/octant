@@ -37,8 +37,12 @@ async def save_delegation(
 ) -> None:
     """Save a delegation to the database."""
 
-    session.add(ScoreDelegation(hashed_addr=primary))
-    session.add(ScoreDelegation(hashed_addr=secondary))
-    session.add(ScoreDelegation(hashed_addr=both))
+    session.add_all(
+        [
+            ScoreDelegation(hashed_addr=primary),
+            ScoreDelegation(hashed_addr=secondary),
+            ScoreDelegation(hashed_addr=both),
+        ]
+    )
 
     await session.commit()
