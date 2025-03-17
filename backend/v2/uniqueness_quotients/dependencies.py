@@ -42,19 +42,24 @@ def get_uq_score_settings() -> UQScoreSettings:
     return UQScoreSettings()
 
 
+def get_timeout_list(chain_settings: GetChainSettings) -> set[Address]:
+    is_mainnet = chain_settings.chain_id == ChainTypes.MAINNET
+    timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
+    return TypeAdapter(set[Address]).validate_python(timeout_list)
+
+
 def get_uq_score_getter(
     session: GetSession,
     settings: Annotated[UQScoreSettings, Depends(get_uq_score_settings)],
     chain_settings: GetChainSettings,
+    timeout_list: Annotated[set[Address], Depends(get_timeout_list)],
 ) -> UQScoreGetter:
     # TODO: this should be a much nicer dependency :)
     is_mainnet = chain_settings.chain_id == ChainTypes.MAINNET
 
     uq_threshold = UQ_THRESHOLD_MAINNET if is_mainnet else UQ_THRESHOLD_NOT_MAINNET
-    timeout_list = TIMEOUT_LIST if is_mainnet else TIMEOUT_LIST_NOT_MAINNET
 
     address_set_validator = TypeAdapter(set[Address])
-    timeout_set = address_set_validator.validate_python(timeout_list)
 
     if is_mainnet:
         guest_set = address_set_validator.validate_python(GUEST_LIST)
@@ -68,7 +73,7 @@ def get_uq_score_getter(
         low_uq_score=settings.low_uq_score,
         null_uq_score=settings.null_uq_score,
         guest_list=guest_set,
-        timeout_list=timeout_set,
+        timeout_list=timeout_list,
     )
 
 
@@ -96,3 +101,4 @@ GetUQScoreGetter = Annotated[UQScoreGetter, Depends(get_uq_score_getter)]
 GetGitcoinScorerClient = Annotated[
     GitcoinScorerClient, Depends(get_gitcoin_scorer_client)
 ]
+GetTimeoutList = Annotated[set[Address], Depends(get_timeout_list)]

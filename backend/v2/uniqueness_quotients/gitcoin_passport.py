@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 import backoff
 import aiohttp
@@ -46,21 +46,26 @@ class GitcoinScorerClient:
             # Once ready, fetch all stamps
             all_stamps = await self._fetch_stamps(session, address)
 
-            # Filter out expired stamps
-            valid_stamps = [
-                stamp
-                for stamp in all_stamps
-                if datetime.fromisoformat(stamp["credential"]["expirationDate"]) > now
-            ]
+            valid_stamps = []
+            expires_at = now  # earliest expiration date
+            for stamp in all_stamps:
+                # We want internally to have all datetimes in UTC but no timezone info (db related)
+                expiration_date = datetime.fromisoformat(
+                    stamp["credential"]["expirationDate"]
+                )
+                expiration_date = expiration_date.astimezone(timezone.utc).replace(
+                    tzinfo=None
+                )
 
-            # Get the expiration date of the oldest valid stamp
-            expires_at = min(
-                [
-                    datetime.fromisoformat(stamp["credential"]["expirationDate"])
-                    for stamp in valid_stamps
-                ],
-                default=now,
-            )
+                # Skip expired stamps
+                if expiration_date < now:
+                    continue
+
+                valid_stamps.append(stamp)
+
+                # Update expiration date if it's the earliest
+                if expiration_date < expires_at:
+                    expires_at = expiration_date
 
             return GitcoinPassportScore(
                 score=float(data["score"]),

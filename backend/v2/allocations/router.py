@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Query
-from v2.matched_rewards.dependencies import GetMatchedRewardsEstimator
+from v2.matched_rewards.dependencies import GetMatchedRewardsEstimatorInAW
 from v2.projects.dependencies import GetProjectsContracts
 from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 from v2.allocations.services import simulate_allocation
@@ -94,7 +94,7 @@ async def get_all_allocations_for_epoch_v1(
 async def simulate_allocation_v1(
     session: GetSession,
     projects_contracts: GetProjectsContracts,
-    matched_rewards_estimator: GetMatchedRewardsEstimator,
+    matched_rewards_estimator: GetMatchedRewardsEstimatorInAW,
     uq_score_getter: GetUQScoreGetter,
     pending_epoch_number: GetOpenAllocationWindowEpochNumber,
     # Request Parameters
