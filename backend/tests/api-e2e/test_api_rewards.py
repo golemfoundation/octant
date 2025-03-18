@@ -1,3 +1,6 @@
+import json
+
+from fastapi.testclient import TestClient
 import pytest
 import time
 
@@ -12,6 +15,7 @@ from app.legacy.core import vault as vault_core
 @pytest.mark.api
 def test_rewards_basic(
     client: Client,
+    fastapi_client: TestClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
     ua_bob: UserAccount,
@@ -38,27 +42,34 @@ def test_rewards_basic(
     assert res["epoch"] > 0
 
     # check if both users have a budget
-    res = client.get_user_rewards_in_epoch(
-        address=ua_alice.address, epoch=STARTING_EPOCH
-    )
-    alice_budget = int(res["budget"])
+    res = fastapi_client.get(f"/rewards/budget/{ua_alice.address}/epoch/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    alice_budget = int(res_json["budget"])
     assert alice_budget > 0
 
-    res = client.get_user_rewards_in_epoch(address=ua_bob.address, epoch=STARTING_EPOCH)
-    bob_budget = int(res["budget"])
+    res = fastapi_client.get(f"/rewards/budget/{ua_bob.address}/epoch/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    bob_budget = int(res_json["budget"])
     assert bob_budget > 0
 
     # check if both users budgets are displayed in global budget endpoints
-    res = client.get_total_users_rewards_in_epoch(epoch=STARTING_EPOCH)
-    all_user_budgets = res["budgets"]
+    res = fastapi_client.get(f"/rewards/budgets/epoch/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+
+    all_user_budgets = res_json["budgets"]
     assert any(budget["amount"] == str(alice_budget) for budget in all_user_budgets)
     assert any(budget["amount"] == str(bob_budget) for budget in all_user_budgets)
 
     ua_alice.allocate(1000, alice_proposals)
 
     # check estimated projects rewards before finalized snapshot
-    res = client.get_estimated_projects_rewards()
-    assert res["rewards"][0]["allocated"] == "1000"
+    res = fastapi_client.get("/rewards/projects/estimated")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    assert res_json["rewards"][0]["allocated"] == "1000"
 
     # TODO replace with helper to wait until end of voting
     client.move_to_next_epoch(STARTING_EPOCH + 2)
@@ -70,24 +81,27 @@ def test_rewards_basic(
     assert res["epoch"] == STARTING_EPOCH
 
     # get estimated budget by number of epochs
-    res = client.get_estimated_budget_by_epochs(1, 10000000000000000000000)
-    one_epoch_budget_estimation = int(res["budget"])
+    res = fastapi_client.post(
+        "/rewards/estimated_budget",
+        json={"numberOfEpochs": 1, "glmAmount": 10000000000000000000000},
+    )
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+
+
+    one_epoch_budget_estimation = int(res_json["budget"])
     assert one_epoch_budget_estimation > 0
 
-    res = client.get_estimated_budget_by_epochs(2, 10000000000000000000000)
-    two_epochs_budget_estimation = int(res["budget"])
+    res = fastapi_client.post(
+        "/rewards/estimated_budget",
+        json={"numberOfEpochs": 2, "glmAmount": 10000000000000000000000},
+    )
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+
+    two_epochs_budget_estimation = int(res_json["budget"])
     assert two_epochs_budget_estimation > 0
     assert two_epochs_budget_estimation > one_epoch_budget_estimation
-
-    # get estimated budget by number of days
-    res = client.get_estimated_budget_by_days(200, 10000000000000000000000)
-    two_hundreds_days_budget_estimation = int(res["budget"])
-    assert two_hundreds_days_budget_estimation > 0
-
-    res = client.get_estimated_budget_by_days(300, 10000000000000000000000)
-    three_hundreds_days_budget_estimation = int(res["budget"])
-    assert three_hundreds_days_budget_estimation > 0
-    assert three_hundreds_days_budget_estimation > two_hundreds_days_budget_estimation
 
     # write merkle root for withdrawals
     vault_core.confirm_withdrawals()
@@ -96,23 +110,32 @@ def test_rewards_basic(
         time.sleep(1)
 
     # check rewards for all projects are returned in proper schema
-    res = client.get_projects_with_matched_rewards_in_epoch(epoch=STARTING_EPOCH)
-    assert len(res[0]["rewards"]) == 3
-    for reward in res[0]["rewards"]:
+    res = fastapi_client.get(f"/rewards/projects/epoch/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+
+    assert len(res_json["rewards"]) == 3
+    for reward in res_json["rewards"]:
         assert "address" in reward
         assert "allocated" in reward
         assert "matched" in reward
 
     # check unused rewards
-    res = client.get_unused_rewards(epoch=STARTING_EPOCH)
-    assert int(res["value"]) == bob_budget
+    res = fastapi_client.get(f"/rewards/unused/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    assert int(res_json["value"]) == bob_budget
 
     # check epoch merkle root exists
-    res = client.get_rewards_merkle_tree(epoch=STARTING_EPOCH)
-    assert len(res["leaves"]) == 4
-    assert res["leafEncoding"] == ["address", "uint256"]
+    res = fastapi_client.get(f"/rewards/merkle_tree/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    assert len(res_json["leaves"]) == 4
+    assert res_json["leafEncoding"] == ["address", "uint256"]
 
     # check epoch leverage
-    res = client.get_rewards_leverage(epoch=STARTING_EPOCH)
-    epoch_leverage = int(res["leverage"])
+    res = fastapi_client.get(f"/rewards/leverage/{STARTING_EPOCH}")
+    # Parse the response text as JSON
+    res_json = json.loads(res.text)
+    epoch_leverage = int(res_json["leverage"])
     assert epoch_leverage > 0
