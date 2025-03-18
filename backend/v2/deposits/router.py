@@ -105,10 +105,12 @@ async def get_user_estimated_effective_deposit(
     epoch_end = current_timestamp
     epoch_start = epoch_details.fromTs
 
-    events = await deposit_events_repository.get_all_user_events(
+    user_events = await deposit_events_repository.get_all_user_events(
         user_address, epoch_number, epoch_start, epoch_end
     )
-    deposits, _ = calculate_effective_deposits(epoch_start, epoch_end, events)
+    deposits, _ = calculate_effective_deposits(
+        epoch_start, epoch_end, {user_address: user_events}
+    )
 
     effective_deposit = deposits[0].effective_deposit if deposits else 0
 
