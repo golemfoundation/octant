@@ -50,18 +50,16 @@ async def test_get_user_estimated_effective_deposit_current_epoch(
     # Setup dependency overrides
     alice = await factories.users.get_or_create_alice()
     events_repository = MagicMock(spec=GetDepositEventsRepository)
-    events_repository.get_all_user_events.return_value = {
-        alice.address: [
-            DepositEvent(
-                user=alice.address,
-                type=EventType.LOCK,
-                timestamp=epoch_start,
-                amount=100 * 10**18,
-                deposit_before=0,
-                source=DepositSource.OCTANT,
-            )
-        ]
-    }
+    events_repository.get_all_user_events.return_value = [
+        DepositEvent(
+            user=alice.address,
+            type=EventType.LOCK,
+            timestamp=epoch_start,
+            amount=100 * 10**18,
+            deposit_before=0,
+            source=DepositSource.OCTANT,
+        )
+    ]
     fast_app.dependency_overrides[
         get_deposit_events_repository
     ] = lambda: events_repository
