@@ -1,5 +1,5 @@
 from decimal import Decimal
-from v2.core.types import Address, BigInteger, OctantModel
+from v2.core.types import BigInteger, OctantModel
 
 
 class TotalEffectiveDepositResponseV1(OctantModel):

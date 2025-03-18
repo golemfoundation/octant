@@ -220,3 +220,76 @@ class EpochsSubgraph:
             decision_window=epoch_details["decisionWindow"],
             remaining_sec=0,
         )
+
+    async def fetch_locks_by_address_and_timestamp_range(
+        self,
+        user_address: str,
+        from_ts: int,
+        to_ts: int,
+    ) -> list[LockEvent]:
+        """
+        Get locks by address and timestamp range.
+        """
+        query = gql(
+            """
+            query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
+            lockeds(
+                orderBy: timestamp
+                where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp, user: $userAddress}
+            ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                user
+                transactionHash
+            }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "toTimestamp": to_ts,
+        }
+
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        return response["lockeds"]
+
+    async def fetch_unlocks_by_address_and_timestamp_range(
+        self,
+        user_address: str,
+        from_ts: int,
+        to_ts: int,
+    ) -> list[UnlockEvent]:
+        """
+        Get unlocks by address and timestamp range.
+        """
+
+        query = gql(
+            """
+            query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
+            unlockeds(
+                orderBy: timestamp
+                where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp, user: $userAddress}
+            ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                user
+                transactionHash
+            }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "toTimestamp": to_ts,
+        }
+
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        return response["unlockeds"]

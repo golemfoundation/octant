@@ -30,10 +30,9 @@ async def get_user_deposit(
     """
     Returns user's deposit for a given epoch.
     """
-    
+
     return await session.scalar(
         select(Deposit)
         .join(User, Deposit.user_id == User.id)
         .where(User.address == user_address, Deposit.epoch == epoch_number)
     )
-
