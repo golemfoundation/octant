@@ -584,7 +584,8 @@
       "showHelpVideos": "Mostrar videos de ayuda",
       "enablePatronMode": "Habilitar modo mecenas",
       "patronModeTooltip": "El modo patrocinador es para los poseedores de tokens que desean apoyar a Octant. Desactiva la asignación para ti o a proyectos. Todas las recompensas van directamente al fondo de contrapartida sin necesidad de que el patrocinador haga nada.",
-      "docs": "Documentos"
+      "docs": "Documentos",
+      "language": "Idioma"
     },
     "syncStatus": {
       "information": "Estamos sincronizando el sistema para preparar la<br/>siguiente época. La aplicación no estará disponible<br/>por un breve período. Por favor, vuelve pronto."
