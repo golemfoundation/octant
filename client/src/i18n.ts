@@ -5,7 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import { LANGUAGE_UI } from 'constants/localStorageKeys';
 import { defaultLang, languageKey } from 'i18n/languages';
 import translationEN from 'locales/en/translation.json';
-import translationES from 'locales/es/translation.json';
+import translationES from 'locales/es/translation_old.json';
 
 declare module 'i18next' {
   interface CustomTypeOptions {
