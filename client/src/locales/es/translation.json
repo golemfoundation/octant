@@ -468,7 +468,13 @@
       "staking": "Bloqueado",
       "communityFund": "Fondo Comunitario",
       "ppf": "PPF",
-      "projectCosts": "Costos del proyecto"
+      "projectCosts": "Costos del proyecto",
+      "gridTileTimeSlicer": {
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1a",
+        "all": "Todo"
+      }
     },
     "onboarding": {
       "modalTimeoutListPresence": {
