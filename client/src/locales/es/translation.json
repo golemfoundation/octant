@@ -170,7 +170,6 @@
           "switchAccount": "Cambiar de cuenta",
           "calculatingScore": "Calcular puntuación",
           "delegationFailedText": "La delegación falló: tu puntuación debe ser 15 o superior. Por favor, intenta con otra billetera",
-          "delegationMessageToSign": "Delegación de la puntuación UQ de {{delegationSecondaryAddress}} a {{delegationPrimaryAddress}}",
           "toasts": {
             "unableToDelegateToAddressWithPositiveGLMLock": {
               "title": "Dirección con GLM bloqueados",
@@ -565,7 +564,7 @@
         "alphabeticalDescending": "Z -> A",
         "totalsDescending": "Total de mayor a menor",
         "totalsAscending": "Total de menor a mayor",
-        "donorsDescending": "Donantes (mayor a menor)", 
+        "donorsDescending": "Donantes (mayor a menor)",
         "donorsAscending": "Donantes (menor a mayor)"
       }
     },
