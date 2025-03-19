@@ -61,19 +61,16 @@ class DepositEventsStore:
             await self.epochs_subgraph.fetch_locks_by_address_and_timestamp_range(
                 user_address, start_sec, end_sec
             )
-            # get_locks_by_address_and_timestamp_range(user_address, start_sec, end_sec)
         )
         events.extend(
             await self.epochs_subgraph.fetch_unlocks_by_address_and_timestamp_range(
                 user_address, start_sec, end_sec
             )
-            # get_unlocks_by_address_and_timestamp_range(user_address, start_sec, end_sec)
         )
 
         sablier_streams = await self.sablier_subgraph.get_user_events_history(
             user_address
         )
-        # sablier_streams = get_user_events_history(user_address)
         mapped_streams = process_to_locks_and_unlocks(
             sablier_streams, from_timestamp=start_sec, to_timestamp=end_sec
         )
