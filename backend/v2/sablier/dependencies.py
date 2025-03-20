@@ -32,15 +32,17 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
 
     if chain_settings.chain_id == ChainTypes.MAINNET:
         return SablierSubgraph(
-            sablier_settings.sablier_mainnet_subgraph_url,
-            sablier_settings.sablier_sender_address,
-            sablier_settings.sablier_token_address,
+            url=sablier_settings.sablier_mainnet_subgraph_url,
+            sender=sablier_settings.sablier_sender_address,
+            token_address=sablier_settings.sablier_token_address,
+            chain_id=ChainTypes.MAINNET,
         )
 
     return SablierSubgraph(
-        sablier_settings.sablier_sepolia_subgraph_url,
-        sablier_settings.sablier_sender_address_sepolia,
-        sablier_settings.sablier_token_address_sepolia,
+        url=sablier_settings.sablier_sepolia_subgraph_url,
+        sender=sablier_settings.sablier_sender_address_sepolia,
+        token_address=sablier_settings.sablier_token_address_sepolia,
+        chain_id=ChainTypes.SEPOLIA,
     )
 
 

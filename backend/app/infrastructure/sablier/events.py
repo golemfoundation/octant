@@ -3,9 +3,16 @@ from typing import TypedDict, List, Dict
 from flask import current_app as app
 from gql import gql
 
+from app.constants import (
+    SABLIER_TOKEN_ADDRESS_SEPOLIA,
+    SABLIER_SENDER_ADDRESS_SEPOLIA,
+    SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+    INCORRECTLY_CANCELLED_STREAMS_PATH,
+)
 from app.extensions import gql_sablier_factory
-from app.constants import SABLIER_TOKEN_ADDRESS_SEPOLIA, SABLIER_SENDER_ADDRESS_SEPOLIA
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+
+import pandas as pd
 
 
 class SablierAction(TypedDict):
@@ -26,6 +33,7 @@ class SablierStream(TypedDict):
     endTime: str
     depositAmount: str
     recipient: str
+    stream_id: str
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
@@ -50,6 +58,10 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
         app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
 
         for stream in streams:
+            stream_id = stream.get("id")
+            if _check_if_incorrectly_cancelled_stream(stream_id) is True:
+                continue
+
             actions = stream.get("actions", [])
             final_intact_amount = stream.get("intactAmount", 0)
             is_cancelled = stream.get("canceled")
@@ -65,6 +77,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
                     endTime=end_time,
                     depositAmount=deposit_amount,
                     recipient=recipient,
+                    id=stream_id,
                 )
             )
 
@@ -182,3 +195,30 @@ def _get_token_address():
         else SABLIER_TOKEN_ADDRESS_SEPOLIA
     )
     return token_address
+
+
+def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
+    """
+    This streams fixes the issue with incorrectly cancelled streams.
+    It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
+
+    Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
+    The last part of the stream id is the id from the source of truth.
+    """
+    chain_id = app.config["CHAIN_ID"]
+
+    processed_stream_id = int(source_stream_id.split("-")[-1])
+    incorrectly_cancelled_streams_ids = set()
+
+    if compare_blockchain_types(chain_id, ChainTypes.SEPOLIA):
+        incorrectly_cancelled_streams_ids = (
+            SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
+        )
+    elif compare_blockchain_types(chain_id, ChainTypes.MAINNET):
+        incorrectly_cancelled_streams_ids = set(
+            pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                "streamid"
+            ].to_list()
+        )
+
+    return processed_stream_id in incorrectly_cancelled_streams_ids

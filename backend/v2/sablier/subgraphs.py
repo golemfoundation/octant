@@ -5,8 +5,17 @@ from gql.client import log as requests_logger
 
 
 import backoff
+
+from app.constants import (
+    SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+    INCORRECTLY_CANCELLED_STREAMS_PATH,
+)
 from app.infrastructure.sablier.events import SablierStream
+from v2.core.enums import ChainTypes
+from v2.core.logic import compare_blockchain_types
 from v2.epochs.subgraphs import BackoffParams
+
+import pandas as pd
 
 requests_logger.setLevel(logging.WARNING)
 
@@ -17,12 +26,14 @@ class SablierSubgraph:
         url: str,
         sender: str,
         token_address: str,
+        chain_id: int,
         backoff_params: BackoffParams | None = None,
     ):
         requests_logger.setLevel(logging.WARNING)
         self.url = url
         self.sender = sender
         self.token_address = token_address
+        self.chain_id = chain_id
 
         self.gql_client = Client(
             transport=AIOHTTPTransport(
@@ -44,6 +55,30 @@ class SablierSubgraph:
                 self.gql_client.execute_async
             )
 
+    def _check_if_incorrectly_cancelled_stream(self, source_stream_id: str) -> bool:
+        """
+        This streams fixes the issue with incorrectly cancelled streams.
+        It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
+
+        Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
+        The last part of the stream id is the id from the source of truth.
+        """
+        processed_stream_id = int(source_stream_id.split("-")[-1])
+        incorrectly_cancelled_streams_ids = set()
+
+        if compare_blockchain_types(self.chain_id, ChainTypes.SEPOLIA):
+            incorrectly_cancelled_streams_ids = (
+                SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
+            )
+        elif compare_blockchain_types(self.chain_id, ChainTypes.MAINNET):
+            incorrectly_cancelled_streams_ids = set(
+                pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                    "streamid"
+                ].to_list()
+            )
+
+        return processed_stream_id in incorrectly_cancelled_streams_ids
+
     async def _fetch_streams(self, query: str, variables: dict) -> list[SablierStream]:
         all_streams = []
         has_more = True
@@ -60,6 +95,10 @@ class SablierSubgraph:
             streams = result.get("streams", [])
 
             for stream in streams:
+                stream_id = stream.get("id")
+                if self._check_if_incorrectly_cancelled_stream(stream_id) is True:
+                    continue
+
                 actions = stream.get("actions", [])
                 final_intact_amount = stream.get("intactAmount", 0)
                 all_streams.append(
