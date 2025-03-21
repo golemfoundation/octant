@@ -1,6 +1,6 @@
 import datetime
 import time
-from fastapi import logger
+import logging
 import pytest
 import json
 from http import HTTPStatus
@@ -21,6 +21,7 @@ from app.modules.dto import ScoreDelegationPayload
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from unittest.mock import patch
 
+logger = logging.getLogger(__name__)
 
 class FastAPIClient:
     def __init__(self, fastapi_client: TestClient):
