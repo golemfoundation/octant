@@ -48,7 +48,7 @@ class SablierSubgraph:
 
     def _check_if_incorrectly_cancelled_stream(self, source_stream_id: str) -> bool:
         """
-        This streams fixes the issue with incorrectly cancelled streams.
+        This function fixes the issue with incorrectly cancelled streams.
 
         Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
         The last part of the stream id is the id from the source of truth.

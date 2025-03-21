@@ -219,7 +219,7 @@ def _retrieve_incorrectly_cancelled_streams() -> Set[int]:
 
 def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
     """
-    This streams fixes the issue with incorrectly cancelled streams.
+    This function fixes the issue with incorrectly cancelled streams.
     It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
 
     Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
