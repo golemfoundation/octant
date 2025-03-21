@@ -29,7 +29,28 @@ class SablierSubgraphSettings(OctantSettings):
 
 
 @lru_cache(maxsize=1)
-def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
+def get_incorrectly_cancelled_streams_ids(chain_settings: GetChainSettings) -> set[int]:
+    """
+    Retrieve the set of incorrectly cancelled stream ids based on the chain type.
+    """
+    is_mainnet = chain_settings.chain_id == ChainTypes.MAINNET
+    if is_mainnet:
+        return set(
+            pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                "streamid"
+            ].to_list()
+        )
+
+    return SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
+
+
+@lru_cache(maxsize=1)
+def get_sablier_subgraph(
+    chain_settings: GetChainSettings,
+    incorrectly_cancelled_streams_ids: Annotated[
+        set[int], Depends(get_incorrectly_cancelled_streams_ids)
+    ],
+) -> SablierSubgraph:
     """
     Based on the chain type (mainnet or sepolia), return the appropriate SablierSubgraph.
     """
@@ -41,18 +62,14 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
             url=sablier_settings.sablier_mainnet_subgraph_url,
             sender=sablier_settings.sablier_sender_address,
             token_address=sablier_settings.sablier_token_address,
-            incorrectly_cancelled_streams_ids=set(
-                pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
-                    "streamid"
-                ].to_list()
-            ),
+            incorrectly_cancelled_streams_ids=incorrectly_cancelled_streams_ids,
         )
 
     return SablierSubgraph(
         url=sablier_settings.sablier_sepolia_subgraph_url,
         sender=sablier_settings.sablier_sender_address_sepolia,
         token_address=sablier_settings.sablier_token_address_sepolia,
-        incorrectly_cancelled_streams_ids=SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+        incorrectly_cancelled_streams_ids=incorrectly_cancelled_streams_ids,
     )
 
 
