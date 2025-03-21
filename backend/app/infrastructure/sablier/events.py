@@ -1,4 +1,5 @@
-from typing import TypedDict, List, Dict
+from functools import lru_cache
+from typing import TypedDict, List, Dict, Set
 
 from flask import current_app as app
 from gql import gql
@@ -197,18 +198,10 @@ def _get_token_address():
     return token_address
 
 
-def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
-    """
-    This streams fixes the issue with incorrectly cancelled streams.
-    It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
-
-    Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
-    The last part of the stream id is the id from the source of truth.
-    """
-    chain_id = app.config["CHAIN_ID"]
-
-    processed_stream_id = int(source_stream_id.split("-")[-1])
+@lru_cache(maxsize=1)
+def _retrieve_incorrectly_cancelled_streams() -> Set[int]:
     incorrectly_cancelled_streams_ids = set()
+    chain_id = app.config["CHAIN_ID"]
 
     if compare_blockchain_types(chain_id, ChainTypes.SEPOLIA):
         incorrectly_cancelled_streams_ids = (
@@ -221,4 +214,17 @@ def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
             ].to_list()
         )
 
+    return incorrectly_cancelled_streams_ids
+
+
+def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
+    """
+    This streams fixes the issue with incorrectly cancelled streams.
+    It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
+
+    Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
+    The last part of the stream id is the id from the source of truth.
+    """
+    processed_stream_id = int(source_stream_id.split("-")[-1])
+    incorrectly_cancelled_streams_ids = _retrieve_incorrectly_cancelled_streams()
     return processed_stream_id in incorrectly_cancelled_streams_ids

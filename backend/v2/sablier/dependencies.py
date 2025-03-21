@@ -1,8 +1,14 @@
 from functools import lru_cache
 from typing import Annotated
 
+import pandas as pd
 from fastapi import Depends
 from pydantic import Field
+
+from app.constants import (
+    SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+    INCORRECTLY_CANCELLED_STREAMS_PATH,
+)
 from app.shared.blockchain_types import ChainTypes
 from v2.sablier.subgraphs import SablierSubgraph
 from v2.core.dependencies import GetChainSettings, OctantSettings
@@ -35,14 +41,18 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
             url=sablier_settings.sablier_mainnet_subgraph_url,
             sender=sablier_settings.sablier_sender_address,
             token_address=sablier_settings.sablier_token_address,
-            chain_id=ChainTypes.MAINNET,
+            incorrectly_cancelled_streams_ids=set(
+                pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                    "streamid"
+                ].to_list()
+            ),
         )
 
     return SablierSubgraph(
         url=sablier_settings.sablier_sepolia_subgraph_url,
         sender=sablier_settings.sablier_sender_address_sepolia,
         token_address=sablier_settings.sablier_token_address_sepolia,
-        chain_id=ChainTypes.SEPOLIA,
+        incorrectly_cancelled_streams_ids=SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
     )
 
 
