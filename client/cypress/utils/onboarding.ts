@@ -32,7 +32,7 @@ export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<
 
 export const beforeSetup = (): void => {
   mockCoinPricesServer();
-  cy.setupMetamask();
+  // cy.setupMetamask();
   window.innerWidth = Cypress.config().viewportWidth;
   window.innerHeight = Cypress.config().viewportHeight;
 };
