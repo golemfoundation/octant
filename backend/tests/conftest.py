@@ -22,7 +22,7 @@ from web3 import Web3
 import logging
 
 from tests.helpers.custom_flask_client import CustomFlaskClient
-from startup import app as fastapi_app
+from startup import fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
