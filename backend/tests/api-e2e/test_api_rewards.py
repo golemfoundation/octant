@@ -7,7 +7,8 @@ from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import Client, UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 from app.legacy.core import vault as vault_core
-from .conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient
+
 
 @pytest.mark.api
 def test_rewards_basic(

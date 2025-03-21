@@ -4,7 +4,7 @@ from flask import current_app as app
 from tests.helpers.constants import STARTING_EPOCH
 from tests.conftest import Client, UserAccount
 from app.extensions import w3
-from .conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient
 
 @pytest.mark.api
 def test_pending_snapshot(

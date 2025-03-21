@@ -2,7 +2,7 @@ import pytest
 
 from tests.conftest import UserAccount
 from tests.helpers.signature import build_user_signature
-from .conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient
 
 @pytest.mark.api
 def test_tos_basics(

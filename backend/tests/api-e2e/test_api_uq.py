@@ -5,7 +5,7 @@ from app.infrastructure import database
 from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import UserAccount, Client
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE, MAX_UQ_SCORE
-from .conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient
 
 
 @pytest.mark.api
