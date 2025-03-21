@@ -20,6 +20,8 @@ from requests import RequestException
 from web3 import Web3
 
 import logging
+
+from tests.helpers.custom_flask_client import CustomFlaskClient
 from v2.main import app as fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
@@ -438,6 +440,8 @@ def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
     _app = create_app(deployment)
 
+    _app.test_client_class = CustomFlaskClient
+
     with _app.test_client() as client:
         with _app.app_context():
             db.create_all()
@@ -615,9 +619,6 @@ class Client:
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending")
-        current_app.logger.debug(
-            f"Request to /snapshots/pending [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text)
 
     def pending_snapshot_simulate(self):
@@ -646,16 +647,10 @@ class Client:
 
     def get_epoch_info(self, epoch):
         rv = self._flask_client.get(f"/epochs/info/{epoch}")
-        current_app.logger.debug(
-            f"Request to /epochs/info/{epoch} [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective_estimated(self):
         rv = self._flask_client.get("/deposits/total_effective/estimated")
-        current_app.logger.debug(
-            f"Request to /deposits/total_effective/estimated [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective(self, epoch: int):
@@ -682,12 +677,10 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug(f"get_user_rewards_in_upcoming_epoch :{rv.text}")
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug(f"get_rewards_budget :{rv.text}")
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
@@ -843,16 +836,10 @@ class Client:
 
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
-        current_app.logger.debug(
-            f"Request to get /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
-        current_app.logger.debug(
-            f"Request to put /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
-        )
         return rv.text, rv.status_code
 
     def get_chain_info(self) -> tuple[dict, int]:
@@ -888,9 +875,6 @@ class Client:
                 "secondaryAddrSignature": secondary_address_signature,
             },
         )
-        current_app.logger.debug(
-            f"Request to /delegate [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def delegation_recalculate(
@@ -908,9 +892,6 @@ class Client:
                 "primaryAddrSignature": primary_address_signature,
                 "secondaryAddrSignature": secondary_address_signature,
             },
-        )
-        current_app.logger.debug(
-            f"Request to /delegation/recalculate [{rv.status_code}] returned text {rv.text}"
         )
         return json.loads(rv.text), rv.status_code
 
