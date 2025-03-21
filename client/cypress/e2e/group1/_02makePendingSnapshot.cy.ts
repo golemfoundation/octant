@@ -9,14 +9,14 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 // In E2E snapshotter is disabled. Before the first test can be run, pending snapshot needs to be done.
 describe('Make pending snapshot', () => {
-  before(() => {
-    /**
-     * Global Metamask setup done by Synpress is not always done.
-     * Since Synpress needs to have valid provider to fetch the data from contracts,
-     * setupMetamask is required in each test suite.
-     */
-    cy.setupMetamask();
-  });
+  // before(() => {
+  //   /**
+  //    * Global Metamask setup done by Synpress is not always done.
+  //    * Since Synpress needs to have valid provider to fetch the data from contracts,
+  //    * setupMetamask is required in each test suite.
+  //    */
+  //   cy.setupMetamask();
+  // });
 
   beforeEach(() => {
     cy.disconnectMetamaskWalletFromAllDapps();
