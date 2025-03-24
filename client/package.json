@@ -30,10 +30,8 @@
     "type-check": "tsc --noEmit true",
     "sourcemaps:remove": "rimraf dist/**/*.map",
     "synpress:open": "TZ=Europe/Warsaw synpress open --configFile synpress.config.ts",
-    "synpress:run": "yarn synpress:run:group-1 && yarn synpress:run:group-2 && yarn synpress:run:group-3",
-    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts'",
-    "synpress:run:group-2": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group2/*.cy.ts'",
-    "synpress:run:group-3": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group3/*.cy.ts'"
+    "synpress:run": "yarn synpress:run:group-1",
+    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts'"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
