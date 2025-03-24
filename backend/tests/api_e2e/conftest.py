@@ -82,6 +82,7 @@ class FastAPIClient:
 
     def pending_snapshot(self):
         rv = self._fastapi_client.post("/snapshots/pending")
+        logger.info(f"pending_snapshot returns {rv.text}")
         return json.loads(rv.text)
 
     def pending_snapshot_simulate(self):
