@@ -17,8 +17,8 @@ def test_uq_for_user(fclient: FastAPIClient, ua_alice: UserAccount):
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 
-    USER_NOT_FOUND = 404
     _, code = fclient.get_user_uq(ua_alice.address, 4)
+    USER_NOT_FOUND = 200 # This actually makes sense because we can check score's address that is not user
     assert code == USER_NOT_FOUND
 
     database.user.add_user(ua_alice.address)

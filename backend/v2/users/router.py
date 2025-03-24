@@ -1,5 +1,5 @@
 from datetime import timezone
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, status
 
 from app.exceptions import (
     AddressAlreadyDelegated,
@@ -204,7 +204,7 @@ async def get_tos_status_for_user_v1(
     return TosStatusResponseV1(accepted=status)
 
 
-@api.post("/{user_address}/tos")
+@api.post("/{user_address}/tos", status_code=status.HTTP_201_CREATED)
 async def post_tos_status_for_user_v1(
     session: GetSession,
     signed_message_verifier: GetSignedMessageVerifier,
