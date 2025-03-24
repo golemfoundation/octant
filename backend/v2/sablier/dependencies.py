@@ -44,7 +44,6 @@ def get_incorrectly_cancelled_streams_ids(chain_settings: GetChainSettings) -> s
     return SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
 
 
-@lru_cache(maxsize=1)
 def get_sablier_subgraph(
     chain_settings: GetChainSettings,
     incorrectly_cancelled_streams_ids: Annotated[
