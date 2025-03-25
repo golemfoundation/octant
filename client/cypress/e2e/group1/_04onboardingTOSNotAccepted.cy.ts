@@ -36,7 +36,7 @@ Object.values(viewports).forEach(
         });
 
         after(() => {
-          cy.disconnectMetamaskWalletFromAllDapps();
+          // cy.disconnectMetamaskWalletFromAllDapps();
         });
 
         it('onboarding TOS step should be first and active', () => {
