@@ -23,9 +23,8 @@ import logging
 
 from v2.sablier.dependencies import get_sablier_subgraph
 from v2.sablier.subgraphs import SablierSubgraph
-from v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
-from startup import create_fastapi_app, fastapi_app
+from startup import create_fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -428,8 +427,6 @@ def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
-
-
 
     for key in dir(deployment):
         if key.isupper():
