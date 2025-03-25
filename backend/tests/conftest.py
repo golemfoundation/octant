@@ -21,8 +21,8 @@ from web3 import Web3
 
 import logging
 
-from backend.v2.sablier.dependencies import get_sablier_subgraph
-from backend.v2.sablier.subgraphs import SablierSubgraph
+from v2.sablier.dependencies import get_sablier_subgraph
+from v2.sablier.subgraphs import SablierSubgraph
 from v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
 from startup import create_fastapi_app, fastapi_app
