@@ -1,10 +1,13 @@
+import logging
 import pytest
-from flask import current_app as app
 
 from app.modules.dto import ScoreDelegationPayload
 from app.infrastructure import database
 from tests.helpers.constants import STARTING_EPOCH, USER1_ADDRESS, USER2_ADDRESS
 from tests.api_e2e.conftest import FastAPIClient
+
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.api
@@ -14,7 +17,7 @@ def test_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayload):
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logger.debug(f"indexed epoch: {epoch_no}")
 
     database.user.add_user(USER1_ADDRESS)
     database.user.add_user(USER2_ADDRESS)
@@ -84,7 +87,7 @@ def test_recalculate_in_delegation(
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logger.debug(f"indexed epoch: {epoch_no}")
 
     database.user.add_user(USER1_ADDRESS)
     database.user.add_user(USER2_ADDRESS)
@@ -127,7 +130,7 @@ def test_check_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayloa
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logger.debug(f"indexed epoch: {epoch_no}")
 
     database.user.add_user(USER1_ADDRESS)
     database.user.add_user(USER2_ADDRESS)

@@ -4,11 +4,14 @@ from app.extensions import w3
 from app.infrastructure import database
 from tests.conftest import UserAccount
 from tests.api_e2e.conftest import FastAPIClient
+from app.extensions import db
 
 
 @pytest.mark.api
 def test_antisybil(fclient: FastAPIClient, ua_alice: UserAccount):
     database.user.add_user(ua_alice.address)
+    db.session.commit()
+
     # flow for an address known to GP
     _, code = fclient.get_antisybil_score(ua_alice.address)
     assert code == 404  # score for this user is not cached
