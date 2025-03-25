@@ -21,6 +21,8 @@ from web3 import Web3
 
 import logging
 
+from backend.v2.sablier.dependencies import get_sablier_subgraph
+from backend.v2.sablier.subgraphs import SablierSubgraph
 from v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
 from startup import create_fastapi_app, fastapi_app
@@ -427,6 +429,8 @@ def fastapi_client(deployment) -> TestClient:
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
 
+
+
     for key in dir(deployment):
         if key.isupper():
             value = getattr(deployment, key)
@@ -435,6 +439,12 @@ def fastapi_client(deployment) -> TestClient:
 
     # Additional logging and no need for socketio in tests
     app = create_fastapi_app(debug=True, include_socketio=False)
+
+    # Mock sablier to just return [] always
+    sablier_subgraph = MagicMock(spec=SablierSubgraph)
+    sablier_subgraph.get_all_streams_history.return_value = []
+    sablier_subgraph.get_user_events_history.return_value = []
+    app.dependency_overrides[get_sablier_subgraph] = lambda: sablier_subgraph
 
     return TestClient(app)
 
