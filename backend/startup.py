@@ -44,7 +44,7 @@ if os.getenv("SENTRY_DSN"):
 
 
 # I'm importing it here to make sure that the flask initializes before the fastapi one
-from v2.main import app as build_app  # noqa
+from v2.main import build_app  # noqa
 
 
 def create_fastapi_app(debug: bool = False, include_socketio: bool = True):
