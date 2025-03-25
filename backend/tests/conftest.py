@@ -23,7 +23,7 @@ import logging
 
 from v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
-from startup import fastapi_app
+from startup import create_fastapi_app, fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -434,7 +434,7 @@ def fastapi_client(deployment) -> TestClient:
                 os.environ[key] = str(value)
 
     # Additional logging and no need for socketio in tests
-    app = build_app(debug=True, include_socketio=False)
+    app = create_fastapi_app(debug=True, include_socketio=False)
 
     return TestClient(app)
 
