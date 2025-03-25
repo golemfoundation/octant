@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import time
 import logging
@@ -6,12 +7,10 @@ import json
 from http import HTTPStatus
 from fastapi.testclient import TestClient
 
-from app.extensions import (
-    w3,
-    epochs,
-)
 
 from app.modules.dto import ScoreDelegationPayload
+from v2.core.dependencies import get_w3, get_web3_provider_settings
+from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from unittest.mock import patch
 
@@ -59,13 +58,33 @@ class FastAPIClient:
             time.sleep(0.5)
 
     def move_to_next_epoch(self, target):
-        assert epochs.get_current_epoch() == target - 1
-        now = w3.eth.get_block("latest").timestamp
-        nextEpochAt = epochs.get_current_epoch_end()
-        forward = nextEpochAt - now + 30
-        w3.provider.make_request("evm_increaseTime", [forward])
-        w3.provider.make_request("evm_mine", [])
-        assert epochs.get_current_epoch() == target
+        async def move_to_next_epoch_async():
+            w3 = get_w3(get_web3_provider_settings())
+            epochs = get_epochs_contracts(w3, get_epochs_settings())
+
+            current_epoch = await epochs.get_current_epoch()
+            assert current_epoch == target - 1
+
+            latest_block = await w3.eth.get_block("latest")
+            now = latest_block.timestamp
+
+            next_epoch_at = await epochs.get_current_epoch_end()
+            forward = next_epoch_at - now + 30
+            await w3.provider.make_request("evm_increaseTime", [forward])
+            await w3.provider.make_request("evm_mine", [])
+
+            current_epoch = await epochs.get_current_epoch()
+            assert current_epoch == target
+
+        asyncio.run(move_to_next_epoch_async())
+
+        # assert epochs.get_current_epoch() == target - 1
+        # now = w3.eth.get_block("latest").timestamp
+        # nextEpochAt = epochs.get_current_epoch_end()
+        # forward = nextEpochAt - now + 30
+        # w3.provider.make_request("evm_increaseTime", [forward])
+        # w3.provider.make_request("evm_mine", [])
+        # assert epochs.get_current_epoch() == target
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
