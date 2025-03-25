@@ -19,7 +19,7 @@ export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<
     cy.intercept('GET', '/user/*/tos', { body: { accepted: mockedTOSResponse } });
   }
 
-  cy.disconnectMetamaskWalletFromAllDapps();
+  // cy.disconnectMetamaskWalletFromAllDapps();
   visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
 
   cy.wait(500);

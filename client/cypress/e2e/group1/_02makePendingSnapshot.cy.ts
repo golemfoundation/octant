@@ -15,7 +15,7 @@ describe('Make pending snapshot', () => {
      * Since Synpress needs to have valid provider to fetch the data from contracts,
      * setupMetamask is required in each test suite.
      */
-    cy.setupMetamask();
+    // cy.setupMetamask();
   });
 
   beforeEach(() => {
