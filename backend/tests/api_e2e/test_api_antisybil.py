@@ -28,6 +28,8 @@ def test_antisybil(fclient: FastAPIClient, ua_alice: UserAccount):
     # flow for a brand new address, which couldn't be scored by GP yet
     ua_jane = UserAccount(w3.eth.account.create(), fclient)
     database.user.add_user(ua_jane.address)
+    db.session.commit()
+
     _, code = fclient.get_antisybil_score(ua_jane.address)
     assert code == 404  # score for this user is not cached
 
