@@ -21,7 +21,7 @@ from web3 import Web3
 
 import logging
 
-from backend.v2.main import build_app
+from v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
 from startup import fastapi_app
 from app import create_app
