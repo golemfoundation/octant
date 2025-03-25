@@ -9,7 +9,7 @@ set -e
 #   900          number of seconds until timeout
 #   bash -c '..' the command to run
 
-timeout --foreground -s TERM 900 bash -c \
+timeout --foreground -s TERM 1800 bash -c \
     'until bash $CI_PROJECT_DIR/ci/argocd/is_app_deployed.sh; [ $? -eq 0 ]; do\
     echo "[-] Waiting for ${0}" app to deploy && sleep 10;\
     done' $DEPLOYMENT_ID
