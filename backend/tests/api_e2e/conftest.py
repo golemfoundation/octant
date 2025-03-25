@@ -7,14 +7,8 @@ from http import HTTPStatus
 from fastapi.testclient import TestClient
 
 from app.extensions import (
-    db,
-    deposits,
-    glm,
-    gql_octant_factory,
     w3,
-    vault,
     epochs,
-    gql_sablier_factory,
 )
 
 from app.modules.dto import ScoreDelegationPayload
@@ -22,6 +16,7 @@ from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from unittest.mock import patch
 
 logger = logging.getLogger(__name__)
+
 
 class FastAPIClient:
     def __init__(self, fastapi_client: TestClient):
@@ -41,14 +36,10 @@ class FastAPIClient:
             try:
                 res, status_code = self.sync_status()
                 logger.debug(f"sync_status returns {res}")
-                logger.debug(
-                    f"sync_status http status code is {status_code}"
-                )
+                logger.debug(f"sync_status http status code is {status_code}")
                 assert status_code == HTTPStatus.OK
             except Exception as exp:
-                logger.warning(
-                    f"Request to /info/sync-status returned {exp}"
-                )
+                logger.warning(f"Request to /info/sync-status returned {exp}")
                 if datetime.datetime.now() - start > timeout:
                     raise TimeoutError(
                         f"Waiting for sync for epoch {target} has timeouted ({timeout_s} sec)"
@@ -126,7 +117,9 @@ class FastAPIClient:
         return json.loads(rv.text), rv.status_code
 
     def get_user_estimated_effective_deposit(self, user_address: str):
-        rv = self._fastapi_client.get(f"/deposits/users/{user_address}/estimated_effective_deposit")
+        rv = self._fastapi_client.get(
+            f"/deposits/users/{user_address}/estimated_effective_deposit"
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_locked_ratio_in_epoch(self, epoch: int):
@@ -199,7 +192,9 @@ class FastAPIClient:
         rv = self._fastapi_client.get(f"/allocations/users/{address}/allocation_nonce")
         return json.loads(rv.text)["allocationNonce"], rv.status_code
 
-    def make_allocation(self, account, amount: int, addresses: list[str], nonce: int) -> int:
+    def make_allocation(
+        self, account, amount: int, addresses: list[str], nonce: int
+    ) -> int:
         signature = self.sign_operation(account, amount, addresses, nonce)
         rv = self._fastapi_client.post(
             "/allocations/allocate",
@@ -219,6 +214,7 @@ class FastAPIClient:
 
     def sign_operation(self, account, amount, addresses, nonce) -> str:
         from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+
         payload = {
             "allocations": [
                 {
@@ -237,18 +233,24 @@ class FastAPIClient:
         return json.loads(rv.text), rv.status_code
 
     def get_proposal_donors(self, epoch, proposal_address) -> tuple[dict, int]:
-        rv = self._fastapi_client.get(f"/allocations/project/{proposal_address}/epoch/{epoch}")
+        rv = self._fastapi_client.get(
+            f"/allocations/project/{proposal_address}/epoch/{epoch}"
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_user_allocations(self, epoch, user_address) -> tuple[dict, int]:
         rv = self._fastapi_client.get(f"/allocations/user/{user_address}/epoch/{epoch}")
         return json.loads(rv.text), rv.status_code
 
-    def check_leverage(self, proposal_address, user_address, amount) -> tuple[dict, int]:
+    def check_leverage(
+        self, proposal_address, user_address, amount
+    ) -> tuple[dict, int]:
         payload = {
             "allocations": [{"proposalAddress": proposal_address, "amount": amount}]
         }
-        rv = self._fastapi_client.post(f"/allocations/leverage/{user_address}", json=payload)
+        rv = self._fastapi_client.post(
+            f"/allocations/leverage/{user_address}", json=payload
+        )
         return json.loads(rv.text), rv.status_code
 
     def get_epoch_patrons(self, epoch) -> tuple[dict, int]:

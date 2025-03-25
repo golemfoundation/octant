@@ -4,7 +4,7 @@ import time
 from flask import current_app as app
 from app.extensions import vault
 from app.legacy.core.projects import get_projects_addresses
-from tests.conftest import Client, UserAccount
+from tests.conftest import UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 from app.legacy.core import vault as vault_core
 from tests.api_e2e.conftest import FastAPIClient
@@ -45,7 +45,9 @@ def test_rewards_basic(
     alice_budget = int(res["budget"])
     assert alice_budget > 0
 
-    res = fclient.get_user_rewards_in_epoch(address=ua_bob.address, epoch=STARTING_EPOCH)
+    res = fclient.get_user_rewards_in_epoch(
+        address=ua_bob.address, epoch=STARTING_EPOCH
+    )
     bob_budget = int(res["budget"])
     assert bob_budget > 0
 

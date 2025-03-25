@@ -2,9 +2,10 @@ import pytest
 
 from flask import current_app as app
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import Client, UserAccount
+from tests.conftest import UserAccount
 from app.extensions import w3
 from tests.api_e2e.conftest import FastAPIClient
+
 
 @pytest.mark.api
 def test_pending_snapshot(
@@ -36,7 +37,9 @@ def test_pending_snapshot(
     alice_budget = int(res["budget"])
     assert alice_budget > 0
 
-    res = fclient.get_user_rewards_in_epoch(address=ua_bob.address, epoch=STARTING_EPOCH)
+    res = fclient.get_user_rewards_in_epoch(
+        address=ua_bob.address, epoch=STARTING_EPOCH
+    )
     bob_budget = int(res["budget"])
     assert bob_budget > 0
 
