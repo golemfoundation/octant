@@ -21,6 +21,7 @@ from web3 import Web3
 
 import logging
 
+from backend.v2.main import build_app
 from tests.helpers.custom_flask_client import CustomFlaskClient
 from startup import fastapi_app
 from app import create_app
@@ -432,7 +433,10 @@ def fastapi_client(deployment) -> TestClient:
             if value is not None:
                 os.environ[key] = str(value)
 
-    return TestClient(fastapi_app)
+    # Additional logging and no need for socketio in tests
+    app = build_app(debug=True, include_socketio=False)
+
+    return TestClient(app)
 
 
 @pytest.fixture
