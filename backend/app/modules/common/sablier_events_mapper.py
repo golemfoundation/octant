@@ -142,6 +142,18 @@ def _process_withdraw(
     return lock_item, starting_deposit
 
 
+def _process_transfer(
+    action: SablierAction, starting_deposit: int
+) -> Tuple[SablierEvent, int]:
+    """
+    The logic is needed for invalidly created streams that were set as transferable.
+    The logic is exactly the same as for withdraw. We don't track the recipient with their locks.
+    """
+    lock_item, starting_deposit = _process_withdraw(action, starting_deposit)
+    lock_item["type"] = SablierEventType.TRANSFER
+    return lock_item, starting_deposit
+
+
 def _process_cancel(
     action: SablierAction, starting_deposit: int
 ) -> Tuple[SablierEvent, int]:
@@ -167,6 +179,7 @@ def _convert(actions: List[SablierAction]) -> List[SablierEvent]:
     action_strategy = {
         SablierEventType.CREATE.value: _process_create,
         SablierEventType.WITHDRAW.value: _process_withdraw,
+        SablierEventType.TRANSFER.value: _process_transfer,
         SablierEventType.CANCEL.value: _process_cancel,
     }
     starting_deposit = 0

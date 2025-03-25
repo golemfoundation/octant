@@ -15,6 +15,7 @@ class EventType(StrEnum):
 class SablierEventType(StrEnum):
     CREATE = "Create"
     WITHDRAW = "Withdraw"
+    TRANSFER = "Transfer"
     CANCEL = "Cancel"
 
 
