@@ -33,6 +33,10 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
 
   const sections: SectionProps[] = [
     {
+      childrenRight: <TransactionDetailsDateAndTime timestamp={timestamp} />,
+      label: t('sections.when'),
+    },
+    {
       dataTest: isPatronDonation
         ? 'TransactionDetailsRest__matchingFundDonation'
         : 'TransactionDetailsRest__amount',
@@ -51,17 +55,6 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
     ...((!isPatronDonation
       ? [
           {
-            doubleValueProps: {
-              cryptoCurrency: 'ethereum',
-              getFormattedEthValueProps: { shouldIgnoreGwei: true },
-              // Gas price is not known for pending transactions.
-              isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
-              showCryptoSuffix: true,
-              valueCrypto: BigInt(transaction?.gasPrice ?? 0),
-            },
-            label: t('sections.gasPrice'),
-          },
-          {
             childrenLeft: <TransactionLabel isFinalized={isFinalized} isMultisig={isMultisig} />,
             childrenRight: (
               <Button
@@ -72,12 +65,19 @@ const TransactionDetailsRest: FC<TransactionDetailsRestProps> = ({
               />
             ),
           },
+          {
+            doubleValueProps: {
+              cryptoCurrency: 'ethereum',
+              getFormattedEthValueProps: { shouldIgnoreGwei: true },
+              // Gas price is not known for pending transactions.
+              isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
+              showCryptoSuffix: true,
+              valueCrypto: BigInt(transaction?.gasPrice ?? 0),
+            },
+            label: t('sections.gasPrice'),
+          },
         ]
       : []) as SectionProps[]),
-    {
-      childrenRight: <TransactionDetailsDateAndTime timestamp={timestamp} />,
-      label: t('sections.when'),
-    },
   ];
 
   return (
