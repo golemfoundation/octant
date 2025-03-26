@@ -570,10 +570,10 @@
         "randomized": "Randomized",
         "alphabeticalAscending": "A -> Z",
         "alphabeticalDescending": "Z -> A",
-        "totalsDescending": "Total high to low",
-        "totalsAscending": "Total low to high",
-        "donorsDescending": "Donors most to least",
-        "donorsAscending": "Donors least to most"
+        "totalsDescending": "Most funded",
+        "totalsAscending": "Least funded",
+        "donorsDescending": "Most donors",
+        "donorsAscending": "Least donors"
       }
     },
     "settings": {
