@@ -565,7 +565,7 @@
         "allocationWindow": "Allocation window",
         "epochStarts": "Epoch {{epoch}} starts"
       },
-      "searchInputPlaceholder": "Search for projects and epochs eg Tor E1,E2",
+      "searchInputPlaceholder": "Search by project name and epoch e.g. Tor E1, E2",
       "sortOptions": {
         "randomized": "Randomised",
         "alphabeticalAscending": "A -> Z",
