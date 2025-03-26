@@ -7,6 +7,7 @@ export const PROGRAMS_IDS_TO_EPOCH_NUMBER_MAPPING = {
   4: '547',
   5: '548',
   6: '773',
+  7: '887',
 };
 /* eslint-enable @typescript-eslint/naming-convention */
 
