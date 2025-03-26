@@ -587,7 +587,7 @@
       "alwaysShowOnboarding": "Always show onboarding",
       "showHelpVideos": "Show help videos",
       "enablePatronMode": "Enable patron mode",
-      "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
+      "patronModeTooltip": "Automatically allocate all of your rewards across all projects for each epoch.",
       "docs": "Docs",
       "language": "Language"
     },
