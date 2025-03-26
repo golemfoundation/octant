@@ -105,7 +105,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
 
       setDurationToChangeAWInMinutes(minutes);
 
-      setShowAWAlert(isDecisionWindowOpen && minutes <= 24 * 60);
+      setShowAWAlert(isDecisionWindowOpen && minutes <= 7 * 24 * 60);
     };
 
     setNextDuration();
