@@ -21,7 +21,7 @@ from web3 import Web3
 
 import logging
 
-from app.infrastructure.database.models import User
+from app.infrastructure.database.models import BaseModel, User
 from v2.sablier.dependencies import get_sablier_subgraph
 from v2.sablier.subgraphs import SablierSubgraph
 from tests.helpers.custom_flask_client import CustomFlaskClient
@@ -457,11 +457,11 @@ def fastapi_client(deployment) -> TestClient:
         future=True,  # Use the future-facing SQLAlchemy 2.0 style
     )
     
-    db.create_all(bind=engine)
+    BaseModel.metadata.create_all(bind=engine)
 
     yield TestClient(app)
 
-    db.drop_all(bind=engine)
+    BaseModel.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
