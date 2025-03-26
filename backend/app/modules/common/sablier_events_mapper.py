@@ -151,6 +151,7 @@ def _process_transfer(
     """
     lock_item, starting_deposit = _process_withdraw(action, starting_deposit)
     lock_item["type"] = SablierEventType.TRANSFER
+    lock_item["user"] = action["addressA"]
     return lock_item, starting_deposit
 
 
