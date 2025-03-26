@@ -110,7 +110,7 @@
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
-        "editLockedGLM": "Edit Locked GLM",
+        "editLockedGLM": "Lock / unlock GLM",
         "effective": "Effective",
         "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Lock more & EL increases proportionally to epoch time remaining. Unlock GLM & that amount is removed from EL for the epoch. Note that if EL falls below 100, no rewards will be calculated.",
         "modalLockGlm": {
