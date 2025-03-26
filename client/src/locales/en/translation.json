@@ -241,7 +241,7 @@
       "homeGridDonations": {
         "donationHistory": "Donation history",
         "noDonationsYet": "No donations yet. Lock GLM<br/> and earn rewards to donate",
-        "noDonationsYetAWOpen": "Check out the <0>Projects view</0><br/>to find projects to fund"
+        "noDonationsYetAWOpen": "Support some of the projects listed on the<br/><0>Projects page</0>"
       },
       "homeGridEpochResults": {
         "epochResults": "Epoch {{epoch}} results",
