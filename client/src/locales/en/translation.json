@@ -54,7 +54,8 @@
     "unlockedGLM": "Unlocked GLM",
     "total": "Total",
     "matching": "Matching",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "update": "Update"
   },
   "components": {
     "allocation": {
