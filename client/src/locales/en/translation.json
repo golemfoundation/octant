@@ -283,7 +283,7 @@
         "waiting": "Waiting"
       },
       "allocationRewardsBox": {
-        "subtitleNoRewards": "No rewards yet",
+        "subtitleNoRewards": "Rewards earned",
         "donate": "Donate",
         "donateWithPercentage": "Donate {{percentage}}%",
         "personalWithPercentage": "Personal {{percentage}}%",
