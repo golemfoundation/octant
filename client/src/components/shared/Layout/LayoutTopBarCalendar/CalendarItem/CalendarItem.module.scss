@@ -63,10 +63,6 @@
   &.isActive {
     background-color: $color-octant-green5;
 
-    &:hover {
-      background-color: $color-octant-green11;
-    }
-
     .day,
     .monthShort,
     .label,
@@ -127,8 +123,6 @@
 
     .monthShort {
       font-size: $font-size-08;
-      line-height: 1.6rem;
-      text-align: center;
       font-weight: $font-weight-bold;
       letter-spacing: 0.024rem;
       line-height: 1.1rem;
