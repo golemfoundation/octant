@@ -58,9 +58,9 @@
   },
   "components": {
     "allocation": {
-      "emptyState": "Lock some GLM to earn rewards, then add projects here from the<br/> Projects view to donate to them during Allocation window",
+      "emptyState": "Lock 100 GLM or more to earn rewards, then allocate some<br />to support projects within the Allocation Window.<br /><0>View projects ↗</0>",
       "emptyStateAWOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
-      "emptyStateMobile": "Lock some GLM to earn rewards,<br/> then add projects here from the Projects view<br/> to donate to them during Allocation window",
+      "emptyStateMobile": "Lock 100 GLM or more to earn rewards, then allocate some<br />to support projects within the Allocation Window.<br /><0>View projects ↗</0>",
       "emptyStateMobileAWOpen": "Visit the <0>Projects view</0> to add your favourite<br/> projects so you can donate rewards to them here",
       "allocateRewards": "Allocate rewards",
       "lowUQScoreModal": {
