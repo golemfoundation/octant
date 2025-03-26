@@ -13,7 +13,7 @@
       "history": {
         "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
       },
-      "userRejectedWalletOperation": "User rejected wallet operation",
+      "userRejectedWalletOperation": "Wallet rejected the operation",
       "default": {
         "title": "Sorry, something went wrong there",
         "message": "Please reload the app and try again"
@@ -514,7 +514,7 @@
           "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate drawer where you can donate."
         },
         "slideIt": {
-          "header": "Just slide it",
+          "header": "Slide to support",
           "text": "If you have rewards, use the slider in the Allocate drawer to easily divide them between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
