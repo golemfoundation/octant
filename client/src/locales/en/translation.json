@@ -366,7 +366,7 @@
   },
   "layout": {
     "navigationTabs": {
-      "home": "Home",
+      "home": "Dashboard",
       "metrics": "Metrics",
       "settings": "Settings",
       "allocate": "Allocate"
@@ -498,11 +498,11 @@
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Epoch {{epoch}} Allocation",
-          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Home view, and explore the projects for this epoch to get an idea of what Octant is all about."
+          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Dashboard view, and explore the projects for this epoch to get an idea of what Octant is all about."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Dashboard view to estimate potential rewards."
         },
         "donateToProjects": {
           "header": "Donate to projects",
@@ -516,11 +516,11 @@
       "stepsDecisionWindowClosed": {
         "welcomeToOctant": {
           "header": "Welcome to Octant Epoch {{epoch}}",
-          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Home view, and explore the projects for this epoch to get an idea of what Octant is all about."
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Dashboard view, and explore the projects for this epoch to get an idea of what Octant is all about."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Dashboard view to estimate potential rewards."
         },
         "getReady": {
           "header": "Get ready for allocation",
