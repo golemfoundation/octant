@@ -2,16 +2,18 @@ import logging
 import pytest
 
 from app.modules.dto import ScoreDelegationPayload
-from app.infrastructure import database
+from tests.conftest import add_user_sync
 from tests.helpers.constants import STARTING_EPOCH, USER1_ADDRESS, USER2_ADDRESS
 from tests.api_e2e.conftest import FastAPIClient
-
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.mark.api
-def test_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayload):
+def test_delegation(
+    fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
+):
     fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
@@ -19,8 +21,9 @@ def test_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayload):
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")
 
-    database.user.add_user(USER1_ADDRESS)
-    database.user.add_user(USER2_ADDRESS)
+    add_user_sync(sync_session, USER1_ADDRESS)
+    add_user_sync(sync_session, USER2_ADDRESS)
+    sync_session.commit()
 
     # refresh scores for users
     _, code = fclient.refresh_antisybil_score(USER1_ADDRESS)
@@ -74,7 +77,7 @@ def test_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayload):
 
 @pytest.mark.api
 def test_recalculate_in_delegation(
-    fclient: FastAPIClient, payload: ScoreDelegationPayload
+    fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
 ):
     """
     Recalculation can actually return two different results:
@@ -89,8 +92,9 @@ def test_recalculate_in_delegation(
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")
 
-    database.user.add_user(USER1_ADDRESS)
-    database.user.add_user(USER2_ADDRESS)
+    add_user_sync(sync_session, USER1_ADDRESS)
+    add_user_sync(sync_session, USER2_ADDRESS)
+    sync_session.commit()
 
     # try to recalculate before delegation
     data, status = fclient.delegation_recalculate(
@@ -124,7 +128,9 @@ def test_recalculate_in_delegation(
 
 
 @pytest.mark.api
-def test_check_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayload):
+def test_check_delegation(
+    fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
+):
     fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
@@ -132,8 +138,9 @@ def test_check_delegation(fclient: FastAPIClient, payload: ScoreDelegationPayloa
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")
 
-    database.user.add_user(USER1_ADDRESS)
-    database.user.add_user(USER2_ADDRESS)
+    add_user_sync(sync_session, USER1_ADDRESS)
+    add_user_sync(sync_session, USER2_ADDRESS)
+    sync_session.commit()
 
     # check if invalid request is handled correctly
     addresses = [payload.primary_addr] * 12

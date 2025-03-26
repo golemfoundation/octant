@@ -1,16 +1,17 @@
 import pytest
 
 from app.extensions import w3
-from app.infrastructure import database
-from tests.conftest import UserAccount
+from tests.conftest import UserAccount, add_user_sync
 from tests.api_e2e.conftest import FastAPIClient
-from app.extensions import db
+from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
-def test_antisybil(fclient: FastAPIClient, ua_alice: UserAccount):
-    database.user.add_user(ua_alice.address)
-    db.session.commit()
+def test_antisybil(
+    fclient: FastAPIClient, ua_alice: UserAccount, sync_session: Session
+):
+    add_user_sync(sync_session, ua_alice.address)
+    sync_session.commit()
 
     # flow for an address known to GP
     _, code = fclient.get_antisybil_score(ua_alice.address)
@@ -27,8 +28,8 @@ def test_antisybil(fclient: FastAPIClient, ua_alice: UserAccount):
 
     # flow for a brand new address, which couldn't be scored by GP yet
     ua_jane = UserAccount(w3.eth.account.create(), fclient)
-    database.user.add_user(ua_jane.address)
-    db.session.commit()
+    add_user_sync(sync_session, ua_jane.address)
+    sync_session.commit()
 
     _, code = fclient.get_antisybil_score(ua_jane.address)
     assert code == 404  # score for this user is not cached

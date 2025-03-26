@@ -1,15 +1,17 @@
 import pytest
 from flask import current_app as app
 
-from app.infrastructure import database
 from app.legacy.core.projects import get_projects_addresses
-from tests.conftest import UserAccount
+from tests.conftest import UserAccount, add_user_sync
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE, MAX_UQ_SCORE
 from tests.api_e2e.conftest import FastAPIClient
+from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
-def test_uq_for_user(fclient: FastAPIClient, ua_alice: UserAccount):
+def test_uq_for_user(
+    fclient: FastAPIClient, ua_alice: UserAccount, sync_session: Session
+):
     fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     fclient.move_to_next_epoch(STARTING_EPOCH + 3)
@@ -21,7 +23,8 @@ def test_uq_for_user(fclient: FastAPIClient, ua_alice: UserAccount):
     USER_NOT_FOUND = 200  # This actually makes sense because we can check score's address that is not user
     assert code == USER_NOT_FOUND
 
-    database.user.add_user(ua_alice.address)
+    add_user_sync(sync_session, ua_alice.address)
+    sync_session.commit()
 
     res, code = fclient.get_user_uq(ua_alice.address, 4)
     assert code == 200

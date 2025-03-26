@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
-
+from eth_utils import to_checksum_address
 from fastapi.testclient import TestClient
 import gql
 import pytest
@@ -21,6 +21,7 @@ from web3 import Web3
 
 import logging
 
+from app.infrastructure.database.models import User
 from v2.sablier.dependencies import get_sablier_subgraph
 from v2.sablier.subgraphs import SablierSubgraph
 from tests.helpers.custom_flask_client import CustomFlaskClient
@@ -92,6 +93,9 @@ from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from v2.core.dependencies import get_database_settings
 
 LOGGER = logging.getLogger("app")
 
@@ -1618,3 +1622,37 @@ def mock_uniqueness_quotients():
     uniqueness_quotients.calculate.return_value = LOW_UQ_SCORE
 
     return uniqueness_quotients
+
+
+@pytest.fixture(scope="function")
+def sync_session() -> Session:
+    """Returns a synchronous SQLAlchemy session for testing."""
+    settings = get_database_settings()
+    
+    # Create a synchronous engine
+    engine = create_engine(
+        settings.db_uri,
+        echo=False,  # Disable SQL query logging (for performance)
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
+    )
+    
+    # Create a session factory
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    # Create and return a session
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def add_user_sync(session: Session, user_address: str) -> User:
+    user = User(address=to_checksum_address(user_address))
+    session.add(user)
+
+    return user
