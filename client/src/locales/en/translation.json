@@ -260,11 +260,8 @@
       "patronMode": {
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
-        "firstParagraph": "This mode is for token holders <br /> who want to support Octant.",
-        "secondParagraph": "It disables and removes all personal allocations and project donations.",
-        "thirdParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
-        "fourthParagraphEnable": "Slide the switch below all the way to <br /> the right to enable patron mode.",
-        "fourthParagraphDisable": "Slide the switch below all the way to <br /> the left to disable patron mode.",
+        "firstParagraph": "It disables and removes all personal allocations and project donations.",
+        "secondParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
         "patronModeEnabled": "Patron mode enabled",
         "patronModeDisabled": "Patron mode disabled",
         "slideRightToConfirm": "Slide right to confirm",
