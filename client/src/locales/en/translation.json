@@ -161,10 +161,14 @@
           "checkingAllowlist": "Checking allowlist"
         },
         "modalCalculatingYourUniqueness": {
-          "calculatingYourUniqueness": "Calculating your uniqueness",
-          "calculatingYourUniquenessStep1": "To prove your uniqueness you need a <0>Gitcoin\u00a0Passport</0> score of 15 or higher.<br/><br/>If you have this your donations will attract the maximum amount of match funding. If not, maximum match funding will be set to 10%.<br/><br/>You can increase your score in a couple of different ways.",
-          "calculatingYourUniquenessStep2": "You can go to our <0>Passport dashboard</0> and add stamps to the score for your Octant address.<br/><br/>If your Passport score is not on your primary address, you can delegate your score from another address with a 15+ Passport score. <br/><br/>You can only do this once, and it must be done before allocating to benefit the current epoch.",
-          "calculatingYourUniquenessStep3": "Delegation will not link your addresses or compromise your privacy in any way.<br/><br/>We require proof of uniqueness to defend against sybil attacks as we have switched  to a quadratic funding model.<br/><br/> To learn more, check out Gitcoin’s handy <0>guide on improving your score.</0>"
+          "calculatingYourUniquenessHeaders": {
+            "step1": "What is Passport score?",
+            "step2": "How to check your Passport score",
+            "step3": "Keeping funding fair"
+          },
+          "calculatingYourUniquenessStep1": "We use <0>Gitcoin\u00a0Passport</0>, an onchain reputation system, to match and multiply allocations from real people.<br/><br/>If you have a Passport score of 15 or higher, we'll match your allocation and apply the max multiplier. If not, the multiplier is capped at 10%.",
+          "calculatingYourUniquenessStep2": "To check your Passport score, go to the <0>Passport Dashboard on Gitcoin.</0><br/><br/>From there you can add stamps to improve  your score. You can also delegate your score from a different address.",
+          "calculatingYourUniquenessStep3": "By applying Gitcoin Passport Score we keep our project funding fair and effective.<br/><br/>To learn more, check out <0>Gitcoin's handy guide on improving your score</0>"
         },
         "modalCalculatingUQScore": {
           "signMessages": "Sign messages",
