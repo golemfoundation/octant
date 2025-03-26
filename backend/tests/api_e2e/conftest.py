@@ -76,6 +76,8 @@ class FastAPIClient:
             current_epoch = await epochs.get_current_epoch()
             assert current_epoch == target
 
+            logger.info(f"Moved to epoch {target}")
+
         asyncio.run(move_to_next_epoch_async())
 
         # assert epochs.get_current_epoch() == target - 1
