@@ -426,7 +426,8 @@ def random_string() -> str:
     return "".join(random.choices(characters, k=length_of_string))
 
 
-@pytest.fixture
+
+@pytest.fixture(scope="function")
 def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
@@ -447,7 +448,20 @@ def fastapi_client(deployment) -> TestClient:
     sablier_subgraph.get_user_events_history.return_value = []
     app.dependency_overrides[get_sablier_subgraph] = lambda: sablier_subgraph
 
-    return TestClient(app)
+    # Create database tables based on the models
+    
+    settings = get_database_settings()
+    engine = create_engine(
+        settings.db_uri,
+        echo=False,  # Disable SQL query logging (for performance)
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
+    )
+    
+    db.create_all(bind=engine)
+
+    yield TestClient(app)
+
+    db.drop_all(bind=engine)
 
 
 @pytest.fixture
