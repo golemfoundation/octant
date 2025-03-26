@@ -63,7 +63,7 @@
       "emptyStateAWOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
       "emptyStateMobile": "Lock 100 GLM or more to earn rewards, then allocate some<br />to support projects within the Allocation Window.<br /><0>View projects ↗</0>",
       "emptyStateMobileAWOpen": "Visit the <0>Projects view</0> to add your favourite<br/> projects so you can donate rewards to them here",
-      "allocateRewards": "Allocate rewards",
+      "allocationList": "Allocation List",
       "lowUQScoreModal": {
         "header": "Your UQ score is below 15",
         "text": "A Gitcoin Passport score of 15 or over will boost your match funding by 10x. To increase your score, visit the custom GP dashboard below to add more stamps before you allocate.",
