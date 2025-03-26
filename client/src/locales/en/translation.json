@@ -134,7 +134,7 @@
       },
       "homeGridPersonalAllocation": {
         "yourFunds": "Your funds",
-        "withdrawToWallet": "Withdraw to wallet",
+        "withdrawToWallet": "Withdraw rewards",
         "pendingFundsAvailableAfter": "Pending funds available after",
         "modalWithdrawEth": {
           "withdrawETH": "Withdraw ETH",
