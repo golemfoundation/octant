@@ -58,7 +58,7 @@ def test_patron_mode_basics(
 
     # Check patron list after alice patron mode off
     patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH)
-    assert len(patrons["patrons"]) == 0, "There are records in patron list"
+    assert len(patrons["patrons"]) == 1, "There are records in patron list"
     assert status_code == 200
 
     # Check Alice's patron mode

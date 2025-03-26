@@ -426,7 +426,6 @@ def random_string() -> str:
     return "".join(random.choices(characters, k=length_of_string))
 
 
-
 @pytest.fixture(scope="function")
 def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
@@ -449,14 +448,14 @@ def fastapi_client(deployment) -> TestClient:
     app.dependency_overrides[get_sablier_subgraph] = lambda: sablier_subgraph
 
     # Create database tables based on the models
-    
+
     settings = get_database_settings()
     engine = create_engine(
         settings.db_uri,
         echo=False,  # Disable SQL query logging (for performance)
         future=True,  # Use the future-facing SQLAlchemy 2.0 style
     )
-    
+
     BaseModel.metadata.create_all(bind=engine)
 
     yield TestClient(app)
@@ -1642,17 +1641,17 @@ def mock_uniqueness_quotients():
 def sync_session() -> Session:
     """Returns a synchronous SQLAlchemy session for testing."""
     settings = get_database_settings()
-    
+
     # Create a synchronous engine
     engine = create_engine(
         settings.db_uri,
         echo=False,  # Disable SQL query logging (for performance)
         future=True,  # Use the future-facing SQLAlchemy 2.0 style
     )
-    
+
     # Create a session factory
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    
+
     # Create and return a session
     session = SessionLocal()
     try:

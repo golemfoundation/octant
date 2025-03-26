@@ -62,8 +62,6 @@ def get_blockchain_info() -> ChainInfo:
 
 def healthcheck() -> Tuple[Healthcheck, int]:
     try:
-        print("w3.eth.chain_id", w3.eth.chain_id)
-        print("app.config['CHAIN_ID']", app.config["CHAIN_ID"])
         is_chain_rpc_healthy = w3.eth.chain_id == app.config["CHAIN_ID"]
     except Exception as e:
         app.logger.warning(f"[Healthcheck] blockchain is down with an error: {e}")
@@ -108,54 +106,26 @@ def sync_status() -> Tuple[SyncStatus, int]:
     pending_snapshot = None
     finalized_snapshot = None
     if services.blockchain == "UP":
-        app.logger.info("[sync_status] Blockchain service is UP, fetching blockchain data")
-        try:
-            blockchain_height = w3.eth.get_block("latest")["number"]
-            app.logger.debug(f"[sync_status] Got blockchain height: {blockchain_height}")
-            blockchain_epoch = epochs.get_current_epoch()
-            app.logger.debug(f"[sync_status] Got blockchain epoch: {blockchain_epoch}")
-        except Exception as e:
-            app.logger.error(f"[sync_status] Error fetching blockchain data: {e}")
-            ExceptionHandler.print_stacktrace(e)
-    else:
-        app.logger.warning("[sync_status] Blockchain service is DOWN")
-
+        blockchain_height = w3.eth.get_block("latest")["number"]
+        blockchain_epoch = epochs.get_current_epoch()
     if services.subgraph == "UP":
-        app.logger.info("[sync_status] Subgraph service is UP, fetching subgraph data")
-        try:
-            sg_result = graphql.epochs.get_epochs()
-            app.logger.debug(f"[sync_status] Raw subgraph result: {sg_result}")
-            sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
-            indexed_epoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
-            app.logger.debug(f"[sync_status] Got indexed epoch: {indexed_epoch}")
-            indexed_height = sg_result["_meta"]["block"]["number"]
-            app.logger.debug(f"[sync_status] Got indexed height: {indexed_height}")
-        except Exception as e:
-            app.logger.error(f"[sync_status] Error fetching subgraph data: {e}")
-            ExceptionHandler.print_stacktrace(e)
-    else:
-        app.logger.warning("[sync_status] Subgraph service is DOWN")
+        sg_result = graphql.epochs.get_epochs()
+        sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
+        indexed_epoch = sg_epochs[-1:][0]["epoch"] if sg_epochs else 0
+        indexed_height = sg_result["_meta"]["block"]["number"]
 
     if status == HTTPStatus.OK:
-        app.logger.info("[sync_status] All services OK, fetching snapshot statuses")
-        try:
-            finalized_snapshot = snapshots.get_finalized_snapshot_status()
-            app.logger.debug(f"[sync_status] Got finalized snapshot status: {finalized_snapshot}")
-            pending_snapshot = snapshots.get_pending_snapshot_status()
-            app.logger.debug(f"[sync_status] Got pending snapshot status: {pending_snapshot}")
-        except Exception as e:
-            app.logger.error(f"[sync_status] Error fetching snapshot statuses: {e}")
-            ExceptionHandler.print_stacktrace(e)
-    else:
-        app.logger.warning("[sync_status] Services not all healthy, skipping snapshot status checks")
+        finalized_snapshot = snapshots.get_finalized_snapshot_status()
+        pending_snapshot = snapshots.get_pending_snapshot_status()
 
-    sync_status = SyncStatus(
-        blockchainEpoch=blockchain_epoch,
-        indexedEpoch=indexed_epoch,
-        blockchainHeight=blockchain_height,
-        indexedHeight=indexed_height,
-        pendingSnapshot=pending_snapshot,
-        finalizedSnapshot=finalized_snapshot,
+    return (
+        SyncStatus(
+            blockchainEpoch=blockchain_epoch,
+            indexedEpoch=indexed_epoch,
+            blockchainHeight=blockchain_height,
+            indexedHeight=indexed_height,
+            pendingSnapshot=pending_snapshot,
+            finalizedSnapshot=finalized_snapshot,
+        ),
+        status,
     )
-    app.logger.info(f"[sync_status] Returning sync status: {sync_status}")
-    return sync_status, status
