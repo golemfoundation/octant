@@ -103,7 +103,9 @@ const MetricsEpoch = (): ReactElement => {
           unusedRewards={unusedRewards}
         />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
+        <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />
+        <MetricsEpochGridAverageLeverage className={styles.averageLeverage} isLoading={isLoading} />
         <MetricsEpochGridRewardsUnused className={styles.rewardsUnused} isLoading={isLoading} />
         <MetricsEpochGridUnallocatedValue
           className={styles.unallocatedValue}
@@ -119,8 +121,6 @@ const MetricsEpoch = (): ReactElement => {
           isLoading={isLoading}
           matchingFund={matchedRewards}
         />
-        <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
-        <MetricsEpochGridAverageLeverage className={styles.averageLeverage} isLoading={isLoading} />
         <MetricsEpochGridDonationsVsMatching
           className={styles.donationsVsMatching}
           isLoading={isLoading}
