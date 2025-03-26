@@ -567,7 +567,7 @@
       },
       "searchInputPlaceholder": "Search by project name and epoch e.g. Tor E1, E2",
       "sortOptions": {
-        "randomized": "Randomised",
+        "randomized": "Randomized",
         "alphabeticalAscending": "A -> Z",
         "alphabeticalDescending": "Z -> A",
         "totalsDescending": "Total high to low",
