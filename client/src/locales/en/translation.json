@@ -458,7 +458,7 @@
       "ethBelowThreshold": "ETH Below threshold",
       "totalDonations": "Total donations",
       "averageLeverage": "Average leverage",
-      "currentDonors": "Current donors",
+      "currentDonors": "Total donors",
       "patrons": "Patrons",
       "rewardsUnused": "Rewards unused",
       "unallocatedValue": "Unallocated value",
