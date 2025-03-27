@@ -11,6 +11,7 @@ import ModalCalculatingYourUniqueness from 'components/Home/HomeGridUQScore/Moda
 import ModalRecalculatingScore from 'components/Home/HomeGridUQScore/ModalRecalculatingScore';
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
+import { TOURGUIDE_ELEMENT_4 } from 'constants/domElementsIds';
 import { UQ_SCORE_THRESHOLD_FOR_LEVERAGE_1 } from 'constants/uq';
 import {
   GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD,
@@ -245,6 +246,7 @@ const HomeGridUQScore: FC<HomeGridUQScoreProps> = ({ className }) => {
       <GridTile
         className={className}
         dataTest="HomeGridUQScore"
+        id={TOURGUIDE_ELEMENT_4}
         title={t('yourUniquenessScore')}
         titleSuffix={
           <Button

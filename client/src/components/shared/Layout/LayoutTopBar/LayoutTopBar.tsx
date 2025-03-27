@@ -12,6 +12,7 @@ import Button from 'components/ui/Button';
 import Drawer from 'components/ui/Drawer';
 import Svg from 'components/ui/Svg';
 import TinyLabel from 'components/ui/TinyLabel';
+import { TOURGUIDE_ELEMENT_3 } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
@@ -247,6 +248,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             <div
               className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
               data-test={`${dataTestRoot}__allocationButton`}
+              id={TOURGUIDE_ELEMENT_3}
               onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
             >
               <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
+import { TOURGUIDE_ELEMENT_3 } from 'constants/domElementsIds';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -42,6 +43,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
     },
     {
       icon: allocate,
+      id: TOURGUIDE_ELEMENT_3,
       isActive: ROOT_ROUTES.allocation.absolute === pathname,
       isBigIcon: true,
       key: 'allocate',
