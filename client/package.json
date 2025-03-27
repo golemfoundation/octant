@@ -30,10 +30,8 @@
     "type-check": "tsc --noEmit true",
     "sourcemaps:remove": "rimraf dist/**/*.map",
     "synpress:open": "TZ=Europe/Warsaw synpress open --configFile synpress.config.ts",
-    "synpress:run": "yarn synpress:run:group-1 && yarn synpress:run:group-2 && yarn synpress:run:group-3",
-    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts'",
-    "synpress:run:group-2": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group2/*.cy.ts'",
-    "synpress:run:group-3": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group3/*.cy.ts'"
+    "synpress:run": "yarn synpress:run:group-1",
+    "synpress:run:group-1": "TZ=Europe/Warsaw synpress run --configFile synpress.config.ts --spec '**/group1/*.cy.ts'"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
@@ -78,7 +76,7 @@
     "@babel/preset-react": "^7.24.1",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/client-preset": "^4.2.5",
-    "@synthetixio/synpress": "^3.7.2-beta.10",
+    "@synthetixio/synpress": "^3.7.2",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.3.3",
@@ -118,9 +116,6 @@
     "vite": "^5.2.11",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html-config": "^1.0.11"
-  },
-  "resolutions": {
-    "**/cypress": "13.8.1"
   },
   "engines": {
     "node": ">=20"

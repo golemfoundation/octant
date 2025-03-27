@@ -13,7 +13,7 @@ import { ConnectWalletParameters } from './types';
 import Chainable = Cypress.Chainable;
 
 export const setupAndMoveToPlayground = (): Chainable<any> => {
-  cy.disconnectMetamaskWalletFromAllDapps();
+  // cy.disconnectMetamaskWalletFromAllDapps();
   mockCoinPricesServer();
   localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
   localStorage.setItem(IS_ONBOARDING_DONE, 'true');

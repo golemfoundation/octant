@@ -19,7 +19,7 @@ export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<
     cy.intercept('GET', '/user/*/tos', { body: { accepted: mockedTOSResponse } });
   }
 
-  cy.disconnectMetamaskWalletFromAllDapps();
+  // cy.disconnectMetamaskWalletFromAllDapps();
   visitWithLoader(ROOT.absolute, ROOT_ROUTES.home.absolute);
 
   cy.wait(500);
@@ -32,7 +32,7 @@ export const connectWalletOnboarding = (mockedTOSResponse?: boolean): Chainable<
 
 export const beforeSetup = (): void => {
   mockCoinPricesServer();
-  cy.setupMetamask();
+  // cy.setupMetamask();
   window.innerWidth = Cypress.config().viewportWidth;
   window.innerHeight = Cypress.config().viewportHeight;
 };

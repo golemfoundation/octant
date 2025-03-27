@@ -8,7 +8,7 @@ describe('move time - AW IS CLOSED', () => {
      * Since Synpress needs to have valid provider to fetch the data from contracts,
      * setupMetamask is required in each test suite.
      */
-    cy.setupMetamask();
+    // cy.setupMetamask();
   });
 
   it('allocation window is closed, when it is not, move time', () => {

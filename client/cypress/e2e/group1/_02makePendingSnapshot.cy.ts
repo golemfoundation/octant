@@ -15,11 +15,11 @@ describe('Make pending snapshot', () => {
      * Since Synpress needs to have valid provider to fetch the data from contracts,
      * setupMetamask is required in each test suite.
      */
-    cy.setupMetamask();
+    // cy.setupMetamask();
   });
 
   beforeEach(() => {
-    cy.disconnectMetamaskWalletFromAllDapps();
+    // cy.disconnectMetamaskWalletFromAllDapps();
     mockCoinPricesServer();
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
