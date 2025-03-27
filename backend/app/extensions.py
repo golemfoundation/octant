@@ -57,7 +57,6 @@ def init_web3(app):
 
 
 def init_subgraph(app):
-    print("init_subgraph")
     gql_octant_factory.set_url(app.config, SubgraphEndpoints.OCTANT_SUBGRAPH)
     gql_sablier_factory.set_url(
         app.config,
