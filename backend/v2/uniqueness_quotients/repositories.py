@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 import json
 from typing import Optional
@@ -64,15 +64,18 @@ async def add_gp_stamps(
     if user is None:
         raise UserNotFound(user_address)
 
+    assert (
+        expires_at.tzinfo is None
+    ), "expires_at must be in UTC and not have timezone info"
+
     gp_stamps = GPStamps(
         user_id=user.id,
         score=score,
-        expires_at=expires_at.astimezone(timezone.utc).replace(tzinfo=None),
+        expires_at=expires_at,
         stamps=json.dumps(stamps),
     )
 
     session.add(gp_stamps)
-    await session.commit()
 
     return gp_stamps
 
