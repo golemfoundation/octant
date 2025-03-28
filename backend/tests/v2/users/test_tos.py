@@ -89,7 +89,7 @@ async def test_post_tos_status_success(
             f"user/{user.address}/tos",
             json={"signature": signature},
         )
-        assert resp.status_code == HTTPStatus.OK
+        assert resp.status_code == HTTPStatus.CREATED
         assert resp.json() == {"accepted": True}
 
 
@@ -261,5 +261,5 @@ async def test_post_tos_status_required_x_real_ip(
             json={"signature": signature},
             headers={"X-Real-IP": "1.1.1.1"},
         )
-        assert resp.status_code == HTTPStatus.OK
+        assert resp.status_code == HTTPStatus.CREATED
         assert resp.json() == {"accepted": True}
