@@ -80,14 +80,6 @@ class FastAPIClient:
 
         asyncio.run(move_to_next_epoch_async())
 
-        # assert epochs.get_current_epoch() == target - 1
-        # now = w3.eth.get_block("latest").timestamp
-        # nextEpochAt = epochs.get_current_epoch_end()
-        # forward = nextEpochAt - now + 30
-        # w3.provider.make_request("evm_increaseTime", [forward])
-        # w3.provider.make_request("evm_mine", [])
-        # assert epochs.get_current_epoch() == target
-
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
         return json.loads(rv.text), rv.status_code
