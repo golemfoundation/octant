@@ -10,6 +10,7 @@ from tests.v2.factories.budgets import BudgetFactorySet
 from tests.v2.factories.pending_snapshots import PendingEpochSnapshotFactorySet
 from tests.v2.factories.finalized_snapshots import FinalizedEpochSnapshotFactorySet
 from tests.v2.factories.patrons import PatronModeEventFactorySet
+from tests.v2.factories.tos import UserConsentsFactorySet
 from dataclasses import dataclass
 
 
@@ -35,6 +36,7 @@ class FactoriesAggregator:
     patrons: PatronModeEventFactorySet
     uniqueness_quotients: UniquenessQuotientFactorySet
     gp_stamps: GPStampsFactorySet
+    tos_consents: UserConsentsFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -50,3 +52,4 @@ class FactoriesAggregator:
         self.patrons = PatronModeEventFactorySet(fast_session)
         self.uniqueness_quotients = UniquenessQuotientFactorySet(fast_session)
         self.gp_stamps = GPStampsFactorySet(fast_session)
+        self.tos_consents = UserConsentsFactorySet(fast_session)

@@ -2,6 +2,7 @@ import random
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import Sequence, LazyAttribute
+from sqlalchemy import select
 
 from app.infrastructure.database.models import Allocation, User
 from tests.v2.factories import AllocationRequestFactorySet
@@ -57,3 +58,13 @@ class AllocationFactorySet(FactorySetBase):
 
         allocation = await AllocationFactory.create(**factory_kwargs)
         return allocation
+
+    async def get_by_user_and_epoch(
+        self, user: User | Address, epoch: int
+    ) -> list[Allocation]:
+        results = await self.session.scalars(
+            select(Allocation).where(
+                Allocation.user_id == user.id, Allocation.epoch == epoch
+            )
+        )
+        return list(results)
