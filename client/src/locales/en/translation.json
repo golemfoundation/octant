@@ -262,7 +262,7 @@
         "enablePatronMode": "Enable patron mode",
         "disablePatronMode": "Disable patron mode",
         "firstParagraph": "It disables and removes all personal allocations and project donations.",
-        "secondParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
+        "secondParagraph": "Automatically donate your rewards to the Octant Matching Fund, boosting community donations to public goods projects.<br/><br/>Patron Mode disables all current allocations until you turn it off.<br/><br/>Learn more in the <0>Docs</0>.",
         "patronModeEnabled": "Patron mode enabled",
         "patronModeDisabled": "Patron mode disabled",
         "slideRightToConfirm": "Slide right to confirm",
@@ -326,7 +326,7 @@
             "lock": {
               "notApproved": {
                 "label": "Please approve two wallet transactions",
-                "text": "One to allow ERC-20 tokens, the other to deposit GLM."
+                "text": "Give app GLM permissions, then deposit."
               }
             }
           }
