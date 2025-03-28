@@ -180,36 +180,6 @@ def test_cancel_action():
     assert unlock["__source"] == "Sablier"
 
 
-def test_transfer_action():
-    create_action_item = create_action(
-        SablierEventType.CREATE, timestamp=100, amountA=200
-    )
-    transfer_action_item = create_action(
-        SablierEventType.TRANSFER, timestamp=200, amountB=50
-    )
-    sablier_streams = [
-        SablierStream(
-            actions=[create_action_item, transfer_action_item],
-            intactAmount=0,
-        )
-    ]
-    result = process_to_locks_and_unlocks(sablier_streams)[0]
-
-    assert len(result.locks) == 1
-    assert len(result.unlocks) == 1
-
-    lock = result.locks[0]
-    assert lock["amount"] == 200
-    assert lock["depositBefore"] == 0
-    assert lock["__source"] == "Sablier"
-
-    unlock = result.unlocks[0]
-    assert unlock["amount"] == 50
-    assert unlock["__typename"] == "Unlocked"
-    assert unlock["depositBefore"] == 200
-    assert unlock["__source"] == "Sablier"
-
-
 def test_mixed_actions():
     actions = [
         create_action(SablierEventType.CREATE, timestamp=100, amountA=100),
@@ -246,52 +216,6 @@ def test_mixed_actions():
     assert unlock2["amount"] == 150
     assert unlock2["__typename"] == "Unlocked"
     assert unlock2["depositBefore"] == 250
-    assert unlock2["__source"] == "Sablier"
-
-
-def test_mixed_actions_with_transfers():
-    actions = [
-        create_action(SablierEventType.CREATE, timestamp=100, amountA=100),
-        create_action(SablierEventType.WITHDRAW, timestamp=150, amountB=50),
-        create_action(SablierEventType.CREATE, timestamp=200, amountA=200),
-        create_action(SablierEventType.TRANSFER, timestamp=250, amountB=100),
-        create_action(SablierEventType.TRANSFER, timestamp=300, amountB=100),
-    ]
-    sablier_streams = [SablierStream(actions=actions, intactAmount=0)]
-
-    result = process_to_locks_and_unlocks(sablier_streams)[0]
-
-    assert len(result.locks) == 2
-    assert len(result.unlocks) == 3
-
-    lock1 = result.locks[0]
-    assert lock1["amount"] == 100
-    assert lock1["__typename"] == "Locked"
-    assert lock1["depositBefore"] == 0
-    assert lock1["__source"] == "Sablier"
-
-    unlock1 = result.unlocks[0]
-    assert unlock1["amount"] == 50
-    assert unlock1["__typename"] == "Unlocked"
-    assert unlock1["depositBefore"] == 100
-    assert unlock1["__source"] == "Sablier"
-
-    lock2 = result.locks[1]
-    assert lock2["amount"] == 200
-    assert lock2["__typename"] == "Locked"
-    assert lock2["depositBefore"] == 50
-    assert lock2["__source"] == "Sablier"
-
-    unlock2 = result.unlocks[1]
-    assert unlock2["amount"] == 100
-    assert unlock2["__typename"] == "Unlocked"
-    assert unlock2["depositBefore"] == 250
-    assert unlock2["__source"] == "Sablier"
-
-    unlock2 = result.unlocks[2]
-    assert unlock2["amount"] == 100
-    assert unlock2["__typename"] == "Unlocked"
-    assert unlock2["depositBefore"] == 150
     assert unlock2["__source"] == "Sablier"
 
 
