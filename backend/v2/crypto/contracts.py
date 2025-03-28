@@ -1,6 +1,9 @@
 import logging
 
+from web3 import AsyncWeb3
+
 from app.constants import EIP1271_MAGIC_VALUE_BYTES
+from backend.v2.core.types import Address
 from v2.core.contracts import SmartContract
 
 
@@ -17,6 +20,14 @@ class GnosisSafeContracts(SmartContract):
 
     async def get_message_hash(self, message: bytes) -> str:
         return await self.contract.functions.getMessageHash(message).call()
+    
+
+class GnosisSafeContractsFactory:
+    def __init__(self, w3: AsyncWeb3) -> None:
+        self.w3 = w3
+
+    def for_address(self, address: Address) -> GnosisSafeContracts:
+        return GnosisSafeContracts(self.w3, GNOSIS_SAFE, address)
 
 
 GNOSIS_SAFE = [

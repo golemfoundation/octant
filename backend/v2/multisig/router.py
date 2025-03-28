@@ -1,18 +1,25 @@
+import json
 from fastapi import APIRouter
 
+from hexbytes import HexBytes
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import EffectiveDepositNotFoundException, InvalidEpoch
-from backend.app.infrastructure.database.multisig_signature import SigStatus
-from backend.app.modules.dto import SignatureOpType
-from backend.v2.allocations.router import allocate_v1
-from backend.v2.allocations.schemas import UserAllocationRequestPayloadV1, UserAllocationRequestV1
-from backend.v2.crypto.signatures import SignedMessageVerifier
-from backend.v2.multisig.repositories import get_last_pending_multisig, get_multisigs_for_allocation, get_multisigs_for_tos
-from backend.v2.multisig.safe import SafeClient
-from backend.v2.multisig.schemas import PendingSignatureResponseV1
-from backend.v2.users.dependencies import GetXRealIp
-from backend.v2.users.router import post_tos_status_for_user_v1
+from app.exceptions import DuplicateConsent, EffectiveDepositNotFoundException, InvalidEpoch, InvalidMultisigAddress, InvalidMultisigSignatureRequest
+from app.infrastructure.database.multisig_signature import SigStatus
+from app.modules.dto import SignatureOpType
+from backend.app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from backend.v2.allocations.validators import SignatureVerifier, verify_logic
+from backend.v2.crypto.contracts import GnosisSafeContracts
+from backend.v2.crypto.dependencies import GetGnosisSafeContractsFactory
+from backend.v2.users.repositories import get_user_tos_consent_status
+from v2.allocations.router import allocate_v1
+from v2.allocations.schemas import UserAllocationRequestPayloadV1, UserAllocationRequestV1
+from v2.crypto.signatures import SignedMessageVerifier, hash_signable_message
+from v2.multisig.repositories import get_last_pending_multisig, get_multisigs_for_allocation, get_multisigs_for_tos, save_pending_allocation, save_pending_tos
+from v2.multisig.safe import SafeClient
+from v2.multisig.schemas import PendingSignatureRequestV1, PendingSignatureResponseV1
+from v2.users.dependencies import GetXRealIp
+from v2.users.router import post_tos_status_for_user_v1
 from v2.core.dependencies import GetCurrentTimestamp, GetSession
 from v2.core.types import Address
 from v2.deposits.dependencies import GetDepositEventsRepository
@@ -41,35 +48,173 @@ async def get_last_pending_signature(
     """
     signature = await get_last_pending_multisig(session, user_address, op_type)
 
+    # We do not want 404 when there is no pending signature
     if signature is None:
         return PendingSignatureResponseV1(message=None, hash=None)
 
     return PendingSignatureResponseV1(message=signature.message, hash=signature.safe_msg_hash)
 
 
+async def _add_tos_signature(
+    session: AsyncSession,
+    safe_client: SafeClient,
+    safe_contracts: GnosisSafeContracts,
+    user_address: Address,
+    message: str,
+    ip_address: str,
+) -> None:
+    
+    # Terms of Service can only be accepted once
+    already_accepted = await get_user_tos_consent_status(session, user_address)
+    if already_accepted:
+        raise DuplicateConsent(user_address)
+
+    # Prepare message for SAFE validation
+    encoded_message = encode_for_signing(EncodingStandardFor.TEXT, message)
+    safe_message_hash = hash_signable_message(encoded_message)
+    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
+    message_hash = f"0x{message_hash.hex()}"
+
+    # We should have retry logic here
+    message_details = await safe_client.get_message_details(message_hash)
+    if message_details is None or user_address != message_details["safe"]:
+        raise InvalidMultisigAddress()
+    
+    # If all is good, save the signature
+    await save_pending_tos(
+        session,
+        user_address,
+        message,
+        message_hash,
+        safe_message_hash,
+        ip_address
+    )
+
+
+async def _add_allocation_signature(
+    session: AsyncSession,
+    safe_client: SafeClient,
+    safe_contracts: GnosisSafeContracts,
+
+    user_address: Address,
+    payload: dict,
+    x_real_ip: GetXRealIp,
+) -> None:
+    
+    is_valid = await verify_logic(
+        session=session,
+        epoch_subgraph=epoch_subgraph,
+        projects_contracts=projects_contracts,
+        epoch_number=0,
+        payload=payload
+    )
+    if not is_valid:
+        raise InvalidMultisigSignatureRequest()
+    
+    # Safe
+    encoded_message = encode_for_signing(EncodingStandardFor.DATA, payload)
+    safe_message_hash = hash_signable_message(encoded_message)
+    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
+    message_hash = f"0x{message_hash.hex()}"
+
+    msg_to_save = json.dumps(payload)
+
+    # Verify owner
+    message_details = await safe_client.get_message_details(message_hash)
+    if message_details is None or user_address != message_details["safe"]:
+        raise InvalidMultisigAddress()
+    
+    # Save signature
+    await save_pending_allocation(
+        session,
+        user_address,
+        msg_to_save,
+        message_hash,
+        safe_message_hash,
+        x_real_ip
+    )
+
+
 @api.post("/pending/{user_address}/type/{op_type}", status_code=201)
 async def add_pending_signature(
+    # Dependencies
     session: GetSession,
+    safe_contracts_factory: GetGnosisSafeContractsFactory,
+    safe_client: SafeClient,
+    epoch_contracts: GetEpochsContracts,
+    alloc_signature_verifier: SignatureVerifier,
+    # Request payload
     user_address: Address, 
     op_type: SignatureOpType,
-    x_real_ip: GetXRealIp
-) -> PendingSignatureResponseV1:
+    payload: PendingSignatureRequestV1,
+    x_real_ip: GetXRealIp,
+) -> None:
 
-    message = signature_data.get("message")
-    encoding_standard = self._verify_signature(
-        context, user_address, message, op_type
-    )
-    encoded_message = prepare_encoded_message(message, op_type, encoding_standard)
-    safe_message_hash = hash_signable_message(encoded_message)
-    message_hash = get_message_hash(user_address, safe_message_hash)
-    msg_to_save = prepare_msg_to_save(message, op_type)
 
-    self._verify_owner(user_address, message_hash)
+    if op_type == SignatureOpType.TOS:
 
-    database.multisig_signature.save_signature(
-        user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip
-    )
-    db.session.commit()
+        safe_contracts = safe_contracts_factory.for_address(user_address)
+
+        await _add_tos_signature(
+            session,
+            safe_client,
+            safe_contracts,
+            user_address,
+            payload.message,
+            x_real_ip
+        )
+    
+    if op_type == SignatureOpType.ALLOCATION:
+
+        # Viable only in Allocation window, throw exception otherwise
+        pending_epoch = await epoch_contracts.get_pending_epoch()
+        if pending_epoch is None:
+            raise InvalidEpoch()
+        
+        await _add_allocation_signature(
+            session,
+            safe_client,
+            safe_contracts,
+            alloc_signature_verifier,
+            user_address,
+            payload,
+            x_real_ip
+        )
+
+
+    # # verify signature
+    # if op_type == SignatureOpType.ALLOCATION:
+    #     if not verifier.verify_logic(
+    #         context,
+    #         user_address=user_address,
+    #         payload=deserialize_payload(signature_msg),
+    #     ):
+    #         raise InvalidMultisigSignatureRequest()
+    #     return EncodingStandardFor.DATA
+    # else:
+    #     if not verifier.verify_logic(
+    #         context, user_address=user_address, message=signature_msg
+    #     ):
+    #         raise InvalidMultisigSignatureRequest()
+    #     return EncodingStandardFor.TEXT
+
+
+
+    # # message = signature_data.get("message")
+    # encoding_standard = self._verify_signature(
+    #     context, user_address, message, op_type
+    # )
+    # encoded_message = prepare_encoded_message(message, op_type, encoding_standard)
+    # safe_message_hash = hash_signable_message(encoded_message)
+    # message_hash = get_message_hash(user_address, safe_message_hash)
+    # msg_to_save = prepare_msg_to_save(message, op_type)
+
+    # self._verify_owner(user_address, message_hash)
+
+    # database.multisig_signature.save_signature(
+    #     user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip
+    # )
+    # db.session.commit()
     
 
 
@@ -168,6 +313,7 @@ async def _approve_allocation_signatures(
 @api.patch("/pending/approve", status_code=204)
 async def approve_pending_signatures_v1(
     session: GetSession,
+    epoch_contracts: GetEpochsContracts,
 ) -> None:
     """
     This endpoint is used to approve pending signatures.
@@ -177,7 +323,11 @@ async def approve_pending_signatures_v1(
 
     await _approve_tos_signatures(session)
 
-    await _approve_allocation_signatures(session)
+
+    # Viable only in Allocation window, throw exception otherwise
+    pending_epoch = await epoch_contracts.get_pending_epoch()
+    if pending_epoch is not None:
+        await _approve_allocation_signatures(session)
     
 
     # approvals = approve_pending_signatures()
