@@ -4,7 +4,7 @@ import os
 import redis
 import socketio
 from app.exceptions import OctantException
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from v2.allocations.router import api as allocations_api
@@ -16,24 +16,59 @@ from v2.epochs.router import api as epochs_api
 from v2.users.router import api as users_api
 from v2.delegations.router import api as delegations_api
 
-app = FastAPI()
 
-
-@app.exception_handler(OctantException)
-async def handle_octant_exception(request, ex: OctantException):
+async def handle_octant_exception(request: Request, ex: OctantException):
     return JSONResponse(
         status_code=ex.status_code,
         content={"message": ex.message},
     )
 
 
-@app.exception_handler(SQLAlchemyError)
-async def handle_sqlalchemy_exception(request, ex: SQLAlchemyError):
+async def handle_sqlalchemy_exception(request: Request, ex: SQLAlchemyError):
     logging.error(f"SQLAlchemyError: {ex}")
     return JSONResponse(
         status_code=500,
         content={"message": "Internal server error"},
     )
+
+
+def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
+    """Create and configure a FastAPI application.
+
+    Args:
+        debug (bool): We include additional logging if True
+        include_socketio (bool): We include SocketIO if True
+
+    Returns:
+        FastAPI: Configured FastAPI application
+    """
+    app = FastAPI(debug=debug)
+
+    # Register exception handlers
+    app.add_exception_handler(OctantException, handle_octant_exception)
+    app.add_exception_handler(SQLAlchemyError, handle_sqlalchemy_exception)
+
+    # Setup SocketIO if not in testing mode
+    if include_socketio:
+        mgr = get_socketio_manager()
+        sio = socketio.AsyncServer(
+            cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
+        )
+        sio.register_namespace(AllocateNamespace("/"))
+        sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
+
+        app.add_route("/socket.io/", route=sio_asgi_app)
+        app.add_websocket_route("/socket.io/", sio_asgi_app)
+
+    # Register routers
+    app.include_router(allocations_api)
+    app.include_router(project_rewards_api)
+    app.include_router(epochs_api)
+    app.include_router(projects_api)
+    app.include_router(users_api)
+    app.include_router(delegations_api)
+
+    return app
 
 
 def get_socketio_manager() -> socketio.AsyncRedisManager | None:
@@ -56,20 +91,5 @@ def get_socketio_manager() -> socketio.AsyncRedisManager | None:
         logging.error(f"Failed to establish Redis connection: {str(e)}")
         raise
 
-
-mgr = get_socketio_manager()
-sio = socketio.AsyncServer(
-    cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
-)
-sio.register_namespace(AllocateNamespace("/"))
-sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
-
-app.add_route("/socket.io/", route=sio_asgi_app)
-app.add_websocket_route("/socket.io/", sio_asgi_app)
-
-app.include_router(allocations_api)
-app.include_router(project_rewards_api)
-app.include_router(epochs_api)
-app.include_router(projects_api)
-app.include_router(users_api)
-app.include_router(delegations_api)
+# Create the default app instance
+app = build_app()

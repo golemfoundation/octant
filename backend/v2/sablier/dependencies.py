@@ -1,8 +1,14 @@
 from functools import lru_cache
 from typing import Annotated
 
+import pandas as pd
 from fastapi import Depends
 from pydantic import Field
+
+from app.constants import (
+    SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+    INCORRECTLY_CANCELLED_STREAMS_PATH,
+)
 from app.shared.blockchain_types import ChainTypes
 from v2.sablier.subgraphs import SablierSubgraph
 from v2.core.dependencies import GetChainSettings, OctantSettings
@@ -23,7 +29,27 @@ class SablierSubgraphSettings(OctantSettings):
 
 
 @lru_cache(maxsize=1)
-def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
+def get_incorrectly_cancelled_streams_ids(chain_settings: GetChainSettings) -> set[int]:
+    """
+    Retrieve the set of incorrectly cancelled stream ids based on the chain type.
+    """
+    is_mainnet = chain_settings.chain_id == ChainTypes.MAINNET
+    if is_mainnet:
+        return set(
+            pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                "streamid"
+            ].to_list()
+        )
+
+    return SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
+
+
+def get_sablier_subgraph(
+    chain_settings: GetChainSettings,
+    incorrectly_cancelled_streams_ids: Annotated[
+        set[int], Depends(get_incorrectly_cancelled_streams_ids)
+    ],
+) -> SablierSubgraph:
     """
     Based on the chain type (mainnet or sepolia), return the appropriate SablierSubgraph.
     """
@@ -32,15 +58,17 @@ def get_sablier_subgraph(chain_settings: GetChainSettings) -> SablierSubgraph:
 
     if chain_settings.chain_id == ChainTypes.MAINNET:
         return SablierSubgraph(
-            sablier_settings.sablier_mainnet_subgraph_url,
-            sablier_settings.sablier_sender_address,
-            sablier_settings.sablier_token_address,
+            url=sablier_settings.sablier_mainnet_subgraph_url,
+            sender=sablier_settings.sablier_sender_address,
+            token_address=sablier_settings.sablier_token_address,
+            incorrectly_cancelled_streams_ids=incorrectly_cancelled_streams_ids,
         )
 
     return SablierSubgraph(
-        sablier_settings.sablier_sepolia_subgraph_url,
-        sablier_settings.sablier_sender_address_sepolia,
-        sablier_settings.sablier_token_address_sepolia,
+        url=sablier_settings.sablier_sepolia_subgraph_url,
+        sender=sablier_settings.sablier_sender_address_sepolia,
+        token_address=sablier_settings.sablier_token_address_sepolia,
+        incorrectly_cancelled_streams_ids=incorrectly_cancelled_streams_ids,
     )
 
 

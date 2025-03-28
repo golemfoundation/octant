@@ -1,10 +1,10 @@
 import logging
-from gql import Client, gql
-from gql.transport.aiohttp import AIOHTTPTransport
-from gql.client import log as requests_logger
-
 
 import backoff
+from gql import Client, gql
+from gql.client import log as requests_logger
+from gql.transport.aiohttp import AIOHTTPTransport
+
 from app.infrastructure.sablier.events import SablierStream
 from v2.core.types import Address
 from v2.epochs.subgraphs import BackoffParams
@@ -18,12 +18,14 @@ class SablierSubgraph:
         url: str,
         sender: str,
         token_address: str,
+        incorrectly_cancelled_streams_ids: set,
         backoff_params: BackoffParams | None = None,
     ):
         requests_logger.setLevel(logging.WARNING)
         self.url = url
         self.sender = sender
         self.token_address = token_address
+        self.incorrectly_cancelled_streams_ids = incorrectly_cancelled_streams_ids
 
         self.gql_client = Client(
             transport=AIOHTTPTransport(
@@ -45,6 +47,16 @@ class SablierSubgraph:
                 self.gql_client.execute_async
             )
 
+    def _check_if_incorrectly_cancelled_stream(self, source_stream_id: str) -> bool:
+        """
+        This function fixes the issue with incorrectly cancelled streams.
+
+        Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
+        The last part of the stream id is the id from the source of truth.
+        """
+        processed_stream_id = int(source_stream_id.split("-")[-1])
+        return processed_stream_id in self.incorrectly_cancelled_streams_ids
+
     async def _fetch_streams(self, query: str, variables: dict) -> list[SablierStream]:
         all_streams = []
         has_more = True
@@ -61,7 +73,10 @@ class SablierSubgraph:
             streams = result.get("streams", [])
 
             for stream in streams:
-                # Extract the stream data
+                stream_id = stream.get("id")
+                if self._check_if_incorrectly_cancelled_stream(stream_id) is True:
+                    continue
+
                 actions = stream.get("actions", [])
                 final_intact_amount = stream.get("intactAmount", 0)
                 is_cancelled = stream.get("canceled")
