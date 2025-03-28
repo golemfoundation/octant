@@ -1,13 +1,13 @@
-from app.pydantic import Model
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
+from app.context.manager import Context
 from app.infrastructure.sablier.events import (
     get_user_events_history,
     get_all_streams_history,
     SablierStream,
 )
-from app.context.manager import Context
+from app.pydantic import Model
 
 
 @dataclass
