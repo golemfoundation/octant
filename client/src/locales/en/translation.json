@@ -454,7 +454,7 @@
       "of1BTotalSupply": "of 1B total supply",
       "cumulativeGlmLocked": "Cumulative GLM in contract",
       "walletsWithGlmLocked": "Wallets with GLM locked",
-      "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
+      "totalProjectsSinceLastEpoch": "{{projectsAmount}} since last epoch",
       "belowThreshold": "Below threshold",
       "ethBelowThreshold": "ETH Below threshold",
       "totalDonations": "Total donations",

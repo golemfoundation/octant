@@ -26,10 +26,10 @@ const MetricsGeneralGridTotalProjects: FC<MetricsGeneralGridTotalProjectsProps> 
           children: (
             <MetricsGridTileValue
               isLoading={isLoading}
-              subvalue={t('totalProjectsSinceEpoch0', {
-                projectsAmount: allProjects?.length,
+              subvalue={t('totalProjectsSinceLastEpoch', {
+                projectsAmount: projectsEpoch?.projectsAddresses.length,
               })}
-              value={projectsEpoch?.projectsAddresses.length.toString() ?? ''}
+              value={allProjects?.length.toString() ?? ''}
             />
           ),
           title: t('totalProjects'),
