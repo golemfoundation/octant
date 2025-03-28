@@ -103,11 +103,12 @@
       &.donorsSection {
         &.variant-- {
           &projectView {
+            background: $color-octant-grey8;
             @media #{$tablet-up} {
               cursor: pointer;
 
               &:hover {
-                background: $color-octant-grey8;
+                background: $color-octant-grey1;
               }
             }
           }
