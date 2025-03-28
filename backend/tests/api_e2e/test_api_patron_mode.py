@@ -41,27 +41,34 @@ def test_patron_mode_basics(
 
     # Check patron list after alice patron mode on
     patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH)
+    assert len(patrons["patrons"]) == 1, "We should have only one patron"
     for patron in patrons["patrons"]:
-        assert patron == ua_alice.address, "Patron user address is wrong"
+        assert patron == ua_alice.address, "This parton should be alice"
     assert status_code == 200
 
     # Check Alice's patron mode
     alice_patron, status_code = fclient.get_patron_mode_status(ua_alice.address)
-    assert alice_patron["status"], "Patron mode is disabled"
+    assert alice_patron["status"], "Patron mode should be enabled"
     assert status_code == 200
 
     # Toggle patron mode off
     signature = build_user_signature_patron(ua_alice._account, False)
     res, status_code = fclient.patch_patron(ua_alice.address, signature.hex())
-    assert not res["status"], "Patron mode is enabled"
+    assert not res["status"], "Patron mode should be disabled after this operation"
     assert status_code == 200
 
     # Check patron list after alice patron mode off
     patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH)
-    assert len(patrons["patrons"]) == 0, "There are records in patron list"
+    assert len(patrons["patrons"]) == 1, "Previous epoch should still have one patron"
+    assert status_code == 200
+
+    patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH + 1)
+    assert (
+        len(patrons["patrons"]) == 0
+    ), "This epoch should have no patrons, as we disabled it"
     assert status_code == 200
 
     # Check Alice's patron mode
     alice_patron, status_code = fclient.get_patron_mode_status(ua_alice.address)
-    assert not alice_patron["status"], "Patron mode is enabled"
+    assert not alice_patron["status"], "Alice should remain non-patron"
     assert status_code == 200
