@@ -17,6 +17,9 @@ def test_patron_mode_basics(
     # lock GLM for one account
     ua_alice.lock(10000)
 
+    # wait for indexer to catch up
+    fclient.wait_for_sync(STARTING_EPOCH)
+
     # Check Alice's patron mode
     alice_patron, status_code = fclient.get_patron_mode_status(ua_alice.address)
     assert not alice_patron["status"], "Patron mode is enabled"
