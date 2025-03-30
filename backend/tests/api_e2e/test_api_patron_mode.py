@@ -1,7 +1,7 @@
+import time
 import pytest
 
 from sqlalchemy.orm import Session
-from flask import current_app as app
 from tests.helpers.constants import STARTING_EPOCH
 from tests.conftest import UserAccount, add_user_sync
 from tests.helpers.signature import build_user_signature_patron
@@ -34,6 +34,9 @@ def test_patron_mode_basics(
     assert res["status"], "Patron mode is disabled"
     assert status_code == 200
 
+    # wait for a second to make sure we dont get created_at timestamp conflict
+    time.sleep(1)
+
     # Check patron list after alice patron mode on
     patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH)
     assert (
@@ -51,6 +54,9 @@ def test_patron_mode_basics(
     res, status_code = fclient.patch_patron(ua_alice.address, signature.hex())
     assert not res["status"], "Patron mode should be disabled after this operation"
     assert status_code == 200
+
+    # wait for a second to make sure we dont get created_at timestamp conflict
+    time.sleep(1)
 
     # Check patron list after alice patron mode off
     patrons, status_code = fclient.get_epoch_patrons(STARTING_EPOCH)

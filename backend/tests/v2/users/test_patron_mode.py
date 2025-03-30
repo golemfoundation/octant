@@ -4,6 +4,7 @@ from fastapi import FastAPI
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+import asyncio
 
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from v2.crypto.dependencies import get_signed_message_verifier
@@ -280,3 +281,88 @@ async def test_patch_patron_mode_revokes_allocations(
         )
         assert len(allocations) == 2
         assert all(allocation.deleted_at is not None for allocation in allocations)
+
+
+@pytest.mark.asyncio
+async def test_patron_mode_full_toggle_cycle(
+    fast_app: FastAPI,
+    fast_client: AsyncClient,
+    fast_session: AsyncSession,
+    factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+):
+    """Should successfully toggle patron mode on, off, and back on"""
+    user, eth_account = await factories.users.create_random_user()
+
+    # mock the signature verifier to return True
+    fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
+
+    async with fast_client as client:
+        # Step 0: Check if user is not patron
+        resp = await client.get(f"user/{user.address}/patron-mode")
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": False}
+
+        # Step 1: Enable patron mode
+        message = (
+            f"Signing this message will enable patron mode for address {user.address}."
+        )
+        signature = eth_account.sign_message(
+            encode_for_signing(EncodingStandardFor.TEXT, message)
+        ).signature.hex()
+
+        resp = await client.patch(
+            f"user/{user.address}/patron-mode",
+            json={"signature": signature},
+        )
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": True}
+        await asyncio.sleep(1)  # Wait 1 second after PATCH
+
+        # Verify it's enabled
+        resp = await client.get(f"user/{user.address}/patron-mode")
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": True}
+
+        # Step 2: Disable patron mode
+        message = (
+            f"Signing this message will disable patron mode for address {user.address}."
+        )
+        signature = eth_account.sign_message(
+            encode_for_signing(EncodingStandardFor.TEXT, message)
+        ).signature.hex()
+
+        resp = await client.patch(
+            f"user/{user.address}/patron-mode",
+            json={"signature": signature},
+        )
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": False}
+        await asyncio.sleep(1)  # Wait 1 second after PATCH
+
+        # Verify it's disabled
+        resp = await client.get(f"user/{user.address}/patron-mode")
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": False}
+
+        # Step 3: Re-enable patron mode
+        message = (
+            f"Signing this message will enable patron mode for address {user.address}."
+        )
+        signature = eth_account.sign_message(
+            encode_for_signing(EncodingStandardFor.TEXT, message)
+        ).signature.hex()
+
+        resp = await client.patch(
+            f"user/{user.address}/patron-mode",
+            json={"signature": signature},
+        )
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": True}
+        await asyncio.sleep(1)  # Wait 1 second after PATCH
+
+        # Verify it's enabled again
+        resp = await client.get(f"user/{user.address}/patron-mode")
+        assert resp.status_code == HTTPStatus.OK
+        assert resp.json() == {"status": True}
