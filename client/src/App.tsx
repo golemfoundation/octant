@@ -42,9 +42,7 @@ const App = (): ReactElement => {
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
-  const isLoadingTest = (isLoading || !isLocalStorageInitialized) && !isSyncingInProgress;
-
-  if (isLoadingTest) {
+  if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
     return <AppLoader />;
   }
 
