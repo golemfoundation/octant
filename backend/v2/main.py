@@ -93,5 +93,6 @@ def get_socketio_manager() -> socketio.AsyncRedisManager | None:
         logging.error(f"Failed to establish Redis connection: {str(e)}")
         raise
 
+
 # Create the default app instance
 app = build_app()
