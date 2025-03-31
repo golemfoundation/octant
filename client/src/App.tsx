@@ -7,6 +7,7 @@ import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
 import ModalTimeoutListPresence from 'components/shared/ModalTimeoutListPresence';
 import OnboardingStepper from 'components/shared/OnboardingStepper';
+import QuickTourHandler from 'components/shared/QuickTour/Handler';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
 import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
@@ -15,7 +16,6 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useOnboardingStore from 'store/onboarding/store';
-import QuickTourHandler from 'components/shared/QuickTour/Handler';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';

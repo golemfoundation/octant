@@ -15,6 +15,9 @@ export default function useQuickTourSteps(): Step[] {
     keyPrefix: 'tourGuide',
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => getQuickTourSteps(t, isDecisionWindowOpen!, navigate), [isDecisionWindowOpen]);
+  return useMemo(
+    () => getQuickTourSteps(t, isDecisionWindowOpen!, navigate),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isDecisionWindowOpen],
+  );
 }
