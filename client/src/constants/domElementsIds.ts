@@ -5,8 +5,8 @@ export const LAYOUT_NAVBAR_ID = 'LayoutNavbar';
 export const EPOCH_RESULTS_BAR_ID = 'EpochResultsBar';
 export const MODAL_ONBOARDING_ID = 'ModalOnboarding';
 
-export const HOME_GRID_CURRENT_GLM_CLOCK = 'HomeGridCurrentGlmLock';
-export const CALENDAR = 'Calendar';
+export const TOURGUIDE_ELEMENT_1 = 'HomeGridCurrentGlmLock';
+export const TOURGUIDE_ELEMENT_2 = 'Calendar';
 export const TOURGUIDE_ELEMENT_3 = 'TourguideElement3';
 export const TOURGUIDE_ELEMENT_4 = 'TourguideElement4';
 export const TOURGUIDE_ELEMENT_5 = 'TourguideElement5';

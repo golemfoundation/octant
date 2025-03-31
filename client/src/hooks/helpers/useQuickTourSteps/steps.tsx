@@ -3,8 +3,8 @@ import { Trans } from 'react-i18next';
 
 import styles from 'components/shared/QuickTour/Handler/Handler.module.scss';
 import {
-  CALENDAR,
-  HOME_GRID_CURRENT_GLM_CLOCK,
+  TOURGUIDE_ELEMENT_2,
+  TOURGUIDE_ELEMENT_1,
   TOURGUIDE_ELEMENT_10_11,
   TOURGUIDE_ELEMENT_3,
   TOURGUIDE_ELEMENT_4,
@@ -27,7 +27,7 @@ export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, na
           <Trans components={[<span className={styles.bold} />]} i18nKey="tourGuide.step1.text" />
         ),
       },
-      target: `#${HOME_GRID_CURRENT_GLM_CLOCK}`,
+      target: `#${TOURGUIDE_ELEMENT_1}`,
       title: t('step1.title'),
     },
     {
@@ -35,7 +35,7 @@ export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, na
         imgSrc: '/images/tourguide/2.gif',
         text: t('step2.text'),
       },
-      target: `#${CALENDAR}`,
+      target: `#${TOURGUIDE_ELEMENT_2}`,
       title: t('step2.title'),
     },
     {

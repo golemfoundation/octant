@@ -15,8 +15,7 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useOnboardingStore from 'store/onboarding/store';
-
-import QuickTourHandler from './components/shared/QuickTour/Handler';
+import QuickTourHandler from 'components/shared/QuickTour/Handler';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';

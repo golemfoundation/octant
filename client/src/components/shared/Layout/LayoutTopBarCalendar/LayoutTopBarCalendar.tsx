@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import Calendar from 'components/shared/Layout/LayoutTopBarCalendar/Calendar';
 import Modal from 'components/ui/Modal';
 import Svg from 'components/ui/Svg';
-import { CALENDAR } from 'constants/domElementsIds';
+import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -126,7 +126,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
       <div
         className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
         data-test={dataTestRoot}
-        id={CALENDAR}
+        id={TOURGUIDE_ELEMENT_2}
         onClick={() => setIsCalendarOpen(true)}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
