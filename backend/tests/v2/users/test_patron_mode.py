@@ -339,7 +339,7 @@ async def test_patron_mode_full_toggle_cycle(
         )
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {"status": False}
-        await asyncio.sleep(1)  # Wait 1 second after PATCH
+        await asyncio.sleep(2)  # Wait 2 seconds after PATCH
 
         # Verify it's disabled
         resp = await client.get(f"user/{user.address}/patron-mode")
@@ -360,7 +360,7 @@ async def test_patron_mode_full_toggle_cycle(
         )
         assert resp.status_code == HTTPStatus.OK
         assert resp.json() == {"status": True}
-        await asyncio.sleep(1)  # Wait 1 second after PATCH
+        await asyncio.sleep(2)  # Wait 2 seconds after PATCH
 
         # Verify it's enabled again
         resp = await client.get(f"user/{user.address}/patron-mode")
