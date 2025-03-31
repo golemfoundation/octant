@@ -1,13 +1,11 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Joyride, { EVENTS, ACTIONS } from 'react-joyride';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import StepContent from 'components/shared/QuickTour/StepContent';
 import TooltipComponent from 'components/shared/QuickTour/TooltipComponent';
-import { getQuickTourSteps } from 'constants/quickTour/steps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useQuickTourSteps from 'hooks/helpers/useQuickTourSteps';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useSettingsStore from 'store/settings/store';
 
@@ -15,12 +13,6 @@ const Handler = (): ReactElement => {
   const [isRunning, setIsRunning] = useState<boolean>(true);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'tourGuide',
-  });
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
 
@@ -28,6 +20,8 @@ const Handler = (): ReactElement => {
     isQuickTourVisible: state.data.isQuickTourVisible,
     setIsQuickTourVisible: state.setIsQuickTourVisible,
   }));
+
+  const steps = useQuickTourSteps();
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,12 +33,10 @@ const Handler = (): ReactElement => {
     return <div />;
   }
 
-  const stepsCurrentView = getQuickTourSteps(t, isDecisionWindowOpen!, navigate).map(
-    ({ content, ...rest }) => ({
-      content: <StepContent {...content} />,
-      ...rest,
-    }),
-  );
+  const stepsCurrentView = steps.map(({ content, ...rest }) => ({
+    content: <StepContent {...content} />,
+    ...rest,
+  }));
 
   return (
     <div>
