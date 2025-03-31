@@ -25,6 +25,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       children,
       onClick,
       onToggle,
+      id,
       justifyContent = 'center',
       subtitle,
       subtitleClassName,
@@ -71,6 +72,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
           className,
         )}
         data-test={dataTest}
+        id={id}
         onClick={onClick}
       >
         {tabs && (

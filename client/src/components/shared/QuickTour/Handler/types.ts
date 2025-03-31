@@ -8,10 +8,6 @@ export type Step = {
   data?: {
     onAfterStepIsDone?: () => void;
   };
-  target: HTMLElement | null;
+  target: string;
   title: string;
-};
-
-export type StepsPerView = {
-  [key: string]: Step[];
 };

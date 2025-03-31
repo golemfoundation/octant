@@ -632,6 +632,14 @@
     "step9": {
       "text": "Hover or tap the donut chart segments to see the details of how funds were used for the epoch",
       "title": "Funds usage"
+    },
+    "step10": {
+      "text": "Drag the slider handle to choose your total donation vs personal amounts. Donations will be split evenly amongst all your chosen projects.",
+      "title": "Easy mode"
+    },
+    "step11": {
+      "text": "Edit donation values directly to enter manual mode. Allocate exact amounts to each project, and the remainder will be allocated to you.",
+      "title": "Manual allocation"
     }
   }
 }
