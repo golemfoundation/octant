@@ -155,7 +155,7 @@ async def get_user_patron_mode_status(
     result = await session.scalar(
         select(PatronModeEvent.patron_mode_enabled)
         .filter(PatronModeEvent.user_address == user_address)
-        .order_by(PatronModeEvent.created_at.desc())
+        .order_by(PatronModeEvent.id.desc(), PatronModeEvent.created_at.desc())
         .limit(1)
     )
 
