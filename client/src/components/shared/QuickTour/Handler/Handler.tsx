@@ -8,7 +8,7 @@ import useQuickTourSteps from 'hooks/helpers/useQuickTourSteps';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useSettingsStore from 'store/settings/store';
 
-const Handler = (): ReactElement => {
+const Handler = (): ReactElement | null => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
@@ -47,7 +47,7 @@ const Handler = (): ReactElement => {
   );
 
   if (isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
-    return <div />;
+    return null;
   }
 
   return (
