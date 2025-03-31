@@ -32,6 +32,14 @@
   padding: 0 1.6rem 1.6rem 1.6rem;
 }
 
+.stepsCounter {
+  display: flex;
+  align-items: center;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-12;
+  color: $color-octant-grey5;
+}
+
 .button {
   width: 6rem;
   height: 3.2rem;

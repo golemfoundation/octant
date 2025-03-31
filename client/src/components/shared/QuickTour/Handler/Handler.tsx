@@ -39,8 +39,9 @@ const Handler = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
 
-  const { isQuickTourVisible } = useSettingsStore(state => ({
+  const { isQuickTourVisible, setIsQuickTourVisible } = useSettingsStore(state => ({
     isQuickTourVisible: state.data.isQuickTourVisible,
+    setIsQuickTourVisible: state.setIsQuickTourVisible,
   }));
 
   const steps: Step[] = [
@@ -128,10 +129,11 @@ const Handler = (): ReactElement => {
         imgSrc: '/images/tourguide/9.gif',
         text: t('step9.text'),
       },
-      data: {
-        // TODO: redirect OR open drawer...
-        onAfterStepIsDone: () => navigate(ROOT_ROUTES.allocation.absolute),
-      },
+      data: isDecisionWindowOpen
+        ? {
+            onAfterStepIsDone: () => navigate(ROOT_ROUTES.allocation.absolute),
+          }
+        : undefined,
       target: `#${TOURGUIDE_ELEMENT_9}`,
       title: t('step9.title'),
     },
@@ -163,48 +165,54 @@ const Handler = (): ReactElement => {
     }, 1000);
   }, [location.pathname]);
 
+  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
+    return <div />;
+  }
+
   const stepsCurrentView = steps.map(({ content, ...rest }) => ({
     content: <StepContent {...content} />,
     ...rest,
   }));
 
-  // Hack around this: https://github.com/gilbarbara/react-joyride/discussions/1049.
-  // const areAllStepsDOMElementsLoaded = !stepsCurrentView?.some(element => element.target === null);
-  const areAllStepsDOMElementsLoaded = true;
-
-  if (!areAllStepsDOMElementsLoaded || isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
-    return <div />;
-  }
-
   return (
     <div>
-      {areAllStepsDOMElementsLoaded && (
-        <Joyride
-          callback={args => {
-            // console.log({ args }, args.action, args.type);
+      <Joyride
+        callback={args => {
+          // When skipped on step 0, set the setting to false.
+          if (currentStep === 0 && args.action === ACTIONS.SKIP && args.type === EVENTS.TOUR_END) {
+            setIsQuickTourVisible(false);
+          }
 
-            if (args.action === ACTIONS.PREV && args.type === EVENTS.STEP_AFTER) {
-              setCurrentStep(prev => prev - 1);
-            }
+          // When tour is finished, set the setting to false.
+          if (args.action === ACTIONS.NEXT && args.type === EVENTS.TOUR_END) {
+            setIsQuickTourVisible(false);
+          }
 
-            if (args.action === ACTIONS.NEXT && args.type === EVENTS.STEP_AFTER) {
-              setCurrentStep(prev => prev + 1);
-            }
+          if (args.action === ACTIONS.PREV && args.type === EVENTS.STEP_AFTER) {
+            setCurrentStep(prev => prev - 1);
+          }
 
-            if (args.type === EVENTS.STEP_AFTER && args.step?.data?.onAfterStepIsDone) {
-              setIsRunning(false);
-              args.step.data.onAfterStepIsDone();
-              // debugger;
-            }
-          }}
-          continuous
-          debug
-          run={isRunning}
-          stepIndex={currentStep}
-          steps={stepsCurrentView}
-          tooltipComponent={TooltipComponent}
-        />
-      )}
+          if (args.action === ACTIONS.NEXT && args.type === EVENTS.STEP_AFTER) {
+            setCurrentStep(prev => prev + 1);
+          }
+
+          if (args.type === EVENTS.STEP_AFTER && args.step?.data?.onAfterStepIsDone) {
+            setIsRunning(false);
+            args.step.data.onAfterStepIsDone();
+          }
+        }}
+        continuous
+        debug
+        run={isRunning}
+        // 80 for LayoutTopBar + 20.
+        scrollOffset={100}
+        stepIndex={currentStep}
+        steps={stepsCurrentView}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        tooltipComponent={props => (
+          <TooltipComponent numberOfSteps={stepsCurrentView.length} {...props} />
+        )}
+      />
     </div>
   );
 };

@@ -597,6 +597,9 @@
     "spanish": "Español"
   },
   "tourGuide": {
+    "tooltipComponent": {
+      "stepsCounter": "{{currentStepNumber}} of {{numberOfSteps}}"
+    },
     "step1": {
       "text": "Connect your wallet and click the <1>Lock GLM</1> button. Enter the amount of GLM to lock and confirm the transaction in your wallet.",
       "title": "How to lock GLM"
