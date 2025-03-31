@@ -597,41 +597,52 @@
     "spanish": "Español"
   },
   "tourGuide": {
+    "tooltipComponent": {
+      "stepsCounter": "{{currentStepNumber}} de {{numberOfSteps}}"
+    },
     "step1": {
-      "text": "Connect your wallet and click the <1>Lock GLM</1> button. Enter the amount of GLM to lock and confirm the transaction in your wallet.",
-      "title": "How to lock GLM"
+      "text": "Conecta tu billetera y haz clic en el botón <1>Bloquear GLM</1>. Ingresa la cantidad de GLM a bloquear y confirma la transacción en tu billetera.",
+      "title": "Cómo bloquear GLM"
     },
     "step2": {
-      "text": "Keep your GLM locked to earn rewards and use them in the next allocation window. The calendar will show you when that is, just click to open it.",
-      "title": "Check the calendar"
+      "text": "Mantén tu GLM bloqueado para ganar recompensas y usarlos en la próxima ventana de asignación. El calendario te mostrará cuándo es, solo haz clic para abrirlo.",
+      "title": "Revisa el calendario"
     },
     "step3": {
-      "text": "When allocation is open, check Projects view and click the heart icons to add them to your cart. Then donate and self-allocate from here.",
-      "title": "Check your cart"
+      "text": "Cuando la asignación esté abierta, revisa la vista de Proyectos y haz clic en los íconos de corazón para agregarlos a tu carrito. Luego, dona y autoasigna desde aquí.",
+      "title": "Revisa tu carrito"
     },
     "step4": {
-      "text": "You need to verify yourself as unique in order to receive fund matching for your donations. Visit Octant’s Gitcoin passport dashboard to do that.",
-      "title": "Uniqueness score"
+      "text": "Debes verificarte como único para recibir financiamiento complementario para tus donaciones. Visita el panel de pasaporte de Gitcoin de Octant para hacerlo.",
+      "title": "Puntuación de unicidad"
     },
     "step5": {
-      "text": "Estimate the value of your rewards and match funding here. Just enter a GLM amount and the amount of time you plan to lock them for.",
-      "title": "Estimate your rewards"
+      "text": "Estima el valor de tus recompensas y el financiamiento complementario aquí. Solo ingresa una cantidad de GLM y el tiempo que planeas bloquearlos.",
+      "title": "Estima tus recompensas"
     },
     "step6": {
-      "text": "Mouse over the chart to see how projects are doing. Click and drag to see more. Click to open a project's details in a new tab.",
-      "title": "Results chart"
+      "text": "Pasa el cursor sobre el gráfico para ver cómo les va a los proyectos. Haz clic y arrastra para ver más. Haz clic para abrir los detalles de un proyecto en una nueva pestaña.",
+      "title": "Gráfico de resultados"
     },
     "step7": {
-      "text": "During allocation window, click the heart to add projects to your cart. Then open your cart and allocate to your chosen projects and yourself.",
-      "title": "Add your favourite projects"
+      "text": "Durante la ventana de asignación, haz clic en el corazón para agregar proyectos a tu carrito. Luego, ábrelo y asigna fondos a los proyectos elegidos y a ti mismo.",
+      "title": "Añade tus proyectos favoritos"
     },
     "step8": {
-      "text": "Browse through archived epoch metrics with these navigation arrows",
-      "title": "Explore previous epochs"
+      "text": "Explora las métricas de épocas archivadas con estas flechas de navegación.",
+      "title": "Explora épocas anteriores"
     },
     "step9": {
-      "text": "Hover or tap the donut chart segments to see the details of how funds were used for the epoch",
-      "title": "Funds usage"
+      "text": "Pasa el cursor o toca los segmentos del gráfico de dona para ver los detalles de cómo se utilizaron los fondos en la época.",
+      "title": "Uso de fondos"
+    },
+    "step10": {
+      "text": "Arrastra el control deslizante para elegir tu donación total vs. montos personales. Las donaciones se dividirán equitativamente entre todos los proyectos elegidos.",
+      "title": "Modo fácil"
+    },
+    "step11": {
+      "text": "Edita los valores de donación directamente para ingresar al modo manual. Asigna montos exactos a cada proyecto y el resto se te asignará a ti.",
+      "title": "Asignación manual"
     }
   }
 }
