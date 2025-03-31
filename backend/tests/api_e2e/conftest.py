@@ -394,9 +394,11 @@ def mock_fetch_streams():
 async def reset_state():
     # Save initial state
     w3 = get_w3(get_web3_provider_settings())
-    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
     
     yield
     
     # Restore state after each test
-    await w3.provider.make_request("evm_revert", [snapshot_id])
+    print("Resetting blockchain time")
+    await w3.provider.make_request("evm_setNextBlockTimestamp", [int(time.time())])
+    await w3.provider.make_request("evm_mine", [])
+    logger.info("Blockchain time reset")
