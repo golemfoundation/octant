@@ -1,5 +1,5 @@
-import React, { ReactElement, useState } from 'react';
-import Joyride, { EVENTS, ACTIONS, CallBackProps } from 'react-joyride';
+import React, { ReactElement, useState, useCallback } from 'react';
+import Joyride, { EVENTS, ACTIONS, CallBackProps, TooltipRenderProps } from 'react-joyride';
 
 import StepContent from 'components/shared/QuickTour/StepContent';
 import TooltipComponent from 'components/shared/QuickTour/TooltipComponent';
@@ -44,14 +44,22 @@ const Handler = (): ReactElement => {
     }
   };
 
-  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
-    return <div />;
-  }
-
   const stepsCurrentView = steps.map(({ content, ...rest }) => ({
     content: <StepContent {...content} />,
     ...rest,
   }));
+
+  const renderTooltip = useCallback(
+    (props: TooltipRenderProps) => (
+      <TooltipComponent numberOfSteps={stepsCurrentView.length} {...props} />
+    ),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    [stepsCurrentView.length],
+  );
+
+  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
+    return <div />;
+  }
 
   return (
     <div>
@@ -63,10 +71,7 @@ const Handler = (): ReactElement => {
         scrollOffset={100}
         stepIndex={currentStep}
         steps={stepsCurrentView}
-        // eslint-disable-next-line react/no-unstable-nested-components
-        tooltipComponent={props => (
-          <TooltipComponent numberOfSteps={stepsCurrentView.length} {...props} />
-        )}
+        tooltipComponent={renderTooltip}
       />
     </div>
   );
