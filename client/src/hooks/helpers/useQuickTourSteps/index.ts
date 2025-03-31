@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,5 +15,6 @@ export default function useQuickTourSteps(): Step[] {
     keyPrefix: 'tourGuide',
   });
 
-  return getQuickTourSteps(t, isDecisionWindowOpen!, navigate);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => getQuickTourSteps(t, isDecisionWindowOpen!, navigate), [isDecisionWindowOpen]);
 }
