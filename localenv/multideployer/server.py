@@ -124,6 +124,29 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 return err, None
 
     def new_deployment(self, name) -> Dict[str, str]:
+        # Reset blockchain time to current time
+        subprocess.run(
+            [
+                "npx",
+                "hardhat",
+                "--network",
+                "localhost",
+                "run",
+                "--no-compile",
+                """--eval=
+                async function() {
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    await network.provider.send('evm_setNextBlockTimestamp', [currentTime]);
+                    await network.provider.send('evm_mine');
+                }
+                """
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd="../hardhat/",
+        )
+
         contracts = subprocess.run(
             [
                 "npx",
