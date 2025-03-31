@@ -21,25 +21,15 @@ const Handler = (): ReactElement => {
   const steps = useQuickTourSteps();
 
   const handleCallback = (args: CallBackProps) => {
-    // When skipped on step 0, set the setting to false.
     if (currentStep === 0 && args.action === ACTIONS.SKIP && args.type === EVENTS.TOUR_END) {
       setIsQuickTourVisible(false);
-    }
-
-    // When tour is finished, set the setting to false.
-    if (args.action === ACTIONS.NEXT && args.type === EVENTS.TOUR_END) {
+    } else if (args.action === ACTIONS.NEXT && args.type === EVENTS.TOUR_END) {
       setIsQuickTourVisible(false);
-    }
-
-    if (args.action === ACTIONS.PREV && args.type === EVENTS.STEP_AFTER) {
+    } else if (args.action === ACTIONS.PREV && args.type === EVENTS.STEP_AFTER) {
       setCurrentStep(prev => prev - 1);
-    }
-
-    if (args.action === ACTIONS.NEXT && args.type === EVENTS.STEP_AFTER) {
+    } else if (args.action === ACTIONS.NEXT && args.type === EVENTS.STEP_AFTER) {
       setCurrentStep(prev => prev + 1);
-    }
-
-    if (args.type === EVENTS.STEP_AFTER && args.step?.data?.onAfterStepIsDone) {
+    } else if (args.type === EVENTS.STEP_AFTER && args.step?.data?.onAfterStepIsDone) {
       args.step.data.onAfterStepIsDone();
     }
   };
@@ -53,7 +43,6 @@ const Handler = (): ReactElement => {
     (props: TooltipRenderProps) => (
       <TooltipComponent numberOfSteps={stepsCurrentView.length} {...props} />
     ),
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     [stepsCurrentView.length],
   );
 

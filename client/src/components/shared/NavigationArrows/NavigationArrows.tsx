@@ -19,8 +19,8 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
   dataTest = 'NavigationArrows',
 }) => (
   <div className={cx(styles.root, className)} data-test={dataTest}>
-    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
     <button
+      aria-label="Button previous"
       className={cx(
         styles.arrow,
         styles.leftArrow,
@@ -40,8 +40,8 @@ const NavigationArrows: FC<NavigationArrowsProps> = ({
     >
       <Svg dataTest={`${dataTest}__leftArrowSvg`} img={arrowRight} size={1.4} />
     </button>
-    {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
     <button
+      aria-label="Button next"
       className={cx(styles.arrow, isNextButtonDisabled && styles.isDisabled, classNameNextButton)}
       data-test={`${dataTest}__rightArrow`}
       disabled={isNextButtonDisabled}
