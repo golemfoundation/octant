@@ -46,7 +46,7 @@ const TooltipComponent: FC<TooltipComponentProps> = ({
           </button>
         )}
         <div className={styles.stepsCounter}>
-          {t('tooltipComponent.stepsCounter', { currentStepNumber: index, numberOfSteps })}
+          {t('tooltipComponent.stepsCounter', { currentStepNumber: index + 1, numberOfSteps })}
         </div>
         {isContinuous && (
           <button className={cx(styles.button, styles.isCta)} type="button" {...primaryProps}>
