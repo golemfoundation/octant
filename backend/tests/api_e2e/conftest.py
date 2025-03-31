@@ -80,17 +80,6 @@ class FastAPIClient:
 
         asyncio.run(move_to_next_epoch_async())
 
-    def reset_blockchain_time(self):
-        async def reset_blockchain_time_async():
-            logger.info("Resetting blockchain time")
-            w3 = get_w3(get_web3_provider_settings())
-            await w3.provider.make_request("evm_setTime", [int(time.time())])
-            await w3.provider.make_request("evm_mine", [])
-
-            logger.info("Blockchain time reset")
-
-        asyncio.run(reset_blockchain_time_async())
-
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
         return json.loads(rv.text), rv.status_code
@@ -379,9 +368,8 @@ class FastAPIClient:
 
 @pytest.fixture
 def fclient(fastapi_client: TestClient) -> FastAPIClient:
-    client = FastAPIClient(fastapi_client)
-    client.reset_blockchain_time()
-    return client
+    return FastAPIClient(fastapi_client)
+
 
 
 @pytest.fixture()
@@ -400,3 +388,15 @@ def mock_fetch_streams():
     with patch("app.infrastructure.sablier.events.fetch_streams") as mock:
         mock.return_value = []
         yield mock
+
+
+@pytest.fixture(autouse=True)
+async def reset_state():
+    # Save initial state
+    w3 = get_w3(get_web3_provider_settings())
+    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
+    
+    yield
+    
+    # Restore state after each test
+    await w3.provider.make_request("evm_revert", [snapshot_id])
