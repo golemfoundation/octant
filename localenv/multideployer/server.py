@@ -125,46 +125,57 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def new_deployment(self, name) -> Dict[str, str]:
         # Reset blockchain time to current time
-        subprocess.run(
-            [
-                "npx",
-                "hardhat",
-                "--network",
-                "localhost",
-                "run",
-                "--no-compile",
-                """--eval=
-                async function() {
-                    const currentTime = Math.floor(Date.now() / 1000);
-                    await network.provider.send('evm_setNextBlockTimestamp', [currentTime]);
-                    await network.provider.send('evm_mine');
-                }
-                """
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-            cwd="../hardhat/",
-        )
+        try:
+            time_reset = subprocess.run(
+                [
+                    "npx",
+                    "hardhat",
+                    "--network",
+                    "localhost",
+                    "run",
+                    "--no-compile",
+                    """--eval=
+                    async function() {
+                        const currentTime = Math.floor(Date.now() / 1000);
+                        await network.provider.send('evm_setNextBlockTimestamp', [currentTime]);
+                        await network.provider.send('evm_mine');
+                    }
+                    """
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd="../hardhat/",
+            )
+            logging.debug(f"Time reset output: {time_reset.stdout}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Failed to reset time: {e.stderr}")
+            raise
 
-        contracts = subprocess.run(
-            [
-                "npx",
-                "hardhat",
-                "--network",
-                "localhost",
-                "deploy",
-                "--reset",
-                "--write",
-                "false",
-                "--tags",
-                "local",
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-            cwd="../hardhat/",
-        )
+        try:
+            contracts = subprocess.run(
+                [
+                    "npx",
+                    "hardhat",
+                    "--network",
+                    "localhost",
+                    "deploy",
+                    "--reset",
+                    "--write",
+                    "false",
+                    "--tags",
+                    "local",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                cwd="../hardhat/",
+            )
+            logging.debug(f"Deployment output: {contracts.stdout}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Failed to deploy contracts: {e.stderr}")
+            raise
+
         # TODO: this is fragile. Consider getting addresses from artifacts file instead.
         addrs = get_addresses(contracts.stdout.split("\n"))
         logging.debug(f"got addresses: {addrs}")
