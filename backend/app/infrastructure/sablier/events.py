@@ -102,7 +102,6 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
               sender: $sender
               recipient: $recipient
               asset_: {address: $tokenAddress}
-              transferable: false
             }
             first: $limit
             skip: $skip
@@ -146,7 +145,6 @@ def get_all_streams_history() -> List[SablierStream]:
             where: {
               sender: $sender
               asset_: {address: $tokenAddress}
-              transferable: false
             }
             first: $limit
             skip: $skip
