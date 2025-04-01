@@ -14,16 +14,6 @@ from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from unittest.mock import patch
 
-# Configure pytest-asyncio
-pytest_plugins = ["pytest_asyncio"]
-pytestmark = pytest.mark.asyncio
-
-# Set default event loop scope for fixtures to function level
-def pytest_configure(config):
-    config.option.asyncio_mode = "auto"
-    # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
-    setattr(config.option, "asyncio_default_fixture_loop_scope", "function")
-
 logger = logging.getLogger(__name__)
 
 # Configure logging to show logs during pytest execution

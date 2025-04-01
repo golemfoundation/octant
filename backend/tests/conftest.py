@@ -114,6 +114,16 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
+# Configure pytest-asyncio
+pytest_plugins = ["pytest_asyncio"]
+pytestmark = pytest.mark.asyncio
+
+# Set default event loop scope for fixtures to function level
+def pytest_configure(config):
+    config.option.asyncio_mode = "auto"
+    # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
+    setattr(config.option, "asyncio_default_fixture_loop_scope", "function")
+
 
 def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
     if args[0] == "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266":
