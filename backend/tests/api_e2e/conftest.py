@@ -376,21 +376,29 @@ class FastAPIClient:
 
 
 @pytest.fixture
-async def fclient(fastapi_client: TestClient) -> FastAPIClient:
+def fclient(fastapi_client: TestClient) -> FastAPIClient:
     client = FastAPIClient(fastapi_client)
 
-    logger.info("=== SETUP: Creating blockchain snapshot ===")
-    w3 = get_w3(get_web3_provider_settings())
-    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
-    logger.info(f"Snapshot ID: {snapshot_id}")
+    async def create_snapshot():
+        logger.info("=== SETUP: Creating blockchain snapshot ===")
+        w3 = get_w3(get_web3_provider_settings())
+        snapshot_id = await w3.provider.make_request("evm_snapshot", [])
+        logger.info(f"Snapshot ID: {snapshot_id}")
+
+        return snapshot_id
+
+    async def revert_snapshot(snapshot_id):
+        logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
+        w3 = get_w3(get_web3_provider_settings())
+        result = await w3.provider.make_request("evm_revert", [snapshot_id["result"]])
+        logger.info(f"Revert result: {result}")
+        logger.info("Blockchain state reset complete")
+
+    snapshot = asyncio.run(create_snapshot())
 
     yield client
 
-    logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
-    w3 = get_w3(get_web3_provider_settings())
-    result = await w3.provider.make_request("evm_revert", [snapshot_id["result"]])
-    logger.info(f"Revert result: {result}")
-    logger.info("Blockchain state reset complete")
+    asyncio.run(revert_snapshot(snapshot))
 
 
 
