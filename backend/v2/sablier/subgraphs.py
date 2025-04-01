@@ -113,7 +113,6 @@ class SablierSubgraph:
                 where: {
                 sender: $sender
                 asset_: {address: $tokenAddress}
-                transferable: false
                 }
                 first: $limit
                 skip: $skip
