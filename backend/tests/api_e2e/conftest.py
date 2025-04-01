@@ -16,6 +16,15 @@ from unittest.mock import patch
 
 logger = logging.getLogger(__name__)
 
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    force=True  # Override any existing configuration
+)
+
+# Set specific log level for our test logger
+logger.setLevel(logging.DEBUG)
 
 class FastAPIClient:
     def __init__(self, fastapi_client: TestClient):
@@ -392,13 +401,15 @@ def mock_fetch_streams():
 
 @pytest.fixture(autouse=True)
 async def reset_state():
-    # Save initial state
+    # make the snapshot of the blockchain
+    logger.info("Resetting blockchain time")
     w3 = get_w3(get_web3_provider_settings())
-    
+    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
+    logger.info(f"Snapshot ID: {snapshot_id}")
+
     yield
     
     # Restore state after each test
     print("Resetting blockchain time")
-    await w3.provider.make_request("evm_setNextBlockTimestamp", [int(time.time())])
-    await w3.provider.make_request("evm_mine", [])
+    await w3.provider.make_request("evm_revert", [snapshot_id])
     logger.info("Blockchain time reset")
