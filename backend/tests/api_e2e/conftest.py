@@ -399,7 +399,7 @@ def mock_fetch_streams():
         yield mock
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="function")
 async def reset_state():
     # make the snapshot of the blockchain
     logger.info("Resetting blockchain time")
