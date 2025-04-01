@@ -506,7 +506,6 @@ def deployment(pytestconfig, request):
     Deploy contracts and a subgraph under a single-use name.
     """
 
-
     async def create_snapshot():
         logger.info("=== SETUP: Creating blockchain snapshot ===")
         w3 = get_w3(get_web3_provider_settings())
@@ -564,6 +563,7 @@ def deployment(pytestconfig, request):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    logger.info(f"SUBGRAPH_ENDPOINT: {conf.SUBGRAPH_ENDPOINT}")
     conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
