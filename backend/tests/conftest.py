@@ -479,6 +479,34 @@ def fastapi_client(deployment) -> TestClient:
 
     BaseModel.metadata.create_all(bind=engine)
 
+    yield TestClient(app)
+
+    # Revert after the test
+    BaseModel.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture
+def flask_client(deployment) -> FlaskClient:
+    """An application for the integration / API tests."""
+    _app = create_app(deployment)
+
+    _app.test_client_class = CustomFlaskClient
+
+    with _app.test_client() as client:
+        with _app.app_context():
+            db.create_all()
+            yield client
+            db.session.close()
+            db.drop_all()
+
+
+@pytest.fixture(scope="function")
+def deployment(pytestconfig, request):
+    """
+    Deploy contracts and a subgraph under a single-use name.
+    """
+
+
     async def create_snapshot():
         logger.info("=== SETUP: Creating blockchain snapshot ===")
         w3 = get_w3(get_web3_provider_settings())
@@ -531,34 +559,6 @@ def fastapi_client(deployment) -> TestClient:
     snapshot_id = loop.run_until_complete(create_snapshot())
 
 
-    yield TestClient(app)
-
-    # Revert after the test
-    loop.run_until_complete(revert_snapshot(snapshot_id))
-    loop.close()
-    BaseModel.metadata.drop_all(bind=engine)
-
-
-@pytest.fixture
-def flask_client(deployment) -> FlaskClient:
-    """An application for the integration / API tests."""
-    _app = create_app(deployment)
-
-    _app.test_client_class = CustomFlaskClient
-
-    with _app.test_client() as client:
-        with _app.app_context():
-            db.create_all()
-            yield client
-            db.session.close()
-            db.drop_all()
-
-
-@pytest.fixture(scope="function")
-def deployment(pytestconfig, request):
-    """
-    Deploy contracts and a subgraph under a single-use name.
-    """
     envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
     conf = DevConfig
@@ -579,6 +579,12 @@ def deployment(pytestconfig, request):
         "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     )
     yield conf
+
+    # Revert after the test
+    loop.run_until_complete(revert_snapshot(snapshot_id))
+    loop.close()
+
+
     teardown_deployment(request.node.name, graph_name)
 
 
