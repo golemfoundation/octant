@@ -376,8 +376,21 @@ class FastAPIClient:
 
 
 @pytest.fixture
-def fclient(fastapi_client: TestClient) -> FastAPIClient:
-    return FastAPIClient(fastapi_client)
+async def fclient(fastapi_client: TestClient) -> FastAPIClient:
+    client = FastAPIClient(fastapi_client)
+
+    logger.info("=== SETUP: Creating blockchain snapshot ===")
+    w3 = get_w3(get_web3_provider_settings())
+    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
+    logger.info(f"Snapshot ID: {snapshot_id}")
+
+    yield client
+
+    logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
+    w3 = get_w3(get_web3_provider_settings())
+    result = await w3.provider.make_request("evm_revert", [snapshot_id["result"]])
+    logger.info(f"Revert result: {result}")
+    logger.info("Blockchain state reset complete")
 
 
 
@@ -397,20 +410,3 @@ def mock_fetch_streams():
     with patch("app.infrastructure.sablier.events.fetch_streams") as mock:
         mock.return_value = []
         yield mock
-
-
-@pytest.fixture(autouse=True, scope="function")
-async def reset_state():
-    # make the snapshot of the blockchain
-    logger.info("=== SETUP: Creating blockchain snapshot ===")
-    w3 = get_w3(get_web3_provider_settings())
-    snapshot_id = await w3.provider.make_request("evm_snapshot", [])
-    logger.info(f"Snapshot ID: {snapshot_id}")
-
-    yield
-    
-    # Restore state after each test
-    logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
-    result = await w3.provider.make_request("evm_revert", [snapshot_id["result"]])
-    logger.info(f"Revert result: {result}")
-    logger.info("Blockchain state reset complete")
