@@ -84,7 +84,6 @@ def setup_subgraph(contracts, testname):
             "--network",
             "localhost",
             "--version-label=v0.0.1",
-            "--start-block", "1",
             "--network-file",
             fn,
             testname,
