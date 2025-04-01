@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import datetime
 import json
 import os
@@ -95,7 +96,7 @@ from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from v2.core.dependencies import get_database_settings
+from v2.core.dependencies import get_database_settings, get_w3, get_web3_provider_settings
 
 LOGGER = logging.getLogger("app")
 
@@ -117,6 +118,16 @@ MOCK_IS_CONTRACT = Mock()
 # Configure pytest-asyncio
 pytest_plugins = ["pytest_asyncio"]
 pytestmark = pytest.mark.asyncio
+
+logger = logging.getLogger(__name__)
+
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    force=True  # Override any existing configuration
+)
+
 
 # Set default event loop scope for fixtures to function level
 def pytest_configure(config):
@@ -468,8 +479,63 @@ def fastapi_client(deployment) -> TestClient:
 
     BaseModel.metadata.create_all(bind=engine)
 
+    async def create_snapshot():
+        logger.info("=== SETUP: Creating blockchain snapshot ===")
+        w3 = get_w3(get_web3_provider_settings())
+        
+        # Get current block height before snapshot
+        current_height = await w3.eth.get_block_number()
+        logger.info(f"Current block height before snapshot: {current_height}")
+        
+        # Create a new snapshot
+        snapshot_response = await w3.provider.make_request("evm_snapshot", [])
+        if "result" not in snapshot_response:
+            logger.error(f"Unexpected snapshot response format: {snapshot_response}")
+            raise ValueError(f"Failed to create snapshot, unexpected response: {snapshot_response}")
+            
+        snapshot_id = snapshot_response["result"]
+        logger.info(f"Created snapshot with ID: {snapshot_id}")
+        return snapshot_id
+
+    async def revert_snapshot(snapshot_id):
+        logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
+        w3 = get_w3(get_web3_provider_settings())
+        
+        # Get block height before revert
+        height_before = await w3.eth.get_block_number()
+        logger.info(f"Block height before revert: {height_before}")
+        
+        # Revert to snapshot
+        revert_response = await w3.provider.make_request("evm_revert", [snapshot_id])
+        if not revert_response.get("result", False):
+            logger.error(f"Snapshot revert failed: {revert_response}")
+            raise ValueError(f"Failed to revert to snapshot {snapshot_id}, response: {revert_response}")
+            
+        logger.info(f"Revert result: {revert_response}")
+        
+        # Mine a block to ensure changes take effect
+        await w3.provider.make_request("evm_mine", [])
+        
+        # Get block height after revert
+        height_after = await w3.eth.get_block_number()
+        logger.info(f"Block height after revert: {height_after}")
+        
+        if height_after >= height_before:
+            logger.warning(f"Blockchain height did not decrease after revert! Before: {height_before}, After: {height_after}")
+        else:
+            logger.info("Blockchain state reset successfully")
+
+    # Run the async functions
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    snapshot_id = loop.run_until_complete(create_snapshot())
+
+
     yield TestClient(app)
 
+    # Revert after the test
+    loop.run_until_complete(revert_snapshot(snapshot_id))
+    loop.close()
     BaseModel.metadata.drop_all(bind=engine)
 
 
