@@ -14,6 +14,16 @@ from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from unittest.mock import patch
 
+# Configure pytest-asyncio
+pytest_plugins = ["pytest_asyncio"]
+pytestmark = pytest.mark.asyncio
+
+# Set default event loop scope for fixtures to function level
+def pytest_configure(config):
+    config.option.asyncio_mode = "auto"
+    # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
+    setattr(config.option, "asyncio_default_fixture_loop_scope", "function")
+
 logger = logging.getLogger(__name__)
 
 # Configure logging to show logs during pytest execution
@@ -402,7 +412,7 @@ def mock_fetch_streams():
 @pytest.fixture(autouse=True, scope="function")
 async def reset_state():
     # make the snapshot of the blockchain
-    logger.info("Resetting blockchain time")
+    logger.info("=== SETUP: Creating blockchain snapshot ===")
     w3 = get_w3(get_web3_provider_settings())
     snapshot_id = await w3.provider.make_request("evm_snapshot", [])
     logger.info(f"Snapshot ID: {snapshot_id}")
@@ -410,6 +420,7 @@ async def reset_state():
     yield
     
     # Restore state after each test
-    print("Resetting blockchain time")
-    await w3.provider.make_request("evm_revert", [snapshot_id])
-    logger.info("Blockchain time reset")
+    logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
+    result = await w3.provider.make_request("evm_revert", [snapshot_id["result"]])
+    logger.info(f"Revert result: {result}")
+    logger.info("Blockchain state reset complete")
