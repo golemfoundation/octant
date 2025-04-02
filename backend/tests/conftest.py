@@ -509,9 +509,15 @@ def deployment(pytestconfig, request):
     async def reset_timestamp():
         w3 = get_w3(get_web3_provider_settings())
         
-        # Set timestamp to a specific date in the past (January 1st, 2023)
+        # Get the difference between now and the last block timestamp
         now_timestamp = int(time.time())
-        await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
+        last_block = await w3.eth.get_block('latest')
+        last_block_timestamp = last_block.timestamp
+        time_diff = now_timestamp - last_block_timestamp
+
+        logger.info(f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})")
+
+        await w3.provider.make_request("evm_increaseTime", [time_diff])
         await w3.provider.make_request("evm_mine", [])
         
         # Verify the change
