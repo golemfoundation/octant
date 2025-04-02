@@ -518,9 +518,11 @@ def deployment(pytestconfig, request):
         logger.info(f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})")
         logger.info(f"Last block height: {last_block.number}")
 
-        # Set the timestamp for the next block
+        # First set the current time
+        await w3.provider.make_request("evm_setTime", [now_timestamp])
+        # Then set the next block's timestamp
         await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
-        # Mine just one block
+        # Mine the block
         await w3.provider.make_request("evm_mine", [])
         
         # Verify the change
