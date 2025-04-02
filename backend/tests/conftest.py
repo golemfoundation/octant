@@ -516,12 +516,14 @@ def deployment(pytestconfig, request):
         time_diff = now_timestamp - last_block_timestamp
 
         logger.info(f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})")
+        logger.info(f"Last block height: {last_block.number}")
 
         await w3.provider.make_request("evm_increaseTime", [time_diff])
-        await w3.provider.make_request("evm_mine", [])
+        await w3.provider.make_request("evm_mine", [1])
         
         # Verify the change
         latest_block = await w3.eth.get_block('latest')
+        logger.info(f"Latest block height: {latest_block.number}")
         logger.info(f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}")
         logger.info("Timestamp reset complete")
 
