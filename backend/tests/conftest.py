@@ -519,7 +519,7 @@ def deployment(pytestconfig, request):
         logger.info(f"Last block height: {last_block.number}")
 
         await w3.provider.make_request("evm_increaseTime", [time_diff])
-        await w3.provider.make_request("evm_mine", [1])
+        await w3.provider.make_request("hardhat_mine", ["0x10"])
         
         # Verify the change
         latest_block = await w3.eth.get_block('latest')
