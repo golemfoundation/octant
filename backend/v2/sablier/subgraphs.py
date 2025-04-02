@@ -117,6 +117,8 @@ class SablierSubgraph:
         Returns empty list if E2E environment is detected.
         """
 
+        # This is for E2E tests only!
+        # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
         if is_e2e_env():
             logger.info("E2E environment detected, skipping Sablier subgraph query")
             return []
@@ -167,6 +169,8 @@ class SablierSubgraph:
         Returns empty list if E2E environment is detected.
         """
 
+        # This is for E2E tests only!
+        # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
         if is_e2e_env():
             logger.info("E2E environment detected, skipping Sablier subgraph query")
             return []
