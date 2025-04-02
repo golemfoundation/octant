@@ -100,6 +100,8 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
     Get all the locks and unlocks for a user.
     Query used for computing user's effective deposit and getting all sablier streams from an endpoint.
     """
+    # This is for E2E tests only!
+    # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
     if is_e2e_env():
         app.logger.info("E2E environment detected, skipping Sablier subgraph query")
         return []
@@ -148,6 +150,8 @@ def get_all_streams_history() -> List[SablierStream]:
     """
     Get all the locks and unlocks in history.
     """
+    # This is for E2E tests only!
+    # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
     if is_e2e_env():
         app.logger.info("E2E environment detected, skipping Sablier subgraph query")
         return []
