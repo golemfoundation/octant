@@ -96,7 +96,11 @@ from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from v2.core.dependencies import get_database_settings, get_w3, get_web3_provider_settings
+from v2.core.dependencies import (
+    get_database_settings,
+    get_w3,
+    get_web3_provider_settings,
+)
 
 LOGGER = logging.getLogger("app")
 
@@ -124,8 +128,8 @@ logger = logging.getLogger(__name__)
 # Configure logging to show logs during pytest execution
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    force=True  # Override any existing configuration
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    force=True,  # Override any existing configuration
 )
 
 
@@ -134,6 +138,8 @@ def pytest_configure(config):
     config.option.asyncio_mode = "auto"
     # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
     setattr(config.option, "asyncio_default_fixture_loop_scope", "function")
+
+    config.addinivalue_line("markers", "api: mark test as API test")
 
 
 def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
@@ -394,10 +400,6 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
-    config.addinivalue_line("markers", "api: mark test as API test")
-
-
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--runapi"):
         return
@@ -508,14 +510,16 @@ def deployment(pytestconfig, request):
 
     async def reset_timestamp():
         w3 = get_w3(get_web3_provider_settings())
-        
+
         # Get the difference between now and the last block timestamp
         now_timestamp = int(time.time())
-        last_block = await w3.eth.get_block('latest')
+        last_block = await w3.eth.get_block("latest")
         last_block_timestamp = last_block.timestamp
         time_diff = now_timestamp - last_block_timestamp
 
-        logger.info(f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})")
+        logger.info(
+            f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})"
+        )
         logger.info(f"Last block height: {last_block.number}")
 
         # First set the current time
@@ -524,64 +528,19 @@ def deployment(pytestconfig, request):
         await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
         # Mine the block
         await w3.provider.make_request("evm_mine", [])
-        
+
         # Verify the change
-        latest_block = await w3.eth.get_block('latest')
+        latest_block = await w3.eth.get_block("latest")
         logger.info(f"Latest block height: {latest_block.number}")
-        logger.info(f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}")
+        logger.info(
+            f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}"
+        )
         logger.info("Timestamp reset complete")
-
-    # async def create_snapshot():
-    #     logger.info("=== SETUP: Creating blockchain snapshot ===")
-    #     w3 = get_w3(get_web3_provider_settings())
-        
-    #     # Get current block height before snapshot
-    #     current_height = await w3.eth.get_block_number()
-    #     logger.info(f"Current block height before snapshot: {current_height}")
-        
-    #     # Create a new snapshot
-    #     snapshot_response = await w3.provider.make_request("evm_snapshot", [])
-    #     if "result" not in snapshot_response:
-    #         logger.error(f"Unexpected snapshot response format: {snapshot_response}")
-    #         raise ValueError(f"Failed to create snapshot, unexpected response: {snapshot_response}")
-            
-    #     snapshot_id = snapshot_response["result"]
-    #     logger.info(f"Created snapshot with ID: {snapshot_id}")
-    #     return snapshot_id
-
-    # async def revert_snapshot(snapshot_id):
-    #     logger.info(f"=== TEARDOWN: Reverting to snapshot {snapshot_id} ===")
-    #     w3 = get_w3(get_web3_provider_settings())
-        
-    #     # Get block height before revert
-    #     height_before = await w3.eth.get_block_number()
-    #     logger.info(f"Block height before revert: {height_before}")
-        
-    #     # Revert to snapshot
-    #     revert_response = await w3.provider.make_request("evm_revert", [snapshot_id])
-    #     if not revert_response.get("result", False):
-    #         logger.error(f"Snapshot revert failed: {revert_response}")
-    #         raise ValueError(f"Failed to revert to snapshot {snapshot_id}, response: {revert_response}")
-            
-    #     logger.info(f"Revert result: {revert_response}")
-        
-    #     # Mine a block to ensure changes take effect
-    #     await w3.provider.make_request("evm_mine", [])
-        
-    #     # Get block height after revert
-    #     height_after = await w3.eth.get_block_number()
-    #     logger.info(f"Block height after revert: {height_after}")
-        
-    #     if height_after >= height_before:
-    #         logger.warning(f"Blockchain height did not decrease after revert! Before: {height_before}, After: {height_after}")
-    #     else:
-    #         logger.info("Blockchain state reset successfully")
 
     # Run the async functions
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(reset_timestamp())
-
 
     envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
@@ -606,9 +565,7 @@ def deployment(pytestconfig, request):
     yield conf
 
     # Revert after the test
-    # loop.run_until_complete(revert_snapshot(snapshot_id))
     loop.close()
-
 
     teardown_deployment(request.node.name, graph_name)
 
