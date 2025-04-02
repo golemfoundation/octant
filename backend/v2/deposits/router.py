@@ -54,7 +54,7 @@ async def get_estimated_total_effective_deposit(
     epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
 
     # We SIMULATE the epoch end as if it ended now
-    epoch_end = current_timestamp
+    epoch_end = epoch_details.fromTs + epoch_details.duration
     epoch_start = epoch_details.fromTs
 
     # If secondary address has effective deposit, it cannot delegate
