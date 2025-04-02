@@ -102,7 +102,7 @@ async def get_user_estimated_effective_deposit(
     epoch_details = await epochs_subgraph.fetch_epoch_by_number(epoch_number)
 
     # We SIMULATE the epoch end as if it ended now
-    epoch_end = current_timestamp
+    epoch_end = epoch_details.fromTs + epoch_details.duration
     epoch_start = epoch_details.fromTs
 
     user_events = await deposit_events_repository.get_all_user_events(
