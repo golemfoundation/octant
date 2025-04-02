@@ -157,13 +157,6 @@ const ModalOnboarding = (): ReactElement => {
   }, []);
 
   useEffect(() => {
-    if (!isUserTOSAcceptedInitial && isUserTOSAccepted) {
-      setCurrentStepIndex(prev => prev + 1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserTOSAccepted]);
-
-  useEffect(() => {
     /**
      * User should not be able to have LAST_SEEN_STEP more than 0 without having ToS signed.
      * However, whenever ToS is reset (on the backend, or by environment flush),
@@ -183,7 +176,9 @@ const ModalOnboarding = (): ReactElement => {
       return;
     }
     setIsUserTOSAcceptedInitial(isUserTOSAccepted);
-  }, [address, isFetchingUserTOS, isUserTOSAccepted]);
+    // isUserTOSAccepted mustn't be in deps here, otherwise once TOS is signed initial will flip too.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, isFetchingUserTOS]);
 
   return (
     <Modal
