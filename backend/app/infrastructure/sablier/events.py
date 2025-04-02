@@ -1,4 +1,5 @@
 from functools import lru_cache
+import os
 from typing import TypedDict, List, Dict, Set
 
 from flask import current_app as app
@@ -35,6 +36,10 @@ class SablierStream(TypedDict):
     depositAmount: str
     recipient: str
     stream_id: str
+
+
+def is_e2e_env() -> bool:
+    return os.getenv("ENV_TYPE") == "e2e"
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
@@ -95,6 +100,10 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
     Get all the locks and unlocks for a user.
     Query used for computing user's effective deposit and getting all sablier streams from an endpoint.
     """
+    if is_e2e_env():
+        app.logger.info("E2E environment detected, skipping Sablier subgraph query")
+        return []
+
     query = """
         query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
           streams(
@@ -139,6 +148,10 @@ def get_all_streams_history() -> List[SablierStream]:
     """
     Get all the locks and unlocks in history.
     """
+    if is_e2e_env():
+        app.logger.info("E2E environment detected, skipping Sablier subgraph query")
+        return []
+
     query = """
         query GetAllEvents($sender: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
           streams(
