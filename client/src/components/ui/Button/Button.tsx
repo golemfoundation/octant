@@ -12,6 +12,7 @@ import ButtonProps from './types';
 const Button = <T extends ButtonProps>(
   {
     Icon,
+    id,
     children,
     className,
     dataParameters,
@@ -90,6 +91,7 @@ const Button = <T extends ButtonProps>(
         (onClick || type === 'submit') && styles.isClickable,
         className,
       )}
+      id={id}
       {...dataParameters}
       data-test={dataTest}
       onClick={

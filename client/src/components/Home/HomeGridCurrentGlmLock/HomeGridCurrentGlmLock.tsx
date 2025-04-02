@@ -8,6 +8,7 @@ import GridTile from 'components/shared/Grid/GridTile';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import Button from 'components/ui/Button';
 import DoubleValue from 'components/ui/DoubleValue';
+import { TOURGUIDE_ELEMENT_1 } from 'constants/domElementsIds';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -65,6 +66,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
         className={className}
         classNameTitleWrapper={didUserWinAnyRaffles ? styles.didUserWinAnyRaffles : ''}
         dataTest="HomeGridCurrentGlmLock"
+        id={TOURGUIDE_ELEMENT_1}
         title={t('currentGlmLock')}
         titleSuffix={<RaffleWinnerBadge isVisible={didUserWinAnyRaffles} />}
       >

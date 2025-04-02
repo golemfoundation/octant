@@ -7,6 +7,7 @@ import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
 import ModalTimeoutListPresence from 'components/shared/ModalTimeoutListPresence';
 import OnboardingStepper from 'components/shared/OnboardingStepper';
+import QuickTourHandler from 'components/shared/QuickTour/Handler';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
 import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
@@ -54,6 +55,7 @@ const App = (): ReactElement => {
       <AnimatePresence>
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>
+      <QuickTourHandler />
     </Fragment>
   );
 };
