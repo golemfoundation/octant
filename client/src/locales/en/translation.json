@@ -505,7 +505,7 @@
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
+          "text": "Rewards are calculated on a weighted average. Lock more GLM for longer periods to earn more.<br/><br/>Any GLM unlocked during an epoch won’t count towards your rewards. Use the calculator in the Home view to estimate potential rewards."
         },
         "donateToProjects": {
           "header": "Donate to projects",
@@ -523,7 +523,7 @@
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "Rewards are calculated on a weighted average, so the more GLM you lock and the earlier you lock it, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Home view to estimate potential rewards."
+          "text": "Rewards are calculated on a weighted average. Lock more GLM for longer periods to earn more.<br/><br/>Any GLM unlocked during an epoch won’t count towards your rewards. Use the calculator in the Home view to estimate potential rewards."
         },
         "getReady": {
           "header": "Get ready for allocation",
