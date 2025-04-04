@@ -7,12 +7,13 @@ from app.extensions import w3, vault
 from app.legacy.core import vault as vault_core
 from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import Client, UserAccount
+from tests.conftest import UserAccount
+from tests.api_e2e.conftest import FastAPIClient
 
 
 @pytest.mark.api
 def test_withdrawals(
-    client: Client,
+    fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
     ua_bob: UserAccount,
@@ -29,21 +30,21 @@ def test_withdrawals(
     ua_carol.lock(10000)
 
     # forward time to the beginning of the epoch 2
-    client.move_to_next_epoch(STARTING_EPOCH + 1)
+    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # fund the vault (amount here is arbitrary)
     vault.fund(deployer._account, 1000 * 10**18)
 
     # wait for indexer to catch up
-    epoch_no = client.wait_for_sync(STARTING_EPOCH + 1)
+    epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
-    res = client.pending_snapshot()
+    res = fclient.pending_snapshot()
     assert res["epoch"] > 0
 
     # save account budget for assertion
-    res = client.get_user_rewards_in_epoch(
+    res = fclient.get_user_rewards_in_epoch(
         address=ua_alice.address, epoch=STARTING_EPOCH
     )
     alice_budget = int(res["budget"])
@@ -52,14 +53,16 @@ def test_withdrawals(
     ua_alice.allocate(0, alice_proposals)
 
     # save account budget for assertion
-    res = client.get_user_rewards_in_epoch(address=ua_bob.address, epoch=STARTING_EPOCH)
+    res = fclient.get_user_rewards_in_epoch(
+        address=ua_bob.address, epoch=STARTING_EPOCH
+    )
     bob_budget = int(res["budget"])
 
     # make empty vote to get personal rewards
     ua_bob.allocate(0, bob_proposals)
 
     # save account budget for assertion
-    res = client.get_user_rewards_in_epoch(
+    res = fclient.get_user_rewards_in_epoch(
         address=ua_carol.address, epoch=STARTING_EPOCH
     )
     carol_budget = int(res["budget"])
@@ -68,13 +71,13 @@ def test_withdrawals(
     ua_carol.allocate(0, carol_proposals)
 
     # TODO replace with helper to wait until end of voting
-    client.move_to_next_epoch(STARTING_EPOCH + 2)
-    epoch_no = client.wait_for_sync(STARTING_EPOCH + 2)
+    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 
     # make a finalized snapshot
     # res = client.pending_snapshot()
-    res = client.finalized_snapshot()
+    res = fclient.finalized_snapshot()
     assert res["epoch"] == STARTING_EPOCH
 
     # write merkle root for withdrawals
@@ -87,9 +90,9 @@ def test_withdrawals(
     app.logger.debug(f"root is 0x{root}")
 
     # Save latest withdrawals for assertions
-    alice_withdrawals = client.get_withdrawals_for_address(address=ua_alice.address)[0]
-    bob_withdrawals = client.get_withdrawals_for_address(address=ua_bob.address)[0]
-    carol_withdrawals = client.get_withdrawals_for_address(address=ua_carol.address)[0]
+    alice_withdrawals = fclient.get_withdrawals_for_address(address=ua_alice.address)[0]
+    bob_withdrawals = fclient.get_withdrawals_for_address(address=ua_bob.address)[0]
+    carol_withdrawals = fclient.get_withdrawals_for_address(address=ua_carol.address)[0]
 
     assert alice_withdrawals["proof"], "Merkle proof in response is empty"
     assert bob_withdrawals["proof"], "Merkle proof in response is empty"
