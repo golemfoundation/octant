@@ -11,9 +11,11 @@ from backend.app.modules.common.crypto.signature import EncodingStandardFor, enc
 from backend.v2.allocations.validators import SignatureVerifier, verify_logic
 from backend.v2.crypto.contracts import GnosisSafeContracts
 from backend.v2.crypto.dependencies import GetGnosisSafeContractsFactory
+from backend.v2.multisig.services import _add_allocation_signature, _add_tos_signature, _approve_allocation_signatures, _approve_tos_signatures
+from backend.v2.projects.dependencies import GetProjectsContracts
 from backend.v2.users.repositories import get_user_tos_consent_status
 from v2.allocations.router import allocate_v1
-from v2.allocations.schemas import UserAllocationRequestPayloadV1, UserAllocationRequestV1
+from v2.allocations.schemas import UserAllocationRequest, UserAllocationRequestPayloadV1, UserAllocationRequestV1
 from v2.crypto.signatures import SignedMessageVerifier, hash_signable_message
 from v2.multisig.repositories import get_last_pending_multisig, get_multisigs_for_allocation, get_multisigs_for_tos, save_pending_allocation, save_pending_tos
 from v2.multisig.safe import SafeClient
@@ -48,91 +50,11 @@ async def get_last_pending_signature(
     """
     signature = await get_last_pending_multisig(session, user_address, op_type)
 
-    # We do not want 404 when there is no pending signature
+    # We do not want to return 404 when there is no pending signature
     if signature is None:
         return PendingSignatureResponseV1(message=None, hash=None)
 
     return PendingSignatureResponseV1(message=signature.message, hash=signature.safe_msg_hash)
-
-
-async def _add_tos_signature(
-    session: AsyncSession,
-    safe_client: SafeClient,
-    safe_contracts: GnosisSafeContracts,
-    user_address: Address,
-    message: str,
-    ip_address: str,
-) -> None:
-    
-    # Terms of Service can only be accepted once
-    already_accepted = await get_user_tos_consent_status(session, user_address)
-    if already_accepted:
-        raise DuplicateConsent(user_address)
-
-    # Prepare message for SAFE validation
-    encoded_message = encode_for_signing(EncodingStandardFor.TEXT, message)
-    safe_message_hash = hash_signable_message(encoded_message)
-    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
-    message_hash = f"0x{message_hash.hex()}"
-
-    # We should have retry logic here
-    message_details = await safe_client.get_message_details(message_hash)
-    if message_details is None or user_address != message_details["safe"]:
-        raise InvalidMultisigAddress()
-    
-    # If all is good, save the signature
-    await save_pending_tos(
-        session,
-        user_address,
-        message,
-        message_hash,
-        safe_message_hash,
-        ip_address
-    )
-
-
-async def _add_allocation_signature(
-    session: AsyncSession,
-    safe_client: SafeClient,
-    safe_contracts: GnosisSafeContracts,
-
-    user_address: Address,
-    payload: dict,
-    x_real_ip: GetXRealIp,
-) -> None:
-    
-    is_valid = await verify_logic(
-        session=session,
-        epoch_subgraph=epoch_subgraph,
-        projects_contracts=projects_contracts,
-        epoch_number=0,
-        payload=payload
-    )
-    if not is_valid:
-        raise InvalidMultisigSignatureRequest()
-    
-    # Safe
-    encoded_message = encode_for_signing(EncodingStandardFor.DATA, payload)
-    safe_message_hash = hash_signable_message(encoded_message)
-    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
-    message_hash = f"0x{message_hash.hex()}"
-
-    msg_to_save = json.dumps(payload)
-
-    # Verify owner
-    message_details = await safe_client.get_message_details(message_hash)
-    if message_details is None or user_address != message_details["safe"]:
-        raise InvalidMultisigAddress()
-    
-    # Save signature
-    await save_pending_allocation(
-        session,
-        user_address,
-        msg_to_save,
-        message_hash,
-        safe_message_hash,
-        x_real_ip
-    )
 
 
 @api.post("/pending/{user_address}/type/{op_type}", status_code=201)
@@ -141,6 +63,8 @@ async def add_pending_signature(
     session: GetSession,
     safe_contracts_factory: GetGnosisSafeContractsFactory,
     safe_client: SafeClient,
+    projects_contracts: GetProjectsContracts,
+    epoch_subgraph: GetEpochsSubgraph,
     epoch_contracts: GetEpochsContracts,
     alloc_signature_verifier: SignatureVerifier,
     # Request payload
@@ -151,11 +75,11 @@ async def add_pending_signature(
 ) -> None:
 
 
-    if op_type == SignatureOpType.TOS:
+    if op_type == SignatureOpType.TOS and isinstance(payload.message, str):
 
         safe_contracts = safe_contracts_factory.for_address(user_address)
 
-        await _add_tos_signature(
+        return await _add_tos_signature(
             session,
             safe_client,
             safe_contracts,
@@ -164,23 +88,22 @@ async def add_pending_signature(
             x_real_ip
         )
     
-    if op_type == SignatureOpType.ALLOCATION:
+    elif op_type == SignatureOpType.ALLOCATION and isinstance(payload.message, UserAllocationRequest):
 
-        # Viable only in Allocation window, throw exception otherwise
-        pending_epoch = await epoch_contracts.get_pending_epoch()
-        if pending_epoch is None:
-            raise InvalidEpoch()
-        
-        await _add_allocation_signature(
+        return await _add_allocation_signature(
             session,
             safe_client,
             safe_contracts,
-            alloc_signature_verifier,
+            epoch_contracts,
+            epoch_subgraph,
+            projects_contracts,
             user_address,
-            payload,
+            payload.message,
             x_real_ip
         )
 
+    # If we get here, the operation type is unsupported
+    raise InvalidMultisigSignatureRequest()
 
     # # verify signature
     # if op_type == SignatureOpType.ALLOCATION:
@@ -219,96 +142,6 @@ async def add_pending_signature(
 
 
 
-async def _approve_tos_signatures(
-    session: AsyncSession,
-    signed_message_verifier: SignedMessageVerifier,
-    safe_client: SafeClient,
-) -> None:
-    
-    signatures = await get_multisigs_for_tos(session)
-
-    for signature in signatures:
-
-        message_details = await safe_client.get_message_details(signature.msg_hash)
-        if message_details is None:
-            continue
-
-        user_details = await safe_client.get_user_details(signature.address)
-        if user_details is None:
-            continue
-
-        confirmations = message_details["confirmations"]
-        threshold = int(user_details["threshold"])
-
-        # When we are still missing confirmations, we don't need to do anything
-        if len(confirmations) < threshold:
-            continue
-
-        signature.confirmed_signature = message_details["preparedSignature"]
-
-        # Just call dedicated API to add the consent
-        await post_tos_status_for_user_v1(
-            session,
-            signed_message_verifier,
-            signature.address, 
-            signature.confirmed_signature, 
-            signature.user_ip
-        )
-
-        # Mark the signature as approved
-        signature.status = SigStatus.APPROVED
-
-        # session.add(signature) 
-
-
-async def _approve_allocation_signatures(
-    session: AsyncSession,
-    signed_message_verifier: SignedMessageVerifier,
-    safe_client: SafeClient,
-) -> None:
-    
-    signatures = await get_multisigs_for_allocation(session)
-
-    for signature in signatures:
-
-        message_details = await safe_client.get_message_details(signature.msg_hash)
-        if message_details is None:
-            continue
-
-        user_details = await safe_client.get_user_details(signature.address)
-        if user_details is None:
-            continue
-
-        confirmations = message_details["confirmations"]
-        threshold = int(user_details["threshold"])
-
-        # When we are still missing confirmations, we don't need to do anything
-        if len(confirmations) < threshold:
-            continue
-
-        signature.confirmed_signature = message_details["preparedSignature"]
-
-        # Make allocation
-        await allocate_v1(
-            allocator=GetAllocator(), # TODO
-            allocation_request=UserAllocationRequestV1(
-                user_address=signature.address,
-                payload=UserAllocationRequestPayloadV1(
-                    allocations=[],
-                    nonce=0,
-                ),
-                signature=signature.confirmed_signature,
-                is_manually_edited=False
-            )
-        )
-        # Mark the signature as approved
-        signature.status = SigStatus.APPROVED
-
-        # session.add(signature) 
-
-
-
-
 
 @api.patch("/pending/approve", status_code=204)
 async def approve_pending_signatures_v1(
@@ -319,15 +152,10 @@ async def approve_pending_signatures_v1(
     This endpoint is used to approve pending signatures.
     It will approve all pending signatures and apply them to the user.
     """
-# 
 
     await _approve_tos_signatures(session)
 
-
-    # Viable only in Allocation window, throw exception otherwise
-    pending_epoch = await epoch_contracts.get_pending_epoch()
-    if pending_epoch is not None:
-        await _approve_allocation_signatures(session)
+    await _approve_allocation_signatures(session, epoch_contracts)
     
 
     # approvals = approve_pending_signatures()
@@ -352,30 +180,30 @@ async def approve_pending_signatures_v1(
         # )
 
 
-    for tos_signature in approvals.tos_signatures:
-        # We don't want to fail the whole process if one TOS fails
-        try:
-            tos_controller.post_user_terms_of_service_consent(
-                tos_signature.user_address,
-                tos_signature.signature,
-                tos_signature.ip_address,
-            )
-            apply_pending_tos_signature(tos_signature.id)
+    # for tos_signature in approvals.tos_signatures:
+    #     # We don't want to fail the whole process if one TOS fails
+    #     try:
+    #         tos_controller.post_user_terms_of_service_consent(
+    #             tos_signature.user_address,
+    #             tos_signature.signature,
+    #             tos_signature.ip_address,
+    #         )
+    #         apply_pending_tos_signature(tos_signature.id)
 
-        except Exception as e:
-            app.logger.error(f"Error confirming TOS signature: {e}")
+    #     except Exception as e:
+    #         app.logger.error(f"Error confirming TOS signature: {e}")
 
-    for allocation_signature in approvals.allocation_signatures:
-        # We don't want to fail the whole process if one allocation fails
-        try:
-            message = json.loads(allocation_signature.message)
-            message["signature"] = allocation_signature.signature
-            allocations_controller.allocate(
-                allocation_signature.user_address,
-                message,
-                is_manually_edited=message.get("isManuallyEdited"),
-            )
-            apply_pending_allocation_signature(allocation_signature.id)
+    # for allocation_signature in approvals.allocation_signatures:
+    #     # We don't want to fail the whole process if one allocation fails
+    #     try:
+    #         message = json.loads(allocation_signature.message)
+    #         message["signature"] = allocation_signature.signature
+    #         allocations_controller.allocate(
+    #             allocation_signature.user_address,
+    #             message,
+    #             is_manually_edited=message.get("isManuallyEdited"),
+    #         )
+    #         apply_pending_allocation_signature(allocation_signature.id)
 
-        except Exception as e:
-            app.logger.error(f"Error confirming allocation signature: {e}")
+    #     except Exception as e:
+    #         app.logger.error(f"Error confirming allocation signature: {e}")

@@ -67,3 +67,24 @@ async def save_pending_tos(
         status=SigStatus.PENDING,
     )
     session.add(signature)
+
+
+async def save_pending_allocation(
+    session: AsyncSession,
+    user_address: Address,
+    message: str,
+    message_hash: str,
+    safe_message_hash: str,
+    ip_address: str,
+) -> None:
+
+    signature = MultisigSignatures(
+        address=user_address,
+        type=SignatureOpType.ALLOCATION,
+        message=message,
+        msg_hash=message_hash,
+        safe_msg_hash=safe_message_hash,
+        user_ip=ip_address,
+        status=SigStatus.PENDING,
+    )
+    session.add(signature)
