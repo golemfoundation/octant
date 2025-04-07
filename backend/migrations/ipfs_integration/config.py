@@ -5,12 +5,12 @@ from core import build_filename
 
 class Config:
     FILENAME_PREFIX = "ipfs_projects_details"
-    EPOCH = 6  # change corresponding to the epoch
+    EPOCH = 7  # change corresponding to the epoch
     JSON_FILEPATH = f"files/{build_filename(FILENAME_PREFIX, EPOCH)}"
     CID = [
-        "bafybeifs53yk5oycvy5lu5r42oefk3vh7qkvfdkklkvaw2ocubmycgvche"
+        "bafybeigxa4wpqhianuiltv3qqzqpitjyjyqzdeurpwqrvidgc3c4opw26m"
     ]  # change corresponding to the epoch
-    GATEWAY_URL = "https://octant.infura-ipfs.io/ipfs/"
+    GATEWAY_URL = "https://turquoise-accused-gayal-88.mypinata.cloud/ipfs/"
 
 
 class ProjectDetails(StrEnum):
