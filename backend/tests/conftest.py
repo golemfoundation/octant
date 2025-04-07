@@ -137,7 +137,9 @@ logging.basicConfig(
 def pytest_configure(config):
     config.option.asyncio_mode = "auto"
     # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
-    setattr(config.option, "asyncio_default_fixture_loop_scope", "function")  # noqa: B010
+    setattr(
+        config.option, "asyncio_default_fixture_loop_scope", "function"
+    )  # noqa: B010
 
     config.addinivalue_line("markers", "api: mark test as API test")
 
