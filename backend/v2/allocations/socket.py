@@ -40,6 +40,7 @@ from v2.projects.services.projects_allocation_threshold_getter import (
     ProjectsAllocationThresholdGetter,
 )
 from v2.uniqueness_quotients.dependencies import (
+    get_timeout_list,
     get_uq_score_getter,
     get_uq_score_settings,
 )
@@ -141,15 +142,20 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 estimated_matched_rewards,
             )
 
+            chain_settings = get_chain_settings()
             signature_verifier = get_signature_verifier(
                 session,
                 epochs_subgraph,
                 projects_contracts,
-                get_chain_settings(),
+                chain_settings,
             )
 
+            timeout_list = get_timeout_list(chain_settings)
             uq_score_getter = get_uq_score_getter(
-                session, get_uq_score_settings(), get_chain_settings()
+                session,
+                get_uq_score_settings(),
+                chain_settings,
+                timeout_list,
             )
 
             allocations = await get_allocator(
