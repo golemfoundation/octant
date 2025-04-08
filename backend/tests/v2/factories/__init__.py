@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from tests.v2.factories.deposits import DepositFactorySet
 from tests.v2.factories.delegations import ScoreDelegationFactorySet
 from tests.v2.factories.gp_scores import GPStampsFactorySet
 from tests.v2.factories.uniqueness_quotients import UniquenessQuotientFactorySet
@@ -39,6 +40,7 @@ class FactoriesAggregator:
     gp_stamps: GPStampsFactorySet
     tos_consents: UserConsentsFactorySet
     score_delegations: ScoreDelegationFactorySet
+    deposits: DepositFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -56,3 +58,4 @@ class FactoriesAggregator:
         self.gp_stamps = GPStampsFactorySet(fast_session)
         self.tos_consents = UserConsentsFactorySet(fast_session)
         self.score_delegations = ScoreDelegationFactorySet(fast_session)
+        self.deposits = DepositFactorySet(fast_session)
