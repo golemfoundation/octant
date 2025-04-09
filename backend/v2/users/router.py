@@ -1,11 +1,20 @@
 from datetime import timezone
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, status
 
 from app.exceptions import (
     AddressAlreadyDelegated,
+    DuplicateConsent,
     GPStampsNotFound,
     InvalidEpoch,
+    InvalidSignature,
 )
+from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from app.modules.user.tos.core import build_consent_message
+from v2.sablier.dependencies import GetSablierSubgraph
+from v2.allocations.repositories import soft_delete_user_allocations_by_epoch
+from v2.crypto.dependencies import GetSignedMessageVerifier
+from v2.users.dependencies import GetXRealIp
+from v2.users.repositories import add_user_tos_consent, get_user_tos_consent_status
 from v2.delegations.dependencies import GetDelegationService
 from v2.uniqueness_quotients.repositories import (
     add_gp_stamps,
@@ -22,15 +31,23 @@ from v2.core.dependencies import GetCurrentDatetime, GetSession
 from v2.user_patron_mode.repositories import (
     get_all_patrons_at_timestamp,
     get_budgets_by_users_addresses_and_epoch,
+    get_user_patron_mode_status,
+    toggle_patron_mode,
 )
 from v2.users.schemas import (
     AllUsersUQResponseV1,
     AntisybilStatusResponseV1,
     EpochPatronsResponseV1,
+    PatronModeRequestV1,
+    PatronModeResponseV1,
+    SablierStreamItem,
+    SablierStreamsResponseV1,
+    TosStatusRequestV1,
+    TosStatusResponseV1,
     UQResponseV1,
     UserUQResponseV1,
 )
-from v2.epochs.dependencies import GetEpochsSubgraph
+from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
 
 api = APIRouter(prefix="/user", tags=["user"])
 
@@ -170,4 +187,158 @@ async def refresh_antisybil_status_for_user_v1(
 
     await add_gp_stamps(
         session, user_address, gc_score.score, gc_score.expires_at, gc_score.stamps
+    )
+
+
+@api.get("/{user_address}/tos")
+async def get_tos_status_for_user_v1(
+    session: GetSession,
+    # Request Parameters
+    user_address: Address,
+) -> TosStatusResponseV1:
+    """
+    Returns true if given user has already accepted Terms of Service, false in the other case.
+    """
+
+    status = await get_user_tos_consent_status(session, user_address)
+    return TosStatusResponseV1(accepted=status)
+
+
+@api.post("/{user_address}/tos", status_code=status.HTTP_201_CREATED)
+async def post_tos_status_for_user_v1(
+    session: GetSession,
+    signed_message_verifier: GetSignedMessageVerifier,
+    # Request Parameters
+    user_address: Address,
+    payload: TosStatusRequestV1,
+    x_real_ip: GetXRealIp,
+) -> TosStatusResponseV1:
+    """
+    Updates user's Terms of Service status.
+    """
+
+    # Terms of Service can only be accepted once
+    already_accepted = await get_user_tos_consent_status(session, user_address)
+    if already_accepted:
+        raise DuplicateConsent(user_address)
+
+    # Build the message & verify the signature
+    msg_text = build_consent_message(user_address)
+    # TODO: At some point we should make this encode function a bit nicer, it's used in multiple places
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
+    is_valid = await signed_message_verifier.verify(
+        user_address, encoded_msg, payload.signature
+    )
+    if not is_valid:
+        raise InvalidSignature(user_address, payload.signature)
+
+    # Add the consent and commit the session
+    await add_user_tos_consent(session, user_address, x_real_ip)
+
+    return TosStatusResponseV1(accepted=True)
+
+
+@api.get("/{user_address}/patron-mode")
+async def get_patron_mode_for_user_v1(
+    session: GetSession,
+    # Request Parameters
+    user_address: Address,
+) -> PatronModeResponseV1:
+    """
+    Returns true if given user has enabled patron mode, false in the other case.
+    """
+
+    status = await get_user_patron_mode_status(session, user_address)
+    return PatronModeResponseV1(status=status)
+
+
+@api.patch("/{user_address}/patron-mode")
+async def patch_patron_mode_for_user_v1(
+    session: GetSession,
+    current_datetime: GetCurrentDatetime,
+    epochs_contracts: GetEpochsContracts,
+    signed_message_verifier: GetSignedMessageVerifier,
+    # Request Parameters
+    user_address: Address,
+    payload: PatronModeRequestV1,
+):
+    """
+    Toggle user's patron mode status.
+    """
+
+    current_status = await get_user_patron_mode_status(session, user_address)
+
+    # Build the message & verify the signature
+    # If we are currently in patron mode, we want to disable it
+    # If we are not in patron mode, we want to enable it
+    toggle_msg = "disable" if current_status else "enable"
+    message = f"Signing this message will {toggle_msg} patron mode for address {user_address}."
+    # TODO: At some point we should make this encode function a bit nicer, it's used in multiple places
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, message)
+    is_valid = await signed_message_verifier.verify(
+        user_address, encoded_msg, payload.signature
+    )
+    if not is_valid:
+        raise InvalidSignature(user_address, payload.signature)
+
+    # Toggle the patron mode and persist the change
+    next_status = await toggle_patron_mode(session, user_address, current_datetime)
+
+    # If we are in the allocation window, we need to revoke all previous allocations
+    epoch_number = await epochs_contracts.get_pending_epoch()
+    if epoch_number is not None:
+        await soft_delete_user_allocations_by_epoch(session, user_address, epoch_number)
+
+    # Let's make sure we return the correct status only if all the operations are successful
+    await session.commit()
+
+    return PatronModeResponseV1(status=next_status)
+
+
+@api.get("/{user_address}/sablier-streams")
+async def get_sablier_streams_for_user_v1(
+    sablier_subgraph: GetSablierSubgraph,
+    # Request Parameters
+    user_address: Address,
+) -> SablierStreamsResponseV1:
+    """
+    Returns an array of user's streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.
+    """
+
+    streams = await sablier_subgraph.get_user_events_history(user_address)
+
+    return SablierStreamsResponseV1(
+        sablier_streams=[
+            SablierStreamItem(
+                amount=s["depositAmount"],
+                date_available_for_withdrawal=s["endTime"],
+                is_cancelled=s["canceled"],
+                remaining_amount=s["intactAmount"],
+                recipient_address=s["recipient"],
+            )
+            for s in streams
+        ]
+    )
+
+
+@api.get("/sablier-streams/all")
+async def get_all_sablier_streams_v1(
+    sablier_subgraph: GetSablierSubgraph,
+) -> SablierStreamsResponseV1:
+    """
+    Returns an array of all streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.
+    """
+
+    streams = await sablier_subgraph.get_all_streams_history()
+    return SablierStreamsResponseV1(
+        sablier_streams=[
+            SablierStreamItem(
+                amount=s["depositAmount"],
+                date_available_for_withdrawal=s["endTime"],
+                is_cancelled=s["canceled"],
+                remaining_amount=s["intactAmount"],
+                recipient_address=s["recipient"],
+            )
+            for s in streams
+        ]
     )
