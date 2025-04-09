@@ -65,7 +65,7 @@ class ProjectsMetadata(OctantResource):
 
         return {
             "projectsAddresses": projects_metadata.projects_addresses,
-            "projectsCid": projects_metadata.projects_cid,
+            "projectsCid": "bafybeifs53yk5oycvy5lu5r42oefk3vh7qkvfdkklkvaw2ocubmycgvche" if epoch == 7 else projects_metadata.projects_cid,
         }
 
 
