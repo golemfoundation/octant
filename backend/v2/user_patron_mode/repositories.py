@@ -143,3 +143,40 @@ async def get_budgets_by_users_addresses_and_epoch(
         transform_to_checksum_address(row.address): int(row.budget)
         for row in results.all()
     }
+
+
+async def get_user_patron_mode_status(
+    session: AsyncSession, user_address: Address
+) -> bool:
+    """
+    Get the patron mode (based on the last event) status for a given user.
+    """
+
+    result = await session.scalar(
+        select(PatronModeEvent.patron_mode_enabled)
+        .filter(PatronModeEvent.user_address == user_address)
+        .order_by(PatronModeEvent.id.desc(), PatronModeEvent.created_at.desc())
+        .limit(1)
+    )
+
+    return bool(result)
+
+
+async def toggle_patron_mode(
+    session: AsyncSession, user_address: Address, created_at: datetime
+) -> bool:
+    """
+    Toggle the patron mode status for a given user.
+    """
+
+    current_status = await get_user_patron_mode_status(session, user_address)
+    next_status = not current_status
+
+    new_event = PatronModeEvent(
+        user_address=user_address,
+        patron_mode_enabled=next_status,
+        created_at=created_at,
+    )
+    session.add(new_event)
+
+    return next_status

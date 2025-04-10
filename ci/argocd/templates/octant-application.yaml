@@ -15,13 +15,15 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.68
+      targetRevision: 0.2.72
       chart: octant
       helm:
         parameters:
           # From gitlab-ci.yml
           - name: 'image.tag'
             value: '$IMAGE_TAG'
+          - name: 'envType'
+            value: '$ENV_TYPE'
           ## Client
           - name: webClient.replicas
             value: '${WEB_CLIENT_REPLICAS:-1}'

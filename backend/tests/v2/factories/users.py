@@ -1,4 +1,5 @@
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
+from eth_account import Account as EthAccount
 from factory import LazyAttribute
 from sqlalchemy import select
 
@@ -45,3 +46,10 @@ class UserFactorySet(FactorySetBase):
 
     async def get_or_create_charlie(self) -> User:
         return await self.get_or_create(CHARLIE_ADDRESS)
+
+    # Create a random user but also retrieve private key for the account
+    async def create_random_user(self) -> tuple[User, EthAccount]:
+        """Returns a tuple of a User and an EthAccount to maybe sign messages or transactions"""
+        account = EthAccount.create()
+        user = await self.create(address=account.address)
+        return user, account
