@@ -80,17 +80,13 @@ class FastAPIClient:
 
         # Get or create event loop
         try:
-            loop = asyncio.get_running_loop()
+            loop = asyncio.get_event_loop()
         except RuntimeError:
-            # No running event loop
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        # Create a task from the coroutine
-        task = loop.create_task(move_to_next_epoch_async())
-        # Run the task until it completes
-        loop.run_until_complete(task)
-
+        # Run the async function
+        loop.run_until_complete(move_to_next_epoch_async())
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
