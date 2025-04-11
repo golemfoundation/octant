@@ -59,7 +59,7 @@ const ModalCalculatingYourUniqueness: FC<ModalCalculatingYourUniquenessProps> = 
     <Modal
       className={styles.root}
       dataTest="ModalCalculatingYourUniqueness"
-      header={t('calculatingYourUniqueness')}
+      header={t(`calculatingYourUniquenessHeaders.step${currentStepIndex + 1}`)}
       Image={
         <div className={styles.imageWrapper}>
           <Img className={styles.image} src="/images/calculator.webp" />
