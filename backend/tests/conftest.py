@@ -10,6 +10,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 from eth_utils import to_checksum_address
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import gql
 import pytest
@@ -452,6 +453,48 @@ def random_string() -> str:
 
 
 @pytest.fixture(scope="function")
+def fastapi_app(deployment) -> FastAPI:
+    # take SQLALCHEMY_DATABASE_URI and use as DB_URI
+    os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
+    os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
+
+    for key in dir(deployment):
+        if key.isupper():
+            value = getattr(deployment, key)
+            if value is not None:
+                os.environ[key] = str(value)
+
+    # Additional logging and no need for socketio in tests
+    app = create_fastapi_app(debug=True)
+
+    # Mock sablier to just return [] always
+    sablier_subgraph = MagicMock(spec=SablierSubgraph)
+    sablier_subgraph.get_all_streams_history.return_value = []
+    sablier_subgraph.get_user_events_history.return_value = []
+    app.dependency_overrides[get_sablier_subgraph] = lambda: sablier_subgraph
+
+    # Create database tables based on the models
+
+    settings = get_database_settings()
+    engine = create_engine(
+        settings.db_uri,
+        echo=False,  # Disable SQL query logging (for performance)
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
+    )
+
+    BaseModel.metadata.create_all(bind=engine)
+
+    yield app
+
+    BaseModel.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture(scope="function")
+def fastapi_client(fastapi_app: FastAPI) -> TestClient:
+    return TestClient(fastapi_app)
+
+
+@pytest.fixture(scope="function")
 def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
@@ -464,7 +507,7 @@ def fastapi_client(deployment) -> TestClient:
                 os.environ[key] = str(value)
 
     # Additional logging and no need for socketio in tests
-    app = create_fastapi_app(debug=True, include_socketio=False)
+    app = create_fastapi_app(debug=True)
 
     # Mock sablier to just return [] always
     sablier_subgraph = MagicMock(spec=SablierSubgraph)
