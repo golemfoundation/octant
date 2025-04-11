@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from eth_account import Account
 from eth_account.messages import SignableMessage, _hash_eip191_message
 from eth_keys.exceptions import BadSignature
@@ -6,6 +7,18 @@ from v2.core.types import Address
 from v2.crypto.contracts import GNOSIS_SAFE, GnosisSafeContracts
 from web3 import AsyncWeb3
 from web3.exceptions import ContractLogicError
+
+
+@dataclass
+class SignedMessageVerifier:
+    w3: AsyncWeb3
+
+    async def verify(
+        self, user_address: Address, encoded_msg: SignableMessage, signature: str
+    ) -> bool:
+        return await verify_signed_message(
+            self.w3, user_address, encoded_msg, signature
+        )
 
 
 async def verify_signed_message(

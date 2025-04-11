@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
-
+from eth_utils import to_checksum_address
 from fastapi.testclient import TestClient
 import gql
 import pytest
@@ -20,7 +20,12 @@ from requests import RequestException
 from web3 import Web3
 
 import logging
-from v2.main import app as fastapi_app
+
+from app.infrastructure.database.models import BaseModel, User
+from v2.sablier.dependencies import get_sablier_subgraph
+from v2.sablier.subgraphs import SablierSubgraph
+from tests.helpers.custom_flask_client import CustomFlaskClient
+from startup import create_fastapi_app
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.exceptions import ExternalApiException
@@ -88,6 +93,9 @@ from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from v2.core.dependencies import get_database_settings
 
 LOGGER = logging.getLogger("app")
 
@@ -418,7 +426,7 @@ def random_string() -> str:
     return "".join(random.choices(characters, k=length_of_string))
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def fastapi_client(deployment) -> TestClient:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
@@ -430,13 +438,37 @@ def fastapi_client(deployment) -> TestClient:
             if value is not None:
                 os.environ[key] = str(value)
 
-    return TestClient(fastapi_app)
+    # Additional logging and no need for socketio in tests
+    app = create_fastapi_app(debug=True, include_socketio=False)
+
+    # Mock sablier to just return [] always
+    sablier_subgraph = MagicMock(spec=SablierSubgraph)
+    sablier_subgraph.get_all_streams_history.return_value = []
+    sablier_subgraph.get_user_events_history.return_value = []
+    app.dependency_overrides[get_sablier_subgraph] = lambda: sablier_subgraph
+
+    # Create database tables based on the models
+
+    settings = get_database_settings()
+    engine = create_engine(
+        settings.db_uri,
+        echo=False,  # Disable SQL query logging (for performance)
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
+    )
+
+    BaseModel.metadata.create_all(bind=engine)
+
+    yield TestClient(app)
+
+    BaseModel.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
 def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
     _app = create_app(deployment)
+
+    _app.test_client_class = CustomFlaskClient
 
     with _app.test_client() as client:
         with _app.app_context():
@@ -615,9 +647,6 @@ class Client:
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending")
-        current_app.logger.debug(
-            f"Request to /snapshots/pending [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text)
 
     def pending_snapshot_simulate(self):
@@ -646,16 +675,10 @@ class Client:
 
     def get_epoch_info(self, epoch):
         rv = self._flask_client.get(f"/epochs/info/{epoch}")
-        current_app.logger.debug(
-            f"Request to /epochs/info/{epoch} [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective_estimated(self):
         rv = self._flask_client.get("/deposits/total_effective/estimated")
-        current_app.logger.debug(
-            f"Request to /deposits/total_effective/estimated [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective(self, epoch: int):
@@ -682,12 +705,10 @@ class Client:
 
     def get_user_rewards_in_upcoming_epoch(self, address: str):
         rv = self._flask_client.get(f"/rewards/budget/{address}/upcoming")
-        current_app.logger.debug(f"get_user_rewards_in_upcoming_epoch :{rv.text}")
         return json.loads(rv.text)
 
     def get_user_rewards_in_epoch(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}")
-        current_app.logger.debug(f"get_rewards_budget :{rv.text}")
         return json.loads(rv.text)
 
     def get_total_users_rewards_in_epoch(self, epoch):
@@ -843,16 +864,10 @@ class Client:
 
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
-        current_app.logger.debug(
-            f"Request to get /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
         rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
-        current_app.logger.debug(
-            f"Request to put /user/{user_address}/antisybil-status [{rv.status_code}] returned text {rv.text}"
-        )
         return rv.text, rv.status_code
 
     def get_chain_info(self) -> tuple[dict, int]:
@@ -888,9 +903,6 @@ class Client:
                 "secondaryAddrSignature": secondary_address_signature,
             },
         )
-        current_app.logger.debug(
-            f"Request to /delegate [{rv.status_code}] returned text {rv.text}"
-        )
         return json.loads(rv.text), rv.status_code
 
     def delegation_recalculate(
@@ -908,9 +920,6 @@ class Client:
                 "primaryAddrSignature": primary_address_signature,
                 "secondaryAddrSignature": secondary_address_signature,
             },
-        )
-        current_app.logger.debug(
-            f"Request to /delegation/recalculate [{rv.status_code}] returned text {rv.text}"
         )
         return json.loads(rv.text), rv.status_code
 
@@ -1626,3 +1635,37 @@ def mock_uniqueness_quotients():
     uniqueness_quotients.calculate.return_value = LOW_UQ_SCORE
 
     return uniqueness_quotients
+
+
+@pytest.fixture(scope="function")
+def sync_session() -> Session:
+    """Returns a synchronous SQLAlchemy session for testing."""
+    settings = get_database_settings()
+
+    # Create a synchronous engine
+    engine = create_engine(
+        settings.db_uri,
+        echo=False,  # Disable SQL query logging (for performance)
+        future=True,  # Use the future-facing SQLAlchemy 2.0 style
+    )
+
+    # Create a session factory
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    # Create and return a session
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def add_user_sync(session: Session, user_address: str) -> User:
+    user = User(address=to_checksum_address(user_address))
+    session.add(user)
+
+    return user

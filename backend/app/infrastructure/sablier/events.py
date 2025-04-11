@@ -1,11 +1,20 @@
-from typing import TypedDict, List, Dict
+from functools import lru_cache
+import os
+from typing import TypedDict, List, Dict, Set
 
 from flask import current_app as app
 from gql import gql
 
+from app.constants import (
+    SABLIER_TOKEN_ADDRESS_SEPOLIA,
+    SABLIER_SENDER_ADDRESS_SEPOLIA,
+    SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA,
+    INCORRECTLY_CANCELLED_STREAMS_PATH,
+)
 from app.extensions import gql_sablier_factory
-from app.constants import SABLIER_TOKEN_ADDRESS_SEPOLIA, SABLIER_SENDER_ADDRESS_SEPOLIA
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
+
+import pandas as pd
 
 
 class SablierAction(TypedDict):
@@ -26,6 +35,11 @@ class SablierStream(TypedDict):
     endTime: str
     depositAmount: str
     recipient: str
+    stream_id: str
+
+
+def is_e2e_env() -> bool:
+    return os.getenv("ENV_TYPE") == "e2e"
 
 
 def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
@@ -50,6 +64,10 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
         app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
 
         for stream in streams:
+            stream_id = stream.get("id")
+            if _check_if_incorrectly_cancelled_stream(stream_id) is True:
+                continue
+
             actions = stream.get("actions", [])
             final_intact_amount = stream.get("intactAmount", 0)
             is_cancelled = stream.get("canceled")
@@ -65,6 +83,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
                     endTime=end_time,
                     depositAmount=deposit_amount,
                     recipient=recipient,
+                    id=stream_id,
                 )
             )
 
@@ -81,6 +100,12 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
     Get all the locks and unlocks for a user.
     Query used for computing user's effective deposit and getting all sablier streams from an endpoint.
     """
+    # This is for E2E tests only!
+    # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
+    if is_e2e_env():
+        app.logger.info("E2E environment detected, skipping Sablier subgraph query")
+        return []
+
     query = """
         query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
           streams(
@@ -88,7 +113,6 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
               sender: $sender
               recipient: $recipient
               asset_: {address: $tokenAddress}
-              transferable: false
             }
             first: $limit
             skip: $skip
@@ -126,13 +150,18 @@ def get_all_streams_history() -> List[SablierStream]:
     """
     Get all the locks and unlocks in history.
     """
+    # This is for E2E tests only!
+    # these request timeout sometimes causing pending snapshot to fail and subsequently E2E tests to crash.
+    if is_e2e_env():
+        app.logger.info("E2E environment detected, skipping Sablier subgraph query")
+        return []
+
     query = """
         query GetAllEvents($sender: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
           streams(
             where: {
               sender: $sender
               asset_: {address: $tokenAddress}
-              transferable: false
             }
             first: $limit
             skip: $skip
@@ -182,3 +211,35 @@ def _get_token_address():
         else SABLIER_TOKEN_ADDRESS_SEPOLIA
     )
     return token_address
+
+
+@lru_cache(maxsize=1)
+def _retrieve_incorrectly_cancelled_streams() -> Set[int]:
+    incorrectly_cancelled_streams_ids = set()
+    chain_id = app.config["CHAIN_ID"]
+
+    if compare_blockchain_types(chain_id, ChainTypes.SEPOLIA):
+        incorrectly_cancelled_streams_ids = (
+            SABLIER_INCORRECTLY_CANCELLED_STREAMS_IDS_SEPOLIA
+        )
+    elif compare_blockchain_types(chain_id, ChainTypes.MAINNET):
+        incorrectly_cancelled_streams_ids = set(
+            pd.read_csv(INCORRECTLY_CANCELLED_STREAMS_PATH, sep=";")[
+                "streamid"
+            ].to_list()
+        )
+
+    return incorrectly_cancelled_streams_ids
+
+
+def _check_if_incorrectly_cancelled_stream(source_stream_id: str) -> bool:
+    """
+    This function fixes the issue with incorrectly cancelled streams.
+    It suppresses the streams based on the data/cancelled_streams.csv file for mainnet.
+
+    Source stream id is the stream id from the subgraph. Its format is: "0x{stream_id}-<nr>-<num_id>".
+    The last part of the stream id is the id from the source of truth.
+    """
+    processed_stream_id = int(source_stream_id.split("-")[-1])
+    incorrectly_cancelled_streams_ids = _retrieve_incorrectly_cancelled_streams()
+    return processed_stream_id in incorrectly_cancelled_streams_ids
