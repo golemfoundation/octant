@@ -24,7 +24,6 @@
     display: flex;
     align-items: center;
     margin: 1.6rem 0 0.8rem;
-    height: 3.2rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -32,7 +31,6 @@
     @media #{$tablet-up} {
       @include fontBig($font-size-32);
       margin: 0.6rem 0 0.8rem;
-      height: 4.8rem;
     }
 
     @media #{$desktop-up} {

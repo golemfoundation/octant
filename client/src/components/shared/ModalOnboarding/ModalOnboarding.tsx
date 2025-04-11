@@ -172,6 +172,13 @@ const ModalOnboarding = (): ReactElement => {
   }, [isUserTOSAccepted]);
 
   useEffect(() => {
+    if (!isUserTOSAcceptedInitial && isUserTOSAccepted) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUserTOSAccepted]);
+
+  useEffect(() => {
     if (isFetchingUserTOS) {
       return;
     }
