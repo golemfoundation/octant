@@ -11,7 +11,7 @@ import pytest
 from flask import current_app as app
 from fastapi import FastAPI, status
 from app.legacy.core.projects import get_projects_addresses
-from backend.tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient
 from tests.conftest import Client, UserAccount
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
 import json
