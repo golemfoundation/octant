@@ -581,6 +581,7 @@
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use ETH as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
+      "showQuickTour": "Show quick tour",
       "showHelpVideos": "Show help videos",
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
@@ -594,5 +595,54 @@
   "languageSelector": {
     "english": "English",
     "spanish": "Español"
+  },
+  "tourGuide": {
+    "tooltipComponent": {
+      "stepsCounter": "{{currentStepNumber}} of {{numberOfSteps}}"
+    },
+    "step1": {
+      "text": "Connect your wallet and click the <1>Lock GLM</1> button. Enter the amount of GLM to lock and confirm the transaction in your wallet.",
+      "title": "How to lock GLM"
+    },
+    "step2": {
+      "text": "Keep your GLM locked to earn rewards and use them in the next allocation window. The calendar will show you when that is, just click to open it.",
+      "title": "Check the calendar"
+    },
+    "step3": {
+      "text": "When allocation is open, check Projects view and click the heart icons to add them to your cart. Then donate and self-allocate from here.",
+      "title": "Check your cart"
+    },
+    "step4": {
+      "text": "You need to verify yourself as unique in order to receive fund matching for your donations. Visit Octant’s Gitcoin passport dashboard to do that.",
+      "title": "Uniqueness score"
+    },
+    "step5": {
+      "text": "Estimate the value of your rewards and match funding here. Just enter a GLM amount and the amount of time you plan to lock them for.",
+      "title": "Estimate your rewards"
+    },
+    "step6": {
+      "text": "Mouse over the chart to see how projects are doing. Click and drag to see more. Click to open a project's details in a new tab.",
+      "title": "Results chart"
+    },
+    "step7": {
+      "text": "During allocation window, click the heart to add projects to your cart. Then open your cart and allocate to your chosen projects and yourself.",
+      "title": "Add your favourite projects"
+    },
+    "step8": {
+      "text": "Browse through archived epoch metrics with these navigation arrows",
+      "title": "Explore previous epochs"
+    },
+    "step9": {
+      "text": "Hover or tap the donut chart segments to see the details of how funds were used for the epoch",
+      "title": "Funds usage"
+    },
+    "step10": {
+      "text": "Drag the slider handle to choose your total donation vs personal amounts. Donations will be split evenly amongst all your chosen projects.",
+      "title": "Easy mode"
+    },
+    "step11": {
+      "text": "Edit donation values directly to enter manual mode. Allocate exact amounts to each project, and the remainder will be allocated to you.",
+      "title": "Manual allocation"
+    }
   }
 }

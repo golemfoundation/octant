@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
+import { TOURGUIDE_ELEMENT_9 } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
@@ -190,6 +191,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
           title: t('fundsUsage', { epoch }),
         },
       ]}
+      id={TOURGUIDE_ELEMENT_9}
       size="L"
     />
   );

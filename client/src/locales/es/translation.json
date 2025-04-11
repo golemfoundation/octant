@@ -581,6 +581,7 @@
       "chooseDisplayCurrency": "Elige una moneda para visualizar",
       "cryptoMainValueDisplay": "Utiliza ETH como valor principal de visualización",
       "alwaysShowOnboarding": "Mostrar siempre la incorporación",
+      "showQuickTour": "Mostrar recorrido rápido",
       "showHelpVideos": "Mostrar videos de ayuda",
       "enablePatronMode": "Habilitar modo mecenas",
       "patronModeTooltip": "El modo patrocinador es para los poseedores de tokens que desean apoyar a Octant. Desactiva la asignación para ti o a proyectos. Todas las recompensas van directamente al fondo de contrapartida sin necesidad de que el patrocinador haga nada.",
@@ -594,5 +595,54 @@
   "languageSelector": {
     "english": "Inglés",
     "spanish": "Español"
+  },
+  "tourGuide": {
+    "tooltipComponent": {
+      "stepsCounter": "{{currentStepNumber}} de {{numberOfSteps}}"
+    },
+    "step1": {
+      "text": "Conecta tu billetera y haz clic en el botón <1>Bloquear GLM</1>. Ingresa la cantidad de GLM a bloquear y confirma la transacción en tu billetera.",
+      "title": "Cómo bloquear GLM"
+    },
+    "step2": {
+      "text": "Mantén tu GLM bloqueado para ganar recompensas y usarlos en la próxima ventana de asignación. El calendario te mostrará cuándo es, solo haz clic para abrirlo.",
+      "title": "Revisa el calendario"
+    },
+    "step3": {
+      "text": "Cuando la asignación esté abierta, revisa la vista de Proyectos y haz clic en los íconos de corazón para agregarlos a tu carrito. Luego, dona y autoasigna desde aquí.",
+      "title": "Revisa tu carrito"
+    },
+    "step4": {
+      "text": "Debes verificarte como único para recibir financiamiento complementario para tus donaciones. Visita el panel de pasaporte de Gitcoin de Octant para hacerlo.",
+      "title": "Puntuación de unicidad"
+    },
+    "step5": {
+      "text": "Estima el valor de tus recompensas y el financiamiento complementario aquí. Solo ingresa una cantidad de GLM y el tiempo que planeas bloquearlos.",
+      "title": "Estima tus recompensas"
+    },
+    "step6": {
+      "text": "Pasa el cursor sobre el gráfico para ver cómo les va a los proyectos. Haz clic y arrastra para ver más. Haz clic para abrir los detalles de un proyecto en una nueva pestaña.",
+      "title": "Gráfico de resultados"
+    },
+    "step7": {
+      "text": "Durante la ventana de asignación, haz clic en el corazón para agregar proyectos a tu carrito. Luego, ábrelo y asigna fondos a los proyectos elegidos y a ti mismo.",
+      "title": "Añade tus proyectos favoritos"
+    },
+    "step8": {
+      "text": "Explora las métricas de épocas archivadas con estas flechas de navegación.",
+      "title": "Explora épocas anteriores"
+    },
+    "step9": {
+      "text": "Pasa el cursor o toca los segmentos del gráfico de dona para ver los detalles de cómo se utilizaron los fondos en la época.",
+      "title": "Uso de fondos"
+    },
+    "step10": {
+      "text": "Arrastra el control deslizante para elegir tu donación total vs. montos personales. Las donaciones se dividirán equitativamente entre todos los proyectos elegidos.",
+      "title": "Modo fácil"
+    },
+    "step11": {
+      "text": "Edita los valores de donación directamente para ingresar al modo manual. Asigna montos exactos a cada proyecto y el resto se te asignará a ti.",
+      "title": "Asignación manual"
+    }
   }
 }

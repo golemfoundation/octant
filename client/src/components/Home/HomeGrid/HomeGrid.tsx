@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { memo, ReactNode } from 'react';
+import React, { memo, ReactElement } from 'react';
 
 import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
 import HomeGridDivider from 'components/Home/HomeGridDivider';
@@ -18,7 +18,7 @@ import useSettingsStore from 'store/settings/store';
 
 import styles from './HomeGrid.module.scss';
 
-const HomeGrid = (): ReactNode => {
+const HomeGrid = (): ReactElement => {
   const { isLargeDesktop, isDesktop, isMobile, isTablet } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
