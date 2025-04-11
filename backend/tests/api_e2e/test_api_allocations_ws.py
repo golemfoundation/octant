@@ -246,7 +246,7 @@ def test_allocations_via_socketio(
             print("Server logs:")
             server_logs = server_log.getvalue()
             print(server_logs)
-            return server_logs
+            return server_logs  # noqa: B012
 
     # Run the async test
     server_logs = None
