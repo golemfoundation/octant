@@ -35,7 +35,7 @@ def test_allocations_via_socketio(
     """
 
     # Set up logging to capture server output
-    caplog.set_level(logging.DEBUG)
+    caplog.set_level(logging.WARNING)
     
     # Setup test data
     alice_proposals = get_projects_addresses(1)[:3]
@@ -86,7 +86,7 @@ def test_allocations_via_socketio(
         # Capture server logs
         server_log = io.StringIO()
         log_handler = logging.StreamHandler(server_log)
-        log_handler.setLevel(logging.DEBUG)
+        log_handler.setLevel(logging.WARNING)
         uvicorn_logger = logging.getLogger("uvicorn")
         uvicorn_logger.addHandler(log_handler)
         
@@ -96,7 +96,7 @@ def test_allocations_via_socketio(
                 "app": fastapi_app,
                 "host": "127.0.0.1",
                 "port": 8766,
-                "log_level": "debug"  # More verbose logging
+                "log_level": "warning"  # Only warnings and above
             }
         )
         server_thread.daemon = True
@@ -108,7 +108,7 @@ def test_allocations_via_socketio(
         await asyncio.sleep(2)
         
         # Create socketio client
-        sio = socketio.AsyncClient(logger=True, engineio_logger=True)
+        sio = socketio.AsyncClient(logger=False, engineio_logger=False)
         
         @sio.event
         async def connect():
