@@ -107,7 +107,6 @@ class FastAPIClient:
             loop.run_until_complete(task)
             loop.close()
 
-
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
         return json.loads(rv.text), rv.status_code
