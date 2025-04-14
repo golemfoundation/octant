@@ -95,7 +95,7 @@ const LocalStorageService = () => {
   };
 
   const validateIsQuickTourAlwaysVisible = (): void => {
-    validateBoolean(IS_QUICKTOUR_ALWAYS_VISIBLE);
+    validateBoolean(IS_QUICKTOUR_ALWAYS_VISIBLE, true);
   };
 
   const validateIsOnboardingDone = (): void => {

@@ -6,6 +6,7 @@ import TooltipComponent from 'components/shared/QuickTour/TooltipComponent';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useQuickTourSteps from 'hooks/helpers/useQuickTourSteps';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
+import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 
 const Handler = (): ReactElement | null => {
@@ -17,20 +18,35 @@ const Handler = (): ReactElement | null => {
     isQuickTourVisible: state.data.isQuickTourVisible,
     setIsQuickTourVisible: state.setIsQuickTourVisible,
   }));
+  const { isOnboardingModalOpen } = useOnboardingStore(state => ({
+    isOnboardingModalOpen: state.data.isOnboardingModalOpen,
+  }));
 
   const steps = useQuickTourSteps();
 
   const handleCallback = (args: CallBackProps) => {
+    const isOnAfterStepIsDoneDefined = !!args.step?.data?.onAfterStepIsDone;
+    const isOnStepPrevDefined = !!args.step?.data?.onStepPrev;
+
     if (currentStep === 0 && args.action === ACTIONS.SKIP && args.type === EVENTS.TOUR_END) {
-      setIsQuickTourVisible(false);
-    } else if (args.action === ACTIONS.NEXT && args.type === EVENTS.TOUR_END) {
       setIsQuickTourVisible(false);
     } else if (args.action === ACTIONS.PREV && args.type === EVENTS.STEP_AFTER) {
       setCurrentStep(prev => prev - 1);
+
+      if (isOnStepPrevDefined) {
+        args.step.data.onStepPrev();
+      }
     } else if (args.action === ACTIONS.NEXT && args.type === EVENTS.STEP_AFTER) {
       setCurrentStep(prev => prev + 1);
-    } else if (args.type === EVENTS.STEP_AFTER && args.step?.data?.onAfterStepIsDone) {
-      args.step.data.onAfterStepIsDone();
+
+      if (isOnAfterStepIsDoneDefined) {
+        args.step.data.onAfterStepIsDone();
+      }
+
+      if (currentStep === steps.length - 1) {
+        setIsQuickTourVisible(false);
+        setCurrentStep(0);
+      }
     }
   };
 
@@ -46,7 +62,7 @@ const Handler = (): ReactElement | null => {
     [stepsCurrentView.length],
   );
 
-  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible) {
+  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible || isOnboardingModalOpen) {
     return null;
   }
 

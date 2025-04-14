@@ -18,7 +18,12 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 
 import { GetQuickTourSteps } from './types';
 
-export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, navigate) => {
+export const getQuickTourSteps: GetQuickTourSteps = (
+  t,
+  isDecisionWindowOpen,
+  navigate,
+  setIsAllocationDrawerOpen,
+) => {
   return [
     {
       content: {
@@ -85,6 +90,7 @@ export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, na
             },
             data: {
               onAfterStepIsDone: () => navigate(ROOT_ROUTES.metrics.absolute),
+              onStepPrev: () => navigate(ROOT_ROUTES.home.absolute),
             },
             target: `#${TOURGUIDE_ELEMENT_7}`,
             title: t('step7.title'),
@@ -95,6 +101,12 @@ export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, na
       content: {
         imgSrc: '/images/tourguide/8.gif',
         text: t('step8.text'),
+      },
+      data: {
+        onStepPrev: () =>
+          navigate(
+            isDecisionWindowOpen ? ROOT_ROUTES.projects.absolute : ROOT_ROUTES.home.absolute,
+          ),
       },
       target: `#${TOURGUIDE_ELEMENT_8}`,
       title: t('step8.title'),
@@ -118,6 +130,14 @@ export const getQuickTourSteps: GetQuickTourSteps = (t, isDecisionWindowOpen, na
             content: {
               imgSrc: '/images/tourguide/10.gif',
               text: t('step10.text'),
+            },
+            data: {
+              onStepPrev: isDecisionWindowOpen
+                ? () => {
+                    navigate(ROOT_ROUTES.metrics.absolute);
+                    setIsAllocationDrawerOpen(false);
+                  }
+                : undefined,
             },
             target: `#${TOURGUIDE_ELEMENT_10_11}`,
             title: t('step10.title'),
