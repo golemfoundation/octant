@@ -3,7 +3,7 @@ import logging
 from web3 import AsyncWeb3
 
 from app.constants import EIP1271_MAGIC_VALUE_BYTES
-from backend.v2.core.types import Address
+from v2.core.types import Address
 from v2.core.contracts import SmartContract
 
 

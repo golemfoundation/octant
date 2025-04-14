@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from backend.v2.crypto.contracts import GNOSIS_SAFE, GnosisSafeContractsFactory, GnosisSafeContracts
+from v2.crypto.contracts import GNOSIS_SAFE, GnosisSafeContractsFactory, GnosisSafeContracts
 from v2.crypto.signatures import SignedMessageVerifier
 from v2.core.dependencies import Web3
 
