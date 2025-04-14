@@ -65,9 +65,9 @@
       "allocateRewards": "Asigna tus recompensas",
       "lowUQScoreModal": {
         "header": "Tu puntuación UQ es inferior a 15",
-        "text": "Una puntuación de 15 o más en el Pasaporte Gitcoin multiplicará por 10 tu financiación de emparejamiento. Para aumentar tu puntuación, antes de asignar, visita el panel de control personalizado del GP que aparece a continuación para añadir más sellos.",
+        "text": "Una puntuación de 15 o más en el Passport XYZ multiplicará por 10 tu financiación de emparejamiento. Para aumentar tu puntuación, antes de asignar, visita el panel de control personalizado del Passport que aparece a continuación para añadir más sellos.",
         "checkboxLabel": "Entiendo que solo recibiré el 10% del financiamiento máximo equivalente.",
-        "goToGitcoinPassportCustomOctantDashboard": "Ir al panel de control de GP",
+        "goToGitcoinPassportCustomOctantDashboard": "Ir al panel de control de Passport",
         "proceedToAllocate": "Asignar de todos modos",
         "toasts": {
           "success": {
@@ -161,9 +161,9 @@
         },
         "modalCalculatingYourUniqueness": {
           "calculatingYourUniqueness": "Calculando tu singularidad",
-          "calculatingYourUniquenessStep1": "Para demostrar tu singularidad, necesitas un puntaje de <0>Gitcoin Passport</0> de 15 o más. <br/> <br/> Si lo tienes, tus donaciones atraerán la cantidad máxima de financiación equivalente. De lo contrario, la financiación equivalente máxima será del 10 %. <br/> <br/> Puedes aumentar tu puntuación de diferentes formas.",
+          "calculatingYourUniquenessStep1": "Para demostrar tu singularidad, necesitas un puntaje de <0>Passport XYZ</0> de 15 o más. <br/> <br/> Si lo tienes, tus donaciones atraerán la cantidad máxima de financiación equivalente. De lo contrario, la financiación equivalente máxima será del 10 %. <br/> <br/> Puedes aumentar tu puntuación de diferentes formas.",
           "calculatingYourUniquenessStep2": "Puedes ir a nuestro <0>Panel de Pasaporte</0> y agregar sellos al puntaje de tu dirección Octant. <br/> <br/> Si tu puntaje de Pasaporte no está en tu dirección principal, puedes delegar tu puntaje desde otra dirección con un puntaje de Pasaporte de 15 o más. <br/> <br/> Solo puedes hacer esto una vez y debes hacerlo antes de asignar para beneficiar la época actual.",
-          "calculatingYourUniquenessStep3": "La delegación no vinculará tus direcciones ni comprometerá tu privacidad de forma alguna. <br/> <br/> Requerimos una prueba de singularidad para poder protegernos contra los ataques Sybil, ya que hemos cambiado a un modelo de financiación cuadrático. <br/> <br/> Para obtener más información, consulta la práctica <0>guía de Gitcoin para mejorar tu puntuación.</0>"
+          "calculatingYourUniquenessStep3": "La delegación no vinculará tus direcciones ni comprometerá tu privacidad de forma alguna. <br/> <br/> Requerimos una prueba de singularidad para poder protegernos contra los ataques Sybil, ya que hemos cambiado a un modelo de financiación cuadrático. <br/> <br/> Para obtener más información, consulta la práctica <0>guía de Passport XYZ para mejorar tu puntuación.</0>"
         },
         "modalCalculatingUQScore": {
           "signMessages": "Firmar mensajes",
@@ -613,7 +613,7 @@
       "title": "Revisa tu carrito"
     },
     "step4": {
-      "text": "Debes verificarte como único para recibir financiamiento complementario para tus donaciones. Visita el panel de pasaporte de Gitcoin de Octant para hacerlo.",
+      "text": "Debes verificarte como único para recibir financiamiento complementario para tus donaciones. Visita el panel de Passport XYZ de Octant para hacerlo.",
       "title": "Puntuación de unicidad"
     },
     "step5": {
