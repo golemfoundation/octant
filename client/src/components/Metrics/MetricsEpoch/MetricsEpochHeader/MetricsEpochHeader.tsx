@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsSectionHeader from 'components/Metrics/MetricsSectionHeader';
 import NavigationArrows from 'components/shared/NavigationArrows';
+import { TOURGUIDE_ELEMENT_8 } from 'constants/domElementsIds';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
@@ -43,6 +44,7 @@ const MetricsEpochHeader = (): ReactElement => {
         className={styles.arrows}
         classNamePrevButton={styles.arrowLeft}
         dataTest={`${dataTestRoot}__NavigationArrows`}
+        idArrowPrevious={TOURGUIDE_ELEMENT_8}
         isNextButtonDisabled={isRightArrowDisabled}
         isPrevButtonDisabled={isLeftArrowDisabled}
         onClickNextButton={() => setEpoch(epoch + 1)}
