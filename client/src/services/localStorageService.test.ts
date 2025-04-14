@@ -11,6 +11,7 @@ import {
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
   SHOW_HELP_VIDEOS,
   LANGUAGE_UI,
+  IS_QUICKTOUR_ALWAYS_VISIBLE,
 } from 'constants/localStorageKeys';
 import { languageKey } from 'i18n/languages';
 import { ProjectsAddressesRandomizedOrder } from 'types/localStorage';
@@ -62,6 +63,12 @@ describe('LocalStorageService', () => {
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'not-a-boolean');
       localStorageService.init(localStorageInitParams);
       expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).toBe('false');
+    });
+
+    it(`should validate ${IS_QUICKTOUR_ALWAYS_VISIBLE}`, () => {
+      localStorage.setItem(IS_QUICKTOUR_ALWAYS_VISIBLE, 'not-a-boolean');
+      localStorageService.init(localStorageInitParams);
+      expect(localStorage.getItem(IS_QUICKTOUR_ALWAYS_VISIBLE)).toBe('true');
     });
 
     it(`should validate ${IS_ONBOARDING_DONE}`, () => {

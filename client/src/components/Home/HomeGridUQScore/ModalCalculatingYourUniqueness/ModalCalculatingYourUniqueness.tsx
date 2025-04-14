@@ -7,9 +7,9 @@ import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
 import {
-  GITCOIN_PASSPORT,
+  PASSPORT_XYZ,
   SCORING_20_FOR_HUMANS_GUIDE,
-  GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD,
+  PASSPORT_XYZ_CUSTOM_OCTANT_DASHBOARD,
 } from 'constants/urls';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 
@@ -26,14 +26,14 @@ const ModalCalculatingYourUniqueness: FC<ModalCalculatingYourUniquenessProps> = 
 
   const steps = [
     <Trans
-      components={[<Button className={styles.link} href={GITCOIN_PASSPORT} variant="link3" />]}
+      components={[<Button className={styles.link} href={PASSPORT_XYZ} variant="link3" />]}
       i18nKey={`${translationKeyPrefix}.calculatingYourUniquenessStep1`}
     />,
     <Trans
       components={[
         <Button
           className={styles.link}
-          href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+          href={PASSPORT_XYZ_CUSTOM_OCTANT_DASHBOARD}
           variant="link3"
         />,
       ]}

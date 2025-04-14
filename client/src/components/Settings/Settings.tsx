@@ -8,6 +8,7 @@ import SettingsLanguageSelectorBox from 'components/Settings/SettingsLanguageSel
 import SettingsMainInfoBox from 'components/Settings/SettingsMainInfoBox';
 import SettingsPatronModeBox from 'components/Settings/SettingsPatronModeBox';
 import SettingsShowOnboardingBox from 'components/Settings/SettingsShowOnboardingBox';
+import SettingsShowQuickTourBox from 'components/Settings/SettingsShowQuickTourBox';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
@@ -39,6 +40,7 @@ const Settings: FC<SettingsProps> = ({ dataTest }) => {
         <SettingsShowHelpVideosBox />
         {isConnected && !isProjectAdminMode && <SettingsPatronModeBox />}
         {!isProjectAdminMode && !isPatronMode && <SettingsShowOnboardingBox />}
+        {!isProjectAdminMode && !isPatronMode && <SettingsShowQuickTourBox />}
         <SettingsLanguageSelectorBox />
       </div>
     </div>

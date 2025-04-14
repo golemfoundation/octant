@@ -67,9 +67,9 @@
       "allocationList": "Allocation List",
       "lowUQScoreModal": {
         "header": "Your UQ score is below 15",
-        "text": "A Gitcoin Passport score of 15 or over will boost your match funding by 10x. To increase your score, visit the custom GP dashboard below to add more stamps before you allocate.",
+        "text": "A Passport XYZ score of 15 or over will boost your match funding by 10x. To increase your score, visit the custom Passport dashboard below to add more stamps before you allocate.",
         "checkboxLabel": "I understand I will only receive 10% of the max. match funding",
-        "goToGitcoinPassportCustomOctantDashboard": "Go to GP dashboard",
+        "goToGitcoinPassportCustomOctantDashboard": "Go to Passport dashboard",
         "proceedToAllocate": "Allocate anyway",
         "toasts": {
           "success": {
@@ -168,9 +168,9 @@
             "step2": "How to check your Passport score",
             "step3": "Keeping funding fair"
           },
-          "calculatingYourUniquenessStep1": "We use <0>Gitcoin\u00a0Passport</0>, an onchain reputation system, to match and multiply allocations from real people.<br/><br/>If you have a Passport score of 15 or higher, we'll match your allocation and apply the max multiplier. If not, the multiplier is capped at 10%.",
-          "calculatingYourUniquenessStep2": "To check your Passport score, go to the <0>Passport Dashboard on Gitcoin.</0><br/><br/>From there you can add stamps to improve  your score. You can also delegate your score from a different address.",
-          "calculatingYourUniquenessStep3": "By applying Gitcoin Passport Score we keep our project funding fair and effective.<br/><br/>To learn more, check out <0>Gitcoin's handy guide on improving your score</0>"
+          "calculatingYourUniquenessStep1": "We use <0>Passport\u00a0XYZ</0>, an onchain reputation system, to match and multiply allocations from real people.<br/><br/>If you have a Passport score of 15 or higher, we'll match your allocation and apply the max multiplier. If not, the multiplier is capped at 10%.",
+          "calculatingYourUniquenessStep2": "To check your Passport score, go to the <0>Passport Dashboard.</0><br/><br/>From there you can add stamps to improve  your score. You can also delegate your score from a different address.",
+          "calculatingYourUniquenessStep3": "By applying Passport XYZ Score we keep our project funding fair and effective.<br/><br/>To learn more, check out <0>Passport's handy guide on improving your score</0>"
         },
         "modalCalculatingUQScore": {
           "signMessages": "Sign messages",
@@ -584,6 +584,7 @@
       "chooseDisplayCurrency": "Choose a currency",
       "cryptoMainValueDisplay": "Use ETH as main value",
       "alwaysShowOnboarding": "Always show onboarding",
+      "showQuickTour": "Show quick tour",
       "showHelpVideos": "Show help videos",
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Automatically allocate all of your rewards across all projects for each epoch.",
@@ -597,5 +598,54 @@
   "languageSelector": {
     "english": "English",
     "spanish": "Español"
+  },
+  "tourGuide": {
+    "tooltipComponent": {
+      "stepsCounter": "{{currentStepNumber}} of {{numberOfSteps}}"
+    },
+    "step1": {
+      "text": "Connect your wallet and click the <1>Lock GLM</1> button. Enter the amount of GLM to lock and confirm the transaction in your wallet.",
+      "title": "How to lock GLM"
+    },
+    "step2": {
+      "text": "Keep your GLM locked to earn rewards and use them in the next allocation window. The calendar will show you when that is, just click to open it.",
+      "title": "Check the calendar"
+    },
+    "step3": {
+      "text": "When allocation is open, check Projects view and click the heart icons to add them to your cart. Then donate and self-allocate from here.",
+      "title": "Check your cart"
+    },
+    "step4": {
+      "text": "You need to verify yourself as unique in order to receive fund matching for your donations. Visit Octant’s Passport XYZ dashboard to do that.",
+      "title": "Uniqueness score"
+    },
+    "step5": {
+      "text": "Estimate the value of your rewards and match funding here. Just enter a GLM amount and the amount of time you plan to lock them for.",
+      "title": "Estimate your rewards"
+    },
+    "step6": {
+      "text": "Mouse over the chart to see how projects are doing. Click and drag to see more. Click to open a project's details in a new tab.",
+      "title": "Results chart"
+    },
+    "step7": {
+      "text": "During allocation window, click the heart to add projects to your cart. Then open your cart and allocate to your chosen projects and yourself.",
+      "title": "Add your favourite projects"
+    },
+    "step8": {
+      "text": "Browse through archived epoch metrics with these navigation arrows",
+      "title": "Explore previous epochs"
+    },
+    "step9": {
+      "text": "Hover or tap the donut chart segments to see the details of how funds were used for the epoch",
+      "title": "Funds usage"
+    },
+    "step10": {
+      "text": "Drag the slider handle to choose your total donation vs personal amounts. Donations will be split evenly amongst all your chosen projects.",
+      "title": "Easy mode"
+    },
+    "step11": {
+      "text": "Edit donation values directly to enter manual mode. Allocate exact amounts to each project, and the remainder will be allocated to you.",
+      "title": "Manual allocation"
+    }
   }
 }
