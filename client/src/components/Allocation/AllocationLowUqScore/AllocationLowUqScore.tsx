@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import InputCheckbox from 'components/ui/InputCheckbox';
-import { GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD } from 'constants/urls';
+import { PASSPORT_XYZ_CUSTOM_OCTANT_DASHBOARD } from 'constants/urls';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useUqScore from 'hooks/queries/useUqScore';
@@ -94,7 +94,7 @@ const AllocationLowUqScore: FC<AllocationLowUqScoreProps> = ({ onAllocate, onClo
         <Button
           className={styles.button}
           dataTest="AllocationLowUqScore__Button--gitcoinPassport"
-          href={GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD}
+          href={PASSPORT_XYZ_CUSTOM_OCTANT_DASHBOARD}
           target="_blank"
         >
           {t('goToGitcoinPassportCustomOctantDashboard')}

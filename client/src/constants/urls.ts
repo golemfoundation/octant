@@ -8,10 +8,10 @@ export const OCTANT_BUILD_LINK = 'https://octant.build/';
 export const X_LINK = 'https://x.com/OctantApp';
 export const FARCASTER_LINK = 'https://warpcast.com/octant';
 export const TERMS_OF_USE = 'https://docs.octant.app/terms-of-use.html';
-export const GITCOIN_PASSPORT = 'https://support.passport.xyz/passport-knowledge-base';
-export const GITCOIN_PASSPORT_CUSTOM_OCTANT_DASHBOARD = 'https://passport.gitcoin.co/#/octant/';
+export const PASSPORT_XYZ = 'https://support.passport.xyz/passport-knowledge-base';
+export const PASSPORT_XYZ_CUSTOM_OCTANT_DASHBOARD = 'https://app.passport.xyz/#/octant/';
 export const SCORING_20_FOR_HUMANS_GUIDE =
-  'https://support.passport.xyz/passport-knowledge-base/stamps/scoring-20-for-humans';
+  'https://support.passport.xyz/passport-knowledge-base/using-passport/scoring-20-for-humans';
 export const TIME_OUT_LIST_DISPUTE_FORM = 'https://octant.fillout.com/t/wLNsbSGJKWus';
 export const SYBIL_ATTACK_EXPLANATION = 'https://chain.link/education-hub/sybil-attack';
 export const PRIVACY_POLICY = 'https://docs.octant.app/privacy-policy.html';
