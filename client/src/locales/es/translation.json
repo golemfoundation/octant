@@ -65,9 +65,9 @@
       "allocateRewards": "Asigna tus recompensas",
       "lowUQScoreModal": {
         "header": "Tu puntuación UQ es inferior a 15",
-        "text": "Una puntuación de 15 o más en el Passport XYZ multiplicará por 10 tu financiación de emparejamiento. Para aumentar tu puntuación, antes de asignar, visita el panel de control personalizado del GP que aparece a continuación para añadir más sellos.",
+        "text": "Una puntuación de 15 o más en el Passport XYZ multiplicará por 10 tu financiación de emparejamiento. Para aumentar tu puntuación, antes de asignar, visita el panel de control personalizado del Passport que aparece a continuación para añadir más sellos.",
         "checkboxLabel": "Entiendo que solo recibiré el 10% del financiamiento máximo equivalente.",
-        "goToGitcoinPassportCustomOctantDashboard": "Ir al panel de control de GP",
+        "goToGitcoinPassportCustomOctantDashboard": "Ir al panel de control de Passport",
         "proceedToAllocate": "Asignar de todos modos",
         "toasts": {
           "success": {
