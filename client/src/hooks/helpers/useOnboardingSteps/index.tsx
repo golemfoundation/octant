@@ -33,6 +33,10 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
     return '';
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  const timeCurrentEpochEndFormatted = timeCurrentEpochEnd
+    ? format(new Date(timeCurrentEpochEnd).getTime(), 'dd MMM')
+    : '';
+
   return [
     // Once TOS accepted, remove this step from onboarding.
     ...(isUserTOSAcceptedInitial === false && isUserTOSAccepted === false
@@ -59,7 +63,12 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
         ]
       : []),
     ...(isDecisionWindowOpen
-      ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
+      ? getStepsDecisionWindowOpen(
+          epoch?.toString() ?? '',
+          (epoch! + 1)?.toString() ?? '',
+          changeAWDate,
+          timeCurrentEpochEndFormatted,
+        )
       : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
   ];
 };

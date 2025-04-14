@@ -501,19 +501,19 @@
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Epoch {{epoch}} Allocation",
-          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Home view, and explore the projects for this epoch to get an idea of what Octant is all about."
+          "text": "Octant allows you to earn ETH rewards, and use any portion of those rewards to support Ethereum public goods."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "Rewards are calculated on a weighted average. Lock more GLM for longer periods to earn more.<br/><br/>Any GLM unlocked during an epoch won’t count towards your rewards. Use the calculator in the Home view to estimate potential rewards."
+          "text": "Lock 100 GLM or more to start earning rewards.<br/><br/>The more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>Any GLM you unlock won’t count towards rewards for that epoch."
         },
         "donateToProjects": {
           "header": "Donate to projects",
-          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate drawer where you can donate."
+          "text": "Rewards you earn during epoch {{epoch}}, can be used to support projects during epoch the {{epoch}} Allocation Window.<br/><br/>This Allocation Window starts {{date}} and runs for 14 days."
         },
         "slideIt": {
           "header": "Slide to support",
-          "text": "If you have rewards, use the slider in the Allocate drawer to easily divide them between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
+          "text": "Lock your GLM today and explore the app. Come back after {{date}} and start saving projects to your Allocation List.<br/><br/>From this list, you can allocate any portion of your rewards to support public goods, and ultimately support Ethereum."
         }
       },
       "stepsDecisionWindowClosed": {
