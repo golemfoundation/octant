@@ -14,6 +14,18 @@ from tests.helpers.constants import STARTING_EPOCH
 import uvicorn
 import threading
 import io
+import traceback
+
+
+class SocketIOTestResults:
+    def __init__(self):
+        self.threshold = None
+        self.project_rewards = None
+        self.project_donors = {}
+        self.exception = None
+        self.connected = False
+        self.received_events = []  # Track all received events
+        self.connection_errors = []  # Track connection errors
 
 
 @pytest.mark.api
@@ -64,16 +76,6 @@ def test_allocations_via_socketio(
 
     # Create a test for FastAPI socketio
     # We'll need to run the server and client in an event loop
-
-    class SocketIOTestResults:
-        def __init__(self):
-            self.threshold = None
-            self.project_rewards = None
-            self.project_donors = {}
-            self.exception = None
-            self.connected = False
-            self.received_events = []  # Track all received events
-            self.connection_errors = []  # Track connection errors
 
     # Store results in this object
     results = SocketIOTestResults()
@@ -232,7 +234,6 @@ def test_allocations_via_socketio(
 
         except Exception as e:
             print(f"Exception during SocketIO test: {e}")
-            import traceback
 
             traceback.print_exc()
             results.exception = str(e)
@@ -268,8 +269,6 @@ def test_allocations_via_socketio(
         print(f"  Exception: {results.exception}")
     except Exception as e:
         print(f"Unexpected exception during test: {e}")
-        import traceback
-
         traceback.print_exc()
 
     # Print test logs
