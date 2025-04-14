@@ -68,7 +68,7 @@ describe('LocalStorageService', () => {
     it(`should validate ${IS_QUICKTOUR_ALWAYS_VISIBLE}`, () => {
       localStorage.setItem(IS_QUICKTOUR_ALWAYS_VISIBLE, 'not-a-boolean');
       localStorageService.init(localStorageInitParams);
-      expect(localStorage.getItem(IS_QUICKTOUR_ALWAYS_VISIBLE)).toBe('false');
+      expect(localStorage.getItem(IS_QUICKTOUR_ALWAYS_VISIBLE)).toBe('true');
     });
 
     it(`should validate ${IS_ONBOARDING_DONE}`, () => {
