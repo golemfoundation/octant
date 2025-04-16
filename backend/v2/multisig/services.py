@@ -19,12 +19,14 @@ from v2.matched_rewards.dependencies import (
 )
 from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 from v2.allocations.validators import verify_logic
-from v2.crypto.contracts import GnosisSafeContracts
+from v2.multisig.contracts import SafeContractsFactory
 from v2.projects.dependencies import GetProjectsContracts
 from v2.users.repositories import get_user_tos_consent_status
 from v2.users.schemas import TosStatusRequestV1
 from v2.allocations.router import allocate_v1
 from v2.allocations.schemas import (
+    UserAllocationRequest,
+    UserAllocationRequestRawV1,
     UserAllocationRequestV1,
 )
 from v2.crypto.signatures import SignedMessageVerifier, hash_signable_message
@@ -44,7 +46,7 @@ from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
 async def _add_tos_signature(
     session: AsyncSession,
     safe_client: SafeClient,
-    safe_contracts: GnosisSafeContracts,
+    safe_contracts: SafeContractsFactory,
     user_address: Address,
     message: str,
     ip_address: str,
@@ -55,10 +57,8 @@ async def _add_tos_signature(
         raise DuplicateConsent(user_address)
 
     # Prepare message for SAFE validation
-    encoded_message = encode_for_signing(EncodingStandardFor.TEXT, message)
-    safe_message_hash = hash_signable_message(encoded_message)
-    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
-    message_hash = f"0x{message_hash.hex()}"
+    safe_message_hash = safe_contracts.get_safe_message_hash_for_tos(message)
+    message_hash = await safe_contracts.get_message_hash(user_address, safe_message_hash)
 
     message_details = await safe_client.get_message_details(message_hash, retries=3)
     if user_address != message_details["safe"]:
@@ -73,12 +73,12 @@ async def _add_tos_signature(
 async def _add_allocation_signature(
     session: AsyncSession,
     safe_client: SafeClient,
-    safe_contracts: GnosisSafeContracts,
+    safe_contracts: SafeContractsFactory,
     epoch_contracts: GetEpochsContracts,
     epoch_subgraph: GetEpochsSubgraph,
     projects_contracts: GetProjectsContracts,
     user_address: Address,
-    payload: UserAllocationRequestV1,
+    payload: UserAllocationRequestRawV1,
     x_real_ip: GetXRealIp,
 ) -> None:
     # Viable only in Allocation window, throw exception otherwise
@@ -86,22 +86,27 @@ async def _add_allocation_signature(
     if pending_epoch is None:
         raise InvalidEpoch()
 
+    user_allocation_request = UserAllocationRequest(
+        user_address=user_address,
+        allocations=payload.payload.allocations,
+        nonce=payload.payload.nonce,
+        signature="placeholder",
+        is_manually_edited=payload.is_manually_edited,
+    )
+
     # Verification will throw exception if invalid
     await verify_logic(
         session=session,
         epoch_subgraph=epoch_subgraph,
         projects_contracts=projects_contracts,
         epoch_number=pending_epoch,
-        payload=payload,
+        payload=user_allocation_request,
     )
 
-    # Safe
-    encoded_message = encode_for_signing(EncodingStandardFor.DATA, payload.model_dump())
-    safe_message_hash = hash_signable_message(encoded_message)
-    message_hash = await safe_contracts.get_message_hash(HexBytes(safe_message_hash))
-    message_hash = f"0x{message_hash.hex()}"
+    safe_message_hash = safe_contracts.get_safe_message_hash_for_allocation(user_allocation_request)
+    message_hash = await safe_contracts.get_message_hash(user_address, safe_message_hash)
 
-    msg_to_save = payload.model_dump_json()
+    msg_to_save = payload.model_dump_json(by_alias=True)
 
     # Verify owner
     message_details = await safe_client.get_message_details(message_hash, retries=3)

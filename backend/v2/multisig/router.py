@@ -5,8 +5,7 @@ from app.exceptions import (
     InvalidMultisigSignatureRequest,
 )
 from app.modules.dto import SignatureOpType
-from v2.allocations.validators import SignatureVerifier
-from v2.crypto.dependencies import GetGnosisSafeContractsFactory
+from v2.multisig.dependencies import GetSafeClient, GetSafeContractsFactory
 from v2.multisig.services import (
     _add_allocation_signature,
     _add_tos_signature,
@@ -15,12 +14,11 @@ from v2.multisig.services import (
 )
 from v2.projects.dependencies import GetProjectsContracts
 from v2.allocations.schemas import (
-    UserAllocationRequest,
+    UserAllocationRequestRawV1,
 )
 from v2.multisig.repositories import (
     get_last_pending_multisig,
 )
-from v2.multisig.safe import SafeClient
 from v2.multisig.schemas import PendingSignatureRequestV1, PendingSignatureResponseV1
 from v2.users.dependencies import GetXRealIp
 from v2.core.dependencies import GetSession
@@ -53,37 +51,38 @@ async def get_last_pending_signature(
 async def add_pending_signature(
     # Dependencies
     session: GetSession,
-    safe_contracts_factory: GetGnosisSafeContractsFactory,
-    safe_client: SafeClient,
-    projects_contracts: GetProjectsContracts,
+    safe_contracts_factory: GetSafeContractsFactory,
+    safe_client: GetSafeClient,
     epoch_subgraph: GetEpochsSubgraph,
     epoch_contracts: GetEpochsContracts,
-    alloc_signature_verifier: SignatureVerifier,
+    projects_contracts: GetProjectsContracts,
     # Request payload
     user_address: Address,
     op_type: SignatureOpType,
     payload: PendingSignatureRequestV1,
     x_real_ip: GetXRealIp,
 ) -> None:
-    if op_type == SignatureOpType.TOS and isinstance(payload.message, str):
-        safe_contracts = safe_contracts_factory.for_address(user_address)
+    """
+    Add a pending multisig signature for a specific user and type.
+    """
 
+    if op_type == SignatureOpType.TOS and isinstance(payload.message, str):
         return await _add_tos_signature(
             session,
             safe_client,
-            safe_contracts,
+            safe_contracts_factory,
             user_address,
             payload.message,
             x_real_ip,
         )
 
     elif op_type == SignatureOpType.ALLOCATION and isinstance(
-        payload.message, UserAllocationRequest
+        payload.message, UserAllocationRequestRawV1
     ):
         return await _add_allocation_signature(
             session,
             safe_client,
-            safe_contracts,
+            safe_contracts_factory,
             epoch_contracts,
             epoch_subgraph,
             projects_contracts,
