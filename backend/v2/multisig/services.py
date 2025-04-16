@@ -1,6 +1,6 @@
 import logging
+import traceback
 
-from hexbytes import HexBytes
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import (
@@ -10,7 +10,6 @@ from app.exceptions import (
 )
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.infrastructure.database.models import MultisigSignatures
-from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from v2.allocations.dependencies import GetSignatureVerifier, get_allocator
 from v2.allocations.services import Allocator
 from v2.matched_rewards.dependencies import (
@@ -29,7 +28,7 @@ from v2.allocations.schemas import (
     UserAllocationRequestRawV1,
     UserAllocationRequestV1,
 )
-from v2.crypto.signatures import SignedMessageVerifier, hash_signable_message
+from v2.crypto.signatures import SignedMessageVerifier
 from v2.multisig.repositories import (
     get_multisigs_for_allocation,
     get_multisigs_for_tos,
@@ -58,7 +57,9 @@ async def _add_tos_signature(
 
     # Prepare message for SAFE validation
     safe_message_hash = safe_contracts.get_safe_message_hash_for_tos(message)
-    message_hash = await safe_contracts.get_message_hash(user_address, safe_message_hash)
+    message_hash = await safe_contracts.get_message_hash(
+        user_address, safe_message_hash
+    )
 
     message_details = await safe_client.get_message_details(message_hash, retries=3)
     if user_address != message_details["safe"]:
@@ -103,8 +104,12 @@ async def _add_allocation_signature(
         payload=user_allocation_request,
     )
 
-    safe_message_hash = safe_contracts.get_safe_message_hash_for_allocation(user_allocation_request)
-    message_hash = await safe_contracts.get_message_hash(user_address, safe_message_hash)
+    safe_message_hash = safe_contracts.get_safe_message_hash_for_allocation(
+        user_allocation_request
+    )
+    message_hash = await safe_contracts.get_message_hash(
+        user_address, safe_message_hash
+    )
 
     msg_to_save = payload.model_dump_json(by_alias=True)
 
@@ -160,12 +165,13 @@ async def try_approve_tos_signatures(
         try:
             await _approve_tos_signature(
                 session,
-                signed_message_verifier,
                 safe_client,
+                signed_message_verifier,
                 signature,
             )
 
         except Exception as e:
+            print(traceback.format_exc())
             logging.error(f"Error approving TOS signature: {e}")
 
 
@@ -184,10 +190,14 @@ async def _approve_allocation_signature(
 
     signature.confirmed_signature = confirmed_signature
 
-    payload = UserAllocationRequestV1.model_validate_json(signature.message)
-    payload.signature = signature.confirmed_signature
+    payload = UserAllocationRequestRawV1.model_validate_json(signature.message)
 
-    request = UserAllocationRequestV1.model_validate_json(signature.message)
+    request = UserAllocationRequestV1(
+        payload=payload.payload,
+        is_manually_edited=payload.is_manually_edited,
+        user_address=signature.address,
+        signature=signature.confirmed_signature,
+    )
 
     # Make allocation
     await allocate_v1(
@@ -232,6 +242,7 @@ async def try_approve_allocation_signatures(
 
     for signature in signatures:
         try:
+            print(f"Approving allocation signature: {signature.safe_msg_hash}")
             await _approve_allocation_signature(
                 safe_client,
                 allocator,
@@ -239,4 +250,6 @@ async def try_approve_allocation_signatures(
             )
 
         except Exception as e:
+            # print stack trace
             logging.error(f"Error approving allocation signature: {e}")
+            logging.error(traceback.format_exc())

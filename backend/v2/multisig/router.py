@@ -5,6 +5,8 @@ from app.exceptions import (
     InvalidMultisigSignatureRequest,
 )
 from app.modules.dto import SignatureOpType
+from v2.allocations.dependencies import GetSignatureVerifier
+from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 from v2.multisig.dependencies import GetSafeClient, GetSafeContractsFactory
 from v2.multisig.services import (
     _add_allocation_signature,
@@ -131,16 +133,32 @@ async def add_pending_signature(
 async def approve_pending_signatures_v1(
     session: GetSession,
     epoch_contracts: GetEpochsContracts,
+    epoch_subgraph: GetEpochsSubgraph,
+    projects_contracts: GetProjectsContracts,
+    safe_client: GetSafeClient,
+    signature_verifier: GetSignatureVerifier,
+    uq_score_getter: GetUQScoreGetter,
 ) -> None:
     """
     This endpoint is used to approve pending signatures.
     It will approve all pending signatures and apply them to the user.
     """
 
-    await try_approve_tos_signatures(session)
+    await try_approve_tos_signatures(
+        session,
+        signature_verifier,
+        safe_client,
+    )
 
-    await try_approve_allocation_signatures(session, epoch_contracts)
-
+    await try_approve_allocation_signatures(
+        session,
+        epoch_contracts,
+        epoch_subgraph,
+        projects_contracts,
+        signature_verifier,
+        uq_score_getter,
+        safe_client,
+    )
     # approvals = approve_pending_signatures()
 
     # allocation_approvals = _approve(SignatureOpType.ALLOCATION)
