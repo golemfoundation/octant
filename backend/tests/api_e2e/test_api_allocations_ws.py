@@ -285,7 +285,8 @@ def test_allocations_via_socketio(
     caplog.set_level(logging.WARNING)
 
     # Setup test data
-    alice_proposals = fclient.get_projects(1)["projectsAddresses"][:3]
+    projects, _ = fclient.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
     allocation_amount = 1000
 
     print(
