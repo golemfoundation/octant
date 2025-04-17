@@ -602,7 +602,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
 
   return (
     <div className={styles.root} data-test={dataTestRoot}>
-      <div className={styles.title}>{t('allocateRewards')}</div>
+      <div className={styles.title}>{t('allocationList')}</div>
       <div
         ref={boxesWrapperRef}
         className={cx(

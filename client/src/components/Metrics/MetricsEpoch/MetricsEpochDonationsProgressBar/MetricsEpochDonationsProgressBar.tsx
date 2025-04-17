@@ -38,7 +38,7 @@ const MetricsEpochDonationsProgressBar: FC<MetricsEpochDonationsProgressBarProps
           ) : (
             <>
               <div className={styles.percentage}>{donationsPercentage}%</div>
-              <div className={styles.label}>{i18n.t('common.donations')}</div>
+              <div className={styles.label}>{i18n.t('common.withdrawals')}</div>
             </>
           )}
         </div>
