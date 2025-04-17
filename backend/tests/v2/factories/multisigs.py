@@ -1,8 +1,7 @@
 import random
-from datetime import datetime
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
-from factory import Sequence, LazyAttribute
+from factory import LazyAttribute
 from sqlalchemy import select
 
 from app.infrastructure.database.models import MultisigSignatures
@@ -20,8 +19,12 @@ class MultisigSignatureFactory(AsyncSQLAlchemyFactory):
     address = LazyAttribute(lambda _: generate_random_eip55_address())
     type = SignatureOpType.ALLOCATION
     message = LazyAttribute(lambda _: f"Test message {random.randint(1, 1000)}")
-    msg_hash = LazyAttribute(lambda _: f"0x{random.getrandbits(256).to_bytes(32, 'big').hex()}")
-    safe_msg_hash = LazyAttribute(lambda _: f"0x{random.getrandbits(256).to_bytes(32, 'big').hex()}")
+    msg_hash = LazyAttribute(
+        lambda _: f"0x{random.getrandbits(256).to_bytes(32, 'big').hex()}"
+    )
+    safe_msg_hash = LazyAttribute(
+        lambda _: f"0x{random.getrandbits(256).to_bytes(32, 'big').hex()}"
+    )
     status = SigStatus.PENDING
     user_ip = "127.0.0.1"
     confirmed_signature = None
@@ -63,7 +66,7 @@ class MultisigSignatureFactorySet(FactorySetBase):
         results = await self.session.scalars(
             select(MultisigSignatures).where(
                 MultisigSignatures.address == address,
-                MultisigSignatures.type == op_type
+                MultisigSignatures.type == op_type,
             )
         )
         return list(results)
