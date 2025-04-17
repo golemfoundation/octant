@@ -5,6 +5,7 @@ from app.exceptions import (
     InvalidMultisigSignatureRequest,
 )
 from app.modules.dto import SignatureOpType
+from v2.crypto.dependencies import GetSignedMessageVerifier
 from v2.allocations.dependencies import GetSignatureVerifier
 from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
 from v2.multisig.dependencies import GetSafeClient, GetSafeContractsFactory
@@ -136,6 +137,7 @@ async def approve_pending_signatures_v1(
     epoch_subgraph: GetEpochsSubgraph,
     projects_contracts: GetProjectsContracts,
     safe_client: GetSafeClient,
+    signed_message_verifier: GetSignedMessageVerifier,
     signature_verifier: GetSignatureVerifier,
     uq_score_getter: GetUQScoreGetter,
 ) -> None:
@@ -146,7 +148,7 @@ async def approve_pending_signatures_v1(
 
     await try_approve_tos_signatures(
         session,
-        signature_verifier,
+        signed_message_verifier,
         safe_client,
     )
 

@@ -10,16 +10,18 @@ from app.exceptions import (
 )
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.infrastructure.database.models import MultisigSignatures
-from v2.allocations.dependencies import GetSignatureVerifier, get_allocator
+from v2.epochs.contracts import EpochsContract
+from v2.epochs.subgraphs import EpochsSubgraph
+from v2.projects.contracts import ProjectsContracts
+from v2.uniqueness_quotients.services import UQScoreGetter
+from v2.allocations.dependencies import get_allocator
 from v2.allocations.services import Allocator
 from v2.matched_rewards.dependencies import (
     get_matched_rewards_estimator,
     get_matched_rewards_estimator_settings,
 )
-from v2.uniqueness_quotients.dependencies import GetUQScoreGetter
-from v2.allocations.validators import verify_logic
+from v2.allocations.validators import SignatureVerifier, verify_logic
 from v2.multisig.contracts import SafeContractsFactory
-from v2.projects.dependencies import GetProjectsContracts
 from v2.users.repositories import get_user_tos_consent_status
 from v2.users.schemas import TosStatusRequestV1
 from v2.allocations.router import allocate_v1
@@ -39,7 +41,6 @@ from v2.multisig.safe import SafeClient
 from v2.users.dependencies import GetXRealIp
 from v2.users.router import post_tos_status_for_user_v1
 from v2.core.types import Address
-from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
 
 
 async def _add_tos_signature(
@@ -75,9 +76,9 @@ async def _add_allocation_signature(
     session: AsyncSession,
     safe_client: SafeClient,
     safe_contracts: SafeContractsFactory,
-    epoch_contracts: GetEpochsContracts,
-    epoch_subgraph: GetEpochsSubgraph,
-    projects_contracts: GetProjectsContracts,
+    epoch_contracts: EpochsContract,
+    epoch_subgraph: EpochsSubgraph,
+    projects_contracts: ProjectsContracts,
     user_address: Address,
     payload: UserAllocationRequestRawV1,
     x_real_ip: GetXRealIp,
@@ -210,11 +211,11 @@ async def _approve_allocation_signature(
 
 async def try_approve_allocation_signatures(
     session: AsyncSession,
-    epoch_contracts: GetEpochsContracts,
-    epoch_subgraph: GetEpochsSubgraph,
-    projects_contracts: GetProjectsContracts,
-    signature_verifier: GetSignatureVerifier,
-    uq_score_getter: GetUQScoreGetter,
+    epoch_contracts: EpochsContract,
+    epoch_subgraph: EpochsSubgraph,
+    projects_contracts: ProjectsContracts,
+    signature_verifier: SignatureVerifier,
+    uq_score_getter: UQScoreGetter,
     safe_client: SafeClient,
 ) -> None:
     # Making allocations is only possible in Allocation window
