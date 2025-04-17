@@ -40,6 +40,7 @@ from v2.projects.services.projects_allocation_threshold_getter import (
     ProjectsAllocationThresholdGetter,
 )
 from v2.uniqueness_quotients.dependencies import (
+    get_timeout_list,
     get_uq_score_getter,
     get_uq_score_settings,
 )
@@ -141,15 +142,20 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
                 estimated_matched_rewards,
             )
 
+            chain_settings = get_chain_settings()
             signature_verifier = get_signature_verifier(
                 session,
                 epochs_subgraph,
                 projects_contracts,
-                get_chain_settings(),
+                chain_settings,
             )
 
+            timeout_list = get_timeout_list(chain_settings)
             uq_score_getter = get_uq_score_getter(
-                session, get_uq_score_settings(), get_chain_settings()
+                session,
+                get_uq_score_settings(),
+                chain_settings,
+                timeout_list,
             )
 
             allocations = await get_allocator(
@@ -181,11 +187,12 @@ class AllocateNamespace(socketio.AsyncNamespace):
             threshold_getter,
             estimated_project_rewards,
         ):
-            logging.debug("Client connected")
+            logging.info(f"Client {sid} connected")
 
             # Get the allocation threshold and send it to the client
             allocation_threshold = await threshold_getter.get()
 
+            logging.info(f"Emitting threshold to client {sid}: {allocation_threshold}")
             await self.emit(
                 "threshold", {"threshold": str(allocation_threshold)}, to=sid
             )
@@ -193,6 +200,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
             # Get the estimated project rewards and send them to the client
             project_rewards = await estimated_project_rewards.get()
 
+            logging.info(f"Emitting project_rewards to client {sid}")
             await self.emit(
                 "project_rewards",
                 [
@@ -201,6 +209,8 @@ class AllocateNamespace(socketio.AsyncNamespace):
                 ],
                 to=sid,
             )
+
+            logging.info(f"Emitting project_donors foreach project to client {sid}")
 
             for project_address in project_rewards.project_fundings:
                 donations = await get_donations_by_project(
@@ -221,6 +231,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
                             for d in donations
                         ],
                     },
+                    to=sid,
                 )
 
     async def on_connect(self, sid: str, environ: dict):
@@ -240,6 +251,7 @@ class AllocateNamespace(socketio.AsyncNamespace):
         logging.debug("Client disconnected")
 
     async def handle_on_allocate(self, sid: str, data: str):
+        logging.info(f"Received allocation data from client {sid}: {data}")
         async with create_dependencies_on_allocate() as (
             session,
             allocations,
@@ -248,6 +260,10 @@ class AllocateNamespace(socketio.AsyncNamespace):
         ):
             request = from_dict(data)
 
+            logging.info(
+                f"Handling allocation request for client {sid} as user {request.user_address}"
+            )
+
             await allocations.handle(request)
 
             logging.debug("Allocation request handled")
@@ -255,12 +271,14 @@ class AllocateNamespace(socketio.AsyncNamespace):
             # Get the allocation threshold and send it to the client
             allocation_threshold = await threshold_getter.get()
 
+            logging.info(f"Emitting threshold to client {sid}: {allocation_threshold}")
             await self.emit(
                 "threshold", {"threshold": str(allocation_threshold)}, to=sid
             )
 
             # Get the estimated project rewards and send them to the client
             project_rewards = await estimated_project_rewards.get()
+            logging.info(f"Emitting project_rewards to client {sid}")
             await self.emit(
                 "project_rewards",
                 [
@@ -269,6 +287,8 @@ class AllocateNamespace(socketio.AsyncNamespace):
                 ],
                 to=sid,
             )
+
+            logging.info(f"Emitting project_donors foreach project to client {sid}")
 
             for project_address in project_rewards.project_fundings:
                 donations = await get_donations_by_project(

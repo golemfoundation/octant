@@ -43,6 +43,11 @@ export const SHOW_HELP_VIDEOS = getLocalStorageKey(settingsPrefix, 'showHelpVide
 
 export const LANGUAGE_UI = getLocalStorageKey(settingsPrefix, 'languageUI');
 
+export const IS_QUICKTOUR_ALWAYS_VISIBLE = getLocalStorageKey(
+  settingsPrefix,
+  'isQuickTourAlwaysVisible',
+);
+
 // Delegation
 const delegationPrefix = 'delegation_5';
 

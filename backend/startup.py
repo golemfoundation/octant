@@ -43,43 +43,48 @@ if os.getenv("SENTRY_DSN"):
     )
 
 
-flask_app = create_flask_app()
-
-
-@flask_app.teardown_request
-def teardown_session(*args, **kwargs):
-    flask_db.session.remove()
-
-
 # I'm importing it here to make sure that the flask initializes before the fastapi one
-from v2.main import app as fastapi_app  # noqa
+from v2.main import build_app  # noqa
 
 
-# Middleware to check if the path exists in FastAPI
-# If it does, proceed with the request
-# If it doesn't, modify the request to forward to the Flask app
-class PathCheckMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        path = request.url.path
+def create_fastapi_app(debug: bool = False, include_socketio: bool = True):
+    fastapi_app = build_app(debug=debug, include_socketio=include_socketio)
+    flask_app = create_flask_app()
 
-        for route in fastapi_app.routes:
-            match, _ = route.matches(
-                {"type": "http", "path": path, "method": request.method}
-            )
-            if match != Match.NONE:
+    @flask_app.teardown_request
+    def teardown_session(*args, **kwargs):
+        flask_db.session.remove()
+
+    # Middleware to check if the path exists in FastAPI
+    # If it does, proceed with the request
+    # If it doesn't, modify the request to forward to the Flask app
+    class PathCheckMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request: Request, call_next):
+            path = request.url.path
+
+            for route in fastapi_app.routes:
+                match, _ = route.matches(
+                    {"type": "http", "path": path, "method": request.method}
+                )
+                if match != Match.NONE:
+                    return await call_next(request)
+
+            # If path does not exist, modify the request to forward to the Flask app
+            if path.startswith("/flask"):
                 return await call_next(request)
+            request.scope["path"] = "/flask" + path  # Adjust the path as needed
+            response = await call_next(request)
+            return response
 
-        # If path does not exist, modify the request to forward to the Flask app
-        if path.startswith("/flask"):
-            return await call_next(request)
-        request.scope["path"] = "/flask" + path  # Adjust the path as needed
-        response = await call_next(request)
-        return response
+    # Setup the pass-through to Flask app
+    fastapi_app.add_middleware(PathCheckMiddleware)
+    fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
+
+    return fastapi_app
 
 
-# Setup the pass-through to Flask app
-fastapi_app.add_middleware(PathCheckMiddleware)
-fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
+# Create the FastAPI app
+fastapi_app = create_fastapi_app()
 
 
 if __name__ == "__main__":

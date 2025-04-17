@@ -3,6 +3,7 @@ export default interface NavigationArrowsProps {
   classNameNextButton?: string;
   classNamePrevButton?: string;
   dataTest?: string;
+  idArrowPrevious?: string;
   isNextButtonDisabled: boolean;
   isPrevButtonDisabled: boolean;
   onClickNextButton: () => void;

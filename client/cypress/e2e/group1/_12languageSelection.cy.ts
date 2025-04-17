@@ -103,8 +103,9 @@ Object.values(viewports).forEach(
            *
            * It happens in Synpress only because of its extreme speed.
            *
-           * .scrollIntoView() solves the problem.
+           * cy.wait() & .scrollIntoView() should solve this problem.
            */
+          cy.wait(2000);
           cy.get('[data-test=SettingsLanguageSelectorBox__InputSelect]').scrollIntoView().click();
           cy.get(
             `[data-test=SettingsLanguageSelectorBox__InputSelect__Option--${languageKey.esEs}]`,

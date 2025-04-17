@@ -851,8 +851,6 @@ def upgrade():
         {"epoch": epoch, "addresses": tuple(checksum_addresses)},
     )
 
-    session.commit()
-
 
 def downgrade():
     pass

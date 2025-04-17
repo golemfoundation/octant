@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
 import BoxRounded from 'components/ui/BoxRounded';
 import Slider from 'components/ui/Slider';
+import { TOURGUIDE_ELEMENT_10_11 } from 'constants/domElementsIds';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -103,6 +104,7 @@ const AllocationSliderBox: FC<AllocationSliderBoxProps> = ({
       className={cx(styles.root, className)}
       dataTest="AllocationSliderBox"
       hasPadding={false}
+      id={TOURGUIDE_ELEMENT_10_11}
       isVertical
     >
       <div className={styles.sliderWrapper}>

@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from app.exceptions import (
     AntisybilScoreTooLow,
     DelegationAlreadyExists,
-    DelegationCheckWrongParams,
     DelegationDoesNotExist,
     InvalidDelegationForLockingAddress,
     InvalidDelegationRequest,
@@ -12,6 +11,7 @@ from app.exceptions import (
 )
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from app.modules.score_delegation.core import MIN_SCORE
+from v2.delegations.validators import validate_comma_separated_addresses
 from v2.uniqueness_quotients.repositories import add_gp_stamps
 from v2.project_rewards.services import calculate_effective_deposits
 from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
@@ -20,8 +20,6 @@ from v2.delegations.repositories import contains_hashed_address, save_delegation
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.uniqueness_quotients.dependencies import GetGitcoinScorerClient, GetTimeoutList
 from v2.core.dependencies import GetCurrentDatetime, GetCurrentTimestamp, GetSession
-from v2.core.types import Address
-from v2.core.transformers import transform_to_checksum_address
 from v2.delegations.dependencies import GetDelegationService
 from v2.delegations.schemas import DelegationRequestV1, DelegationCheckResponseV1
 
@@ -145,18 +143,6 @@ async def recalculate_uq_score_v1(
         raise DelegationDoesNotExist()
 
     raise InvalidRecalculationRequest()
-
-
-def validate_comma_separated_addresses(addresses: str) -> list[Address]:
-    """
-    Convert comma-separated addresses to a list of checksum addresses
-    """
-
-    tokens = addresses.split(",")
-    if not (2 <= len(tokens) <= 10):
-        raise DelegationCheckWrongParams()
-
-    return [transform_to_checksum_address(token) for token in tokens]
 
 
 @api.get("/check/{user_addresses}")
