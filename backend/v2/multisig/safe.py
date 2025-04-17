@@ -29,7 +29,7 @@ class SafeClient:
             raise ExternalApiException(e)
 
     async def get_user_details(self, address: str) -> dict | None:
-        api_url = f"{self.url}/users/{address}"
+        api_url = f"{self.url}/safes/{address}"
 
         async with aiohttp.ClientSession() as session:
             try:
