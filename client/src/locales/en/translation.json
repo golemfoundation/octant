@@ -69,7 +69,7 @@
         "header": "Your UQ score is below 15",
         "text": "A Passport XYZ score of 15 or over will boost your match funding by 10x. To increase your score, visit the custom Passport dashboard below to add more stamps before you allocate.",
         "checkboxLabel": "I understand I will only receive 10% of the max. match funding",
-        "goToGitcoinPassportCustomOctantDashboard": "Go to Passport dashboard",
+        "goToGitcoinPassportCustomOctantDashboard": "Go to dashboard",
         "proceedToAllocate": "Allocate anyway",
         "toasts": {
           "success": {
