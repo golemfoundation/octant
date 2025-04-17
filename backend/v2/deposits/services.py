@@ -12,7 +12,7 @@ from app.modules.common.sablier_events_mapper import (
     process_to_locks_and_unlocks,
 )
 from app.modules.user.events_generator.core import unify_deposit_balances
-from v2.deposits.repositories import get_all_deposit_events_for_epoch
+from v2.deposits.repositories import get_all_deposit_events_for_epoch, get_user_deposit
 from v2.epochs.subgraphs import EpochsSubgraph
 from v2.sablier.subgraphs import SablierSubgraph
 
@@ -30,6 +30,66 @@ class DepositEventsStore:
         self.sablier_subgraph = sablier_subgraph
         self.sablier_unlock_grace_period = sablier_unlock_grace_period
 
+    async def get_all_user_events(
+        self,
+        user_address: str,
+        epoch_number: int,
+        start_sec: int,
+        end_sec: int,
+    ) -> list[DepositEvent]:
+        """
+        Returns all events of a given user (LOCK, UNLOCK) for a given epoch.
+        """
+
+        epoch_start_deposit = await get_user_deposit(
+            self.session, user_address, epoch_number - 1
+        )
+        deposit_before = (
+            int(epoch_start_deposit.epoch_end_deposit) if epoch_start_deposit else 0
+        )
+
+        epoch_start_locked_amount = DepositEvent(
+            user=user_address,
+            type=EventType.LOCK,
+            timestamp=start_sec,
+            amount=0,
+            deposit_before=deposit_before,
+        )
+
+        events = []
+        events.extend(
+            await self.epochs_subgraph.fetch_locks_by_address_and_timestamp_range(
+                user_address, start_sec, end_sec
+            )
+        )
+        events.extend(
+            await self.epochs_subgraph.fetch_unlocks_by_address_and_timestamp_range(
+                user_address, start_sec, end_sec
+            )
+        )
+
+        sablier_streams = await self.sablier_subgraph.get_user_events_history(
+            user_address
+        )
+        mapped_streams = process_to_locks_and_unlocks(
+            sablier_streams, from_timestamp=start_sec, to_timestamp=end_sec
+        )
+        events += flatten_sablier_events(mapped_streams, FlattenStrategy.ALL)
+
+        events = list(map(DepositEvent.from_dict, events))
+        sorted_events = sorted(events, key=attrgetter("timestamp"))
+
+        sorted_events.insert(0, epoch_start_locked_amount)
+
+        if len(sorted_events) == 1 and sorted_events[0].deposit_after == 0:
+            return []
+
+        sorted_events_with_unified_deposits = unify_deposit_balances(
+            sorted_events, self.sablier_unlock_grace_period
+        )
+
+        return sorted_events_with_unified_deposits
+
     async def get_all_users_events(
         self,
         epoch_number: int,
@@ -37,7 +97,7 @@ class DepositEventsStore:
         end_sec: int,
     ) -> dict[str, list[DepositEvent]]:
         """
-        Returns all user events (LOCK, UNLOCK) for a given epoch.
+        Returns all events of all users (LOCK, UNLOCK) for a given epoch.
         """
 
         # Get all locked amounts for the previous epoch
