@@ -15,12 +15,14 @@ type MetricsGridTileProps =
       className?: string;
       dataTest?: string;
       groups: [MetricsGridTileGroup];
+      id?: string;
       size?: Exclude<MetricsGridTileSizes, 'M'>;
     }
   | {
       className?: string;
       dataTest?: string;
       groups: [MetricsGridTileGroup, MetricsGridTileGroup?];
+      id?: string;
       size: Exclude<MetricsGridTileSizes, 'S' | 'L' | 'custom'>;
     };
 

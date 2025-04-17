@@ -6,6 +6,7 @@ type GridTileProps = Omit<
 > & {
   classNameTitleWrapper?: string;
   dataTest?: string;
+  id?: string;
   showTitleDivider?: boolean;
   title: string | ReactNode;
   titleSuffix?: ReactNode;

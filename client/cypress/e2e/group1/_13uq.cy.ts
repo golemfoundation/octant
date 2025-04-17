@@ -46,7 +46,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=HomeGridUQScore__Button--scoreTooLow]').should('be.visible');
         cy.get('[data-test=HomeGridUQScore__Button--scoreTooLow]')
           .invoke('attr', 'href')
-          .should('eq', 'https://passport.gitcoin.co/#/octant/');
+          .should('eq', 'https://app.passport.xyz/#/octant/');
         cy.get('[data-test=HomeGridUQScore__Button--recalculate]').should('be.visible');
         cy.get('[data-test=HomeGridUQScore__Button--delegate]').should('be.visible');
       },

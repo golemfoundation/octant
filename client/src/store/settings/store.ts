@@ -2,6 +2,7 @@ import {
   DISPLAY_CURRENCY,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
+  IS_QUICKTOUR_ALWAYS_VISIBLE,
   SHOW_HELP_VIDEOS,
 } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
@@ -12,6 +13,7 @@ export const initialState: SettingsData = {
   displayCurrency: 'usd',
   isAllocateOnboardingAlwaysVisible: false,
   isCryptoMainValueDisplay: true,
+  isQuickTourVisible: true,
   showHelpVideos: true,
 };
 
@@ -38,6 +40,12 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
     },
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
+    setIsQuickTourVisible: payload => {
+      localStorage.setItem(IS_QUICKTOUR_ALWAYS_VISIBLE, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, isQuickTourVisible: payload } }));
+    },
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     setShowHelpVideos: payload => {
       localStorage.setItem(SHOW_HELP_VIDEOS, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, showHelpVideos: payload } }));
@@ -53,6 +61,9 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
           ),
           isCryptoMainValueDisplay: JSON.parse(
             localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY) || 'null',
+          ),
+          isQuickTourVisible: JSON.parse(
+            localStorage.getItem(IS_QUICKTOUR_ALWAYS_VISIBLE) || 'null',
           ),
           showHelpVideos: JSON.parse(localStorage.getItem(SHOW_HELP_VIDEOS) || 'true'),
         },

@@ -15,6 +15,7 @@ import {
   TIMEOUT_LIST_PRESENCE_MODAL_OPEN,
   SHOW_HELP_VIDEOS,
   LANGUAGE_UI,
+  IS_QUICKTOUR_ALWAYS_VISIBLE,
 } from 'constants/localStorageKeys';
 import { languageKey } from 'i18n/languages';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
@@ -91,6 +92,10 @@ const LocalStorageService = () => {
 
   const validateIsOnboardingAlwaysVisible = (): void => {
     validateBoolean(IS_ONBOARDING_ALWAYS_VISIBLE);
+  };
+
+  const validateIsQuickTourAlwaysVisible = (): void => {
+    validateBoolean(IS_QUICKTOUR_ALWAYS_VISIBLE, true);
   };
 
   const validateIsOnboardingDone = (): void => {
@@ -217,6 +222,7 @@ const LocalStorageService = () => {
     validateLocalStorageJsons();
     validateAllocationItems();
     validateIsOnboardingAlwaysVisible();
+    validateIsQuickTourAlwaysVisible();
     validateIsOnboardingDone();
     validateDisplayCurrency();
     validateIsCryptoMainValueDisplay();
