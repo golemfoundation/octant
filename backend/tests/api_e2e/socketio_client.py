@@ -4,8 +4,18 @@ from typing import List
 
 import socketio
 from fastapi import FastAPI
-from tests.api_e2e.test_api_allocations_ws import SocketIOTestResults
 from tests.conftest import UserAccount
+
+
+class SocketIOTestResults:
+    def __init__(self):
+        self.threshold = None
+        self.project_rewards = None
+        self.project_donors = {}
+        self.exception = None
+        self.connected = False
+        self.received_events = []  # Track all received events
+        self.connection_errors = []  # Track connection errors
 
 
 class SocketIOClient:
