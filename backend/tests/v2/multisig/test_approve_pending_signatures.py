@@ -10,6 +10,7 @@ from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.user.tos.core import build_consent_message
 from app.context.epoch.details import EpochDetails
+from v2.crypto.dependencies import get_signed_message_verifier
 from v2.allocations.dependencies import get_signature_verifier
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_subgraph
 from v2.projects.dependencies import get_projects_contracts
@@ -90,12 +91,18 @@ async def test_approve_pending_signatures_success_allocation(
     signature_verifier = MagicMock()
     signature_verifier.verify = AsyncMock(return_value=None)
 
+    signed_message_verifier = MagicMock()
+    signed_message_verifier.verify = AsyncMock(return_value=True)
+
     # Override the dependencies
     fast_app.dependency_overrides[get_epochs_contracts] = lambda: epoch_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: epoch_subgraph
     fast_app.dependency_overrides[get_safe_client] = lambda: safe_client
     fast_app.dependency_overrides[get_projects_contracts] = lambda: projects_contracts
     fast_app.dependency_overrides[get_signature_verifier] = lambda: signature_verifier
+    fast_app.dependency_overrides[
+        get_signed_message_verifier
+    ] = lambda: signed_message_verifier
 
     # Call the endpoint
     async with fast_client as client:
