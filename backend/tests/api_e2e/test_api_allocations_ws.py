@@ -10,7 +10,7 @@ import pytest
 import uvicorn
 from fastapi import FastAPI
 from tests.api_e2e.conftest import FastAPIClient
-from tests.api_e2e.socketio_client import SocketIOClient
+from tests.api_e2e.socketio_client import SocketIOClient, SocketIOTestResults
 from tests.conftest import UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 
@@ -30,7 +30,7 @@ async def wait_for_server(host: str, port: int, timeout: float = 3.0) -> None:
 
 
 async def run_test(
-    results: "SocketIOTestResults",
+    results: SocketIOTestResults,
     fastapi_app: FastAPI,
     alice_proposals: List[str],
     allocation_amount: int,
@@ -111,17 +111,6 @@ async def run_test(
         server_logs = server_log.getvalue()
         print(server_logs)
         return server_logs  # noqa: B012
-
-
-class SocketIOTestResults:
-    def __init__(self):
-        self.threshold = None
-        self.project_rewards = None
-        self.project_donors = {}
-        self.exception = None
-        self.connected = False
-        self.received_events = []  # Track all received events
-        self.connection_errors = []  # Track connection errors
 
 
 def try_run_test(
