@@ -16,6 +16,16 @@ from unittest.mock import patch
 
 logger = logging.getLogger(__name__)
 
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    force=True,  # Override any existing configuration
+)
+
+# Set specific log level for our test logger
+logger.setLevel(logging.DEBUG)
+
 
 class FastAPIClient:
     def __init__(self, fastapi_client: TestClient):

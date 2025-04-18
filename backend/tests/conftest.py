@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import datetime
 import json
 import os
@@ -95,7 +96,11 @@ from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from v2.core.dependencies import get_database_settings
+from v2.core.dependencies import (
+    get_database_settings,
+    get_w3,
+    get_web3_provider_settings,
+)
 
 LOGGER = logging.getLogger("app")
 
@@ -113,6 +118,30 @@ MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
+
+# Configure pytest-asyncio
+pytest_plugins = ["pytest_asyncio"]
+pytestmark = pytest.mark.asyncio
+
+logger = logging.getLogger(__name__)
+
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    force=True,  # Override any existing configuration
+)
+
+
+# Set default event loop scope for fixtures to function level
+def pytest_configure(config):
+    config.option.asyncio_mode = "auto"
+    # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
+    setattr(  # noqa: B010
+        config.option, "asyncio_default_fixture_loop_scope", "function"
+    )
+
+    config.addinivalue_line("markers", "api: mark test as API test")
 
 
 def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
@@ -373,10 +402,6 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
-    config.addinivalue_line("markers", "api: mark test as API test")
-
-
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--runapi"):
         return
@@ -460,6 +485,7 @@ def fastapi_client(deployment) -> TestClient:
 
     yield TestClient(app)
 
+    # Revert after the test
     BaseModel.metadata.drop_all(bind=engine)
 
 
@@ -483,11 +509,47 @@ def deployment(pytestconfig, request):
     """
     Deploy contracts and a subgraph under a single-use name.
     """
+
+    async def reset_timestamp():
+        w3 = get_w3(get_web3_provider_settings())
+
+        # Get the difference between now and the last block timestamp
+        now_timestamp = int(time.time())
+        last_block = await w3.eth.get_block("latest")
+        last_block_timestamp = last_block.timestamp
+        time_diff = now_timestamp - last_block_timestamp
+
+        logger.info(
+            f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})"
+        )
+        logger.info(f"Last block height: {last_block.number}")
+
+        # First set the current time
+        await w3.provider.make_request("evm_setTime", [now_timestamp])
+        # Then set the next block's timestamp
+        await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
+        # Mine the block
+        await w3.provider.make_request("evm_mine", [])
+
+        # Verify the change
+        latest_block = await w3.eth.get_block("latest")
+        logger.info(f"Latest block height: {latest_block.number}")
+        logger.info(
+            f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}"
+        )
+        logger.info("Timestamp reset complete")
+
+    # Run the async functions
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(reset_timestamp())
+
     envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    logger.info(f"SUBGRAPH_ENDPOINT: {conf.SUBGRAPH_ENDPOINT}")
     conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
@@ -503,6 +565,10 @@ def deployment(pytestconfig, request):
         "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     )
     yield conf
+
+    # Revert after the test
+    loop.close()
+
     teardown_deployment(request.node.name, graph_name)
 
 
