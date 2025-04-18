@@ -100,12 +100,7 @@ class FastAPIClient:
             # managed by pytest-asyncio. If it does, the test setup might be wrong.
             logger.error("move_to_next_epoch called without a running event loop!")
             # Fallback to creating a new loop, though this might indicate other issues
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            # Create a task and run it to completion using the existing/new loop
-            task = loop.create_task(move_to_next_epoch_async())
-            loop.run_until_complete(task)
-            loop.close()
+            asyncio.run(move_to_next_epoch_async())
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
