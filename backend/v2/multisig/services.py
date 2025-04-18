@@ -4,9 +4,15 @@ import traceback
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import (
+    BudgetNotFound,
     DuplicateConsent,
+    EmptyAllocations,
     InvalidEpoch,
     InvalidMultisigAddress,
+    InvalidSignature,
+    NotAllowedInPatronMode,
+    RewardsBudgetExceeded,
+    WrongAllocationsNonce,
 )
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.infrastructure.database.models import MultisigSignatures
@@ -170,10 +176,25 @@ async def try_approve_tos_signatures(
                 signed_message_verifier,
                 signature,
             )
+            logging.info(f"Multisig approved: TOS for {signature.address}")
+
+        except DuplicateConsent:
+            logging.warning(
+                f"Multisig rejected: Duplicate consent for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
+
+        except InvalidSignature:
+            logging.error(
+                f"Multisig rejected: Invalid signature for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
 
         except Exception as e:
-            print(traceback.format_exc())
-            logging.error(f"Error approving TOS signature: {e}")
+            logging.error(f"Multisig: Unknown error approving TOS signature: {e}")
+            logging.error(traceback.format_exc())
 
 
 async def _approve_allocation_signature(
@@ -243,14 +264,50 @@ async def try_approve_allocation_signatures(
 
     for signature in signatures:
         try:
-            print(f"Approving allocation signature: {signature.safe_msg_hash}")
             await _approve_allocation_signature(
                 safe_client,
                 allocator,
                 signature,
             )
+            logging.info(f"Multisig approved: Allocation for {signature.address}")
+
+        except EmptyAllocations:
+            logging.warning(
+                f"Multisig rejected: Empty allocations for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
+
+        except WrongAllocationsNonce:
+            logging.warning(
+                f"Multisig rejected: Wrong allocations nonce for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
+
+        except NotAllowedInPatronMode:
+            logging.warning(
+                f"Multisig rejected: Not allowed in patron mode for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
+
+        except RewardsBudgetExceeded:
+            logging.warning(
+                f"Multisig rejected: Rewards budget exceeded for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
+
+        except BudgetNotFound:
+            logging.warning(
+                f"Multisig rejected: Budget not found for {signature.address}"
+            )
+            signature.status = SigStatus.REJECTED
+            await session.commit()
 
         except Exception as e:
-            # print stack trace
-            logging.error(f"Error approving allocation signature: {e}")
+            logging.error(
+                f"Multisig: Unknown error approving allocation signature: {e}"
+            )
             logging.error(traceback.format_exc())

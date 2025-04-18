@@ -97,38 +97,6 @@ async def add_pending_signature(
     # If we get here, the operation type is unsupported
     raise InvalidMultisigSignatureRequest()
 
-    # # verify signature
-    # if op_type == SignatureOpType.ALLOCATION:
-    #     if not verifier.verify_logic(
-    #         context,
-    #         user_address=user_address,
-    #         payload=deserialize_payload(signature_msg),
-    #     ):
-    #         raise InvalidMultisigSignatureRequest()
-    #     return EncodingStandardFor.DATA
-    # else:
-    #     if not verifier.verify_logic(
-    #         context, user_address=user_address, message=signature_msg
-    #     ):
-    #         raise InvalidMultisigSignatureRequest()
-    #     return EncodingStandardFor.TEXT
-
-    # # message = signature_data.get("message")
-    # encoding_standard = self._verify_signature(
-    #     context, user_address, message, op_type
-    # )
-    # encoded_message = prepare_encoded_message(message, op_type, encoding_standard)
-    # safe_message_hash = hash_signable_message(encoded_message)
-    # message_hash = get_message_hash(user_address, safe_message_hash)
-    # msg_to_save = prepare_msg_to_save(message, op_type)
-
-    # self._verify_owner(user_address, message_hash)
-
-    # database.multisig_signature.save_signature(
-    #     user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip
-    # )
-    # db.session.commit()
-
 
 @api.patch("/pending/approve", status_code=204)
 async def approve_pending_signatures_v1(
@@ -161,49 +129,3 @@ async def approve_pending_signatures_v1(
         uq_score_getter,
         safe_client,
     )
-    # approvals = approve_pending_signatures()
-
-    # allocation_approvals = _approve(SignatureOpType.ALLOCATION)
-    # tos_approvals = _approve(SignatureOpType.TOS)
-
-    # filters = MultisigFilters(type=op_type, status=SigStatus.PENDING)
-    # pending_signatures = (
-    #     database.multisig_signature.get_multisig_signatures_by_filters(filters)
-    # )
-    # new_staged_signatures, approved_signatures = approve_pending_signatures(
-    #     self.staged_signatures, pending_signatures, self.is_mainnet
-    # )
-
-    # self.staged_signatures.extend(new_staged_signatures)
-
-    # return ApprovedSignatureTypes(
-    #     allocation_signatures=allocation_approvals, tos_signatures=tos_approvals
-    # )
-
-    # for tos_signature in approvals.tos_signatures:
-    #     # We don't want to fail the whole process if one TOS fails
-    #     try:
-    #         tos_controller.post_user_terms_of_service_consent(
-    #             tos_signature.user_address,
-    #             tos_signature.signature,
-    #             tos_signature.ip_address,
-    #         )
-    #         apply_pending_tos_signature(tos_signature.id)
-
-    #     except Exception as e:
-    #         app.logger.error(f"Error confirming TOS signature: {e}")
-
-    # for allocation_signature in approvals.allocation_signatures:
-    #     # We don't want to fail the whole process if one allocation fails
-    #     try:
-    #         message = json.loads(allocation_signature.message)
-    #         message["signature"] = allocation_signature.signature
-    #         allocations_controller.allocate(
-    #             allocation_signature.user_address,
-    #             message,
-    #             is_manually_edited=message.get("isManuallyEdited"),
-    #         )
-    #         apply_pending_allocation_signature(allocation_signature.id)
-
-    #     except Exception as e:
-    #         app.logger.error(f"Error confirming allocation signature: {e}")

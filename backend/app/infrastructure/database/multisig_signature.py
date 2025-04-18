@@ -10,6 +10,7 @@ from app.modules.dto import SignatureOpType
 class SigStatus(StrEnum):
     PENDING = "pending"
     APPROVED = "approved"
+    REJECTED = "rejected"
 
 
 @dataclass
