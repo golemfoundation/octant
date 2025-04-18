@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from tests.v2.factories.multisigs import MultisigSignatureFactorySet
 from tests.v2.factories.deposits import DepositFactorySet
 from tests.v2.factories.delegations import ScoreDelegationFactorySet
 from tests.v2.factories.gp_scores import GPStampsFactorySet
@@ -41,6 +42,7 @@ class FactoriesAggregator:
     tos_consents: UserConsentsFactorySet
     score_delegations: ScoreDelegationFactorySet
     deposits: DepositFactorySet
+    multisig_signatures: MultisigSignatureFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -59,3 +61,4 @@ class FactoriesAggregator:
         self.tos_consents = UserConsentsFactorySet(fast_session)
         self.score_delegations = ScoreDelegationFactorySet(fast_session)
         self.deposits = DepositFactorySet(fast_session)
+        self.multisig_signatures = MultisigSignatureFactorySet(fast_session)
