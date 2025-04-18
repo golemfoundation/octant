@@ -10,6 +10,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 from eth_utils import to_checksum_address
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import gql
 import pytest
@@ -452,7 +453,7 @@ def random_string() -> str:
 
 
 @pytest.fixture(scope="function")
-def fastapi_client(deployment) -> TestClient:
+def fastapi_app(deployment) -> FastAPI:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
@@ -464,7 +465,7 @@ def fastapi_client(deployment) -> TestClient:
                 os.environ[key] = str(value)
 
     # Additional logging and no need for socketio in tests
-    app = create_fastapi_app(debug=True, include_socketio=False)
+    app = create_fastapi_app(debug=True)
 
     # Mock sablier to just return [] always
     sablier_subgraph = MagicMock(spec=SablierSubgraph)
@@ -483,10 +484,15 @@ def fastapi_client(deployment) -> TestClient:
 
     BaseModel.metadata.create_all(bind=engine)
 
-    yield TestClient(app)
+    yield app
 
     # Revert after the test
     BaseModel.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture(scope="function")
+def fastapi_client(fastapi_app: FastAPI) -> TestClient:
+    return TestClient(fastapi_app)
 
 
 @pytest.fixture

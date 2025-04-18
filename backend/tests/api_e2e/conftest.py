@@ -88,15 +88,17 @@ class FastAPIClient:
 
             logger.info(f"Moved to epoch {target}")
 
-        # Get or create event loop
         try:
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
         except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+            loop = None
 
-        # Run the async function
-        loop.run_until_complete(move_to_next_epoch_async())
+        if loop and loop.is_running():
+            # Already in an event loop, so create a task and wait for it
+            loop.run_until_complete(move_to_next_epoch_async())
+        else:
+            # No event loop, safe to use asyncio.run
+            asyncio.run(move_to_next_epoch_async())
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
