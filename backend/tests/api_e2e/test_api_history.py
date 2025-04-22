@@ -1,18 +1,17 @@
 import pytest
 
-from tests.conftest import UserAccount
 from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
 from flask import current_app as app
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
 @pytest.mark.asyncio
 async def test_history_basics(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
 ):
     # Check user history before allocation
     user_history, status_code = fclient.get_user_history(ua_alice.address)

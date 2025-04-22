@@ -615,86 +615,86 @@ def deployment(pytestconfig, request):
     teardown_deployment(request.node.name, graph_name)
 
 
-class UserAccount:
-    def __init__(self, account: CryptoAccount, client: Client):
-        self._account = account
-        self._client = client
+# class UserAccount:
+#     def __init__(self, account: CryptoAccount, client: Client):
+#         self._account = account
+#         self._client = client
 
-    def fund_octant(self):
-        signed_txn = w3.eth.account.sign_transaction(
-            dict(
-                nonce=w3.eth.get_transaction_count(self.address),
-                gasPrice=w3.eth.gas_price,
-                gas=1000000,
-                to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
-                value=w3.to_wei(400, "ether"),
-            ),
-            self._account.key,
-        )
-        w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+#     def fund_octant(self):
+#         signed_txn = w3.eth.account.sign_transaction(
+#             dict(
+#                 nonce=w3.eth.get_transaction_count(self.address),
+#                 gasPrice=w3.eth.gas_price,
+#                 gas=1000000,
+#                 to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
+#                 value=w3.to_wei(400, "ether"),
+#             ),
+#             self._account.key,
+#         )
+#         w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-    def transfer(self, account: UserAccount, value: int):
-        glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
+#     def transfer(self, account: UserAccount, value: int):
+#         glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
 
-    def lock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.lock(self._account, w3.to_wei(value, "ether"))
+#     def lock(self, value: int):
+#         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+#         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
-    def unlock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.unlock(self._account, w3.to_wei(value, "ether"))
+#     def unlock(self, value: int):
+#         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+#         deposits.unlock(self._account, w3.to_wei(value, "ether"))
 
-    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
-        vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
+#     def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+#         vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
 
-    def allocate(self, amount: int, addresses: list[str]):
-        nonce, _ = self._client.get_allocation_nonce(self.address)
-        return self._client.make_allocation(self._account, amount, addresses, nonce)
+#     def allocate(self, amount: int, addresses: list[str]):
+#         nonce, _ = self._client.get_allocation_nonce(self.address)
+#         return self._client.make_allocation(self._account, amount, addresses, nonce)
 
-    @property
-    def address(self):
-        return self._account.address
-
-
-@pytest.fixture
-def deployer(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV), client)
+#     @property
+#     def address(self):
+#         return self._account.address
 
 
-@pytest.fixture
-def ua_alice(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(ALICE), client)
+# @pytest.fixture
+# def deployer(client: Client) -> UserAccount:
+#     return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV), client)
 
 
-@pytest.fixture
-def ua_bob(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(BOB), client)
+# @pytest.fixture
+# def ua_alice(client: Client) -> UserAccount:
+#     return UserAccount(CryptoAccount.from_key(ALICE), client)
 
 
-@pytest.fixture
-def ua_carol(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(CAROL), client)
+# @pytest.fixture
+# def ua_bob(client: Client) -> UserAccount:
+#     return UserAccount(CryptoAccount.from_key(BOB), client)
 
 
-@pytest.fixture
-def setup_funds(
-    client: Client,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
-    ua_carol: UserAccount,
-    request,
-):
-    test_name = request.node.name
-    current_app.logger.debug(f"RUNNING TEST: {test_name}")
-    current_app.logger.debug("Setup funds before test")
+# @pytest.fixture
+# def ua_carol(client: Client) -> UserAccount:
+#     return UserAccount(CryptoAccount.from_key(CAROL), client)
 
-    # fund Octant
-    deployer.fund_octant()
-    # fund Users
-    deployer.transfer(ua_alice, 10000)
-    deployer.transfer(ua_bob, 15000)
-    deployer.transfer(ua_carol, 20000)
+
+# @pytest.fixture
+# def setup_funds(
+#     client: Client,
+#     deployer: UserAccount,
+#     ua_alice: UserAccount,
+#     ua_bob: UserAccount,
+#     ua_carol: UserAccount,
+#     request,
+# ):
+#     test_name = request.node.name
+#     current_app.logger.debug(f"RUNNING TEST: {test_name}")
+#     current_app.logger.debug("Setup funds before test")
+
+#     # fund Octant
+#     deployer.fund_octant()
+#     # fund Users
+#     deployer.transfer(ua_alice, 10000)
+#     deployer.transfer(ua_bob, 15000)
+#     deployer.transfer(ua_carol, 20000)
 
 
 class Client:

@@ -2,18 +2,17 @@ import pytest
 
 from flask import current_app as app
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import UserAccount
 from app.extensions import w3
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
 @pytest.mark.asyncio
 async def test_pending_snapshot(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     # lock GLM from two accounts
@@ -53,9 +52,9 @@ async def test_pending_snapshot(
 @pytest.mark.asyncio
 async def test_pending_snapshot_basics(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     # lock GLM from 1 account
@@ -109,9 +108,9 @@ async def test_pending_snapshot_basics(
 @pytest.mark.asyncio
 async def test_finalized_snapshot_basics(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     # lock GLM from 1 account
