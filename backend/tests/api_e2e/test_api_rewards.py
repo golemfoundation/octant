@@ -2,7 +2,6 @@ import pytest
 import time
 import logging
 from app.extensions import vault
-from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
 from app.legacy.core import vault as vault_core
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
@@ -17,7 +16,8 @@ async def test_rewards_basic(
     ua_bob: FastUserAccount,
     setup_funds,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
+    projects, _ = ua_alice._client.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM from two accounts
     ua_alice.lock(10000)

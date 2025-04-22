@@ -235,7 +235,7 @@ class FastAPIClient:
             json={
                 "payload": {
                     "allocations": [
-                        {"proposalAddress": address, "amount": amount}
+                        {"proposalAddress": address, "amount": str(amount)}
                         for address in addresses
                     ],
                     "nonce": nonce,

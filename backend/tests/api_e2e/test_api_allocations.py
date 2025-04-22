@@ -2,7 +2,6 @@ import logging
 from fastapi.testclient import TestClient
 import pytest
 from fastapi import status
-from app.legacy.core.projects import get_projects_addresses
 from tests.api_e2e.conftest import FastUserAccount
 from tests.conftest import Client
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
@@ -18,7 +17,8 @@ async def test_allocations(
     ua_bob: FastUserAccount,
     setup_funds,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
+    projects, _ = ua_alice._client.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM from two accounts
     ua_alice.lock(10000)
@@ -103,7 +103,8 @@ def _check_allocations_logic(
     target_pending_epoch: int,
     fastapi_client: TestClient,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
+    projects, _ = ua_alice._client.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     i = 0
     for i in range(0, target_pending_epoch + 1):
@@ -133,7 +134,7 @@ def _check_allocations_logic(
         "allocationNonce": nonce
     }, "Flask and FastAPI nonce are different"
 
-    allocation_amount = 1000
+    allocation_amount = "1000"
     allocation_response_code = ua_alice.allocate(allocation_amount, alice_proposals)
     assert (
         allocation_response_code == status.HTTP_201_CREATED

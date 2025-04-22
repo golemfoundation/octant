@@ -1,7 +1,6 @@
 import pytest
 import logging
 
-from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import add_user_sync
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE, MAX_UQ_SCORE
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
@@ -54,7 +53,8 @@ async def test_uq_for_all_users(
     assert res["epoch"] > 0
 
     # make an allocation during AW since it saves the uq to the database
-    alice_bob_proposals = get_projects_addresses(4)[:3]
+    projects, _ = ua_alice._client.get_projects(4)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     ua_alice.allocate(1000, alice_bob_proposals)
     ua_bob.allocate(1000, alice_bob_proposals)

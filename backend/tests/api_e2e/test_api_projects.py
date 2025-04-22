@@ -7,7 +7,7 @@ from tests.api_e2e.conftest import FastAPIClient
 @pytest.mark.api
 @pytest.mark.asyncio
 async def test_projects_basics(fclient: FastAPIClient, setup_funds):
-    projects_epoch1, status_code = await fclient.get_projects(STARTING_EPOCH)
+    projects_epoch1, status_code = fclient.get_projects(STARTING_EPOCH)
     projects_number_epoch1 = len(projects_epoch1["projectsAddresses"])
     assert projects_number_epoch1 > (STARTING_EPOCH - 1)
     assert projects_epoch1["projectsCid"], "projectsCid is empty"
