@@ -4,7 +4,6 @@ import pytest
 
 from app.extensions import w3, vault
 from app.legacy.core import vault as vault_core
-from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
@@ -19,9 +18,10 @@ async def test_withdrawals(
     ua_carol: FastUserAccount,
     setup_funds,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
-    bob_proposals = get_projects_addresses(1)[:3]
-    carol_proposals = get_projects_addresses(1)[:3]
+    projects, _ = fclient.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
+    bob_proposals = projects["projectsAddresses"][:3]
+    carol_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM for three accounts
     ua_alice.lock(10000)
