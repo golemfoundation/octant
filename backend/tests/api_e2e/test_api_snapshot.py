@@ -8,7 +8,8 @@ from tests.api_e2e.conftest import FastAPIClient
 
 
 @pytest.mark.api
-def test_pending_snapshot(
+@pytest.mark.asyncio
+async def test_pending_snapshot(
     fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
@@ -20,7 +21,7 @@ def test_pending_snapshot(
     ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
@@ -76,7 +77,7 @@ def test_pending_snapshot_basics(
     assert status_code == 200
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
@@ -104,7 +105,8 @@ def test_pending_snapshot_basics(
 
 
 @pytest.mark.api
-def test_finalized_snapshot_basics(
+@pytest.mark.asyncio
+async def test_finalized_snapshot_basics(
     fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
@@ -122,7 +124,7 @@ def test_finalized_snapshot_basics(
     assert status_code == 200
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
@@ -144,7 +146,7 @@ def test_finalized_snapshot_basics(
     assert status_code == 200
 
     # forward time to the beginning of the epoch 3
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 

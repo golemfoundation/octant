@@ -9,12 +9,13 @@ from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
-def test_uq_for_user(
+@pytest.mark.asyncio
+async def test_uq_for_user(
     fclient: FastAPIClient, ua_alice: UserAccount, sync_session: Session
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     app.logger.debug(f"indexed epoch: {epoch_no}")
@@ -32,15 +33,16 @@ def test_uq_for_user(
 
 
 @pytest.mark.api
-def test_uq_for_all_users(
+@pytest.mark.asyncio
+async def test_uq_for_all_users(
     fclient: FastAPIClient, ua_alice: UserAccount, ua_bob, setup_funds
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
     ua_alice.lock(10000)
     ua_bob.lock(10000)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 4)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 4)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 4)
     app.logger.debug(f"indexed epoch: {epoch_no}")

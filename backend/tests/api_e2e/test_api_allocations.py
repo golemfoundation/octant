@@ -8,7 +8,8 @@ from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
 
 
 @pytest.mark.api
-def test_allocations(
+@pytest.mark.asyncio
+async def test_allocations(
     client: Client,
     fastapi_client: TestClient,
     deployer: UserAccount,
@@ -23,7 +24,7 @@ def test_allocations(
     ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
-    client.move_to_next_epoch(STARTING_EPOCH + 1)
+    await client.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # wait for indexer to catch up
     epoch_no = client.wait_for_sync(STARTING_EPOCH + 1)

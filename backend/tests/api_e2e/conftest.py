@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import time
 import logging
@@ -57,38 +56,25 @@ class FastAPIClient:
                 return res["indexedHeight"]
             time.sleep(0.5)
 
-    def move_to_next_epoch(self, target):
-        async def move_to_next_epoch_async():
-            w3 = get_w3(get_web3_provider_settings())
-            epochs = get_epochs_contracts(w3, get_epochs_settings())
+    async def move_to_next_epoch(self, target):
+        w3 = get_w3(get_web3_provider_settings())
+        epochs = get_epochs_contracts(w3, get_epochs_settings())
 
-            current_epoch = await epochs.get_current_epoch()
-            assert current_epoch == target - 1
+        current_epoch = await epochs.get_current_epoch()
+        assert current_epoch == target - 1
 
-            latest_block = await w3.eth.get_block("latest")
-            now = latest_block.timestamp
+        latest_block = await w3.eth.get_block("latest")
+        now = latest_block.timestamp
 
-            next_epoch_at = await epochs.get_current_epoch_end()
-            forward = next_epoch_at - now + 30
-            await w3.provider.make_request("evm_increaseTime", [forward])
-            await w3.provider.make_request("evm_mine", [])
+        next_epoch_at = await epochs.get_current_epoch_end()
+        forward = next_epoch_at - now + 30
+        await w3.provider.make_request("evm_increaseTime", [forward])
+        await w3.provider.make_request("evm_mine", [])
 
-            current_epoch = await epochs.get_current_epoch()
-            assert current_epoch == target
+        current_epoch = await epochs.get_current_epoch()
+        assert current_epoch == target
 
-            logger.info(f"Moved to epoch {target}")
-
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = None
-
-        if loop and loop.is_running():
-            # Already in an event loop, so create a task and wait for it
-            loop.run_until_complete(move_to_next_epoch_async())
-        else:
-            # No event loop, safe to use asyncio.run
-            asyncio.run(move_to_next_epoch_async())
+        logger.info(f"Moved to epoch {target}")
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")

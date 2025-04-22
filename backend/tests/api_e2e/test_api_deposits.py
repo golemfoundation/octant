@@ -9,7 +9,8 @@ from tests.api_e2e.conftest import FastAPIClient
 
 
 @pytest.mark.api
-def test_deposit_basics(
+@pytest.mark.asyncio
+async def test_deposit_basics(
     fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
@@ -98,7 +99,7 @@ def test_deposit_basics(
     )
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
     app.logger.debug(f"indexed epoch: {epoch_no}")

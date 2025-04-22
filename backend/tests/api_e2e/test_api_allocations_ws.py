@@ -113,7 +113,7 @@ async def run_test(
         return server_logs  # noqa: B012
 
 
-def try_run_test(
+async def try_run_test(
     fastapi_app: FastAPI,
     alice_proposals: List[str],
     allocation_amount: int,
@@ -127,19 +127,17 @@ def try_run_test(
     server_logs = None
     try:
         print("Starting SocketIO test with asyncio.run...")
-        server_logs = asyncio.run(
-            asyncio.wait_for(
-                run_test(
-                    results,
-                    fastapi_app,
-                    alice_proposals,
-                    allocation_amount,
-                    ua_alice_nonce,
-                    ua_alice,
-                    signature,
-                ),
-                timeout=15,
-            )
+        server_logs = await asyncio.wait_for(
+            run_test(
+                results,
+                fastapi_app,
+                alice_proposals,
+                allocation_amount,
+                ua_alice_nonce,
+                ua_alice,
+                signature,
+            ),
+            timeout=15,
         )
     except asyncio.TimeoutError:
         print("Test timed out after 15 seconds")
@@ -160,7 +158,8 @@ def try_run_test(
 
 
 @pytest.mark.api
-def test_allocations_via_socketio(
+@pytest.mark.asyncio
+async def test_allocations_via_socketio(
     fclient: FastAPIClient,
     fastapi_app: FastAPI,
     ua_alice: UserAccount,
@@ -188,7 +187,7 @@ def test_allocations_via_socketio(
     ua_alice.lock(10000)
 
     # Forward time to the beginning of epoch
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # Wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
