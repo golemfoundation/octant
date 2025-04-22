@@ -1,5 +1,5 @@
 import pytest
-from flask import current_app as app
+import logging
 
 from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import add_user_sync
@@ -18,7 +18,7 @@ async def test_uq_for_user(
     await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     _, code = fclient.get_user_uq(ua_alice.address, 4)
     USER_NOT_FOUND = 200  # This actually makes sense because we can check score's address that is not user
@@ -48,7 +48,7 @@ async def test_uq_for_all_users(
     await fclient.move_to_next_epoch(STARTING_EPOCH + 4)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 4)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     res = fclient.pending_snapshot()
     assert res["epoch"] > 0

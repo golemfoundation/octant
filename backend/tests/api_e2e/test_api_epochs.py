@@ -1,7 +1,6 @@
 import pytest
-
+import logging
 from tests.helpers.constants import STARTING_EPOCH
-from flask import current_app as app
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
@@ -34,7 +33,7 @@ async def test_epochs_basics(
         response_code,
     ) = fclient.get_epoch_info(STARTING_EPOCH)
 
-    app.logger.debug(f"Epoch {STARTING_EPOCH} info:\n{epoch_info}")
+    logging.debug(f"Epoch {STARTING_EPOCH} info:\n{epoch_info}")
 
     assert "stakingProceeds" in epoch_info
     assert "totalEffectiveDeposit" in epoch_info
@@ -53,7 +52,7 @@ async def test_epochs_basics(
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # Check current epoch in following epoch
     current_epoch, _ = fclient.get_current_epoch()

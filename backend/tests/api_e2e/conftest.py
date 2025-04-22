@@ -381,6 +381,10 @@ class FastUserAccount:
         self._account = account
         self._client = fclient
 
+    @property
+    def address(self):
+        return self._account.address
+
     def fund_octant(self):
         signed_txn = w3.eth.account.sign_transaction(
             dict(

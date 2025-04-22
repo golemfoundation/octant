@@ -1,6 +1,5 @@
 import time
 import pytest
-
 from sqlalchemy.orm import Session
 from tests.helpers.constants import STARTING_EPOCH
 from tests.conftest import add_user_sync

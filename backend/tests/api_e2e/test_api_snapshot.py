@@ -1,6 +1,5 @@
 import pytest
-
-from flask import current_app as app
+import logging
 from tests.helpers.constants import STARTING_EPOCH
 from app.extensions import w3
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
@@ -24,7 +23,7 @@ async def test_pending_snapshot(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
@@ -45,7 +44,7 @@ async def test_pending_snapshot(
 
     # check that user with bigger lock has bigger budget
     assert bob_budget > alice_budget
-    app.logger.debug(f"bob_budget: {bob_budget} while alice_budget: {alice_budget}")
+    logging.debug(f"bob_budget: {bob_budget} while alice_budget: {alice_budget}")
 
 
 @pytest.mark.api
@@ -61,7 +60,7 @@ async def test_pending_snapshot_basics(
     ua_alice.lock(5000)
 
     indexed_height = fclient.wait_for_height_sync()
-    app.logger.debug(f"indexed blockchain height: {indexed_height}")
+    logging.debug(f"indexed blockchain height: {indexed_height}")
 
     # Check snapshot status before making pending snapshot
     snapshot_status, status_code = fclient.snapshot_status(STARTING_EPOCH)
@@ -81,7 +80,7 @@ async def test_pending_snapshot_basics(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a pending snapshot
     res = fclient.pending_snapshot()
@@ -128,7 +127,7 @@ async def test_finalized_snapshot_basics(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a pending snapshot
     res = fclient.pending_snapshot()
@@ -148,7 +147,7 @@ async def test_finalized_snapshot_basics(
     # forward time to the beginning of the epoch 3
     await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a pending snapshot
     res = fclient.pending_snapshot()

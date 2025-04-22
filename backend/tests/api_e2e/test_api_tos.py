@@ -1,5 +1,4 @@
 import pytest
-
 from tests.helpers.signature import build_user_signature
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
