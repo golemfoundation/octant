@@ -1,8 +1,7 @@
 import pytest
-
+import logging
 from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
-from flask import current_app as app
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
@@ -29,7 +28,7 @@ async def test_history_basics(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()

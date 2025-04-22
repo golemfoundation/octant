@@ -1,6 +1,6 @@
+import logging
 from fastapi.testclient import TestClient
 import pytest
-from flask import current_app as app
 from fastapi import status
 from app.legacy.core.projects import get_projects_addresses
 from tests.api_e2e.conftest import FastUserAccount
@@ -29,7 +29,7 @@ async def test_allocations(
 
     # wait for indexer to catch up
     epoch_no = client.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.info(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = client.pending_snapshot()
@@ -64,14 +64,14 @@ async def test_allocations(
     allocations, _ = client.get_epoch_allocations(STARTING_EPOCH)
     unique_donors = set()
     unique_proposals = set()
-    app.logger.debug(f"Allocations: \n {allocations}")
+    logging.info(f"Allocations: \n {allocations}")
 
     assert len(allocations["allocations"]) == 4
     for allocation in allocations["allocations"]:
         unique_donors.add(allocation["donor"])
         unique_proposals.add(allocation["project"])
         assert int(allocation["amount"]) > 0
-    app.logger.debug(f"Allocations: {allocations}")
+    logging.info(f"Allocations: {allocations}")
     assert len(unique_donors) == 2
     assert len(unique_proposals) == 3
 
@@ -82,7 +82,7 @@ async def test_allocations(
     fastapi_allocations = resp.json()
     fastapi_unique_donors = set()
     fastapi_unique_proposals = set()
-    app.logger.debug(f"FastAPI allocations: \n {fastapi_allocations}")
+    logging.debug(f"FastAPI allocations: \n {fastapi_allocations}")
 
     assert len(fastapi_allocations["allocations"]) == 4
     for allocation in fastapi_allocations["allocations"]:
@@ -115,7 +115,7 @@ def _check_allocations_logic(
 
     # wait for indexer to catch up
     epoch_no = client.wait_for_sync(STARTING_EPOCH + i)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = client.pending_snapshot()
@@ -146,7 +146,7 @@ def _check_allocations_logic(
         assert allocation["donor"] == ua_alice.address, "Donor address is wrong"
         assert int(allocation["amount"]) == allocation_amount
         assert allocation["project"], "Proposal address is empty"
-    app.logger.debug(f"Allocations in epoch 1: {epoch_allocations}")
+    logging.debug(f"Allocations in epoch 1: {epoch_allocations}")
 
     assert status_code == status.HTTP_200_OK, "Status code is different than 200"
 
@@ -166,7 +166,7 @@ def _check_allocations_logic(
     user_allocations, status_code = client.get_user_allocations(
         target_pending_epoch, ua_alice.address
     )
-    app.logger.debug(f"User allocations:  {user_allocations}")
+    logging.debug(f"User allocations:  {user_allocations}")
     assert user_allocations["allocations"], "User allocations for given epoch are empty"
     assert status_code == status.HTTP_200_OK, "Status code is different than 200"
 
@@ -183,7 +183,7 @@ def _check_allocations_logic(
 
     # Check donors
     donors, status_code = client.get_donors(target_pending_epoch)
-    app.logger.debug(f"Donors: {donors}")
+    logging.debug(f"Donors: {donors}")
     for donor in donors["donors"]:
         assert donor == ua_alice.address, "Donor address is wrong"
     assert status_code == 200, "Status code is different than 200"
@@ -200,7 +200,7 @@ def _check_allocations_logic(
     proposal_donors, status_code = client.get_proposal_donors(
         target_pending_epoch, proposal_address
     )
-    app.logger.debug(f"Proposal donors: {proposal_donors}")
+    logging.debug(f"Proposal donors: {proposal_donors}")
     for proposal_donor in proposal_donors:
         assert (
             proposal_donor["address"] == ua_alice.address
@@ -221,7 +221,7 @@ def _check_allocations_logic(
     leverage, status_code = client.check_leverage(
         proposal_address, ua_alice.address, 1000
     )
-    app.logger.debug(f"Leverage: \n{leverage}")
+    logging.debug(f"Leverage: \n{leverage}")
 
     for matched in leverage["matched"]:
         if matched["address"] == proposal_address:

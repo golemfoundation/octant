@@ -1,7 +1,6 @@
 import pytest
 import time
-
-from flask import current_app as app
+import logging
 from app.extensions import vault
 from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
@@ -32,7 +31,7 @@ async def test_rewards_basic(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
@@ -66,7 +65,7 @@ async def test_rewards_basic(
     # TODO replace with helper to wait until end of voting
     await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a finalized snapshot
     res = fclient.finalized_snapshot()

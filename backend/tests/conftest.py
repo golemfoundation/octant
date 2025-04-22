@@ -33,11 +33,8 @@ from app.engine.user.effective_deposit import DepositEvent, EventType, UserDepos
 from app.exceptions import ExternalApiException
 from app.extensions import (
     db,
-    deposits,
-    glm,
     gql_octant_factory,
     w3,
-    vault,
     epochs,
     gql_sablier_factory,
 )
@@ -48,7 +45,6 @@ from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure.database.multisig_signature import SigStatus
-from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
@@ -56,10 +52,6 @@ from app.settings import DevConfig, TestConfig
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
-    ALICE,
-    BOB,
-    CAROL,
-    DEPLOYER_PRIV,
     ETH_PROCEEDS,
     LEFTOVER,
     MATCHED_REWARDS,

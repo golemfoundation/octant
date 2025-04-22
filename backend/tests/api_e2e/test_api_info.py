@@ -1,5 +1,4 @@
 import pytest
-
 from tests.helpers.constants import STARTING_EPOCH
 from tests.api_e2e.conftest import FastAPIClient
 

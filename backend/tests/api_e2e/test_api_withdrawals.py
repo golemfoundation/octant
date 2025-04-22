@@ -1,8 +1,7 @@
 import time
-
+import logging
 import pytest
 
-from flask import current_app as app
 from app.extensions import w3, vault
 from app.legacy.core import vault as vault_core
 from app.legacy.core.projects import get_projects_addresses
@@ -37,7 +36,7 @@ async def test_withdrawals(
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
@@ -73,7 +72,7 @@ async def test_withdrawals(
     # TODO replace with helper to wait until end of voting
     await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a finalized snapshot
     # res = client.pending_snapshot()
@@ -87,7 +86,7 @@ async def test_withdrawals(
         time.sleep(1)
 
     root = vault.get_merkle_root(STARTING_EPOCH).hex()
-    app.logger.debug(f"root is 0x{root}")
+    logging.debug(f"root is 0x{root}")
 
     # Save latest withdrawals for assertions
     alice_withdrawals = fclient.get_withdrawals_for_address(address=ua_alice.address)[0]
@@ -107,18 +106,14 @@ async def test_withdrawals(
     bob_withdrawal_amount: int = int(bob_withdrawals["amount"])
     assert bob_withdrawal_amount == bob_budget
     bob_merkle_proof: list[str] = bob_withdrawals["proof"]
-    app.logger.debug(f"Bob Merkle proof: {bob_merkle_proof}")
+    logging.debug(f"Bob Merkle proof: {bob_merkle_proof}")
 
     bob_wallet_before_withdraw = w3.eth.get_balance(ua_bob.address)
-    app.logger.debug(
-        f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}"
-    )
+    logging.debug(f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}")
 
     ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
     bob_wallet_after_withdraw = w3.eth.get_balance(ua_bob.address)
-    app.logger.debug(
-        f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}"
-    )
+    logging.debug(f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert bob_wallet_after_withdraw > bob_wallet_before_withdraw
 
     # Carol withdrawal
@@ -126,16 +121,14 @@ async def test_withdrawals(
     carol_withdrawal_amount: int = int(carol_withdrawals["amount"])
     assert carol_withdrawal_amount == carol_budget
     carol_merkle_proof: list[str] = carol_withdrawals["proof"]
-    app.logger.debug(f"Carol Merkle proof: {carol_merkle_proof}")
+    logging.debug(f"Carol Merkle proof: {carol_merkle_proof}")
 
     carol_wallet_before_withdraw = w3.eth.get_balance(ua_carol.address)
-    app.logger.debug(
+    logging.debug(
         f"Carol Wallet balance before withdrawal: {carol_wallet_before_withdraw}"
     )
 
     ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
     carol_wallet_after_withdraw = w3.eth.get_balance(ua_carol.address)
-    app.logger.debug(
-        f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}"
-    )
+    logging.debug(f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert carol_wallet_after_withdraw > carol_wallet_before_withdraw
