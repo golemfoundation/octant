@@ -380,7 +380,7 @@ class FastAPIClient:
 class FastUserAccount:
     def __init__(self, account, client: FastAPIClient):
         self._account = account
-        self._client = fclient
+        self._client = client
 
     @property
     def address(self):

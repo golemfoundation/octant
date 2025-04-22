@@ -1,6 +1,5 @@
 import pytest
 import logging
-from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
