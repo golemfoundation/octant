@@ -11,7 +11,8 @@ from tests.api_e2e.conftest import FastAPIClient
 
 
 @pytest.mark.api
-def test_rewards_basic(
+@pytest.mark.asyncio
+async def test_rewards_basic(
     fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
@@ -25,7 +26,7 @@ def test_rewards_basic(
     ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # fund the vault (amount here is arbitrary)
     vault.fund(deployer._account, 1000 * 10**18)
@@ -64,7 +65,7 @@ def test_rewards_basic(
     assert res["rewards"][0]["allocated"] == "1000"
 
     # TODO replace with helper to wait until end of voting
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 
