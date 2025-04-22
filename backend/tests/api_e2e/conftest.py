@@ -1,4 +1,5 @@
 import datetime
+import os
 import time
 import logging
 from eth_account import Account
@@ -401,7 +402,7 @@ class FastUserAccount:
                 nonce=w3.eth.get_transaction_count(self.address),
                 gasPrice=w3.eth.gas_price,
                 gas=1000000,
-                to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
+                to=os.getenv("WITHDRAWALS_TARGET_CONTRACT_ADDRESS"),
                 value=w3.to_wei(400, "ether"),
             ),
             self._account.key,

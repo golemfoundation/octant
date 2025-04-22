@@ -18,7 +18,8 @@ async def test_history_basics(
     assert status_code == 200
 
     # Get alice proposals
-    alice_proposals = get_projects_addresses(1)[:3]
+    projects, _ = fclient.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM for one account
     ua_alice.lock(10000)
