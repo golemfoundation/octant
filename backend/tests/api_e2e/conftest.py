@@ -1,16 +1,30 @@
 import datetime
 import time
 import logging
+from eth_account import Account
 import pytest
 import json
 from http import HTTPStatus
 from fastapi.testclient import TestClient
 
+from app.extensions import (
+    deposits,
+    glm,
+    w3,
+    vault,
+)
 
 from app.modules.dto import ScoreDelegationPayload
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import (
+    ALICE,
+    BOB,
+    CAROL,
+    DEPLOYER_PRIV,
+    USER1_ADDRESS,
+    USER2_ADDRESS,
+)
 from unittest.mock import patch
 
 logger = logging.getLogger(__name__)
@@ -362,6 +376,43 @@ class FastAPIClient:
         return json.loads(rv.text), rv.status_code
 
 
+class FastUserAccount:
+    def __init__(self, account, client: FastAPIClient):
+        self._account = account
+        self._client = fclient
+
+    def fund_octant(self):
+        signed_txn = w3.eth.account.sign_transaction(
+            dict(
+                nonce=w3.eth.get_transaction_count(self.address),
+                gasPrice=w3.eth.gas_price,
+                gas=1000000,
+                to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
+                value=w3.to_wei(400, "ether"),
+            ),
+            self._account.key,
+        )
+        w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+    def transfer(self, account, value: int):
+        glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
+
+    def lock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+        deposits.lock(self._account, w3.to_wei(value, "ether"))
+
+    def unlock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+        deposits.unlock(self._account, w3.to_wei(value, "ether"))
+
+    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
+
+    def allocate(self, amount: int, addresses: list[str]):
+        nonce, _ = self._client.get_allocation_nonce(self.address)
+        return self._client.make_allocation(self._account, amount, addresses, nonce)
+
+
 @pytest.fixture
 def fclient(fastapi_client: TestClient) -> FastAPIClient:
     return FastAPIClient(fastapi_client)
@@ -383,3 +434,44 @@ def mock_fetch_streams():
     with patch("app.infrastructure.sablier.events.fetch_streams") as mock:
         mock.return_value = []
         yield mock
+
+
+@pytest.fixture
+def deployer(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(DEPLOYER_PRIV), fclient)
+
+
+@pytest.fixture
+def ua_alice(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(ALICE), fclient)
+
+
+@pytest.fixture
+def ua_bob(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(BOB), fclient)
+
+
+@pytest.fixture
+def ua_carol(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(CAROL), fclient)
+
+
+@pytest.fixture
+def setup_funds(
+    fclient: FastAPIClient,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
+    ua_carol: FastUserAccount,
+    request,
+):
+    test_name = request.node.name
+    logging.debug(f"RUNNING TEST: {test_name}")
+    logging.debug("Setup funds before test")
+
+    # fund Octant
+    deployer.fund_octant()
+    # fund Users
+    deployer.transfer(ua_alice, 10000)
+    deployer.transfer(ua_bob, 15000)
+    deployer.transfer(ua_carol, 20000)

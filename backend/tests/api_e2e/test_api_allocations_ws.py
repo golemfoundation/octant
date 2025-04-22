@@ -9,9 +9,8 @@ from typing import Any, List
 import pytest
 import uvicorn
 from fastapi import FastAPI
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 from tests.api_e2e.socketio_client import SocketIOClient, SocketIOTestResults
-from tests.conftest import UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 
 
@@ -35,7 +34,7 @@ async def run_test(
     alice_proposals: List[str],
     allocation_amount: int,
     ua_alice_nonce: int,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
     signature: str,
 ) -> str:
     # Capture server logs
@@ -118,7 +117,7 @@ async def try_run_test(
     alice_proposals: List[str],
     allocation_amount: int,
     ua_alice_nonce: int,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
     signature: str,
     caplog: Any,
 ) -> tuple[SocketIOTestResults, str]:
@@ -162,7 +161,7 @@ async def try_run_test(
 async def test_allocations_via_socketio(
     fclient: FastAPIClient,
     fastapi_app: FastAPI,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
     setup_funds,
     monkeypatch,
     caplog,

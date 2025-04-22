@@ -7,18 +7,17 @@ from app.extensions import w3, vault
 from app.legacy.core import vault as vault_core
 from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import UserAccount
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
 @pytest.mark.asyncio
 async def test_withdrawals(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
-    ua_carol: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
+    ua_carol: FastUserAccount,
     setup_funds,
 ):
     alice_proposals = get_projects_addresses(1)[:3]

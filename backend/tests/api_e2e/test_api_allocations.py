@@ -3,7 +3,8 @@ import pytest
 from flask import current_app as app
 from fastapi import status
 from app.legacy.core.projects import get_projects_addresses
-from tests.conftest import Client, UserAccount
+from tests.api_e2e.conftest import FastUserAccount
+from tests.conftest import Client
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
 
 
@@ -12,9 +13,9 @@ from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE
 async def test_allocations(
     client: Client,
     fastapi_client: TestClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     alice_proposals = get_projects_addresses(1)[:3]
@@ -24,7 +25,7 @@ async def test_allocations(
     ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
-    await client.move_to_next_epoch(STARTING_EPOCH + 1)
+    client.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # wait for indexer to catch up
     epoch_no = client.wait_for_sync(STARTING_EPOCH + 1)
@@ -98,7 +99,7 @@ async def test_allocations(
 
 def _check_allocations_logic(
     client: Client,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
     target_pending_epoch: int,
     fastapi_client: TestClient,
 ):
@@ -233,9 +234,9 @@ def _check_allocations_logic(
 def test_allocations_basics(
     client: Client,
     fastapi_client: TestClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     _check_allocations_logic(
@@ -247,7 +248,7 @@ def test_allocations_basics(
 def test_qf_and_uq_allocations(
     client: Client,
     fastapi_client: TestClient,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
 ):
     """
     Test for QF and UQ allocations.

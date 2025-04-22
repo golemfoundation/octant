@@ -4,7 +4,7 @@ from typing import List
 
 import socketio
 from fastapi import FastAPI
-from tests.conftest import UserAccount
+from tests.api_e2e.conftest import FastUserAccount
 
 
 class SocketIOTestResults:
@@ -86,7 +86,7 @@ class SocketIOClient:
         alice_proposals: List[str],
         allocation_amount: int,
         ua_alice_nonce: int,
-        ua_alice: UserAccount,
+        ua_alice: FastUserAccount,
         signature: str,
     ):
         allocation_payload = {
