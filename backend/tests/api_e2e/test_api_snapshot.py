@@ -50,7 +50,8 @@ async def test_pending_snapshot(
 
 
 @pytest.mark.api
-def test_pending_snapshot_basics(
+@pytest.mark.asyncio
+async def test_pending_snapshot_basics(
     fclient: FastAPIClient,
     deployer: UserAccount,
     ua_alice: UserAccount,
