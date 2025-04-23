@@ -18,15 +18,13 @@ def get_safe_client(chain_settings: GetChainSettings) -> SafeClient:
     )
 
 
-GetSafeClient = Annotated[SafeClient, Depends(get_safe_client)]
-
-
 def get_safe_contracts_factory(
     w3: Web3, chain_settings: GetChainSettings
 ) -> SafeContractsFactory:
     return SafeContractsFactory(w3, chain_settings.chain_id)
 
 
+GetSafeClient = Annotated[SafeClient, Depends(get_safe_client)]
 GetSafeContractsFactory = Annotated[
     SafeContractsFactory, Depends(get_safe_contracts_factory)
 ]

@@ -1,3 +1,5 @@
+import asyncio
+import random
 import aiohttp
 from app.exceptions import ExternalApiException
 from v2.epochs.subgraphs import BackoffParams
@@ -15,15 +17,17 @@ class SafeClient:
 
         try:
             async with aiohttp.ClientSession() as session:
-                for _ in range(retries + 1):
+                for _ in range(retries):
                     async with session.get(api_url) as response:
-                        # As long as we are retrying we just jump to the next iteration
-                        if not response.ok:
-                            continue
 
-                        # Once we're done retrying we raise the error or return the json
-                        response.raise_for_status()
-                        return await response.json()
+                        if response.ok:
+                            return await response.json()
+
+                        await asyncio.sleep(random.uniform(0.75, 1.25))
+                
+                async with session.get(api_url) as response:
+                    response.raise_for_status()
+                    return await response.json()
 
         except aiohttp.ClientResponseError as e:
             raise ExternalApiException(e)
