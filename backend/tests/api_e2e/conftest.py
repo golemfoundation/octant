@@ -17,7 +17,7 @@ from app.extensions import (
 
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
-from v2.allocations.validators import build_allocations_eip712_structure
+from v2.allocations.validators import build_allocations_eip712_data
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import (
@@ -256,7 +256,7 @@ class FastAPIClient:
         return account.sign_message(
             encode_for_signing(
                 EncodingStandardFor.DATA,
-                build_allocations_eip712_structure(chain_id, payload),
+                build_allocations_eip712_data(chain_id, payload),
             )
         ).signature.hex()
 
