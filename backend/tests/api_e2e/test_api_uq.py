@@ -54,7 +54,7 @@ async def test_uq_for_all_users(
 
     # make an allocation during AW since it saves the uq to the database
     projects, _ = ua_alice._client.get_projects(4)
-    alice_proposals = projects["projectsAddresses"][:3]
+    alice_bob_proposals = projects["projectsAddresses"][:3]
 
     ua_alice.allocate(1000, alice_bob_proposals)
     ua_bob.allocate(1000, alice_bob_proposals)

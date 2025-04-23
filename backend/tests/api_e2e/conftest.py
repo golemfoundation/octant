@@ -235,13 +235,14 @@ class FastAPIClient:
             json={
                 "payload": {
                     "allocations": [
-                        {"proposalAddress": address, "amount": str(amount)}
+                        {"proposalAddress": address, "amount": amount}
                         for address in addresses
                     ],
                     "nonce": nonce,
                 },
                 "userAddress": account.address,
                 "signature": signature,
+                "isManuallyEdited": False,
             },
         )
         return rv.status_code
