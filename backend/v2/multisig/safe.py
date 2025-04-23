@@ -19,12 +19,11 @@ class SafeClient:
             async with aiohttp.ClientSession() as session:
                 for _ in range(retries):
                     async with session.get(api_url) as response:
-
                         if response.ok:
                             return await response.json()
 
                         await asyncio.sleep(random.uniform(0.75, 1.25))
-                
+
                 async with session.get(api_url) as response:
                     response.raise_for_status()
                     return await response.json()
