@@ -58,7 +58,8 @@ async def test_allocations(
     assert rv.status_code == status.HTTP_201_CREATED
 
     # ua_alice.allocate(1000, alice_proposals)
-    ua_bob.allocate(1000, alice_proposals[:1])
+    resp = ua_bob.allocate(1000, alice_proposals[:1])
+    assert resp.status_code == status.HTTP_201_CREATED
 
     # Check allocations using Flask API
     allocations, _ = client.get_epoch_allocations(STARTING_EPOCH)
@@ -134,7 +135,7 @@ def _check_allocations_logic(
         "allocationNonce": nonce
     }, "Flask and FastAPI nonce are different"
 
-    allocation_amount = "1000"
+    allocation_amount = 1000
     allocation_response_code = ua_alice.allocate(allocation_amount, alice_proposals)
     assert (
         allocation_response_code == status.HTTP_201_CREATED
