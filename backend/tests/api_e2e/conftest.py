@@ -16,6 +16,8 @@ from app.extensions import (
 )
 
 from app.modules.dto import ScoreDelegationPayload
+from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.allocations.validators import build_allocations_eip712_structure
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import (
@@ -248,8 +250,6 @@ class FastAPIClient:
         return rv.status_code
 
     def sign_operation(self, account, amount, addresses, nonce) -> str:
-        from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
-
         payload = {
             "allocations": [
                 {
@@ -260,8 +260,15 @@ class FastAPIClient:
             ],
             "nonce": nonce,
         }
-        signature = sign(account, build_allocations_eip712_data(payload))
-        return signature
+
+        chain_id = int(os.getenv("CHAIN_ID", 1337))
+
+        return account.sign_message(
+            encode_for_signing(
+                EncodingStandardFor.DATA,
+                build_allocations_eip712_structure(chain_id, payload),
+            )
+        ).signature.hex()
 
     def get_donors(self, epoch) -> tuple[dict, int]:
         rv = self._fastapi_client.get(f"/allocations/donors/{epoch}")
