@@ -205,7 +205,7 @@ async def test_allocations_via_socketio(
     )
 
     # Store results in this object
-    results, server_logs = try_run_test(
+    results, server_logs = await try_run_test(
         fastapi_app,
         alice_proposals,
         allocation_amount,
