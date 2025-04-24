@@ -293,3 +293,19 @@ class EpochsSubgraph:
 
         response = await self.gql_client.execute_async(query, variable_values=variables)
         return response["unlockeds"]
+
+    async def get_all_vault_merkle_root_epochs(self) -> list[int]:
+        query = gql(
+            """
+            query {
+              vaultMerkleRoots {
+                epoch
+                root
+                timestamp
+              }
+            }
+            """
+        )
+
+        response = await self.gql_client.execute_async(query)
+        return [item["epoch"] for item in response["vaultMerkleRoots"]]

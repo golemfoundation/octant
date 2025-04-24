@@ -6,7 +6,7 @@ from app.infrastructure.database.models import Allocation
 from app.infrastructure.database.models import AllocationRequest as AllocationRequestDB
 from app.infrastructure.database.models import UniquenessQuotient, User
 from eth_utils import to_checksum_address
-from sqlalchemy import Numeric, cast, func, select, update
+from sqlalchemy import Numeric, cast, exists, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
@@ -267,3 +267,43 @@ async def get_last_allocation_request(
         .filter(AllocationRequestDB.epoch == epoch_number)
         .order_by(AllocationRequestDB.nonce.desc())
     )
+
+
+async def get_user_allocations_sum_by_epoch(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> int:
+    """Get the sum of all allocations for a user in a given epoch."""
+
+    result = await session.scalar(
+        select(func.sum(cast(Allocation.amount, Numeric)))
+        .join(User, Allocation.user_id == User.id)
+        .filter(Allocation.epoch == epoch_number)
+        .filter(Allocation.deleted_at.is_(None))
+        .filter(User.address == user_address)
+    )
+
+    if result is None:
+        return 0
+
+    return int(result)
+
+
+async def has_allocation_requests(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> bool:
+    """Check if a user has allocation requests for a given epoch."""
+
+    result = await session.scalar(
+        select(
+            exists().where(
+                User.address == user_address,
+                AllocationRequestDB.user_id == User.id,
+                AllocationRequestDB.epoch == epoch_number,
+            )
+        )
+    )
+    return result
