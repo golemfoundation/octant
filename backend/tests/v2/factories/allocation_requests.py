@@ -32,7 +32,7 @@ class AllocationRequestFactorySet(FactorySetBase):
         self,
         user: User | Address,
         epoch: int,
-        is_manually_edited: bool = False,
+        is_manually_edited: bool,
         nonce: int | None = None,
         signature: str | None = None,
         leverage: float | None = None,
