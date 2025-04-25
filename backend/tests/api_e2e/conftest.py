@@ -8,12 +8,9 @@ import json
 from http import HTTPStatus
 from fastapi.testclient import TestClient
 
-from app.extensions import (
-    deposits,
-)
-
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.deposits.dependencies import get_deposits_contracts, get_deposits_settings
 from v2.crypto.eip712 import build_allocations_eip712_data
 from v2.glms.dependencies import get_glm_contracts, get_glm_settings
 from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
@@ -425,6 +422,7 @@ class FastUserAccount:
     async def lock(self, value: int):
         w3 = get_w3(get_web3_provider_settings())
         glm = get_glm_contracts(w3, get_glm_settings())
+        deposits = get_deposits_contracts(w3, get_deposits_settings())
         await glm.approve(
             self._account, deposits.contract.address, w3.to_wei(value, "ether")
         )
@@ -433,6 +431,7 @@ class FastUserAccount:
     async def unlock(self, value: int):
         w3 = get_w3(get_web3_provider_settings())
         glm = get_glm_contracts(w3, get_glm_settings())
+        deposits = get_deposits_contracts(w3, get_deposits_settings())
         await glm.approve(
             self._account, deposits.contract.address, w3.to_wei(value, "ether")
         )
