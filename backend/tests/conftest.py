@@ -486,11 +486,6 @@ def fastapi_client(fastapi_app: FastAPI) -> TestClient:
     return TestClient(fastapi_app)
 
 
-@pytest.fixture(scope="function")
-def fastapi_client(fastapi_app: FastAPI) -> TestClient:
-    return TestClient(fastapi_app)
-
-
 @pytest.fixture
 def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
