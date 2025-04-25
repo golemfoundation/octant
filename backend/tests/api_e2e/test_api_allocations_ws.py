@@ -183,7 +183,7 @@ async def test_allocations_via_socketio(
     )
 
     # Lock GLM for allocation
-    ua_alice.lock(10000)
+    await ua_alice.lock(10000)
 
     # Forward time to the beginning of epoch
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)

@@ -10,13 +10,12 @@ from fastapi.testclient import TestClient
 
 from app.extensions import (
     deposits,
-    glm,
-    w3,
-    vault,
 )
 
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from backend.v2.glms.dependencies import get_glm_contracts, get_glm_settings
+from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
 from v2.allocations.validators import build_allocations_eip712_data
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
@@ -404,7 +403,8 @@ class FastUserAccount:
     def address(self):
         return self._account.address
 
-    def fund_octant(self):
+    async def fund_octant(self):
+        w3 = get_w3(get_web3_provider_settings())
         signed_txn = w3.eth.account.sign_transaction(
             dict(
                 nonce=w3.eth.get_transaction_count(self.address),
@@ -415,21 +415,33 @@ class FastUserAccount:
             ),
             self._account.key,
         )
-        w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        await w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-    def transfer(self, account, value: int):
-        glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
+    async def transfer(self, account, value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        await glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
 
-    def lock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.lock(self._account, w3.to_wei(value, "ether"))
+    async def lock(self, value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        await glm.approve(
+            self._account, deposits.contract.address, w3.to_wei(value, "ether")
+        )
+        await deposits.lock(self._account, w3.to_wei(value, "ether"))
 
-    def unlock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.unlock(self._account, w3.to_wei(value, "ether"))
+    async def unlock(self, value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        await glm.approve(
+            self._account, deposits.contract.address, w3.to_wei(value, "ether")
+        )
+        await deposits.unlock(self._account, w3.to_wei(value, "ether"))
 
-    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
-        vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
+    async def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        w3 = get_w3(get_web3_provider_settings())
+        vault = get_vault_contracts(w3, get_vault_settings())
+        await vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
 
     def allocate(self, amount: int, addresses: list[str]):
         nonce, _ = self._client.get_allocation_nonce(self.address)
@@ -480,7 +492,7 @@ def ua_carol(fclient: FastAPIClient) -> FastUserAccount:
 
 
 @pytest.fixture
-def setup_funds(
+async def setup_funds(
     fclient: FastAPIClient,
     deployer: FastUserAccount,
     ua_alice: FastUserAccount,
@@ -493,8 +505,8 @@ def setup_funds(
     logging.debug("Setup funds before test")
 
     # fund Octant
-    deployer.fund_octant()
+    await deployer.fund_octant()
     # fund Users
-    deployer.transfer(ua_alice, 10000)
-    deployer.transfer(ua_bob, 15000)
-    deployer.transfer(ua_carol, 20000)
+    await deployer.transfer(ua_alice, 10000)
+    await deployer.transfer(ua_bob, 15000)
+    await deployer.transfer(ua_carol, 20000)

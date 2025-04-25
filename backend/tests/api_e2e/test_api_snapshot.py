@@ -15,8 +15,8 @@ async def test_pending_snapshot(
     setup_funds,
 ):
     # lock GLM from two accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(15000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
@@ -57,7 +57,7 @@ async def test_pending_snapshot_basics(
     setup_funds,
 ):
     # lock GLM from 1 account
-    ua_alice.lock(5000)
+    await ua_alice.lock(5000)
 
     indexed_height = fclient.wait_for_height_sync()
     logging.debug(f"indexed blockchain height: {indexed_height}")
@@ -113,7 +113,7 @@ async def test_finalized_snapshot_basics(
     setup_funds,
 ):
     # lock GLM from 1 account
-    ua_alice.lock(5000)
+    await ua_alice.lock(5000)
 
     # Check snapshot status before making finalized snapshot
     snapshot_status, status_code = fclient.snapshot_status(STARTING_EPOCH)

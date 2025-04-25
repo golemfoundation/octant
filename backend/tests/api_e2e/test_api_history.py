@@ -21,7 +21,7 @@ async def test_history_basics(
     alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM for one account
-    ua_alice.lock(10000)
+    await ua_alice.lock(10000)
 
     # forward time to the beginning of the epoch 2
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)

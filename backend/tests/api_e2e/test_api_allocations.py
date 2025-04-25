@@ -20,8 +20,8 @@ async def test_allocations(
     alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM from two accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(15000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
@@ -112,7 +112,7 @@ async def _check_allocations_logic(
             await fclient.move_to_next_epoch(STARTING_EPOCH + i)
 
         if STARTING_EPOCH + i == target_pending_epoch:
-            ua_alice.lock(10000)
+            await ua_alice.lock(10000)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + i)

@@ -39,8 +39,8 @@ async def test_deposit_basics(
     # Lock GML for one account
     alice_GLM_budget = 10000
     alice_first_lock = 8000
-    deployer.transfer(ua_alice, alice_GLM_budget)
-    ua_alice.lock(alice_first_lock)
+    await deployer.transfer(ua_alice, alice_GLM_budget)
+    await ua_alice.lock(alice_first_lock)
 
     indexed_height = fclient.wait_for_height_sync()
     logging.debug(f"indexed blockchain height: {indexed_height}")
@@ -70,7 +70,7 @@ async def test_deposit_basics(
     )
 
     # Second GLM lock
-    ua_alice.lock(alice_GLM_budget - alice_first_lock)
+    await ua_alice.lock(alice_GLM_budget - alice_first_lock)
 
     indexed_height = fclient.wait_for_height_sync()
     logging.debug(f"indexed blockchain height: {indexed_height}")

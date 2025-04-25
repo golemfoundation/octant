@@ -42,8 +42,8 @@ async def test_uq_for_all_users(
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
-    ua_alice.lock(10000)
-    ua_bob.lock(10000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(10000)
     await fclient.move_to_next_epoch(STARTING_EPOCH + 4)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 4)

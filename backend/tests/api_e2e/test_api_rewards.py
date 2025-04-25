@@ -20,8 +20,8 @@ async def test_rewards_basic(
     alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM from two accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(15000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)

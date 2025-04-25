@@ -24,9 +24,9 @@ async def test_withdrawals(
     carol_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM for three accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(10000)
-    ua_carol.lock(10000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(10000)
+    await ua_carol.lock(10000)
 
     # forward time to the beginning of the epoch 2
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
@@ -111,7 +111,7 @@ async def test_withdrawals(
     bob_wallet_before_withdraw = w3.eth.get_balance(ua_bob.address)
     logging.debug(f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}")
 
-    ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
+    await ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
     bob_wallet_after_withdraw = w3.eth.get_balance(ua_bob.address)
     logging.debug(f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert bob_wallet_after_withdraw > bob_wallet_before_withdraw
@@ -128,7 +128,7 @@ async def test_withdrawals(
         f"Carol Wallet balance before withdrawal: {carol_wallet_before_withdraw}"
     )
 
-    ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
+    await ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
     carol_wallet_after_withdraw = w3.eth.get_balance(ua_carol.address)
     logging.debug(f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert carol_wallet_after_withdraw > carol_wallet_before_withdraw
