@@ -14,9 +14,9 @@ from app.extensions import (
 
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.crypto.eip712 import build_allocations_eip712_data
 from v2.glms.dependencies import get_glm_contracts, get_glm_settings
 from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
-from v2.allocations.validators import build_allocations_eip712_data
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
 from tests.helpers.constants import (
