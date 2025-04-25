@@ -243,6 +243,7 @@ class FastAPIClient:
                 "isManuallyEdited": False,
             },
         )
+        logger.info(f"make_allocation returns {rv.text} and status code {rv.status_code}")
         return rv.status_code
 
     def sign_operation(self, account, amount, addresses, nonce) -> str:
@@ -414,7 +415,7 @@ class FastUserAccount:
         )
         await w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-    async def transfer(self, account, value: int):
+    async def transfer(self, account: "FastUserAccount", value: int):
         w3 = get_w3(get_web3_provider_settings())
         glm = get_glm_contracts(w3, get_glm_settings())
         await glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))

@@ -12,7 +12,7 @@ class GLMContracts(SmartContract):
     async def transfer(
         self, sender: AddressKey, receiver_address: str, amount: int
     ) -> None:
-        nonce = await self.w3.eth.get_transaction_count(sender)
+        nonce = await self.w3.eth.get_transaction_count(sender.address)
         transaction = self.contract.functions.transfer(
             receiver_address, amount
         ).build_transaction({"from": sender.address, "nonce": nonce})
