@@ -243,7 +243,9 @@ class FastAPIClient:
                 "isManuallyEdited": False,
             },
         )
-        logger.info(f"make_allocation returns {rv.text} and status code {rv.status_code}")
+        logger.info(
+            f"make_allocation returns {rv.text} and status code {rv.status_code}"
+        )
         return rv.status_code
 
     def sign_operation(self, account, amount, addresses, nonce) -> str:

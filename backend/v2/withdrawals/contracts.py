@@ -52,7 +52,7 @@ class VaultContract(SmartContract):
         transaction = await self.contract.functions.setMerkleRoot(
             epoch_number, root
         ).build_transaction({"from": account.address, "nonce": account.nonce})
-        signed_tx = await self.w3.eth.account.sign_transaction(transaction, account.key)
+        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
         logging.debug(f"[Vault contract] Transaction sent with hash: {tx_hash.hex()}")
@@ -70,7 +70,7 @@ class VaultContract(SmartContract):
         transaction = await self.contract.functions.batchWithdraw(
             [(epoch_number, amount, merkle_proof)]
         ).build_transaction({"from": account.address, "nonce": nonce})
-        signed_tx = await self.w3.eth.account.sign_transaction(transaction, account.key)
+        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
         logging.debug(f"[Vault contract] Transaction sent with hash: {tx_hash.hex()}")

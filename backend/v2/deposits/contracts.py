@@ -15,7 +15,7 @@ class DepositsContracts(SmartContract):
             {"from": account.address, "nonce": nonce}
         )
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
-        return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        return await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
     async def balance_of(self, owner_address: str) -> int:
         return await self.contract.functions.deposits(owner_address).call()
