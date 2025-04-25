@@ -14,6 +14,7 @@ from tests.v2.factories.pending_snapshots import PendingEpochSnapshotFactorySet
 from tests.v2.factories.finalized_snapshots import FinalizedEpochSnapshotFactorySet
 from tests.v2.factories.patrons import PatronModeEventFactorySet
 from tests.v2.factories.tos import UserConsentsFactorySet
+from tests.v2.factories.rewards import RewardFactorySet
 from dataclasses import dataclass
 
 
@@ -43,6 +44,7 @@ class FactoriesAggregator:
     score_delegations: ScoreDelegationFactorySet
     deposits: DepositFactorySet
     multisig_signatures: MultisigSignatureFactorySet
+    rewards: RewardFactorySet
 
     def __init__(self, fast_session: AsyncSession):
         """
@@ -62,3 +64,4 @@ class FactoriesAggregator:
         self.score_delegations = ScoreDelegationFactorySet(fast_session)
         self.deposits = DepositFactorySet(fast_session)
         self.multisig_signatures = MultisigSignatureFactorySet(fast_session)
+        self.rewards = RewardFactorySet(fast_session)
