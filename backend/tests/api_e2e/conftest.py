@@ -407,8 +407,8 @@ class FastUserAccount:
         w3 = get_w3(get_web3_provider_settings())
         signed_txn = w3.eth.account.sign_transaction(
             dict(
-                nonce=w3.eth.get_transaction_count(self.address),
-                gasPrice=w3.eth.gas_price,
+                nonce=await w3.eth.get_transaction_count(self.address),
+                gasPrice=await w3.eth.gas_price,
                 gas=1000000,
                 to=os.getenv("WITHDRAWALS_TARGET_CONTRACT_ADDRESS"),
                 value=w3.to_wei(400, "ether"),
