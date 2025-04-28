@@ -46,8 +46,7 @@ async def get_by_address_and_epoch_gt(
 
     results = await session.scalars(
         select(Reward)
-        .where(Reward.address == address)
-        .where(Reward.epoch > epoch_number)
+        .where(Reward.address == address, Reward.epoch > epoch_number)
         .order_by(Reward.epoch.asc())
     )
 

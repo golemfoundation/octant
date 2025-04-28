@@ -279,9 +279,11 @@ async def get_user_allocations_sum_by_epoch(
     result = await session.scalar(
         select(func.sum(cast(Allocation.amount, Numeric)))
         .join(User, Allocation.user_id == User.id)
-        .filter(Allocation.epoch == epoch_number)
-        .filter(Allocation.deleted_at.is_(None))
-        .filter(User.address == user_address)
+        .filter(
+            Allocation.epoch == epoch_number,
+            Allocation.deleted_at.is_(None),
+            User.address == user_address,
+        )
     )
 
     if result is None:

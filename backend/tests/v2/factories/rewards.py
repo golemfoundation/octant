@@ -5,7 +5,7 @@ from factory import LazyAttribute
 from app.infrastructure.database.models import Reward, User
 from tests.v2.factories.base import FactorySetBase
 from tests.v2.factories.users import UserFactorySet
-from v2.core.types import Address, BigInteger
+from v2.core.types import Address
 
 
 class RewardFactory(AsyncSQLAlchemyFactory):
@@ -15,12 +15,8 @@ class RewardFactory(AsyncSQLAlchemyFactory):
 
     address = None
     epoch = None
-    amount = LazyAttribute(
-        lambda _: str(random.randint(1, 1000) * 10**18)
-    )  # Random amount in wei
-    matched = LazyAttribute(
-        lambda _: str(random.randint(1, 500) * 10**18)
-    )  # Random matched amount in wei
+    amount = LazyAttribute(lambda _: str(random.randint(1, 1000) * 10**18))
+    matched = LazyAttribute(lambda _: str(random.randint(1, 500) * 10**18))
 
 
 class RewardFactorySet(FactorySetBase):
@@ -30,8 +26,8 @@ class RewardFactorySet(FactorySetBase):
         self,
         address: Address,
         epoch: int,
-        amount: BigInteger | None = None,
-        matched: BigInteger | None = None,
+        amount: int | None = None,
+        matched: int | None = None,
     ) -> Reward:
         """
         Create a reward for an address in a specific epoch.
@@ -63,8 +59,8 @@ class RewardFactorySet(FactorySetBase):
         self,
         user: User | Address,
         epoch: int,
-        amount: BigInteger | None = None,
-        matched: BigInteger | None = None,
+        amount: int | None = None,
+        matched: int | None = None,
     ) -> Reward:
         """
         Create a reward for a user in a specific epoch.
