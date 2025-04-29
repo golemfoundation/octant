@@ -22,7 +22,7 @@ async def confirm_withdrawals(session: AsyncSession, vault: VaultContracts):
             nonce = await vault.w3.eth.get_transaction_count(
                 multisig.address, block_identifier="latest"
             )
-            chain_id = await vault.w3.eth.get_chain_id()
+            chain_id = int(os.getenv("CHAIN_ID"))
             transaction = {
                 "chainId": chain_id,
                 "from": multisig.address,

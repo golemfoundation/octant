@@ -51,9 +51,13 @@ class VaultContracts(SmartContract):
     ) -> HexBytes:
         logging.debug(f"[Vault contract] Setting merkle root for epoch: {epoch_number}")
 
+        nonce = await self.w3.eth.get_transaction_count(
+            account.address, block_identifier="latest"
+        )
+
         transaction = await self.contract.functions.setMerkleRoot(
             epoch_number, root
-        ).build_transaction({"from": account.address, "nonce": account.nonce})
+        ).build_transaction({"from": account.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
