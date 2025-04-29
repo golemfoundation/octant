@@ -35,3 +35,19 @@ async def get_rewards_for_projects_in_epoch(
     )
 
     return list(results.all())
+
+
+async def get_by_address_and_epoch_gt(
+    session: AsyncSession, address: Address, epoch_number: int
+) -> list[Reward]:
+    """
+    Get all rewards for a given address for epochs greater than the given epoch number.
+    """
+
+    results = await session.scalars(
+        select(Reward)
+        .where(Reward.address == address, Reward.epoch > epoch_number)
+        .order_by(Reward.epoch.asc())
+    )
+
+    return list(results.all())
