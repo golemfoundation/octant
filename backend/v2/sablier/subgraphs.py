@@ -38,7 +38,7 @@ class SablierSubgraph:
         self.gql_client = Client(
             transport=AIOHTTPTransport(
                 url=self.url,
-                timeout=2,
+                timeout=4,
             ),
             fetch_schema_from_transport=False,
         )
