@@ -118,11 +118,11 @@ async def test_withdrawals(
     bob_merkle_proof: list[str] = bob_withdrawals["proof"]
     logging.debug(f"Bob Merkle proof: {bob_merkle_proof}")
 
-    bob_wallet_before_withdraw = w3.eth.get_balance(ua_bob.address)
+    bob_wallet_before_withdraw = await w3.eth.get_balance(ua_bob.address)
     logging.debug(f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}")
 
     await ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
-    bob_wallet_after_withdraw = w3.eth.get_balance(ua_bob.address)
+    bob_wallet_after_withdraw = await w3.eth.get_balance(ua_bob.address)
     logging.debug(f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert bob_wallet_after_withdraw > bob_wallet_before_withdraw
 
@@ -133,12 +133,12 @@ async def test_withdrawals(
     carol_merkle_proof: list[str] = carol_withdrawals["proof"]
     logging.debug(f"Carol Merkle proof: {carol_merkle_proof}")
 
-    carol_wallet_before_withdraw = w3.eth.get_balance(ua_carol.address)
+    carol_wallet_before_withdraw = await w3.eth.get_balance(ua_carol.address)
     logging.debug(
         f"Carol Wallet balance before withdrawal: {carol_wallet_before_withdraw}"
     )
 
     await ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
-    carol_wallet_after_withdraw = w3.eth.get_balance(ua_carol.address)
+    carol_wallet_after_withdraw = await w3.eth.get_balance(ua_carol.address)
     logging.debug(f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert carol_wallet_after_withdraw > carol_wallet_before_withdraw
