@@ -7,7 +7,7 @@ from v2.core.contracts import SmartContract
 from web3.middleware import construct_sign_and_send_raw_middleware
 
 
-class VaultContract(SmartContract):
+class VaultContracts(SmartContract):
     async def get_last_claimed_epoch(self, address: str) -> int:
         logging.debug(
             f"[Vault contract] Getting last claimed epoch for address: {address}"

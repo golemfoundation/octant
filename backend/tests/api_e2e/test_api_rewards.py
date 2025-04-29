@@ -1,9 +1,15 @@
 import pytest
 import time
 import logging
-from app.extensions import vault
+from v2.core.dependencies import (
+    get_database_settings,
+    get_sessionmaker,
+    get_w3,
+    get_web3_provider_settings,
+)
+from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
+from v2.withdrawals.services import confirm_withdrawals
 from tests.helpers.constants import STARTING_EPOCH
-from app.legacy.core import vault as vault_core
 from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
@@ -27,7 +33,9 @@ async def test_rewards_basic(
     await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # fund the vault (amount here is arbitrary)
-    vault.fund(deployer._account, 1000 * 10**18)
+    w3 = get_w3(get_web3_provider_settings())
+    vault = get_vault_contracts(w3, get_vault_settings())
+    await vault.fund(deployer._account, 1000 * 10**18)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
@@ -92,7 +100,9 @@ async def test_rewards_basic(
     assert three_hundreds_days_budget_estimation > two_hundreds_days_budget_estimation
 
     # write merkle root for withdrawals
-    vault_core.confirm_withdrawals()
+    session_maker = get_sessionmaker(get_database_settings())
+    async with session_maker() as session:
+        await confirm_withdrawals(session, vault)
 
     while not vault.is_merkle_root_set(STARTING_EPOCH):
         time.sleep(1)

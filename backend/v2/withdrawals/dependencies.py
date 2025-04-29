@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from v2.core.types import Address
-from v2.withdrawals.contracts import VAULT_ABI, VaultContract
+from v2.withdrawals.contracts import VAULT_ABI, VaultContracts
 from v2.core.dependencies import OctantSettings, Web3
 
 
@@ -14,14 +14,14 @@ def get_vault_settings() -> VaultSettings:
     return VaultSettings()
 
 
-async def get_vault_contracts(
+def get_vault_contracts(
     w3: Web3, settings: Annotated[VaultSettings, Depends(get_vault_settings)]
-) -> VaultContract:
-    return VaultContract(
+) -> VaultContracts:
+    return VaultContracts(
         w3=w3,
         abi=VAULT_ABI,
         address=settings.vault_contract_address,
     )
 
 
-GetVaultContract = Annotated[VaultContract, Depends(get_vault_contracts)]
+GetVaultContract = Annotated[VaultContracts, Depends(get_vault_contracts)]
