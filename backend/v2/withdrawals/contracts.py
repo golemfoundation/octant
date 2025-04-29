@@ -26,7 +26,7 @@ class VaultContracts(SmartContract):
             "value": amount,
         }
         self.w3.middleware_onion.add(
-            async_construct_sign_and_send_raw_middleware(account)
+            await async_construct_sign_and_send_raw_middleware(account)
         )
         tx_hash = await self.w3.eth.send_transaction(transaction)
         await self.w3.eth.wait_for_transaction_receipt(tx_hash)
