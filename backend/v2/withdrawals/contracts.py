@@ -4,7 +4,7 @@ from eth_account import Account
 from hexbytes import HexBytes
 
 from v2.core.contracts import SmartContract
-from web3.middleware import construct_sign_and_send_raw_middleware
+from web3.middleware.signing import async_construct_sign_and_send_raw_middleware
 
 
 class VaultContracts(SmartContract):
@@ -25,7 +25,9 @@ class VaultContracts(SmartContract):
             "to": self.contract.address,
             "value": amount,
         }
-        self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
+        self.w3.middleware_onion.add(
+            async_construct_sign_and_send_raw_middleware(account)
+        )
         tx_hash = await self.w3.eth.send_transaction(transaction)
         await self.w3.eth.wait_for_transaction_receipt(tx_hash)
         return tx_hash
