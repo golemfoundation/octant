@@ -1,21 +1,21 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from dataclasses import dataclass
 
-from tests.v2.factories.multisigs import MultisigSignatureFactorySet
-from tests.v2.factories.deposits import DepositFactorySet
-from tests.v2.factories.delegations import ScoreDelegationFactorySet
-from tests.v2.factories.gp_scores import GPStampsFactorySet
-from tests.v2.factories.uniqueness_quotients import UniquenessQuotientFactorySet
+from sqlalchemy.ext.asyncio import AsyncSession
 from tests.v2.factories.allocation_requests import AllocationRequestFactorySet
 from tests.v2.factories.allocations import AllocationFactorySet
-from tests.v2.factories.projects_details import ProjectsDetailsFactorySet
-from tests.v2.factories.users import UserFactorySet
 from tests.v2.factories.budgets import BudgetFactorySet
-from tests.v2.factories.pending_snapshots import PendingEpochSnapshotFactorySet
+from tests.v2.factories.delegations import ScoreDelegationFactorySet
+from tests.v2.factories.deposits import DepositFactorySet
 from tests.v2.factories.finalized_snapshots import FinalizedEpochSnapshotFactorySet
+from tests.v2.factories.gp_scores import GPStampsFactorySet
+from tests.v2.factories.multisigs import MultisigSignatureFactorySet
 from tests.v2.factories.patrons import PatronModeEventFactorySet
-from tests.v2.factories.tos import UserConsentsFactorySet
+from tests.v2.factories.pending_snapshots import PendingEpochSnapshotFactorySet
+from tests.v2.factories.projects_details import ProjectsDetailsFactorySet
 from tests.v2.factories.rewards import RewardFactorySet
-from dataclasses import dataclass
+from tests.v2.factories.tos import UserConsentsFactorySet
+from tests.v2.factories.uniqueness_quotients import UniquenessQuotientFactorySet
+from tests.v2.factories.users import UserFactorySet
 
 
 @dataclass

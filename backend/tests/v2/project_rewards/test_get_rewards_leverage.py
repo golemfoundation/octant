@@ -6,6 +6,8 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions import InvalidEpoch, NotImplementedForGivenEpochState
+from tests.v2.fake_subgraphs.helpers import FakeEpochEventDetails
+from tests.v2.fake_subgraphs.conftest import FakeEpochsSubgraphCallable
 from v2.matched_rewards.services import MatchedRewardsEstimator
 from tests.v2.factories import FactoriesAggregator
 from tests.v2.fake_contracts.helpers import FakeEpochsContractDetails
@@ -15,10 +17,11 @@ from v2.matched_rewards.dependencies import get_matched_rewards_estimator
 
 @pytest.mark.asyncio
 async def test_returns_leverage_for_finalized_epoch(
-    fake_epochs_contract_factory: FakeEpochsContractCallable,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should return leverage based on finalized snapshot for finalized epoch"""
     # Given: a finalized epoch with snapshot and allocations
@@ -31,6 +34,18 @@ async def test_returns_leverage_for_finalized_epoch(
             finalized_epoch=epoch_number,
             pending_epoch=None,
         )
+    )
+
+    # Mock subgraph to return finalized epoch details
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=epoch_number,
+                from_ts=0,
+                duration=10000,
+                decision_window=3000,
+            )
+        ]
     )
 
     # Create pending snapshot
@@ -62,11 +77,12 @@ async def test_returns_leverage_for_finalized_epoch(
 
 @pytest.mark.asyncio
 async def test_returns_leverage_for_pending_epoch(
-    fake_epochs_contract_factory: FakeEpochsContractCallable,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
     fast_app: FastAPI,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should return leverage based on estimated rewards for pending epoch"""
     # Given: a pending epoch with allocations
@@ -80,6 +96,18 @@ async def test_returns_leverage_for_pending_epoch(
             finalized_epoch=epoch_number,
             pending_epoch=None,
         )
+    )
+
+    # Mock subgraph to return pending epoch details
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=epoch_number,
+                from_ts=0,
+                duration=10000,
+                decision_window=3000,
+            )
+        ]
     )
 
     # Create pending snapshot
@@ -109,10 +137,11 @@ async def test_returns_leverage_for_pending_epoch(
 
 @pytest.mark.asyncio
 async def test_returns_zero_leverage_when_no_allocations(
-    fake_epochs_contract_factory: FakeEpochsContractCallable,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should return zero leverage when there are no allocations"""
     # Given: a finalized epoch with snapshot but no allocations
@@ -125,6 +154,18 @@ async def test_returns_zero_leverage_when_no_allocations(
             current_epoch=2,
             finalized_epoch=epoch_number,
         )
+    )
+
+    # Mock subgraph to return finalized epoch details
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=epoch_number,
+                from_ts=0,
+                duration=10000,
+                decision_window=3000,
+            )
+        ]
     )
 
     # Create pending snapshot
@@ -146,9 +187,10 @@ async def test_returns_zero_leverage_when_no_allocations(
 
 @pytest.mark.asyncio
 async def test_raises_error_when_snapshot_missing(
-    fake_epochs_contract_factory: FakeEpochsContractCallable,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should raise MissingSnapshot when finalized snapshot is missing"""
     # Given: a finalized epoch without snapshot
@@ -162,6 +204,18 @@ async def test_raises_error_when_snapshot_missing(
         )
     )
 
+    # Mock subgraph to return finalized epoch details
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=epoch_number,
+                from_ts=0,
+                duration=10000,
+                decision_window=3000,
+            )
+        ]
+    )
+
     async with fast_client as client:
         resp = await client.get(f"rewards/leverage/{epoch_number}")
         assert resp.status_code == HTTPStatus.BAD_REQUEST
@@ -170,9 +224,10 @@ async def test_raises_error_when_snapshot_missing(
 
 @pytest.mark.asyncio
 async def test_raises_error_for_invalid_epoch_state(
-    fake_epochs_contract_factory: FakeEpochsContractCallable,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should raise NotImplementedForGivenEpochState for invalid epoch state"""
     # Given: an epoch in invalid state (after PENDING)
@@ -185,6 +240,18 @@ async def test_raises_error_for_invalid_epoch_state(
             finalized_epoch=0,
             future_epoch_props=(0, 0, 2000, 1000),  # Future epoch
         )
+    )
+
+    # Mock subgraph to return future epoch details
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=epoch_number,
+                from_ts=0,
+                duration=10000,
+                decision_window=3000,
+            )
+        ]
     )
 
     async with fast_client as client:

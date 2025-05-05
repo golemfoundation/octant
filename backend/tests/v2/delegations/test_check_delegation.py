@@ -104,6 +104,12 @@ async def test_check_delegations_does_not_exist(
     """
     Test that if no addresses have a delegation, we return an empty response.
     """
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     alice = await factories.users.get_or_create_alice()
     bob = await factories.users.get_or_create_bob()
 
@@ -125,6 +131,11 @@ async def test_check_delegations_addresses_list_too_long_or_too_short(
     """
     Test that if no addresses have a delegation, we return an empty response.
     """
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
 
     _, one = await factories.users.create_random_user()
     _, two = await factories.users.create_random_user()

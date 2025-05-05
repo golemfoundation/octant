@@ -61,6 +61,13 @@ async def test_recalculate_delegation_not_exists(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
 ):
+    # Settings for the delegation
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     alice = await factories.users.get_or_create_alice()
     bob = await factories.users.get_or_create_bob()
 
