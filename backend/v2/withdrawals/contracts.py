@@ -4,10 +4,10 @@ from eth_account import Account
 from hexbytes import HexBytes
 
 from v2.core.contracts import SmartContract
-from web3.middleware import construct_sign_and_send_raw_middleware
+from web3.middleware.signing import async_construct_sign_and_send_raw_middleware
 
 
-class VaultContract(SmartContract):
+class VaultContracts(SmartContract):
     async def get_last_claimed_epoch(self, address: str) -> int:
         logging.debug(
             f"[Vault contract] Getting last claimed epoch for address: {address}"
@@ -25,7 +25,9 @@ class VaultContract(SmartContract):
             "to": self.contract.address,
             "value": amount,
         }
-        self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
+        self.w3.middleware_onion.add(
+            await async_construct_sign_and_send_raw_middleware(account)
+        )
         tx_hash = await self.w3.eth.send_transaction(transaction)
         await self.w3.eth.wait_for_transaction_receipt(tx_hash)
         return tx_hash
@@ -49,10 +51,14 @@ class VaultContract(SmartContract):
     ) -> HexBytes:
         logging.debug(f"[Vault contract] Setting merkle root for epoch: {epoch_number}")
 
+        nonce = await self.w3.eth.get_transaction_count(
+            account.address, block_identifier="latest"
+        )
+
         transaction = await self.contract.functions.setMerkleRoot(
             epoch_number, root
-        ).build_transaction({"from": account.address, "nonce": account.nonce})
-        signed_tx = await self.w3.eth.account.sign_transaction(transaction, account.key)
+        ).build_transaction({"from": account.address, "nonce": nonce})
+        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
         logging.debug(f"[Vault contract] Transaction sent with hash: {tx_hash.hex()}")
@@ -70,7 +76,7 @@ class VaultContract(SmartContract):
         transaction = await self.contract.functions.batchWithdraw(
             [(epoch_number, amount, merkle_proof)]
         ).build_transaction({"from": account.address, "nonce": nonce})
-        signed_tx = await self.w3.eth.account.sign_transaction(transaction, account.key)
+        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         tx_hash = await self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
         logging.debug(f"[Vault contract] Transaction sent with hash: {tx_hash.hex()}")

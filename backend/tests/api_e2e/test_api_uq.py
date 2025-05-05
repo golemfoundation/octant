@@ -1,23 +1,23 @@
 import pytest
-from flask import current_app as app
+import logging
 
-from app.legacy.core.projects import get_projects_addresses
-from tests.conftest import UserAccount, add_user_sync
+from tests.conftest import add_user_sync
 from tests.helpers.constants import STARTING_EPOCH, LOW_UQ_SCORE, MAX_UQ_SCORE
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
-def test_uq_for_user(
-    fclient: FastAPIClient, ua_alice: UserAccount, sync_session: Session
+@pytest.mark.asyncio
+async def test_uq_for_user(
+    fclient: FastAPIClient, ua_alice: FastUserAccount, sync_session: Session
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     _, code = fclient.get_user_uq(ua_alice.address, 4)
     USER_NOT_FOUND = 200  # This actually makes sense because we can check score's address that is not user
@@ -32,24 +32,29 @@ def test_uq_for_user(
 
 
 @pytest.mark.api
-def test_uq_for_all_users(
-    fclient: FastAPIClient, ua_alice: UserAccount, ua_bob, setup_funds
+@pytest.mark.asyncio
+async def test_uq_for_all_users(
+    fclient: FastAPIClient,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
+    setup_funds,
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
-    ua_alice.lock(10000)
-    ua_bob.lock(10000)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 4)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(10000)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 4)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 4)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     res = fclient.pending_snapshot()
     assert res["epoch"] > 0
 
     # make an allocation during AW since it saves the uq to the database
-    alice_bob_proposals = get_projects_addresses(4)[:3]
+    projects, _ = ua_alice._client.get_projects(4)
+    alice_bob_proposals = projects["projectsAddresses"][:3]
 
     ua_alice.allocate(1000, alice_bob_proposals)
     ua_bob.allocate(1000, alice_bob_proposals)

@@ -47,8 +47,8 @@ if os.getenv("SENTRY_DSN"):
 from v2.main import build_app  # noqa
 
 
-def create_fastapi_app(debug: bool = False, include_socketio: bool = True):
-    fastapi_app = build_app(debug=debug, include_socketio=include_socketio)
+def create_fastapi_app(debug: bool = False):
+    fastapi_app = build_app(debug=debug)
     flask_app = create_flask_app()
 
     @flask_app.teardown_request
