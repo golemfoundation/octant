@@ -36,12 +36,11 @@ async def handle_sqlalchemy_exception(request: Request, ex: SQLAlchemyError):
     )
 
 
-def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
+def build_app(debug: bool = False) -> FastAPI:
     """Create and configure a FastAPI application.
 
     Args:
         debug (bool): We include additional logging if True
-        include_socketio (bool): We include SocketIO if True
 
     Returns:
         FastAPI: Configured FastAPI application
@@ -52,17 +51,16 @@ def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
     app.add_exception_handler(OctantException, handle_octant_exception)
     app.add_exception_handler(SQLAlchemyError, handle_sqlalchemy_exception)
 
-    # Setup SocketIO if not in testing mode
-    if include_socketio:
-        mgr = get_socketio_manager()
-        sio = socketio.AsyncServer(
-            cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
-        )
-        sio.register_namespace(AllocateNamespace("/"))
-        sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
+    # Setup SocketIO
+    mgr = get_socketio_manager()
+    sio = socketio.AsyncServer(
+        cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
+    )
+    sio.register_namespace(AllocateNamespace("/"))
+    sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
 
-        app.add_route("/socket.io/", route=sio_asgi_app)
-        app.add_websocket_route("/socket.io/", sio_asgi_app)
+    app.add_route("/socket.io/", route=sio_asgi_app)
+    app.add_websocket_route("/socket.io/", sio_asgi_app)
 
     # Register routers
     app.include_router(allocations_api)

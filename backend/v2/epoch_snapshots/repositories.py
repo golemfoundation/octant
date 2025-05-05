@@ -5,6 +5,8 @@ from app.infrastructure.database.models import (
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import exceptions
+
 
 async def get_pending_epoch_snapshot(
     session: AsyncSession, epoch_number: int
@@ -39,6 +41,27 @@ async def get_last_finalized_snapshot_epoch_number(
         return 0
 
     return result.epoch
+
+
+async def get_last_finalized_epoch_snapshot(
+    session: AsyncSession,
+) -> FinalizedEpochSnapshot:
+    """
+    Returns the last finalized epoch snapshot.
+    Raises MissingSnapshot if no snapshot is found.
+    """
+
+    result = await session.execute(
+        select(FinalizedEpochSnapshot)
+        .order_by(FinalizedEpochSnapshot.epoch.desc())
+        .limit(1)
+    )
+
+    snapshot = result.scalar_one_or_none()
+    if snapshot is None:
+        raise exceptions.MissingSnapshot()
+
+    return snapshot
 
 
 async def get_last_pending_snapshot_epoch_number(
