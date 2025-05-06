@@ -1,18 +1,17 @@
 import time
 import pytest
-
 from sqlalchemy.orm import Session
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import UserAccount, add_user_sync
+from tests.conftest import add_user_sync
 from tests.helpers.signature import build_user_signature_patron
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
 def test_patron_mode_basics(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
     setup_funds,
     sync_session: Session,
 ):

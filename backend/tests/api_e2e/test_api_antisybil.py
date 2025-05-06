@@ -1,14 +1,14 @@
 import pytest
 
 from app.extensions import w3
-from tests.conftest import UserAccount, add_user_sync
-from tests.api_e2e.conftest import FastAPIClient
+from tests.conftest import add_user_sync
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
 def test_antisybil(
-    fclient: FastAPIClient, ua_alice: UserAccount, sync_session: Session
+    fclient: FastAPIClient, ua_alice: FastUserAccount, sync_session: Session
 ):
     add_user_sync(sync_session, ua_alice.address)
     sync_session.commit()
@@ -27,7 +27,7 @@ def test_antisybil(
     assert int(score["expiresAt"]) > 0
 
     # flow for a brand new address, which couldn't be scored by GP yet
-    ua_jane = UserAccount(w3.eth.account.create(), fclient)
+    ua_jane = FastUserAccount(w3.eth.account.create(), fclient)
     add_user_sync(sync_session, ua_jane.address)
     sync_session.commit()
 

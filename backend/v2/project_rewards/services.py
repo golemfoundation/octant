@@ -8,6 +8,8 @@ from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.modules.dto import OctantRewardsDTO
 from app.modules.octant_rewards.core import calculate_rewards
+from app.exceptions import MissingAddress
+from v2.core.types import Address
 from v2.project_rewards.repositories import get_rewards_for_epoch
 from v2.project_rewards.schemas import (
     RewardsMerkleTreeLeafV1,
@@ -104,6 +106,30 @@ class ProjectRewardsEstimator:
             allocations=allocations,
             matched_rewards=matched_rewards,
         )
+
+
+async def get_standard_merkle_tree_for_epoch_rewards(
+    session: AsyncSession,
+    epoch_number: int,
+) -> StandardMerkleTree:
+    """
+    Get the rewards merkle tree for a given epoch.
+    """
+
+    rewards = await get_rewards_for_epoch(session, epoch_number)
+
+    LEAF_ENCODING: list[str] = ["address", "uint256"]
+    return StandardMerkleTree.of(
+        [[leaf.address, int(leaf.amount)] for leaf in rewards],
+        LEAF_ENCODING,
+    )
+
+
+def get_proof(mt: StandardMerkleTree, address: Address) -> list[str]:
+    for i, leaf in enumerate(mt.values):
+        if leaf.value[0] == address:
+            return mt.get_proof(i)
+    raise MissingAddress(address)
 
 
 async def get_rewards_merkle_tree_for_epoch(

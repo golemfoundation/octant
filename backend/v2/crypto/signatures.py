@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from eth_account import Account
-from eth_account.messages import SignableMessage, _hash_eip191_message
+from eth_account.messages import SignableMessage
 from eth_keys.exceptions import BadSignature
 from eth_utils import to_checksum_address
+from v2.crypto.eip712 import hash_signable_message
 from v2.core.types import Address
-from v2.crypto.contracts import GNOSIS_SAFE, GnosisSafeContracts
+from v2.multisig.contracts import GNOSIS_SAFE, SafeContracts
 from web3 import AsyncWeb3
 from web3.exceptions import ContractLogicError
 
@@ -52,16 +53,12 @@ async def is_contract(w3: AsyncWeb3, address: str) -> bool:
     return code.hex() != "0x"
 
 
-def hash_signable_message(encoded_msg: SignableMessage) -> str:
-    return "0x" + _hash_eip191_message(encoded_msg).hex()
-
-
 async def _verify_multisig(
     w3: AsyncWeb3, user_address: Address, encoded_msg: SignableMessage, signature: str
 ) -> bool:
     msg_hash = hash_signable_message(encoded_msg)
     try:
-        gnosis_safe = GnosisSafeContracts(w3=w3, abi=GNOSIS_SAFE, address=user_address)  # type: ignore[arg-type]
+        gnosis_safe = SafeContracts(w3=w3, abi=GNOSIS_SAFE, address=user_address)  # type: ignore[arg-type]
         return await gnosis_safe.is_valid_signature(msg_hash, signature)
     except ContractLogicError:
         return False
