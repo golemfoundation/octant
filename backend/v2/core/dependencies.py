@@ -1,4 +1,3 @@
-from __future__ import annotations
 from datetime import datetime, timezone
 import time
 from functools import lru_cache
@@ -94,7 +93,9 @@ def get_sessionmaker(
 
 
 async def get_db_session(
-    sessionmaker: GetSessionmaker,
+    sessionmaker: Annotated[
+        async_sessionmaker[AsyncSession], Depends(get_sessionmaker)
+    ],
 ) -> AsyncGenerator[AsyncSession, None]:
     async with sessionmaker() as session:
         try:
