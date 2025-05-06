@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
 from app.engine.user.effective_deposit import DepositEvent, EventType
+from v2.delegations.dependencies import DelegationSettings, get_delegation_settings
 from v2.core.dependencies import get_current_timestamp
 from v2.deposits.dependencies import (
     GetDepositEventsRepository,
@@ -50,6 +51,13 @@ async def test_delegate_error_low_uq_score(
     fake_epochs_contract_factory: FakeEpochsContractCallable,
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
+    # Settings for the delegation
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     # Mocks
     fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
     fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
@@ -106,6 +114,13 @@ async def test_delegate_ok(
     fake_epochs_contract_factory: FakeEpochsContractCallable,
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
+    # Settings for the delegation
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     # Mocks
     fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
     fake_epochs_contract_factory(FakeEpochsContractDetails(current_epoch=1))
@@ -184,6 +199,13 @@ async def test_delegate_error_locking_address(
     fake_epochs_contract_factory: FakeEpochsContractCallable,
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
+    # Settings for the delegation
+    delegation_settings = DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     alice_user, alice_account = await factories.users.create_random_user()
     bob_user, bob_account = await factories.users.create_random_user()
 
@@ -212,6 +234,10 @@ async def test_delegate_error_locking_address(
             ),
         ]
     }
+    fast_app.dependency_overrides[
+        get_gitcoin_scorer_client
+    ] = lambda: mock_gitcoin_scorer(15.1)
+
     fast_app.dependency_overrides[
         get_deposit_events_repository
     ] = lambda: events_repository

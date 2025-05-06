@@ -8,6 +8,7 @@ from v2.core.dependencies import OctantSettings, Web3
 
 class VaultSettings(OctantSettings):
     vault_contract_address: Address
+    withdrawals_target_contract_address: Address
 
 
 def get_vault_settings() -> VaultSettings:
@@ -24,4 +25,5 @@ def get_vault_contracts(
     )
 
 
+GetVaultSettings = Annotated[VaultSettings, Depends(get_vault_settings)]
 GetVaultContract = Annotated[VaultContracts, Depends(get_vault_contracts)]

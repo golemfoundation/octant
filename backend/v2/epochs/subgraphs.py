@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Callable, Sequence, Type, Union
+from typing import Any, Callable, Sequence, Type, Union
 
 from pydantic import TypeAdapter
 import backoff
@@ -180,10 +180,10 @@ class EpochsSubgraph:
             remaining_sec=0,
         )
 
-    async def get_latest_epoch(self) -> EpochDetails:
-        """Get latest epoch from the subgraph."""
-        logging.debug("[Subgraph] Getting latest epoch from subgraph.")
-
+    async def _fetch_latest_epoch(self) -> dict[str, Any]:
+        """
+        Fetch the latest epoch from the subgraph.
+        """
         query = gql(
             """
             query {
@@ -203,7 +203,13 @@ class EpochsSubgraph:
             """
         )
 
-        response = await self.gql_client.execute_async(query)
+        return await self.gql_client.execute_async(query)
+
+    async def get_latest_epoch(self) -> EpochDetails:
+        """Get latest epoch from the subgraph."""
+        logging.debug("[Subgraph] Getting latest epoch from subgraph.")
+
+        response = await self._fetch_latest_epoch()
         data = response["epoches"]
 
         if not data:
@@ -309,3 +315,36 @@ class EpochsSubgraph:
 
         response = await self.gql_client.execute_async(query)
         return [item["epoch"] for item in response["vaultMerkleRoots"]]
+
+    async def get_indexed_block_num(self) -> int:
+        query = gql(
+            """
+            query {
+              _meta {
+                block {
+                  number
+                }
+              }
+            }
+            """
+        )
+        response = await self.gql_client.execute_async(query)
+        if response:
+            return response["_meta"]["block"]["number"]
+        else:
+            return 0
+
+    async def get_last_indexed_epoch_and_height(self) -> tuple[int, int]:
+        """
+        Get the last indexed epoch and block number.
+        """
+        last_indexed_epoch = await self._fetch_latest_epoch()
+
+        if last_indexed_epoch["epoches"]:
+            indexed_epoch = last_indexed_epoch["epoches"][0]["epoch"]
+        else:
+            indexed_epoch = 0
+
+        indexed_height = last_indexed_epoch["_meta"]["block"]["number"]
+
+        return indexed_epoch, indexed_height

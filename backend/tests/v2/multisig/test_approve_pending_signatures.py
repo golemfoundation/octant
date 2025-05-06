@@ -152,19 +152,48 @@ async def test_approve_pending_signatures_success_tos(
         status=SigStatus.PENDING,
     )
 
+    # Mock the epochs_contracts to return our fixed current epoch
+    epoch_contracts = MagicMock()
+    epoch_contracts.get_pending_epoch = AsyncMock(return_value=1)
+
     # Mock the safe contracts client
     safe_client = AsyncMock()
     safe_client.get_signature_if_confirmed = AsyncMock(
         return_value="0x1234567890abcdef"
     )
 
+    epoch_subgraph = MagicMock()
+    epoch_subgraph.get_epoch_by_number = AsyncMock(
+        return_value=EpochDetails(
+            epoch_num=1,
+            start=0,
+            duration=10000,
+            decision_window=3000,
+            remaining_sec=5000,
+        )
+    )
+
     # Mock the signature verifier
     signature_verifier = MagicMock()
     signature_verifier.verify = AsyncMock(return_value=True)
 
+    signed_message_verifier = MagicMock()
+    signed_message_verifier.verify = AsyncMock(return_value=True)
+
+    projects_contracts = MagicMock()
+    projects_contracts.get_project_addresses = AsyncMock(
+        return_value=["0x16eFF2A933AEa62C6B166BD187f7b705628A7f1e"]
+    )
+
     # Override the dependencies
     fast_app.dependency_overrides[get_safe_client] = lambda: safe_client
     fast_app.dependency_overrides[get_signature_verifier] = lambda: signature_verifier
+    fast_app.dependency_overrides[get_epochs_contracts] = lambda: epoch_contracts
+    fast_app.dependency_overrides[get_epochs_subgraph] = lambda: epoch_subgraph
+    fast_app.dependency_overrides[
+        get_signed_message_verifier
+    ] = lambda: signed_message_verifier
+    fast_app.dependency_overrides[get_projects_contracts] = lambda: projects_contracts
 
     # Call the endpoint
     async with fast_client as client:

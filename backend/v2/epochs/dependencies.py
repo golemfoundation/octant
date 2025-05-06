@@ -114,6 +114,11 @@ async def get_epoch_state(
         return EpochState.FINALIZED
 
 
+GetEpochSettings = Annotated[
+    EpochsSettings,
+    Depends(get_epochs_settings),
+]
+
 GetEpochsSubgraph = Annotated[
     EpochsSubgraph,
     Depends(get_epochs_subgraph),

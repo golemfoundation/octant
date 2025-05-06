@@ -80,6 +80,7 @@ async def test_get_user_effective_deposit_past_epoch_success(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
     fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should return the effective deposit for a user in a past epoch"""
     # Setup
@@ -100,6 +101,28 @@ async def test_get_user_effective_deposit_past_epoch_success(
 
     # Mock the epochs_contracts to return our fixed current epoch
     fake_epochs_contract_factory(FakeEpochsContractDetails(current_epoch=current_epoch))
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=current_epoch,
+                from_ts=1000000,
+            )
+        ]
+    )
+    events_repository = MagicMock(spec=GetDepositEventsRepository)
+    events_repository.get_all_user_events.return_value = [
+        DepositEvent(
+            user=user_address,
+            type=EventType.LOCK,
+            timestamp=1000000,
+            amount=100 * 10**18,
+            deposit_before=0,
+            source=DepositSource.OCTANT,
+        )
+    ]
+    fast_app.dependency_overrides[
+        get_deposit_events_repository
+    ] = lambda: events_repository
 
     async with fast_client as client:
         resp = await client.get(f"deposits/users/{user_address}/{past_epoch}")
@@ -114,6 +137,7 @@ async def test_get_user_effective_deposit_not_found(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
     fake_epochs_contract_factory: FakeEpochsContractCallable,
+    fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     """Should return 404 if a deposit does not exist for the user in that epoch"""
     # Setup
@@ -123,6 +147,20 @@ async def test_get_user_effective_deposit_not_found(
 
     # Create fake user but no deposit
     await factories.users.create(address=user_address)
+
+    fake_epochs_subgraph_factory(
+        [
+            FakeEpochEventDetails(
+                epoch=current_epoch,
+                from_ts=1000000,
+            )
+        ]
+    )
+    events_repository = MagicMock(spec=GetDepositEventsRepository)
+    events_repository.get_all_user_events.return_value = []
+    fast_app.dependency_overrides[
+        get_deposit_events_repository
+    ] = lambda: events_repository
 
     # Mock the epochs_contracts to return our fixed current epoch
     fake_epochs_contract_factory(FakeEpochsContractDetails(current_epoch=current_epoch))
