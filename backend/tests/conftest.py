@@ -449,7 +449,9 @@ def fastapi_app(deployment) -> FastAPI:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
-    os.environ["AUTH_CONTRACT_ADDRESS"] = deployment.AUTH_CONTRACT_ADDRESS
+    os.environ["AUTH_CONTRACT_ADDRESS"] = (
+        deployment.AUTH_CONTRACT_ADDRESS or "0x0000000000000000000000000000000000000000"
+    )
 
     for key in dir(deployment):
         if key.isupper():
