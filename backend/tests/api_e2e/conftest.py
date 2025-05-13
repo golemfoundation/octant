@@ -1,20 +1,42 @@
-import asyncio
 import datetime
+import os
 import time
 import logging
+from eth_account import Account
 import pytest
 import json
 from http import HTTPStatus
 from fastapi.testclient import TestClient
 
-
 from app.modules.dto import ScoreDelegationPayload
+from app.modules.common.crypto.signature import EncodingStandardFor, encode_for_signing
+from v2.deposits.dependencies import get_deposits_contracts, get_deposits_settings
+from v2.crypto.eip712 import build_allocations_eip712_data
+from v2.glms.dependencies import get_glm_contracts, get_glm_settings
+from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
 from v2.core.dependencies import get_w3, get_web3_provider_settings
 from v2.epochs.dependencies import get_epochs_contracts, get_epochs_settings
-from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import (
+    ALICE,
+    BOB,
+    CAROL,
+    DEPLOYER_PRIV,
+    USER1_ADDRESS,
+    USER2_ADDRESS,
+)
 from unittest.mock import patch
 
 logger = logging.getLogger(__name__)
+
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    force=True,  # Override any existing configuration
+)
+
+# Set specific log level for our test logger
+logger.setLevel(logging.DEBUG)
 
 
 class FastAPIClient:
@@ -57,36 +79,25 @@ class FastAPIClient:
                 return res["indexedHeight"]
             time.sleep(0.5)
 
-    def move_to_next_epoch(self, target):
-        async def move_to_next_epoch_async():
-            w3 = get_w3(get_web3_provider_settings())
-            epochs = get_epochs_contracts(w3, get_epochs_settings())
+    async def move_to_next_epoch(self, target):
+        w3 = get_w3(get_web3_provider_settings())
+        epochs = get_epochs_contracts(w3, get_epochs_settings())
 
-            current_epoch = await epochs.get_current_epoch()
-            assert current_epoch == target - 1
+        current_epoch = await epochs.get_current_epoch()
+        assert current_epoch == target - 1
 
-            latest_block = await w3.eth.get_block("latest")
-            now = latest_block.timestamp
+        latest_block = await w3.eth.get_block("latest")
+        now = latest_block.timestamp
 
-            next_epoch_at = await epochs.get_current_epoch_end()
-            forward = next_epoch_at - now + 30
-            await w3.provider.make_request("evm_increaseTime", [forward])
-            await w3.provider.make_request("evm_mine", [])
+        next_epoch_at = await epochs.get_current_epoch_end()
+        forward = next_epoch_at - now + 30
+        await w3.provider.make_request("evm_increaseTime", [forward])
+        await w3.provider.make_request("evm_mine", [])
 
-            current_epoch = await epochs.get_current_epoch()
-            assert current_epoch == target
+        current_epoch = await epochs.get_current_epoch()
+        assert current_epoch == target
 
-            logger.info(f"Moved to epoch {target}")
-
-        # Get or create event loop
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        # Run the async function
-        loop.run_until_complete(move_to_next_epoch_async())
+        logger.info(f"Moved to epoch {target}")
 
     def snapshot_status(self, epoch):
         rv = self._fastapi_client.get(f"/snapshots/status/{epoch}")
@@ -229,13 +240,15 @@ class FastAPIClient:
                 },
                 "userAddress": account.address,
                 "signature": signature,
+                "isManuallyEdited": False,
             },
+        )
+        logger.info(
+            f"make_allocation returns {rv.text} and status code {rv.status_code}"
         )
         return rv.status_code
 
     def sign_operation(self, account, amount, addresses, nonce) -> str:
-        from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
-
         payload = {
             "allocations": [
                 {
@@ -246,8 +259,15 @@ class FastAPIClient:
             ],
             "nonce": nonce,
         }
-        signature = sign(account, build_allocations_eip712_data(payload))
-        return signature
+
+        chain_id = int(os.getenv("CHAIN_ID", 1337))
+
+        return account.sign_message(
+            encode_for_signing(
+                EncodingStandardFor.DATA,
+                build_allocations_eip712_data(chain_id, payload),
+            )
+        ).signature.hex()
 
     def get_donors(self, epoch) -> tuple[dict, int]:
         rv = self._fastapi_client.get(f"/allocations/donors/{epoch}")
@@ -374,6 +394,62 @@ class FastAPIClient:
         return json.loads(rv.text), rv.status_code
 
 
+class FastUserAccount:
+    def __init__(self, account, client: FastAPIClient):
+        self._account = account
+        self._client = client
+
+    @property
+    def address(self):
+        return self._account.address
+
+    async def fund_octant(self):
+        w3 = get_w3(get_web3_provider_settings())
+        signed_txn = w3.eth.account.sign_transaction(
+            dict(
+                nonce=await w3.eth.get_transaction_count(self.address),
+                gasPrice=await w3.eth.gas_price,
+                gas=1000000,
+                to=os.getenv("WITHDRAWALS_TARGET_CONTRACT_ADDRESS"),
+                value=w3.to_wei(400, "ether"),
+            ),
+            self._account.key,
+        )
+        await w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+    async def transfer(self, account: "FastUserAccount", value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        await glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
+
+    async def lock(self, value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        deposits = get_deposits_contracts(w3, get_deposits_settings())
+        await glm.approve(
+            self._account, deposits.contract.address, w3.to_wei(value, "ether")
+        )
+        await deposits.lock(self._account, w3.to_wei(value, "ether"))
+
+    async def unlock(self, value: int):
+        w3 = get_w3(get_web3_provider_settings())
+        glm = get_glm_contracts(w3, get_glm_settings())
+        deposits = get_deposits_contracts(w3, get_deposits_settings())
+        await glm.approve(
+            self._account, deposits.contract.address, w3.to_wei(value, "ether")
+        )
+        await deposits.unlock(self._account, w3.to_wei(value, "ether"))
+
+    async def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        w3 = get_w3(get_web3_provider_settings())
+        vault = get_vault_contracts(w3, get_vault_settings())
+        await vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
+
+    def allocate(self, amount: int, addresses: list[str]):
+        nonce, _ = self._client.get_allocation_nonce(self.address)
+        return self._client.make_allocation(self._account, amount, addresses, nonce)
+
+
 @pytest.fixture
 def fclient(fastapi_client: TestClient) -> FastAPIClient:
     return FastAPIClient(fastapi_client)
@@ -395,3 +471,44 @@ def mock_fetch_streams():
     with patch("app.infrastructure.sablier.events.fetch_streams") as mock:
         mock.return_value = []
         yield mock
+
+
+@pytest.fixture
+def deployer(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(DEPLOYER_PRIV), fclient)
+
+
+@pytest.fixture
+def ua_alice(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(ALICE), fclient)
+
+
+@pytest.fixture
+def ua_bob(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(BOB), fclient)
+
+
+@pytest.fixture
+def ua_carol(fclient: FastAPIClient) -> FastUserAccount:
+    return FastUserAccount(Account.from_key(CAROL), fclient)
+
+
+@pytest.fixture
+async def setup_funds(
+    fclient: FastAPIClient,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
+    ua_carol: FastUserAccount,
+    request,
+):
+    test_name = request.node.name
+    logging.debug(f"RUNNING TEST: {test_name}")
+    logging.debug("Setup funds before test")
+
+    # fund Octant
+    await deployer.fund_octant()
+    # fund Users
+    await deployer.transfer(ua_alice, 10000)
+    await deployer.transfer(ua_bob, 15000)
+    await deployer.transfer(ua_carol, 20000)
