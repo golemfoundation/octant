@@ -5,6 +5,8 @@ from app.infrastructure.database.models import (
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from v2.snapshots.schemas import FinalizedSnapshotResponseV1, OctantRewardsV1
+
 from app import exceptions
 
 
@@ -77,3 +79,46 @@ async def get_last_pending_snapshot_epoch_number(
         return 0
 
     return result.epoch
+
+
+async def save_pending_snapshot(
+    session: AsyncSession,
+    epoch_number: int,
+    rewards: OctantRewardsV1,
+) -> None:
+    """
+    Based on rewards object, create and save a pending snapshot in the database.
+    """
+
+    snapshot = PendingEpochSnapshot(
+        epoch=epoch_number,
+        eth_proceeds=str(rewards.staking_proceeds),
+        total_effective_deposit=str(rewards.total_effective_deposit),
+        locked_ratio="{:f}".format(rewards.locked_ratio),
+        total_rewards=str(rewards.total_rewards),
+        vanilla_individual_rewards=str(rewards.vanilla_individual_rewards),
+        operational_cost=str(rewards.operational_cost),
+        community_fund=str(rewards.community_fund) if rewards.community_fund else None,
+        ppf=str(rewards.ppf) if rewards.ppf else None,
+    )
+    session.add(snapshot)
+
+
+async def save_finalized_snapshot(
+    session: AsyncSession,
+    epoch_number: int,
+    finalized_snapshot: FinalizedSnapshotResponseV1,
+):
+    """
+    Saves a finalized snapshot to the database.
+    """
+
+    snapshot = FinalizedEpochSnapshot(
+        epoch=epoch_number,
+        matched_rewards=str(finalized_snapshot.matched_rewards),
+        withdrawals_merkle_root=finalized_snapshot.merkle_root,
+        patrons_rewards=str(finalized_snapshot.patrons_rewards),
+        leftover=str(finalized_snapshot.leftover),
+        total_withdrawals=str(finalized_snapshot.total_withdrawals),
+    )
+    session.add(snapshot)

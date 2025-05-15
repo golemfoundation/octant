@@ -84,7 +84,7 @@ class GitcoinScorerSettings(OctantSettings):
 
 
 def get_gitcoin_scorer_settings() -> GitcoinScorerSettings:
-    return GitcoinScorerSettings()
+    return GitcoinScorerSettings()  # type: ignore[call-arg]
 
 
 def get_gitcoin_scorer_client(
