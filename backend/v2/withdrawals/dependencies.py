@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
-from v2.core.types import Address
+from v2.core.types import Address, BigInteger
 from v2.withdrawals.contracts import VAULT_ABI, VaultContracts
 from v2.core.dependencies import OctantSettings, Web3
 
@@ -9,6 +9,7 @@ from v2.core.dependencies import OctantSettings, Web3
 class VaultSettings(OctantSettings):
     vault_contract_address: Address
     withdrawals_target_contract_address: Address
+    epoch_2_staking_proceeds_surplus: BigInteger = 0
 
 
 def get_vault_settings() -> VaultSettings:
