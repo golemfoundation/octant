@@ -268,6 +268,7 @@ async def simulate_finalized_snapshot_v1(
     ] + [
         [address, funding.allocated + funding.matched]
         for address, funding in funding.project_fundings.items()
+        if funding.allocated > 0
     ]
     merkle_tree = StandardMerkleTree.of(mr_values, LEAF_ENCODING)
     merkle_root = merkle_tree.root
@@ -283,6 +284,7 @@ async def simulate_finalized_snapshot_v1(
                 matched=funding.matched,
             )
             for address, funding in funding.project_fundings.items()
+            if funding.allocated > 0
         ],
         user_rewards=[
             UserRewardsV1(
