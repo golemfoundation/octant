@@ -12,7 +12,13 @@ from v2.staking_proceeds.services import (
     StakingProceeds,
 )
 from v2.withdrawals.dependencies import GetVaultSettings
-from v2.core.dependencies import GetChainSettings, OctantSettings, Web3, get_w3
+from v2.core.dependencies import (
+    GetChainSettings,
+    OctantSettings,
+    Web3,
+    get_w3,
+    get_web3_provider_settings,
+)
 
 
 class EtherscanClientSettings(OctantSettings):
@@ -90,7 +96,7 @@ def get_staking_proceeds(
         bitquery = get_bitquery_client()
         return get_aggregated_staking_proceeds(etherscan, bitquery, vault_settings)
     else:
-        w3 = get_w3()
+        w3 = get_w3(get_web3_provider_settings())
         return get_contract_balance_staking_proceeds(w3, vault_settings)
 
 
