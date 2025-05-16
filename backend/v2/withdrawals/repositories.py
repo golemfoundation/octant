@@ -53,7 +53,7 @@ async def get_all_users_claimed_rewards(
                 - func.coalesce(func.sum(cast(Allocation.amount, Numeric)), 0)
             ).label("claimed_rewards"),
         )
-        .join(Budget, Budget.user_address == User.address)
+        .join(Budget, Budget.user_id == User.id)
         .outerjoin(
             Allocation,
             (Allocation.user_id == User.id)
