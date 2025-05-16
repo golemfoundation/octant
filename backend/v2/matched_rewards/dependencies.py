@@ -66,6 +66,11 @@ async def get_matched_rewards_estimator(
     )
 
 
+GetMatchedRewardsSettings = Annotated[
+    MatchedRewardsEstimatorSettings,
+    Depends(get_matched_rewards_estimator_settings),
+]
+
 GetMatchedRewardsEstimatorInAW = Annotated[
     MatchedRewardsEstimator,
     Depends(get_matched_rewards_estimator_only_in_aw),

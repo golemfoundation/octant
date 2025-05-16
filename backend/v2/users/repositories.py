@@ -32,6 +32,20 @@ async def get_user_tos_consent_status(
     return bool(result)
 
 
+async def get_or_create_user(
+    session: AsyncSession,
+    user_address: Address,
+) -> User:
+    user = await get_user_by_address(session, user_address)
+    if not user:
+        user = User(address=user_address)
+        session.add(user)
+        await session.flush()
+        await session.refresh(user)
+
+    return user
+
+
 async def add_user_tos_consent(
     session: AsyncSession,
     user_address: Address,
@@ -40,12 +54,7 @@ async def add_user_tos_consent(
     """Add a user's Terms of Service consent."""
 
     # Get or create the user
-    user = await get_user_by_address(session, user_address)
-    if not user:
-        user = User(address=user_address)
-        session.add(user)
-        await session.commit()
-        await session.refresh(user)
+    user = await get_or_create_user(session, user_address)
 
     # Add the consent
     consent = UserConsents(ip=ip_address, user_id=user.id)

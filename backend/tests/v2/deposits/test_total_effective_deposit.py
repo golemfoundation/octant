@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tests.v2.factories import FactoriesAggregator
-from v2.epoch_snapshots.repositories import get_pending_epoch_snapshot
+from v2.snapshots.repositories import get_pending_epoch_snapshot
 
 
 # Helper function to create mock for get_pending_epoch_snapshot

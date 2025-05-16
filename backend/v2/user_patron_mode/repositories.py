@@ -4,8 +4,9 @@ from app.infrastructure.database.models import Budget, PatronModeEvent, User
 from sqlalchemy import Numeric, cast, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from v2.snapshots.schemas import UserBudgetV1
 from v2.core.types import Address, BigInteger
-from v2.users.repositories import get_user_by_address
+from v2.users.repositories import get_or_create_user, get_user_by_address
 from v2.core.transformers import transform_to_checksum_address
 
 
@@ -104,6 +105,27 @@ async def get_all_users_budgets_by_epoch(
         transform_to_checksum_address(row.address): int(row.budget)
         for row in results.all()
     }
+
+
+async def save_budgets(
+    session: AsyncSession,
+    epoch_number: int,
+    budgets: list[UserBudgetV1],
+) -> None:
+    """
+    Save the budgets for a given epoch.
+    """
+
+    for budget in budgets:
+        user = await get_or_create_user(session, budget.user_address)
+
+        budget = Budget(
+            epoch=epoch_number,
+            user_id=user.id,
+            budget=str(budget.budget),
+        )
+
+        session.add(budget)
 
 
 async def user_is_patron_with_budget(
