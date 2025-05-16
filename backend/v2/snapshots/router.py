@@ -4,6 +4,7 @@ from multiproof import StandardMerkleTree
 from app import exceptions
 from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.modules.snapshots.pending.core import calculate_user_budgets
+from v2.staking_proceeds.services import StakingProceedsGetter
 from v2.allocations.repositories import get_allocations_with_user_uqs
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.deposits.repositories import save_deposits
@@ -17,10 +18,6 @@ from v2.project_rewards.services import (
 )
 from v2.projects.dependencies import GetProjectsContracts
 from v2.snapshots.services import calculate_leftover
-from v2.staking_proceeds.dependencies import (
-    GetAggregatedStakingProceeds,
-    GetContractBalanceStakingProceeds,
-)
 from v2.snapshots.repositories import (
     get_finalized_epoch_snapshot,
     get_pending_epoch_snapshot,
@@ -29,7 +26,7 @@ from v2.snapshots.repositories import (
 )
 from v2.user_patron_mode.repositories import get_patrons_rewards, save_budgets
 from v2.withdrawals.repositories import get_all_users_claimed_rewards
-from v2.core.dependencies import GetChainSettings, GetCurrentTimestamp, GetSession
+from v2.core.dependencies import GetCurrentTimestamp, GetSession
 from v2.epochs.dependencies import (
     GetCurrentEpoch,
     GetEpochsContracts,
@@ -55,12 +52,10 @@ api = APIRouter(prefix="/snapshots", tags=["Snapshots"])
 @api.get("/pending/simulate")
 async def simulate_pending_snapshot_v1(
     # Dependencies
-    chain_settings: GetChainSettings,
     epochs_subgraph: GetEpochsSubgraph,
     deposit_events_repository: GetDepositEventsRepository,
     # Staking Proceeds (we use one for mainnet and other for testnet)
-    aggregated_staking_proceeds: GetAggregatedStakingProceeds,
-    contract_balance_staking_proceeds: GetContractBalanceStakingProceeds,
+    staking_proceeds_getter: StakingProceedsGetter,
     # Parameters (injected as dependencies for simulation)
     epoch_number: GetCurrentEpoch,
     current_timestamp: GetCurrentTimestamp,
@@ -77,13 +72,10 @@ async def simulate_pending_snapshot_v1(
     epoch_start = epoch_details.fromTs
     epoch_end = current_timestamp
 
-    # Staking proceeds:
-    # Mainnet: we calculate it based on aggregated transactions (bitquery + etherscan)
-    # Testnet: we use the balance of the contract
-    if chain_settings.is_mainnet:
-        staking_proceeds = await aggregated_staking_proceeds.get(epoch_start, epoch_end)
-    else:
-        staking_proceeds = await contract_balance_staking_proceeds.get()
+    # INFO: Staking proceeds
+    #   Mainnet: we calculate it based on aggregated transactions (bitquery + etherscan)
+    #   Testnet: we use the balance of the contract
+    staking_proceeds = await staking_proceeds_getter.get(epoch_start, epoch_end)
 
     # Based on all deposit events, calculate effective deposits
     events = await deposit_events_repository.get_all_users_events(
@@ -135,10 +127,8 @@ async def simulate_pending_snapshot_v1(
 async def create_pending_snapshot_v1(
     response: Response,
     session: GetSession,
-    chain_settings: GetChainSettings,
     deposit_events_repository: GetDepositEventsRepository,
-    aggregated_staking_proceeds: GetAggregatedStakingProceeds,
-    contract_balance_staking_proceeds: GetContractBalanceStakingProceeds,
+    staking_proceeds_getter: StakingProceedsGetter,
     epochs_contracts: GetEpochsContracts,
     epochs_subgraph: GetEpochsSubgraph,
 ) -> SnapshotCreatedResponseV1 | None:
@@ -174,11 +164,9 @@ async def create_pending_snapshot_v1(
 
     # Simulate = calculate the snapshot with the current state
     pending_snapshot = await simulate_pending_snapshot_v1(
-        chain_settings,
         epochs_subgraph,
         deposit_events_repository,
-        aggregated_staking_proceeds,
-        contract_balance_staking_proceeds,
+        staking_proceeds_getter,
         epoch_number=pending_epoch_number,
         current_timestamp=current_timestamp,
     )
