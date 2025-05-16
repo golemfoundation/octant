@@ -24,7 +24,7 @@ async def get_withdrawals(
     epochs_subgraph: GetEpochsSubgraph,
     epochs_contract: GetEpochsContracts,
     vault: GetVaultContract,
-):
+) -> list[WithdrawalsResponseV1]:
     """
     Returns a list containing amount and merkle proofs for all not claimed epochs.
     """
