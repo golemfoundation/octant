@@ -9,7 +9,7 @@ from v2.staking_proceeds.etherscan import EtherscanClient
 from v2.staking_proceeds.services import (
     AggregatedStakingProceeds,
     ContractBalanceStakingProceeds,
-    StakingProceedsGetter,
+    StakingProceeds,
 )
 from v2.withdrawals.dependencies import GetVaultSettings
 from v2.core.dependencies import GetChainSettings, OctantSettings, Web3, get_w3
@@ -95,7 +95,7 @@ def get_staking_proceeds(
 
 
 GetStakingProceeds = Annotated[
-    StakingProceedsGetter,
+    StakingProceeds,
     Depends(get_staking_proceeds),
 ]
 

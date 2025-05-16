@@ -11,7 +11,7 @@ from v2.staking_proceeds.etherscan import EtherscanClient
 from v2.withdrawals.dependencies import VaultSettings
 
 
-class StakingProceedsGetter(Protocol):
+class StakingProceeds(Protocol):
     async def get(self, epoch_start_ts: int, epoch_end_ts: int) -> int:
         ...
 
