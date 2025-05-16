@@ -9,9 +9,10 @@ from v2.staking_proceeds.etherscan import EtherscanClient
 from v2.staking_proceeds.services import (
     AggregatedStakingProceeds,
     ContractBalanceStakingProceeds,
+    StakingProceedsGetter,
 )
 from v2.withdrawals.dependencies import GetVaultSettings
-from v2.core.dependencies import OctantSettings, Web3
+from v2.core.dependencies import GetChainSettings, OctantSettings, Web3, get_w3
 
 
 class EtherscanClientSettings(OctantSettings):
@@ -74,14 +75,28 @@ def get_contract_balance_staking_proceeds(
     return ContractBalanceStakingProceeds(w3, vault_settings)
 
 
-GetAggregatedStakingProceeds = Annotated[
-    AggregatedStakingProceeds,
-    Depends(get_aggregated_staking_proceeds),
-]
+def get_staking_proceeds(
+    chain_settings: GetChainSettings,
+    vault_settings: GetVaultSettings,
+) -> ContractBalanceStakingProceeds | AggregatedStakingProceeds:
+    """
+    Returns an instance of the StakingProceeds class based on the chain we are on.
 
-GetContractBalanceStakingProceeds = Annotated[
-    ContractBalanceStakingProceeds,
-    Depends(get_contract_balance_staking_proceeds),
+    Mainnet: we calculate it based on aggregated transactions (bitquery + etherscan)
+    Testnet: we use the balance of the contract
+    """
+    if chain_settings.is_mainnet:
+        etherscan = get_etherscan_client()
+        bitquery = get_bitquery_client()
+        return get_aggregated_staking_proceeds(etherscan, bitquery, vault_settings)
+    else:
+        w3 = get_w3()
+        return get_contract_balance_staking_proceeds(w3, vault_settings)
+
+
+GetStakingProceeds = Annotated[
+    StakingProceedsGetter,
+    Depends(get_staking_proceeds),
 ]
 
 GetEtherscanClient = Annotated[
