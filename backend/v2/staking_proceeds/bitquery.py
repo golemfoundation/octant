@@ -34,7 +34,7 @@ class BitqueryClient:
         """
         query = gql(
             """
-            query GetBlockRewards($address: String!, $startBlock: Int!, $endBlock: Int!) {
+            query GetBlockRewards($address: String!, $startBlock: String!, $endBlock: String!) {
                 EVM(dataset: combined, network: eth) {
                     MinerRewards(where: {
                         Block: {
@@ -51,8 +51,8 @@ class BitqueryClient:
 
         variables = {
             "address": str(address).lower(),
-            "startBlock": start_block,
-            "endBlock": end_block,
+            "startBlock": str(start_block),
+            "endBlock": str(end_block),
         }
 
         try:
