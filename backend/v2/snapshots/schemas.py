@@ -70,4 +70,4 @@ class FinalizedSnapshotResponseV1(OctantModel):
     user_rewards: list[UserRewardsV1]
     total_withdrawals: BigInteger
     leftover: BigInteger
-    merkle_root: str
+    merkle_root: str | None

@@ -274,7 +274,7 @@ async def simulate_finalized_snapshot_v1(
         merkle_tree = StandardMerkleTree.of(mr_values, LEAF_ENCODING)
         merkle_root = merkle_tree.root
     else:
-        merkle_root = "0x"
+        merkle_root = None
 
     # Returning the snaphost simulation response
     return FinalizedSnapshotResponseV1(
