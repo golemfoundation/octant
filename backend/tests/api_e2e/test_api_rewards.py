@@ -104,7 +104,7 @@ async def test_rewards_basic(
     async with session_maker() as session:
         await confirm_withdrawals(session, vault)
 
-    while not vault.is_merkle_root_set(STARTING_EPOCH):
+    while not await vault.is_merkle_root_set(STARTING_EPOCH):
         time.sleep(1)
 
     # check rewards for all projects are returned in proper schema

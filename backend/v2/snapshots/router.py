@@ -270,8 +270,11 @@ async def simulate_finalized_snapshot_v1(
         for address, funding in funding.project_fundings.items()
         if funding.allocated > 0
     ]
-    merkle_tree = StandardMerkleTree.of(mr_values, LEAF_ENCODING)
-    merkle_root = merkle_tree.root
+    if len(mr_values) > 0:
+        merkle_tree = StandardMerkleTree.of(mr_values, LEAF_ENCODING)
+        merkle_root = merkle_tree.root
+    else:
+        merkle_root = "0x"
 
     # Returning the snaphost simulation response
     return FinalizedSnapshotResponseV1(
