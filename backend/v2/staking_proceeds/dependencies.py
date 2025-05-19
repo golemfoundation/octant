@@ -92,8 +92,8 @@ def get_staking_proceeds(
     Testnet: we use the balance of the contract
     """
     if chain_settings.is_mainnet:
-        etherscan = get_etherscan_client()
-        bitquery = get_bitquery_client()
+        etherscan = get_etherscan_client(get_etherscan_settings())
+        bitquery = get_bitquery_client(get_bitquery_settings())
         return get_aggregated_staking_proceeds(etherscan, bitquery, vault_settings)
     else:
         w3 = get_w3(get_web3_provider_settings())
