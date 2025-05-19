@@ -109,7 +109,7 @@ async def test_withdrawals(
 
     # Alice withdrawal
     alice_withdrawal_amount: int = int(alice_withdrawals["amount"])
-    assert alice_withdrawal_amount == alice_budget, f"Alice withdrawals: {alice_withdrawals}"
+    assert alice_withdrawal_amount == alice_budget
 
     # Bob withdrawal
     epoch: int = int(bob_withdrawals["epoch"])
