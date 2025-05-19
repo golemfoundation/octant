@@ -18,6 +18,7 @@ class BitqueryClient:
                     "X-API-KEY": self.api_key,
                     "Authorization": f"Bearer {self.bearer}",
                 },
+                timeout=10,
             ),
             fetch_schema_from_transport=False,
         )
