@@ -44,6 +44,7 @@ async def get_all_users_claimed_rewards(
     Returns a dictionary of all users and their claimed rewards for a given epoch.
     Only users with claimed rewards are included in the dictionary (sum(allocations) < budget).
     Claimed rewards are calculated as the difference between the user's budget and the sum of their allocations for the epoch.
+    User needs to make an allocation request to claim rewards, if they did not allocate anythin, it means they claimed nothing.
     """
 
     # Fetch all user addresses and budgets for the epoch
@@ -64,17 +65,22 @@ async def get_all_users_claimed_rewards(
         .filter(Allocation.deleted_at.is_(None))
     )
 
-    # Sum allocations by user_id
+    # Sum allocations by user_id (we do it in python to avoid floating point issues)
     allocations_by_user = defaultdict(int)
     for user_id, amount in allocations_result.all():
         allocations_by_user[user_id] += int(amount)
 
     # Calculate claimed rewards
-    return {
-        address: budget - allocations_by_user.get(user_id, 0)
-        for user_id, (address, budget) in user_budgets.items()
-        if (budget - allocations_by_user.get(user_id, 0)) > 0
-    }
+    claimed_rewards = {}
+    for user_id, allocation_sum in allocations_by_user.items():
+        # if this fails it means that someone made allocation without having a budget
+        address, budget = user_budgets[user_id]
+
+        claimed = budget - allocation_sum
+        if claimed > 0:
+            claimed_rewards[address] = claimed
+
+    return claimed_rewards
 
     # result = await session.execute(
     #     select(
