@@ -1,14 +1,12 @@
 import pytest
-
-from tests.conftest import UserAccount
 from tests.helpers.signature import build_user_signature
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
 def test_tos_basics(
     fclient: FastAPIClient,
-    ua_alice: UserAccount,
+    ua_alice: FastUserAccount,
 ):
     # Check Alice's TOS status before accepting it
     alice_tos_status, status_code = fclient.get_user_tos_status(ua_alice.address)

@@ -15,6 +15,9 @@ from v2.project_rewards.router import api as project_rewards_api
 from v2.epochs.router import api as epochs_api
 from v2.users.router import api as users_api
 from v2.delegations.router import api as delegations_api
+from v2.deposits.router import api as deposits_api
+from v2.multisig.router import api as multisig_signatures_api
+from v2.withdrawals.router import api as withdrawals_api
 
 
 async def handle_octant_exception(request: Request, ex: OctantException):
@@ -32,12 +35,11 @@ async def handle_sqlalchemy_exception(request: Request, ex: SQLAlchemyError):
     )
 
 
-def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
+def build_app(debug: bool = False) -> FastAPI:
     """Create and configure a FastAPI application.
 
     Args:
         debug (bool): We include additional logging if True
-        include_socketio (bool): We include SocketIO if True
 
     Returns:
         FastAPI: Configured FastAPI application
@@ -48,17 +50,16 @@ def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
     app.add_exception_handler(OctantException, handle_octant_exception)
     app.add_exception_handler(SQLAlchemyError, handle_sqlalchemy_exception)
 
-    # Setup SocketIO if not in testing mode
-    if include_socketio:
-        mgr = get_socketio_manager()
-        sio = socketio.AsyncServer(
-            cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
-        )
-        sio.register_namespace(AllocateNamespace("/"))
-        sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
+    # Setup SocketIO
+    mgr = get_socketio_manager()
+    sio = socketio.AsyncServer(
+        cors_allowed_origins="*", async_mode="asgi", client_manager=mgr
+    )
+    sio.register_namespace(AllocateNamespace("/"))
+    sio_asgi_app = socketio.ASGIApp(socketio_server=sio, other_asgi_app=app)
 
-        app.add_route("/socket.io/", route=sio_asgi_app)
-        app.add_websocket_route("/socket.io/", sio_asgi_app)
+    app.add_route("/socket.io/", route=sio_asgi_app)
+    app.add_websocket_route("/socket.io/", sio_asgi_app)
 
     # Register routers
     app.include_router(allocations_api)
@@ -67,6 +68,9 @@ def build_app(debug: bool = False, include_socketio: bool = True) -> FastAPI:
     app.include_router(projects_api)
     app.include_router(users_api)
     app.include_router(delegations_api)
+    app.include_router(deposits_api)
+    app.include_router(multisig_signatures_api)
+    app.include_router(withdrawals_api)
 
     return app
 
@@ -92,5 +96,4 @@ def get_socketio_manager() -> socketio.AsyncRedisManager | None:
         raise
 
 
-# Create the default app instance
 app = build_app()
