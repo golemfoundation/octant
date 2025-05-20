@@ -21,6 +21,7 @@ class BitqueryClient:
                 timeout=10,
             ),
             fetch_schema_from_transport=False,
+            execute_timeout=60,  # This is very liberal, but we need to wait for the response
         )
 
     async def get_blocks_rewards(
