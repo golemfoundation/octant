@@ -5,6 +5,7 @@ export type Milestone = {
   href?: string;
   id: string;
   isAllocationWindowMilestone?: boolean;
+  isHourVisible?: boolean;
   label: string;
   shouldUseThirdPersonSingularVerb?: boolean;
   to?: Date;
@@ -265,6 +266,35 @@ export default function getMilestones(): Milestone[] {
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
       to: new Date('2025-04-25T18:00:00+0200'),
+    },
+    {
+      from: new Date('2025-05-22T00:00:00+0100'),
+      // June 3 11:59 pm PST
+href: 'https://octant.fillout.com/epoch8-applications',
+      
+id: 'e8-applications-open',
+      
+label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'), 
+      to: new Date('2025-06-04T08:59:00+0100'),
+    },
+    {
+      from: new Date('2025-06-16T23:59:00+0100'),
+      id: 'e8-project-updates-close',
+      isHourVisible: false,
+      label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
+    },
+    {
+      from: new Date('2025-07-11T17:00:00+0100'),
+      id: 'e8-allocation-window',
+      isAllocationWindowMilestone: true,
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2025-07-25T17:00:00+0100'),
+    },
+    {
+      from: new Date('2025-07-11T17:00:00+0100'),
+      id: 'e9-epoch-starts',
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 9 }),
     },
   ];
 }
