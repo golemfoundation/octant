@@ -97,4 +97,18 @@ class AggregatedStakingProceeds:
         # Calculate mev, withdrawals and aggregate proceeds
         mev_value = sum_mev(self.withdrawals_address, normal, internal)
         withdrawals_value = sum_withdrawals(withdrawals)
+
+        print("--------------------------------")
+        print("Aggregated proceeds")
+        print(f"target: {self.withdrawals_address}")
+        print(f"blocks: {start_block} - {end_block}")
+        print(f"normal: {len(normal)}")
+        print(f"internal: {len(internal)}")
+        print(f"withdrawals: {len(withdrawals)}")
+        print(f"block rewards: {block_rewards_value}")
+        print(f"mev: {mev_value}")
+        print(f"withdrawals: {withdrawals_value}")
+        print(f"proceeds: {aggregate_proceeds(mev_value, withdrawals_value, block_rewards_value)}")
+        print("--------------------------------")
+
         return aggregate_proceeds(mev_value, withdrawals_value, block_rewards_value)
