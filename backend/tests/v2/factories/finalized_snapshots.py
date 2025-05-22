@@ -1,6 +1,7 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
+from sqlalchemy import select
 
 from app.infrastructure.database.models import FinalizedEpochSnapshot
 from tests.v2.factories.base import FactorySetBase
@@ -65,3 +66,14 @@ class FinalizedEpochSnapshotFactorySet(FactorySetBase):
 
         snapshot = await FinalizedEpochSnapshotFactory.create(**factory_kwargs)
         return snapshot
+
+    async def get(self, epoch_number: int) -> FinalizedEpochSnapshot | None:
+        """
+        Get a finalized epoch snapshot by epoch number.
+        """
+
+        return await self.session.scalar(
+            select(FinalizedEpochSnapshot).where(
+                FinalizedEpochSnapshot.epoch == epoch_number
+            )
+        )
