@@ -2,6 +2,7 @@ import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 
 from factory import LazyAttribute
+from sqlalchemy import select
 from app.infrastructure.database.models import Deposit, User
 from tests.v2.factories.base import FactorySetBase
 
@@ -47,3 +48,9 @@ class DepositFactorySet(FactorySetBase):
 
         deposit = await DepositFactory.create(**factory_kwargs)
         return deposit
+
+    async def get_for_epoch(self, epoch_number: int) -> list[Deposit]:
+        results = await self.session.scalars(
+            select(Deposit).filter(Deposit.epoch == epoch_number)
+        )
+        return list(results)
