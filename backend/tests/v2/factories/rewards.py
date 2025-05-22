@@ -1,6 +1,7 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
+from sqlalchemy import select
 
 from app.infrastructure.database.models import Reward, User
 from tests.v2.factories.base import FactorySetBase
@@ -86,3 +87,12 @@ class RewardFactorySet(FactorySetBase):
             amount=amount,
             matched=matched,
         )
+
+    async def get_for_epoch(self, epoch_number: int) -> list[Reward]:
+        """
+        Get all rewards for a specific epoch.
+        """
+        results = await self.session.scalars(
+            select(Reward).where(Reward.epoch == epoch_number)
+        )
+        return list(results)

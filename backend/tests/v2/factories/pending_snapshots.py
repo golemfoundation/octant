@@ -1,6 +1,7 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
+from sqlalchemy import select
 
 from app.infrastructure.database.models import PendingEpochSnapshot
 from tests.v2.factories.base import FactorySetBase
@@ -84,3 +85,10 @@ class PendingEpochSnapshotFactorySet(FactorySetBase):
 
         snapshot = await PendingEpochSnapshotFactory.create(**factory_kwargs)
         return snapshot
+
+    async def get(self, epoch_number: int) -> PendingEpochSnapshot | None:
+        return await self.session.scalar(
+            select(PendingEpochSnapshot).filter(
+                PendingEpochSnapshot.epoch == epoch_number
+            )
+        )
