@@ -49,7 +49,13 @@ async def get_user_history(
         get_user_unlocks(deposit_events_repository, user_address, from_ts, query_limit),
         get_user_withdrawals(epochs_subgraph, user_address, from_ts, query_limit),
         get_user_allocations(session, user_address, from_ts, query_limit),
+        return_exceptions=True,
     )
+
+    # If any of the results is an exception, raise it
+    for result in [locks, unlocks, withdrawals, allocations]:
+        if isinstance(result, Exception):
+            raise result
 
     # patron donations
     patron_donations: list[HistoryItemV1] = []

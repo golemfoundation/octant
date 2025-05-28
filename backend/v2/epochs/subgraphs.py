@@ -11,8 +11,7 @@ from v2.core.types import Address, OctantModel
 from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
 from gql import Client, gql
-from gql.client import log as requests_logger
-from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.aiohttp import AIOHTTPTransport, log as requests_logger
 from gql.transport.exceptions import TransportQueryError
 
 
@@ -69,22 +68,26 @@ class EpochsSubgraph:
         backoff_params: BackoffParams | None = None,
     ):
         self.url = url
-        self.gql_client = Client(
+        self.backoff_params = backoff_params
+
+    @property
+    def gql_client(self) -> Client:
+        gql_client = Client(
             transport=AIOHTTPTransport(url=self.url, timeout=2),
             fetch_schema_from_transport=False,
         )
 
-        if backoff_params is not None:
+        if self.backoff_params is not None:
             backoff_decorator = backoff.on_exception(
                 backoff.expo,
-                backoff_params.exception,
-                max_time=backoff_params.max_time,
-                giveup=backoff_params.giveup,
+                self.backoff_params.exception,
+                max_time=self.backoff_params.max_time,
+                giveup=self.backoff_params.giveup,
             )
 
-            self.gql_client.execute_async = backoff_decorator(
-                self.gql_client.execute_async
-            )
+            gql_client.execute_async = backoff_decorator(gql_client.execute_async)
+
+        return gql_client
 
     async def fetch_locks_by_timestamp_range(
         self, from_ts: int, to_ts: int
