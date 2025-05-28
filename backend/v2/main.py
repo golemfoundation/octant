@@ -20,6 +20,8 @@ from v2.multisig.router import api as multisig_signatures_api
 from v2.withdrawals.router import api as withdrawals_api
 from v2.info.router import api as info_api
 from v2.snapshots.router import api as snapshots_api
+from v2.history.router import api as history_api
+from v2.glms.router import api as glms_api
 
 
 async def handle_octant_exception(request: Request, ex: OctantException):
@@ -75,6 +77,8 @@ def build_app(debug: bool = False) -> FastAPI:
     app.include_router(withdrawals_api)
     app.include_router(info_api)
     app.include_router(snapshots_api)
+    app.include_router(history_api)
+    app.include_router(glms_api)
 
     return app
 

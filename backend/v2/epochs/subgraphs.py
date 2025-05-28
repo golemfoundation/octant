@@ -1,21 +1,22 @@
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Sequence, Type, Union
+from typing import Any, Callable, Sequence, Type, Union, List
 
 from pydantic import TypeAdapter
 import backoff
 from app import exceptions
 from app.infrastructure.graphql.locks import LockEvent
 from app.infrastructure.graphql.unlocks import UnlockEvent
-from v2.core.types import OctantModel
+from v2.core.types import Address, OctantModel
 from v2.core.exceptions import EpochsNotFound
 from app.context.epoch.details import EpochDetails
 from gql import Client, gql
+from gql.client import log as requests_logger
 from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError
 
-# def lookup_max_time():
-#     return config.SUBGRAPH_RETRY_TIMEOUT_SEC
+
+requests_logger.setLevel(logging.WARNING)
 
 
 exception_type = TransportQueryError
@@ -52,6 +53,13 @@ class EpochSubgraphItem(OctantModel):
     toTs: int
     duration: int
     decisionWindow: int
+
+
+class WithdrawalEvent(OctantModel):
+    amount: int
+    timestamp: int
+    user: Address
+    transaction_hash: str
 
 
 class EpochsSubgraph:
@@ -229,7 +237,7 @@ class EpochsSubgraph:
 
     async def fetch_locks_by_address_and_timestamp_range(
         self,
-        user_address: str,
+        user_address: Address,
         from_ts: int,
         to_ts: int,
     ) -> list[LockEvent]:
@@ -265,7 +273,7 @@ class EpochsSubgraph:
 
     async def fetch_unlocks_by_address_and_timestamp_range(
         self,
-        user_address: str,
+        user_address: Address,
         from_ts: int,
         to_ts: int,
     ) -> list[UnlockEvent]:
@@ -348,3 +356,246 @@ class EpochsSubgraph:
         indexed_height = last_indexed_epoch["_meta"]["block"]["number"]
 
         return indexed_epoch, indexed_height
+
+    async def fetch_user_locks_history(
+        self,
+        user_address: Address,
+        from_ts: int,
+        limit: int,
+    ) -> list[LockEvent]:
+        query = gql(
+            """
+            query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {
+              lockeds(
+                orderBy: timestamp
+                orderDirection: desc
+                where: {user: $userAddress, timestamp_lte: $fromTimestamp}
+                first: $limit
+              ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                transactionHash
+                user
+              }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "limit": limit,
+        }
+
+        results = await self.gql_client.execute_async(query, variable_values=variables)
+        locks = results["lockeds"]
+
+        if len(locks) == 0:
+            return []
+
+        limit_timestamp = locks[-1]["timestamp"]
+        events_at_timestamp_limit = (
+            await self.fetch_locks_by_address_and_timestamp_range(
+                user_address, limit_timestamp, limit_timestamp + 1
+            )
+        )
+        result_without_events_at_timestamp_limit = [
+            lock for lock in locks if lock["timestamp"] != limit_timestamp
+        ]
+        return result_without_events_at_timestamp_limit + events_at_timestamp_limit
+
+    async def fetch_user_unlocks_history(
+        self,
+        user_address: Address,
+        from_ts: int,
+        limit: int,
+    ) -> list[UnlockEvent]:
+        query = gql(
+            """
+            query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {
+            unlockeds(
+                orderBy: timestamp
+                orderDirection: desc
+                where: {user: $userAddress, timestamp_lte: $fromTimestamp}
+                first: $limit
+              ) {
+                __typename
+                depositBefore
+                amount
+                timestamp
+                transactionHash
+                user
+              }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "limit": limit,
+        }
+
+        results = await self.gql_client.execute_async(query, variable_values=variables)
+        unlocks = results["unlockeds"]
+
+        if len(unlocks) == 0:
+            return []
+
+        limit_timestamp = unlocks[-1]["timestamp"]
+        events_at_timestamp_limit = (
+            await self.fetch_unlocks_by_address_and_timestamp_range(
+                user_address, limit_timestamp, limit_timestamp + 1
+            )
+        )
+        result_without_events_at_timestamp_limit = [
+            unlock for unlock in unlocks if unlock["timestamp"] != limit_timestamp
+        ]
+        return result_without_events_at_timestamp_limit + events_at_timestamp_limit
+
+    async def fetch_withdrawals_by_address_and_timestamp_range(
+        self,
+        user_address: Address,
+        from_ts: int,
+        to_ts: int,
+    ) -> list[WithdrawalEvent]:
+        """
+        Get withdrawals by address and timestamp range.
+        """
+        query = gql(
+            """
+            query GetWithdrawals($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
+              withdrawals(
+                orderBy: timestamp
+                where: {user: $userAddress, timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp}
+              ) {
+                amount
+                timestamp
+                user
+                transactionHash
+              }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "toTimestamp": to_ts,
+        }
+
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        return TypeAdapter(list[WithdrawalEvent]).validate_python(
+            response["withdrawals"]
+        )
+
+    async def get_user_withdrawals_history(
+        self,
+        user_address: Address,
+        from_ts: int,
+        limit: int,
+    ) -> list[WithdrawalEvent]:
+        """
+        Get user withdrawals history before a given timestamp.
+        Returns withdrawals from most recent to oldest.
+        """
+        query = gql(
+            """
+            query GetWithdrawals($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {
+              withdrawals(
+                orderBy: timestamp
+                orderDirection: desc
+                where: {user: $userAddress, timestamp_lte: $fromTimestamp}
+                first: $limit
+              ) {
+                amount
+                timestamp
+                user
+                transactionHash
+              }
+            }
+            """
+        )
+
+        variables = {
+            "userAddress": user_address,
+            "fromTimestamp": from_ts,
+            "limit": limit,
+        }
+
+        partial_result = await self.gql_client.execute_async(
+            query, variable_values=variables
+        )
+        withdrawals = TypeAdapter(list[WithdrawalEvent]).validate_python(
+            partial_result["withdrawals"]
+        )
+
+        if len(withdrawals) == 0:
+            return []
+
+        limit_timestamp = withdrawals[-1].timestamp
+        events_at_timestamp_limit = (
+            await self.fetch_withdrawals_by_address_and_timestamp_range(
+                user_address, limit_timestamp, limit_timestamp + 1
+            )
+        )
+        result_without_events_at_timestamp_limit = [
+            w for w in withdrawals if w.timestamp != limit_timestamp
+        ]
+        return result_without_events_at_timestamp_limit + events_at_timestamp_limit
+
+    async def get_epochs_range(
+        self, from_epoch: int, to_epoch: int
+    ) -> List[EpochDetails]:
+        """Get EpochDetails from the subgraph for a range of epochs.
+
+        Args:
+            from_epoch: The starting epoch number (inclusive)
+            to_epoch: The ending epoch number (inclusive)
+
+        Returns:
+            List of EpochDetails ordered from oldest to newest
+        """
+        if from_epoch > to_epoch:
+            raise ValueError("from_epoch must be less than or equal to to_epoch")
+
+        query = gql(
+            """\
+            query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
+                epoches(
+                    where: {epoch_gte: $fromEpoch, epoch_lte: $toEpoch}
+                    orderBy: epoch
+                    orderDirection: asc
+                ) {
+                    epoch
+                    fromTs
+                    toTs
+                    duration
+                    decisionWindow
+                }
+            }
+            """
+        )
+        variables = {
+            "fromEpoch": from_epoch,
+            "toEpoch": to_epoch,
+        }
+
+        response = await self.gql_client.execute_async(query, variable_values=variables)
+        epochs_data = response["epoches"]
+
+        if not epochs_data:
+            return []
+
+        return [
+            EpochDetails(
+                epoch_num=epoch["epoch"],
+                start=epoch["fromTs"],
+                duration=epoch["duration"],
+                decision_window=epoch["decisionWindow"],
+                remaining_sec=0,
+            )
+            for epoch in epochs_data
+        ]
