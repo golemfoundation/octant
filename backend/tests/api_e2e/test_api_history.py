@@ -40,6 +40,8 @@ async def test_history_basics(
     ), "Allocation status code is different than 201"
 
     # Check user history after allocation
+    import time
+    print(f"now is the time: {time.time()}")
     user_history, status_code = fclient.get_user_history(ua_alice.address)
     assert (
         user_history["history"][0]["type"] == "allocation"

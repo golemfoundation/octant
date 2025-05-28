@@ -329,6 +329,7 @@ async def get_user_allocations_history(
 
     # Convert timestamp to datetime for comparison
     from_datetime = datetime.utcfromtimestamp(from_ts)
+    print(f"Inside allocations repository, from_datetime: {from_datetime} or ts: {from_ts}")
 
     # Get allocation requests ordered by creation time and nonce (descending)
     allocation_requests_result = await session.scalars(
@@ -340,9 +341,9 @@ async def get_user_allocations_history(
         )
         .limit(limit)
     )
-
     allocation_requests = list(allocation_requests_result.all())
-
+    print(f"allocation_requests (len: {len(allocation_requests)}): {allocation_requests}")
+    
     if not allocation_requests:
         return []
 
@@ -358,6 +359,7 @@ async def get_user_allocations_history(
     )
 
     allocations = list(allocations_result.all())
+    print(f"allocations (len: {len(allocations)}): {allocations}")
 
     # Group allocations by nonce for easier connection to allocation request
     allocations_by_nonce = defaultdict(list)
