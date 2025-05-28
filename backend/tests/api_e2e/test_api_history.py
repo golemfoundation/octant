@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 import logging
 from tests.helpers.constants import STARTING_EPOCH
@@ -34,13 +35,20 @@ async def test_history_basics(
     res = fclient.pending_snapshot()
     assert res["epoch"] == STARTING_EPOCH
 
+    import time
+
+    print(f"now pre alloc is the time: {time.time()}")
     allocation_response_code = ua_alice.allocate(1000, alice_proposals)
     assert (
         allocation_response_code == 201
     ), "Allocation status code is different than 201"
 
+    print(f"now post alloc is the time: {time.time()}")
+
+    # We sleep here to make sure there's delay between allocation and history retrieval
+    await asyncio.sleep(2)
+
     # Check user history after allocation
-    import time
     print(f"now is the time: {time.time()}")
     user_history, status_code = fclient.get_user_history(ua_alice.address)
     assert (
