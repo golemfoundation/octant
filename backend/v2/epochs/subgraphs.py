@@ -562,7 +562,7 @@ class EpochsSubgraph:
             List of EpochDetails ordered from oldest to newest
         """
         if from_epoch > to_epoch:
-            raise ValueError("from_epoch must be less than or equal to to_epoch")
+            return []
 
         query = gql(
             """\
