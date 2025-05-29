@@ -47,7 +47,7 @@ async def get_allocations_with_user_uqs(
             Allocation.project_address,
             Allocation.amount,
             User.address.label("user_address"),
-            coalesce(UniquenessQuotient.score, 0).label("uq_score"),
+            coalesce(UniquenessQuotient.score, "0.0").label("uq_score"),
         )
         .join(User, Allocation.user_id == User.id)
         .outerjoin(
