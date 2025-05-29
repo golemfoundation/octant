@@ -37,7 +37,7 @@ async def get_last_finalized_snapshot_epoch_number(
         .limit(1)
     )
 
-    return int(result) or 0
+    return result or 0
 
 
 async def get_last_finalized_epoch_snapshot(
@@ -70,4 +70,4 @@ async def get_last_pending_snapshot_epoch_number(
         .limit(1)
     )
 
-    return int(result) or 0
+    return result or 0
