@@ -47,13 +47,16 @@ async def get_allocations_with_user_uqs(
             Allocation.project_address,
             Allocation.amount,
             User.address.label("user_address"),
-            UniquenessQuotient.score,
+            coalesce(UniquenessQuotient.score, 0).label("uq_score"),
         )
         .join(User, Allocation.user_id == User.id)
-        .join(UniquenessQuotient, UniquenessQuotient.user_id == User.id)
+        .outerjoin(
+            UniquenessQuotient,
+            (UniquenessQuotient.user_id == User.id)
+            & (UniquenessQuotient.epoch == epoch_number),
+        )
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
-        .filter(UniquenessQuotient.epoch == epoch_number)
     )
 
     rows = result.all()

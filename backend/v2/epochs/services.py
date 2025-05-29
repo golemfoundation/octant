@@ -291,7 +291,7 @@ async def get_epoch_info_finalized(
             - int(pending_snapshot.eth_proceeds)
             + int(pending_snapshot.operational_cost)
             + int(pending_snapshot.community_fund)
-            + int(pending_snapshot.ppf / 2)  # extra individual rewards
+            + int(pending_snapshot.validated_ppf / 2)  # extra individual rewards
             + int(finalized_snapshot.total_withdrawals)
         )
 
