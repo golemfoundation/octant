@@ -315,10 +315,6 @@ async def get_epoch_info_finalized(
         - alloc_total_below_threshold
     )
 
-    print("unused_matched_rewards", unused_matched_rewards)
-    print("alloc_total", alloc_total)
-    print("alloc_total_below_threshold", alloc_total_below_threshold)
-
     return EpochStatsResponseV1(
         staking_proceeds=int(pending_snapshot.eth_proceeds),
         total_effective_deposit=int(pending_snapshot.total_effective_deposit),
