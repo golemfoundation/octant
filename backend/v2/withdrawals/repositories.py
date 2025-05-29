@@ -81,33 +81,3 @@ async def get_all_users_claimed_rewards(
             claimed_rewards[address] = claimed
 
     return claimed_rewards
-
-    # result = await session.execute(
-    #     select(
-    #         User.address,
-    #         (
-    #             cast(Budget.budget, Numeric)
-    #             - func.coalesce(func.sum(cast(Allocation.amount, Numeric)), 0)
-    #         ).label("claimed_rewards"),
-    #     )
-    #     .join(Budget, Budget.user_id == User.id)
-    #     .outerjoin(
-    #         Allocation,
-    #         (Allocation.user_id == User.id)
-    #         & (Allocation.epoch == Budget.epoch)
-    #         & (Allocation.deleted_at.is_(None)),
-    #     )
-    #     .filter(Budget.epoch == epoch_number)
-    #     .group_by(User.address, Budget.budget)
-    #     .having(
-    #         cast(Budget.budget, Numeric)
-    #         - func.coalesce(func.sum(cast(Allocation.amount, Numeric)), 0)
-    #         > 0
-    #     )
-    #     .order_by(User.address)
-    # )
-
-    # return {
-    #     transform_to_checksum_address(addr): transform_to_biginteger(amount)
-    #     for addr, amount in result.all()
-    # }
