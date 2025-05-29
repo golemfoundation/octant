@@ -34,7 +34,7 @@ from v2.info.services import (
 from v2.projects.dependencies import GetProjectsSettings
 from v2.withdrawals.dependencies import GetVaultSettings
 
-static_dir = f"{os.path.dirname(__file__)}/static"
+STATIC_DIR = f"{os.path.dirname(__file__)}/static"
 api = APIRouter(prefix="/info", tags=["Info"])
 
 
@@ -44,7 +44,7 @@ async def get_websockets_api_v1() -> FileResponse:
     The documentation for websockets can be found under this path
     """
     return FileResponse(
-        f"{static_dir}/websockets-api-docs.html",
+        f"{STATIC_DIR}/websockets-api-docs.html",
         media_type="text/html",
     )
 
@@ -55,7 +55,7 @@ async def get_websockets_api_yaml_v1():
     Returns websockets API documentation.
     """
     return FileResponse(
-        f"{static_dir}/websockets-api.yaml",
+        f"{STATIC_DIR}/websockets-api.yaml",
         media_type="text/plain",
     )
 

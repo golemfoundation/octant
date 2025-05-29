@@ -42,6 +42,13 @@ def mock_gitcoin_scorer(score: float):
     return mock_gitcoin_scorer
 
 
+def fake_delegation_settings() -> DelegationSettings:
+    return DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+
+
 @pytest.mark.asyncio
 async def test_delegate_error_low_uq_score(
     fast_app: FastAPI,
@@ -52,10 +59,7 @@ async def test_delegate_error_low_uq_score(
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     # Settings for the delegation
-    delegation_settings = DelegationSettings(
-        delegation_salt_primary="primary_salt",
-        delegation_salt="secondary_salt",
-    )
+    delegation_settings = fake_delegation_settings()
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
 
     # Mocks
@@ -115,10 +119,7 @@ async def test_delegate_ok(
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     # Settings for the delegation
-    delegation_settings = DelegationSettings(
-        delegation_salt_primary="primary_salt",
-        delegation_salt="secondary_salt",
-    )
+    delegation_settings = fake_delegation_settings()
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
 
     # Mocks
@@ -200,10 +201,7 @@ async def test_delegate_error_locking_address(
     fake_epochs_subgraph_factory: FakeEpochsSubgraphCallable,
 ):
     # Settings for the delegation
-    delegation_settings = DelegationSettings(
-        delegation_salt_primary="primary_salt",
-        delegation_salt="secondary_salt",
-    )
+    delegation_settings = fake_delegation_settings()
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
 
     alice_user, alice_account = await factories.users.create_random_user()
