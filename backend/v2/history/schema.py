@@ -38,7 +38,7 @@ class HistoryItemDataV1(OctantModel):
         ),
     ] = None
     leverage: Annotated[
-        BigInteger | None,
+        str | None,
         Field(
             None,
             description="Leverage of the allocated funds. Field available only for allocation items.",

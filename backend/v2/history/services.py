@@ -88,7 +88,7 @@ async def get_user_allocations(
             timestamp=str(int(request.created_at.timestamp())),
             event_data=HistoryItemDataV1(
                 is_manually_edited=request.is_manually_edited,
-                leverage=request.leverage,
+                leverage=str(request.leverage),
                 allocations=[
                     ProjectAllocationItemV1(
                         project_address=a.project_address, amount=a.amount
