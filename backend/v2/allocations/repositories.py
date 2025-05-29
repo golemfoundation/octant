@@ -42,18 +42,30 @@ async def get_allocations_with_user_uqs(
 ) -> list[AllocationWithUserUQScore]:
     """Get all allocations for a given epoch, including the uniqueness quotients of the users."""
 
+    # First, create a subquery to get the most recent UniquenessQuotient per user and epoch
+    uq_subquery = (
+        select(UniquenessQuotient)
+        .distinct(UniquenessQuotient.user_id, UniquenessQuotient.epoch)
+        .order_by(
+            UniquenessQuotient.user_id,
+            UniquenessQuotient.epoch,
+            UniquenessQuotient.created_at.desc(),
+        )
+        .subquery()
+    )
+
+    # Then use this subquery in the main query
     result = await session.execute(
         select(
             Allocation.project_address,
             Allocation.amount,
             User.address.label("user_address"),
-            coalesce(UniquenessQuotient.score, "0.0").label("uq_score"),
+            coalesce(uq_subquery.c.score, "0.0").label("uq_score"),
         )
         .join(User, Allocation.user_id == User.id)
         .outerjoin(
-            UniquenessQuotient,
-            (UniquenessQuotient.user_id == User.id)
-            & (UniquenessQuotient.epoch == epoch_number),
+            uq_subquery,
+            (uq_subquery.c.user_id == User.id) & (uq_subquery.c.epoch == epoch_number),
         )
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
