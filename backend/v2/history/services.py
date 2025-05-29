@@ -85,7 +85,7 @@ async def get_user_allocations(
     return [
         HistoryItemV1(
             type="allocation",
-            timestamp=str(int(request.created_at.timestamp_s())),
+            timestamp=str(int(request.created_at.timestamp())),
             event_data=HistoryItemDataV1(
                 is_manually_edited=request.is_manually_edited,
                 leverage=request.leverage,
