@@ -59,13 +59,13 @@ async def get_epoch_info_future(
         total_rewards=future_rewards.total_rewards,
         vanilla_individual_rewards=future_rewards.vanilla_individual_rewards,
         operational_cost=future_rewards.operational_cost,
-        total_withdrawals=0,  # Future so no withdrawals (yet)
-        patrons_rewards=0,  # Future so no patrons (yet)
-        matched_rewards=0,  # Future so no matched rewards (yet)
-        leftover=0,  # Future so no leftover (yet)
+        total_withdrawals=None,  # Future so no withdrawals (yet)
+        patrons_rewards=None,  # Future so no patrons (yet)
+        matched_rewards=None,  # Future so no matched rewards (yet)
+        leftover=None,  # Future so no leftover (yet)
         ppf=future_rewards.ppf,
         community_fund=future_rewards.community_fund,
-        donated_to_projects=0,  # Future so no donated to projects (yet)
+        donated_to_projects=None,  # Future so no donated to projects (yet)
     )
 
 
@@ -104,13 +104,13 @@ async def get_epoch_info_current(
         total_rewards=rewards.total_rewards,
         vanilla_individual_rewards=rewards.vanilla_individual_rewards,
         operational_cost=rewards.operational_cost,
-        total_withdrawals=0,  # Current epoch so no withdrawals yet
-        patrons_rewards=0,  # Current epoch so no patrons yet
-        matched_rewards=0,  # Current epoch so no matched rewards yet
-        leftover=0,  # Current epoch so no leftover yet
+        total_withdrawals=None,  # Current epoch so no withdrawals yet
+        patrons_rewards=None,  # Current epoch so no patrons yet
+        matched_rewards=None,  # Current epoch so no matched rewards yet
+        leftover=None,  # Current epoch so no leftover yet
         ppf=rewards.ppf,
         community_fund=rewards.community_fund,
-        donated_to_projects=0,  # Current epoch so no donated to projects yet
+        donated_to_projects=None,  # Current epoch so no donated to projects yet
     )
 
 
@@ -151,13 +151,13 @@ async def get_epoch_info_pre_pending(
         total_rewards=rewards.total_rewards,
         vanilla_individual_rewards=rewards.vanilla_individual_rewards,
         operational_cost=rewards.operational_cost,
-        total_withdrawals=0,  # Pre-pending so no withdrawals yet
-        patrons_rewards=0,  # Pre-pending so no patrons yet
-        matched_rewards=0,  # Pre-pending so no matched rewards yet
-        leftover=0,  # Pre-pending so no leftover yet
+        total_withdrawals=None,  # Pre-pending so no withdrawals yet
+        patrons_rewards=None,  # Pre-pending so no patrons yet
+        matched_rewards=None,  # Pre-pending so no matched rewards yet
+        leftover=None,  # Pre-pending so no leftover yet
         ppf=rewards.ppf,
         community_fund=rewards.community_fund,
-        donated_to_projects=0,  # Pre-pending so no donated to projects yet
+        donated_to_projects=None,  # Pre-pending so no donated to projects yet
     )
 
 
