@@ -32,15 +32,12 @@ async def get_last_finalized_snapshot_epoch_number(
     session: AsyncSession,
 ) -> int:
     result = await session.scalar(
-        select(FinalizedEpochSnapshot)
+        select(FinalizedEpochSnapshot.epoch)
         .order_by(FinalizedEpochSnapshot.epoch.desc())
         .limit(1)
     )
 
-    if result is None:
-        return 0
-
-    return result.epoch
+    return int(result) or 0
 
 
 async def get_last_finalized_epoch_snapshot(
@@ -68,12 +65,9 @@ async def get_last_pending_snapshot_epoch_number(
     session: AsyncSession,
 ) -> int:
     result = await session.scalar(
-        select(PendingEpochSnapshot)
+        select(PendingEpochSnapshot.epoch)
         .order_by(PendingEpochSnapshot.epoch.desc())
         .limit(1)
     )
 
-    if result is None:
-        return 0
-
-    return result.epoch
+    return int(result) or 0
