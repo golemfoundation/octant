@@ -282,14 +282,18 @@ async def get_epoch_info_finalized(
     """
 
     # Calculate leftover based on pending and finalized snapshots
-    unused_matched_rewards = (
-        int(finalized_snapshot.leftover)
-        - int(pending_snapshot.eth_proceeds)
-        + int(pending_snapshot.operational_cost)
-        + int(pending_snapshot.community_fund)
-        + int(pending_snapshot.ppf / 2)  # extra individual rewards
-        + int(finalized_snapshot.total_withdrawals)
-    )
+    # We only do it for epochs >= 4
+    if epoch_number < 4:
+        unused_matched_rewards = 0
+    else:
+        unused_matched_rewards = (
+            int(finalized_snapshot.leftover)
+            - int(pending_snapshot.eth_proceeds)
+            + int(pending_snapshot.operational_cost)
+            + int(pending_snapshot.community_fund)
+            + int(pending_snapshot.ppf / 2)  # extra individual rewards
+            + int(finalized_snapshot.total_withdrawals)
+        )
 
     # Group allocations by project address
     allocations = await get_allocations_with_user_uqs(session, epoch_number)
