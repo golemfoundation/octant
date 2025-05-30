@@ -18,6 +18,7 @@ from v2.delegations.router import api as delegations_api
 from v2.deposits.router import api as deposits_api
 from v2.multisig.router import api as multisig_signatures_api
 from v2.withdrawals.router import api as withdrawals_api
+from v2.info.router import api as info_api
 
 
 async def handle_octant_exception(request: Request, ex: OctantException):
@@ -71,6 +72,7 @@ def build_app(debug: bool = False) -> FastAPI:
     app.include_router(deposits_api)
     app.include_router(multisig_signatures_api)
     app.include_router(withdrawals_api)
+    app.include_router(info_api)
 
     return app
 

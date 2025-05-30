@@ -8,13 +8,13 @@ import pytest_asyncio
 
 from tests.v2.factories import FactoriesAggregator
 from v2.core.dependencies import get_sessionmaker
-from v2.main import app as fastapi_app
+from v2.main import build_app
 from app.extensions import db
 
 
 @pytest.fixture(scope="function")
 def fast_app() -> FastAPI:
-    return fastapi_app
+    return build_app()
 
 
 @pytest.fixture(scope="function")

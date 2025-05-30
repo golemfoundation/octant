@@ -28,6 +28,18 @@ async def get_finalized_epoch_snapshot(
     return result.scalar_one_or_none()
 
 
+async def get_last_finalized_snapshot_epoch_number(
+    session: AsyncSession,
+) -> int:
+    result = await session.scalar(
+        select(FinalizedEpochSnapshot.epoch)
+        .order_by(FinalizedEpochSnapshot.epoch.desc())
+        .limit(1)
+    )
+
+    return result or 0
+
+
 async def get_last_finalized_epoch_snapshot(
     session: AsyncSession,
 ) -> FinalizedEpochSnapshot:
@@ -47,3 +59,15 @@ async def get_last_finalized_epoch_snapshot(
         raise exceptions.MissingSnapshot()
 
     return snapshot
+
+
+async def get_last_pending_snapshot_epoch_number(
+    session: AsyncSession,
+) -> int:
+    result = await session.scalar(
+        select(PendingEpochSnapshot.epoch)
+        .order_by(PendingEpochSnapshot.epoch.desc())
+        .limit(1)
+    )
+
+    return result or 0

@@ -28,5 +28,6 @@ async def get_glm_balance_of_deposits(
     return await glm_contracts.balance_of(deposits_contracts.address)
 
 
+GetGLMSettings = Annotated[GLMSettings, Depends(get_glm_settings)]
 GetGLMContracts = Annotated[GLMContracts, Depends(get_glm_contracts)]
 GetGLMBalanceOfDeposits = Annotated[int, Depends(get_glm_balance_of_deposits)]
