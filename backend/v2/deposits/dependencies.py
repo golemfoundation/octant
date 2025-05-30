@@ -47,6 +47,7 @@ def get_deposit_events_repository(
 
 
 # Annotated dependencies
+GetDepositsSettings = Annotated[DepositsSettings, Depends(get_deposits_settings)]
 GetDepositsContracts = Annotated[DepositsContracts, Depends(get_deposits_contracts)]
 GetDepositEventsRepository = Annotated[
     DepositEventsStore, Depends(get_deposit_events_repository)

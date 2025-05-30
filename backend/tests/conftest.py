@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import datetime
 import json
 import os
@@ -9,6 +10,7 @@ import urllib.request
 from http import HTTPStatus
 from unittest.mock import MagicMock, Mock
 from eth_utils import to_checksum_address
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import gql
 import pytest
@@ -31,11 +33,8 @@ from app.engine.user.effective_deposit import DepositEvent, EventType, UserDepos
 from app.exceptions import ExternalApiException
 from app.extensions import (
     db,
-    deposits,
-    glm,
     gql_octant_factory,
     w3,
-    vault,
     epochs,
     gql_sablier_factory,
 )
@@ -46,7 +45,6 @@ from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure.database.multisig_signature import SigStatus
-from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
@@ -54,10 +52,6 @@ from app.settings import DevConfig, TestConfig
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
-    ALICE,
-    BOB,
-    CAROL,
-    DEPLOYER_PRIV,
     ETH_PROCEEDS,
     LEFTOVER,
     MATCHED_REWARDS,
@@ -95,7 +89,11 @@ from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from v2.core.dependencies import get_database_settings
+from v2.core.dependencies import (
+    get_database_settings,
+    get_w3,
+    get_web3_provider_settings,
+)
 
 LOGGER = logging.getLogger("app")
 
@@ -113,6 +111,30 @@ MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
+
+# Configure pytest-asyncio
+pytest_plugins = ["pytest_asyncio"]
+pytestmark = pytest.mark.asyncio
+
+logger = logging.getLogger(__name__)
+
+# Configure logging to show logs during pytest execution
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    force=True,  # Override any existing configuration
+)
+
+
+# Set default event loop scope for fixtures to function level
+def pytest_configure(config):
+    config.option.asyncio_mode = "auto"
+    # This explicitly sets asyncio_default_fixture_loop_scope to avoid the deprecation warning
+    setattr(  # noqa: B010
+        config.option, "asyncio_default_fixture_loop_scope", "function"
+    )
+
+    config.addinivalue_line("markers", "api: mark test as API test")
 
 
 def mock_gitcoin_passport_issue_address_for_scoring(*args, **kwargs):
@@ -373,10 +395,6 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
-    config.addinivalue_line("markers", "api: mark test as API test")
-
-
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--runapi"):
         return
@@ -427,10 +445,13 @@ def random_string() -> str:
 
 
 @pytest.fixture(scope="function")
-def fastapi_client(deployment) -> TestClient:
+def fastapi_app(deployment) -> FastAPI:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
+    os.environ["AUTH_CONTRACT_ADDRESS"] = (
+        deployment.AUTH_CONTRACT_ADDRESS or "0x0000000000000000000000000000000000000000"
+    )
 
     for key in dir(deployment):
         if key.isupper():
@@ -439,7 +460,7 @@ def fastapi_client(deployment) -> TestClient:
                 os.environ[key] = str(value)
 
     # Additional logging and no need for socketio in tests
-    app = create_fastapi_app(debug=True, include_socketio=False)
+    app = create_fastapi_app(debug=True)
 
     # Mock sablier to just return [] always
     sablier_subgraph = MagicMock(spec=SablierSubgraph)
@@ -458,9 +479,14 @@ def fastapi_client(deployment) -> TestClient:
 
     BaseModel.metadata.create_all(bind=engine)
 
-    yield TestClient(app)
+    yield app
 
     BaseModel.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture(scope="function")
+def fastapi_client(fastapi_app: FastAPI) -> TestClient:
+    return TestClient(fastapi_app)
 
 
 @pytest.fixture
@@ -483,11 +509,47 @@ def deployment(pytestconfig, request):
     """
     Deploy contracts and a subgraph under a single-use name.
     """
+
+    async def reset_timestamp():
+        w3 = get_w3(get_web3_provider_settings())
+
+        # Get the difference between now and the last block timestamp
+        now_timestamp = int(time.time())
+        last_block = await w3.eth.get_block("latest")
+        last_block_timestamp = last_block.timestamp
+        time_diff = now_timestamp - last_block_timestamp
+
+        logger.info(
+            f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})"
+        )
+        logger.info(f"Last block height: {last_block.number}")
+
+        # First set the current time
+        await w3.provider.make_request("evm_setTime", [now_timestamp])
+        # Then set the next block's timestamp
+        await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
+        # Mine the block
+        await w3.provider.make_request("evm_mine", [])
+
+        # Verify the change
+        latest_block = await w3.eth.get_block("latest")
+        logger.info(f"Latest block height: {latest_block.number}")
+        logger.info(
+            f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}"
+        )
+        logger.info("Timestamp reset complete")
+
+    # Run the async functions
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(reset_timestamp())
+
     envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    logger.info(f"SUBGRAPH_ENDPOINT: {conf.SUBGRAPH_ENDPOINT}")
     conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
@@ -503,89 +565,11 @@ def deployment(pytestconfig, request):
         "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     )
     yield conf
+
+    # Revert after the test
+    loop.close()
+
     teardown_deployment(request.node.name, graph_name)
-
-
-class UserAccount:
-    def __init__(self, account: CryptoAccount, client: Client):
-        self._account = account
-        self._client = client
-
-    def fund_octant(self):
-        signed_txn = w3.eth.account.sign_transaction(
-            dict(
-                nonce=w3.eth.get_transaction_count(self.address),
-                gasPrice=w3.eth.gas_price,
-                gas=1000000,
-                to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
-                value=w3.to_wei(400, "ether"),
-            ),
-            self._account.key,
-        )
-        w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-
-    def transfer(self, account: UserAccount, value: int):
-        glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
-
-    def lock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.lock(self._account, w3.to_wei(value, "ether"))
-
-    def unlock(self, value: int):
-        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
-        deposits.unlock(self._account, w3.to_wei(value, "ether"))
-
-    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
-        vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
-
-    def allocate(self, amount: int, addresses: list[str]):
-        nonce, _ = self._client.get_allocation_nonce(self.address)
-        return self._client.make_allocation(self._account, amount, addresses, nonce)
-
-    @property
-    def address(self):
-        return self._account.address
-
-
-@pytest.fixture
-def deployer(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV), client)
-
-
-@pytest.fixture
-def ua_alice(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(ALICE), client)
-
-
-@pytest.fixture
-def ua_bob(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(BOB), client)
-
-
-@pytest.fixture
-def ua_carol(client: Client) -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(CAROL), client)
-
-
-@pytest.fixture
-def setup_funds(
-    client: Client,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
-    ua_carol: UserAccount,
-    request,
-):
-    test_name = request.node.name
-    current_app.logger.debug(f"RUNNING TEST: {test_name}")
-    current_app.logger.debug("Setup funds before test")
-
-    # fund Octant
-    deployer.fund_octant()
-    # fund Users
-    deployer.transfer(ua_alice, 10000)
-    deployer.transfer(ua_bob, 15000)
-    deployer.transfer(ua_carol, 20000)
 
 
 class Client:

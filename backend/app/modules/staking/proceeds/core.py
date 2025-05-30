@@ -35,7 +35,7 @@ def sum_mev(
     # filter out errors, duplicated and txs not sent to withdrawals target
     df = df[df["isError"] != "1"]
     df = df[~df["hash"].duplicated()]
-    df = df[df["to"] == withdrawals_target]
+    df = df[df["to"] == withdrawals_target.lower()]
 
     # Filter out functions other than transfer funds to the address (execTransaction, etc.)
     # This is only relevant to smart contract accounts

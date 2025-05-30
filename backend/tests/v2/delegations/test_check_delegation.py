@@ -13,6 +13,13 @@ from v2.delegations.dependencies import (
 from tests.v2.factories import FactoriesAggregator
 
 
+def fake_delegation_settings() -> DelegationSettings:
+    return DelegationSettings(
+        delegation_salt_primary="primary_salt",
+        delegation_salt="secondary_salt",
+    )
+
+
 @pytest.mark.asyncio
 async def test_check_delegations_exists(
     fast_app: FastAPI,
@@ -20,10 +27,7 @@ async def test_check_delegations_exists(
     fast_session: AsyncSession,
     factories: FactoriesAggregator,
 ):
-    delegation_settings = DelegationSettings(
-        delegation_salt_primary="primary_salt",
-        delegation_salt="secondary_salt",
-    )
+    delegation_settings = fake_delegation_settings()
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
     delegation_service = get_delegation_service(fast_session, delegation_settings)
 
@@ -64,10 +68,7 @@ async def test_check_delegations_exists_but_not_all(
     Test that if one address has a delegation, but the other does not,
     we only return the address that has a delegation.
     """
-    delegation_settings = DelegationSettings(
-        delegation_salt_primary="primary_salt",
-        delegation_salt="secondary_salt",
-    )
+    delegation_settings = fake_delegation_settings()
     fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
     delegation_service = get_delegation_service(fast_session, delegation_settings)
 
@@ -104,6 +105,9 @@ async def test_check_delegations_does_not_exist(
     """
     Test that if no addresses have a delegation, we return an empty response.
     """
+    delegation_settings = fake_delegation_settings()
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
+
     alice = await factories.users.get_or_create_alice()
     bob = await factories.users.get_or_create_bob()
 
@@ -125,6 +129,8 @@ async def test_check_delegations_addresses_list_too_long_or_too_short(
     """
     Test that if no addresses have a delegation, we return an empty response.
     """
+    delegation_settings = fake_delegation_settings()
+    fast_app.dependency_overrides[get_delegation_settings] = lambda: delegation_settings
 
     _, one = await factories.users.create_random_user()
     _, two = await factories.users.create_random_user()
