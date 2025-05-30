@@ -49,3 +49,29 @@ def build_allocations_eip712_data(chain_id: int, message: dict) -> dict:
         "primaryType": "AllocationPayload",
         "message": message,
     }
+
+
+def build_claim_glm_eip712_data(chain_id: int, glm_withdrawal_amount: int) -> dict:
+    domain = {
+        "name": "Octant",
+        "version": "1.0.0",
+        "chainId": chain_id,
+    }
+
+    claim_glm_types = {
+        "EIP712Domain": [
+            {"name": "name", "type": "string"},
+            {"name": "version", "type": "string"},
+            {"name": "chainId", "type": "uint256"},
+        ],
+        "ClaimGLMPayload": [
+            {"name": "msg", "type": "string"},
+        ],
+    }
+
+    return {
+        "types": claim_glm_types,
+        "domain": domain,
+        "primaryType": "ClaimGLMPayload",
+        "message": {"msg": f"Claim {int(glm_withdrawal_amount / 1e18)} GLMs"},
+    }

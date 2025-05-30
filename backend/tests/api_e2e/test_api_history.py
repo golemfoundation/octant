@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 import logging
 from tests.helpers.constants import STARTING_EPOCH
@@ -38,6 +39,9 @@ async def test_history_basics(
     assert (
         allocation_response_code == 201
     ), "Allocation status code is different than 201"
+
+    # We sleep here to make sure there's delay between allocation and history retrieval
+    await asyncio.sleep(2)
 
     # Check user history after allocation
     user_history, status_code = fclient.get_user_history(ua_alice.address)

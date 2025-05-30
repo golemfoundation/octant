@@ -32,6 +32,26 @@ async def get_all_patrons_at_timestamp(
     return [transform_to_checksum_address(row[0]) for row in results.all()]
 
 
+async def was_patron_at_timestamp(
+    session: AsyncSession,
+    user_address: Address,
+    dt: datetime,
+) -> bool:
+    """
+    Check if a user is a patron at a given timestamp.
+    """
+
+    result = await session.execute(
+        select(PatronModeEvent.patron_mode_enabled)
+        .filter(PatronModeEvent.user_address == user_address)
+        .filter(PatronModeEvent.created_at <= dt)
+        .order_by(PatronModeEvent.id.desc(), PatronModeEvent.created_at.desc())
+        .limit(1)
+    )
+
+    return bool(result.scalar())
+
+
 async def get_budget_sum_by_users_addresses_and_epoch(
     session: AsyncSession, users_addresses: list[str], epoch_number: int
 ) -> int:
@@ -146,6 +166,24 @@ async def user_is_patron_with_budget(
         session, user_address, epoch_number
     )
     return budget is not None
+
+
+async def get_patron_epoch_donation(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+    finalized_timestamp: datetime,
+) -> int | None:
+    """
+    Get the patron donation for a given user and epoch (they use full budget of given epoch).
+    """
+
+    if not await was_patron_at_timestamp(session, user_address, finalized_timestamp):
+        return None
+
+    return await get_budget_by_user_address_and_epoch(
+        session, user_address, epoch_number
+    )
 
 
 async def get_budgets_by_users_addresses_and_epoch(
