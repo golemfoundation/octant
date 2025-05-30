@@ -5,7 +5,7 @@ from v2.core.dependencies import GetCurrentTimestamp, GetSession
 from v2.core.types import Address
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.deposits.repositories import get_user_deposit
-from v2.epoch_snapshots.repositories import get_pending_epoch_snapshot
+from v2.snapshots.repositories import get_pending_epoch_snapshot
 from v2.epochs.dependencies import GetEpochsContracts, GetEpochsSubgraph
 from v2.project_rewards.services import calculate_effective_deposits
 from v2.deposits.schemas import (

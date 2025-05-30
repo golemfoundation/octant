@@ -10,7 +10,7 @@ from app.legacy.core.epochs.epoch_snapshots import (
 )
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from v2.epoch_snapshots.repositories import (
+from v2.snapshots.repositories import (
     get_last_finalized_snapshot_epoch_number,
     get_last_pending_snapshot_epoch_number,
 )
@@ -22,9 +22,6 @@ async def check_blockchain(w3: AsyncWeb3, expected_chain_id: int) -> bool:
     """
     Check if the chain RPC is healthy.
     """
-    print(f"w3: {w3}")
-    print(f"w3.eth: {w3.eth}")
-    print(f"w3.eth.chain_id: {w3.eth.chain_id}")
     try:
         return await w3.eth.chain_id == expected_chain_id
     except Exception as e:

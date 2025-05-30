@@ -3,7 +3,7 @@ import os
 from eth_account import Account
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from v2.epoch_snapshots.repositories import get_last_finalized_epoch_snapshot
+from v2.snapshots.repositories import get_last_finalized_epoch_snapshot
 from v2.withdrawals.contracts import VaultContracts
 
 
