@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
 from pydantic import TypeAdapter
@@ -41,18 +42,33 @@ async def get_allocations_with_user_uqs(
 ) -> list[AllocationWithUserUQScore]:
     """Get all allocations for a given epoch, including the uniqueness quotients of the users."""
 
+    # First, create a subquery to get the most recent UniquenessQuotient per user and epoch
+    uq_subquery = (
+        select(UniquenessQuotient)
+        .distinct(UniquenessQuotient.user_id, UniquenessQuotient.epoch)
+        .order_by(
+            UniquenessQuotient.user_id,
+            UniquenessQuotient.epoch,
+            UniquenessQuotient.created_at.desc(),
+        )
+        .subquery()
+    )
+
+    # Then use this subquery in the main query
     result = await session.execute(
         select(
             Allocation.project_address,
             Allocation.amount,
             User.address.label("user_address"),
-            UniquenessQuotient.score,
+            coalesce(uq_subquery.c.score, "0.0").label("uq_score"),
         )
         .join(User, Allocation.user_id == User.id)
-        .join(UniquenessQuotient, UniquenessQuotient.user_id == User.id)
+        .outerjoin(
+            uq_subquery,
+            (uq_subquery.c.user_id == User.id) & (uq_subquery.c.epoch == epoch_number),
+        )
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
-        .filter(UniquenessQuotient.epoch == epoch_number)
     )
 
     rows = result.all()
@@ -308,4 +324,61 @@ async def has_allocation_requests(
             )
         )
     )
-    return result
+    return bool(result)
+
+
+async def get_user_allocations_history(
+    session: AsyncSession,
+    user_address: Address,
+    from_ts: int,
+    limit: int,
+) -> list[tuple[AllocationRequestDB, list[Allocation]]]:
+    """
+    Returns all allocation requests and allocation objects for a given user.
+    From the 'from_ts' timestamp, max 'limit' elements backwards.
+    """
+
+    user = await get_user_by_address(session, user_address)
+    if user is None:
+        return []
+
+    # Convert timestamp to datetime for comparison
+    from_datetime = datetime.utcfromtimestamp(from_ts)
+
+    # Get allocation requests ordered by creation time and nonce (descending)
+    allocation_requests_result = await session.scalars(
+        select(AllocationRequestDB)
+        .filter(AllocationRequestDB.user_id == user.id)
+        .filter(AllocationRequestDB.created_at <= from_datetime)
+        .order_by(
+            AllocationRequestDB.created_at.desc(), AllocationRequestDB.nonce.desc()
+        )
+        .limit(limit)
+    )
+    allocation_requests = list(allocation_requests_result.all())
+
+    if not allocation_requests:
+        return []
+
+    # Get all allocations that belong to the allocation requests
+    allocations_result = await session.scalars(
+        select(Allocation)
+        .filter(Allocation.user_id == user.id)
+        .filter(
+            Allocation.nonce.in_(
+                [alloc_request.nonce for alloc_request in allocation_requests]
+            )
+        )
+    )
+
+    allocations = list(allocations_result.all())
+
+    # Group allocations by nonce for easier connection to allocation request
+    allocations_by_nonce = defaultdict(list)
+    for alloc in allocations:
+        allocations_by_nonce[alloc.nonce].append(alloc)
+
+    return [
+        (alloc_request, allocations_by_nonce[alloc_request.nonce])
+        for alloc_request in allocation_requests
+    ]
