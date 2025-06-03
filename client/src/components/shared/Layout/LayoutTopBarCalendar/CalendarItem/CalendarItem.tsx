@@ -20,6 +20,7 @@ const CalendarItem: FC<CalendarItemProps> = ({
   href,
   shouldUseThirdPersonSingularVerb,
   isAlert,
+  isHourVisible = true,
   durationToChangeAWInMinutes,
 }) => {
   const dataTestRoot = 'CalendarItem';
@@ -115,9 +116,11 @@ const CalendarItem: FC<CalendarItemProps> = ({
             />
           )}
         </div>
-        <div className={styles.date} data-test={`${dataTestRoot}__date`}>
-          {date}
-        </div>
+        {isHourVisible && (
+          <div className={styles.date} data-test={`${dataTestRoot}__date`}>
+            {date}
+          </div>
+        )}
       </div>
     </div>
   );

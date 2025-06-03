@@ -1,11 +1,7 @@
-export default interface CalendarItemProps {
+import { Milestone } from 'constants/milestones';
+
+export default interface CalendarItemProps extends Milestone {
   durationToChangeAWInMinutes: number;
-  from: Date;
-  href?: string;
-  id: string;
   isActive: boolean;
   isAlert?: boolean;
-  label: string;
-  shouldUseThirdPersonSingularVerb?: boolean;
-  to?: Date;
 }
