@@ -11,12 +11,13 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.api
-def test_delegation(
+@pytest.mark.asyncio
+async def test_delegation(
     fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")
@@ -76,7 +77,8 @@ def test_delegation(
 
 
 @pytest.mark.api
-def test_recalculate_in_delegation(
+@pytest.mark.asyncio
+async def test_recalculate_in_delegation(
     fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
 ):
     """
@@ -85,9 +87,9 @@ def test_recalculate_in_delegation(
     - if the delegation exists, i.e. secondary address exists in the database, it will return 400
     it's due to the fact that the recalculation is already stoned for a secondary address in our implementation
     """
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")
@@ -128,12 +130,13 @@ def test_recalculate_in_delegation(
 
 
 @pytest.mark.api
-def test_check_delegation(
+@pytest.mark.asyncio
+async def test_check_delegation(
     fclient: FastAPIClient, payload: ScoreDelegationPayload, sync_session: Session
 ):
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
-    fclient.move_to_next_epoch(STARTING_EPOCH + 3)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 3)
 
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 3)
     logger.debug(f"indexed epoch: {epoch_no}")

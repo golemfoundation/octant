@@ -9,7 +9,7 @@ from pydantic import field_validator
 from app.exceptions import InvalidEpoch
 from app.modules.staking.proceeds.core import ESTIMATED_STAKING_REWARDS_RATE
 from app.context.epoch_state import EpochState
-from v2.epoch_snapshots.repositories import (
+from v2.snapshots.repositories import (
     get_finalized_epoch_snapshot,
     get_pending_epoch_snapshot,
 )
@@ -72,6 +72,10 @@ async def get_current_epoch(epochs_contracts: GetEpochsContracts) -> int:
     return await epochs_contracts.get_current_epoch()
 
 
+async def get_pending_epoch(epochs_contracts: GetEpochsContracts) -> int | None:
+    return await epochs_contracts.get_pending_epoch()
+
+
 async def get_indexed_epoch(epochs_subgraph: GetEpochsSubgraph) -> int:
     latest_epoch = await epochs_subgraph.get_latest_epoch()
     return latest_epoch.epoch_num
@@ -114,6 +118,11 @@ async def get_epoch_state(
         return EpochState.FINALIZED
 
 
+GetEpochSettings = Annotated[
+    EpochsSettings,
+    Depends(get_epochs_settings),
+]
+
 GetEpochsSubgraph = Annotated[
     EpochsSubgraph,
     Depends(get_epochs_subgraph),
@@ -142,4 +151,9 @@ GetIndexedEpoch = Annotated[
 GetRewardsRate = Annotated[
     float,
     Depends(get_rewards_rate),
+]
+
+GetPendingEpoch = Annotated[
+    int | None,
+    Depends(get_pending_epoch),
 ]

@@ -1,14 +1,38 @@
 from fastapi import APIRouter
 
+from app.exceptions import MissingSnapshot
+from v2.matched_rewards.dependencies import GetMatchedRewardsSettings
+from v2.projects.dependencies import GetProjectsContracts
+from v2.core.dependencies import GetSession
+from v2.deposits.dependencies import (
+    GetDepositEventsRepository,
+    GetDepositsSettings,
+)
+from v2.glms.dependencies import GetGLMContracts
+from v2.snapshots.repositories import (
+    get_finalized_epoch_snapshot,
+    get_pending_epoch_snapshot,
+)
+from v2.staking_proceeds.dependencies import GetStakingProceeds
 from v2.epochs.dependencies import (
     GetCurrentEpoch,
+    GetEpochsContracts,
+    GetEpochsSubgraph,
     GetIndexedEpoch,
     GetRewardsRate,
 )
 from v2.epochs.schemas import (
     CurrentEpochResponseV1,
+    EpochStatsResponseV1,
     IndexedEpochResponseV1,
     EpochRewardsRateResponseV1,
+)
+from v2.epochs.services import (
+    get_epoch_info_finalized,
+    get_epoch_info_future,
+    get_epoch_info_current,
+    get_epoch_info_pre_pending,
+    get_epoch_info_pending,
 )
 
 api = APIRouter(prefix="/epochs", tags=["Epochs"])
@@ -55,17 +79,88 @@ async def get_indexed_epoch_v1(
     )
 
 
-# TODO: Requires epoch_rewards implementation that is WIP: https://linear.app/golemfoundation/issue/OCT-2236/migrate-post-rewardsestimated-budget
-# @api.get("/info/{epoch_number}")
-# async def get_epoch_stats_v1(
-#     session: GetSession,
-#     epoch: int
-# ) -> EpochStatsResponse:
-#     """
-#     Returns statistics on a given epoch. Returns data only for historic and currently pending epochs.
-#     """
-#     stats = await get_epoch_stats(session, epoch)
-#     return stats
+@api.get("/info/{epoch_number}")
+async def get_epoch_stats_v1(
+    # Dependencies
+    session: GetSession,
+    epochs_contracts: GetEpochsContracts,
+    projects_contracts: GetProjectsContracts,
+    glm_contracts: GetGLMContracts,
+    deposits_settings: GetDepositsSettings,
+    epochs_subgraph: GetEpochsSubgraph,
+    deposit_events_repository: GetDepositEventsRepository,
+    staking_proceeds_calc: GetStakingProceeds,
+    matched_rewards_settings: GetMatchedRewardsSettings,
+    # Parameters
+    epoch_number: int,
+) -> EpochStatsResponseV1:
+    """
+    Returns statistics on a given epoch.
+    Returns data only for historic and currently pending epochs.
+    """
+
+    current_epoch_number = await epochs_contracts.get_current_epoch()
+
+    # FUTURE EPOCH
+    if epoch_number > current_epoch_number:
+        return await get_epoch_info_future(
+            epochs_contracts, glm_contracts, deposits_settings
+        )
+
+    # CURRENT EPOCH
+    if epoch_number == current_epoch_number:
+        return await get_epoch_info_current(
+            epochs_subgraph, deposit_events_repository, epoch_number
+        )
+
+    pending_epoch_number = await epochs_contracts.get_pending_epoch()
+    pending_snapshot = await get_pending_epoch_snapshot(session, epoch_number)
+
+    if epoch_number == pending_epoch_number:
+        # PRE PENDING
+        if pending_snapshot is None:
+            return await get_epoch_info_pre_pending(
+                epochs_subgraph,
+                deposit_events_repository,
+                staking_proceeds_calc,
+                epoch_number,
+            )
+
+        # PENDING
+        return await get_epoch_info_pending(
+            epochs_subgraph,
+            projects_contracts,
+            session,
+            matched_rewards_settings,
+            epoch_number,
+            pending_snapshot,
+        )
+
+    # If we don't have a pending snapshot at this point, it's bad...
+    if pending_snapshot is None:
+        raise MissingSnapshot(epoch_number)
+
+    finalized_snapshot = await get_finalized_epoch_snapshot(session, epoch_number)
+    if finalized_snapshot is None:
+        # FINALIZING
+        # This is the same as pending snapshot
+        return await get_epoch_info_pending(
+            epochs_subgraph,
+            projects_contracts,
+            session,
+            matched_rewards_settings,
+            epoch_number,
+            pending_snapshot,
+        )
+
+    # FINALIZED
+    return await get_epoch_info_finalized(
+        epochs_subgraph,
+        session,
+        epoch_number,
+        pending_snapshot,
+        finalized_snapshot,
+    )
 
 
 @api.get("/rewards-rate/{epoch_number}")

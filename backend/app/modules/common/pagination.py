@@ -34,7 +34,7 @@ class Paginator:
 
     @staticmethod
     def extract_page(
-        page_records: List[PageRecord], offset_at_timestamp: int, limit: int
+        page_records: list, offset_at_timestamp: int, limit: int
     ) -> Tuple[List, Optional[str]]:
         next_page_start_index = offset_at_timestamp + limit
         current_page = page_records[offset_at_timestamp:next_page_start_index]

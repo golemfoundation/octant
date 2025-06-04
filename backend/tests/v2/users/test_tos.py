@@ -107,6 +107,9 @@ async def test_post_tos_status_duplicate(
 
     # mock the signature verifier to return True
     fast_app.dependency_overrides[get_signed_message_verifier] = mock_verifier
+    fast_app.dependency_overrides[get_x_headers_settings] = lambda: XHeadersSettings(
+        x_real_ip_required=False
+    )
     fake_epochs_contract_factory(FakeEpochsContractDetails(pending_epoch=1))
 
     # Generate valid signature
