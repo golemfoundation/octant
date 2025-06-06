@@ -1,12 +1,8 @@
 import os
-from fastapi import Request
 from fastapi.middleware.wsgi import WSGIMiddleware
-from fastapi.routing import Match
 
-from starlette.middleware.base import BaseHTTPMiddleware
-
-# from app import create_app as create_flask_app
-# from app.extensions import db as flask_db
+from app import create_app as create_flask_app
+from app.extensions import db as flask_db
 
 if os.getenv("SENTRY_DSN"):
     import sentry_sdk
@@ -50,13 +46,15 @@ from v2.main import build_app  # noqa
 def create_fastapi_app(debug: bool = False):
     fastapi_app = build_app(debug=debug)
 
-    # Commented out to remove all the flask stuff (for testing purposes,for now)
-    # flask_app = create_flask_app()
+    # Flask is kept here only as a fallback for the old API for now
+    # We remove the pass-through to the Flask as we have all functionality in fastapi now
+    flask_app = create_flask_app()
 
-    # @flask_app.teardown_request
-    # def teardown_session(*args, **kwargs):
-    #     flask_db.session.remove()
+    @flask_app.teardown_request
+    def teardown_session(*args, **kwargs):
+        flask_db.session.remove()
 
+    # Commented out to remove the pass-through to the Flask app
     # # Middleware to check if the path exists in FastAPI
     # # If it does, proceed with the request
     # # If it doesn't, modify the request to forward to the Flask app
@@ -80,7 +78,7 @@ def create_fastapi_app(debug: bool = False):
 
     # # Setup the pass-through to Flask app
     # fastapi_app.add_middleware(PathCheckMiddleware)
-    # fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
+    fastapi_app.mount("/flask", WSGIMiddleware(flask_app))
 
     return fastapi_app
 
