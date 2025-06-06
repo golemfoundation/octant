@@ -127,31 +127,31 @@ class SablierSubgraph:
 
         query = """
             query GetAllEvents($sender: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-            streams(
-                where: {
-                sender: $sender
-                asset_: {address: $tokenAddress}
+                streams(
+                    where: {
+                        sender: $sender
+                        asset_: {address: $tokenAddress}
+                    }
+                    first: $limit
+                    skip: $skip
+                    orderBy: timestamp
+                ) {
+                    id
+                    intactAmount
+                    canceled
+                    endTime
+                    depositAmount
+                    recipient
+                    actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
+                        category
+                        addressA
+                        addressB
+                        amountA
+                        amountB
+                        timestamp
+                        hash
+                    }
                 }
-                first: $limit
-                skip: $skip
-                orderBy: timestamp
-            ) {
-                id
-                intactAmount
-                canceled
-                endTime
-                depositAmount
-                recipient
-                actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
-                  category
-                  addressA
-                  addressB
-                  amountA
-                  amountB
-                  timestamp
-                  hash
-                }
-              }
             }
         """
         variables = {
@@ -179,33 +179,32 @@ class SablierSubgraph:
 
         query = """
             query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-            streams(
-                where: {
-                sender: $sender
-                recipient: $recipient
-                asset_: {address: $tokenAddress}
-                transferable: false
+                streams(
+                    where: {
+                        sender: $sender
+                        recipient: $recipient
+                        asset_: {address: $tokenAddress}
+                    }
+                    first: $limit
+                    skip: $skip
+                    orderBy: timestamp
+                ) {
+                    id
+                    intactAmount
+                    canceled
+                    endTime
+                    depositAmount
+                    recipient
+                    actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
+                        category
+                        addressA
+                        addressB
+                        amountA
+                        amountB
+                        timestamp
+                        hash
+                    }
                 }
-                first: $limit
-                skip: $skip
-                orderBy: timestamp
-            ) {
-                id
-                intactAmount
-                canceled
-                endTime
-                depositAmount
-                recipient
-                actions(where: {category_in: [Cancel, Withdraw, Create]}, orderBy: timestamp) {
-                  category
-                  addressA
-                  addressB
-                  amountA
-                  amountB
-                  timestamp
-                  hash
-                }
-              }
             }
         """
         variables = {

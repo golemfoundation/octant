@@ -137,6 +137,11 @@ class EnvironmentSettings(OctantSettings):
         description="Deployment id of the deployment",
     )
 
+    scheduler_enabled: bool = Field(
+        default=False,
+        description="Whether the scheduler is enabled. If enabled, the scheduler will be started.",
+    )
+
     @property
     def env(self) -> Literal["prod", "dev"]:
         return "prod" if self.octant_env == "production" else "dev"

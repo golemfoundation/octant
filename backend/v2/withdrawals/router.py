@@ -34,7 +34,7 @@ async def get_withdrawals(
     # When we are in open allocation window
     #  we add the rewards that are available to be claimed (not allocated to projects)
     pending_epoch_number = await epochs_contract.get_pending_epoch()
-    print(f"pending_epoch_number: {pending_epoch_number}")
+
     if pending_epoch_number is not None:
         claimed_rewards = await get_user_claimed_rewards(
             session, user_address, pending_epoch_number

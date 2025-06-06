@@ -10,6 +10,7 @@ class VaultSettings(OctantSettings):
     vault_contract_address: Address
     withdrawals_target_contract_address: Address
     epoch_2_staking_proceeds_surplus: BigInteger = 0
+    vault_confirm_withdrawals_enabled: bool = False
 
 
 def get_vault_settings() -> VaultSettings:
