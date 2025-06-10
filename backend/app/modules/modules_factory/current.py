@@ -9,6 +9,7 @@ from app.constants import (
     TIMEOUT_LIST,
     SABLIER_UNLOCK_GRACE_PERIOD_24_HRS,
     TEST_SABLIER_UNLOCK_GRACE_PERIOD_15_MIN,
+    GUEST_LIST,
     GUEST_LIST_NOT_MAINNET,
 )
 from app.modules.dto import SignatureOpType
@@ -61,9 +62,6 @@ from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosV
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
-from migrations.versions.e27e85614385_bump_uq_score_for_addresses_with_ import (
-    GUEST_LIST,
-)
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
