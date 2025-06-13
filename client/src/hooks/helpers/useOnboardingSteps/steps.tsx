@@ -7,7 +7,12 @@ import Button from 'components/ui/Button';
 import { DISCORD_LINK, FARCASTER_LINK, OCTANT_BUILD_LINK, X_LINK } from 'constants/urls';
 import i18n from 'i18n';
 
-export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string): Step[] => [
+export const getStepsDecisionWindowOpen = (
+  epoch: string,
+  epochNext: string,
+  changeAWDate: string,
+  timeCurrentEpochEndFormatted: string,
+): Step[] => [
   {
     header: i18n.t('views.onboarding.stepsDecisionWindowOpen.welcomeToOctant.header', { epoch }),
     image: 'images/onboarding/1.webp',
@@ -39,7 +44,7 @@ export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string):
       <Trans
         components={[<span className={styles.bold} />]}
         i18nKey="views.onboarding.stepsDecisionWindowOpen.donateToProjects.text"
-        values={{ epoch }}
+        values={{ date: timeCurrentEpochEndFormatted, epoch: epochNext }}
       />
     ),
   },
@@ -51,6 +56,7 @@ export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string):
       <Trans
         components={[<span className={styles.bold} />]}
         i18nKey="views.onboarding.stepsDecisionWindowOpen.slideIt.text"
+        values={{ date: timeCurrentEpochEndFormatted }}
       />
     ),
   },

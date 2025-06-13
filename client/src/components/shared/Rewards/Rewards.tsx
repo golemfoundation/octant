@@ -107,7 +107,7 @@ const Rewards: FC<RewardsProps> = ({
   return (
     <div className={className}>
       <div className={cx(styles.root, styles[`variant--${variant}`])} data-test="ProjectRewards">
-        <div className={styles.horizontalDivider} />
+        {variant === 'projectsView' && <div className={styles.horizontalDivider} />}
         <div className={styles.sections}>
           <div className={cx(styles.section, styles[`variant--${variant}`])}>
             <div className={styles.label} data-test="ProjectRewards__currentTotal__label">

@@ -4,17 +4,18 @@ import { useTranslation } from 'react-i18next';
 
 import { Step } from 'components/shared/ModalOnboarding/types';
 import ModalOnboardingTOS from 'components/shared/ModalOnboardingTOS';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useUserTOS from 'hooks/queries/useUserTOS';
 
 import { getStepsDecisionWindowOpen, getStepsDecisionWindowClosed } from './steps';
-
-import useEpochAndAllocationTimestamps from '../useEpochAndAllocationTimestamps';
 
 const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step[] => {
   const { i18n } = useTranslation();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: isUserTOSAccepted } = useUserTOS();
   const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
     useState(false);
 
@@ -32,8 +33,13 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
     return '';
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  const timeCurrentEpochEndFormatted = timeCurrentEpochEnd
+    ? format(new Date(timeCurrentEpochEnd).getTime(), 'dd MMM')
+    : '';
+
   return [
-    ...(isUserTOSAcceptedInitial === false
+    // Once TOS accepted, remove this step from onboarding.
+    ...(isUserTOSAcceptedInitial === false && isUserTOSAccepted === false
       ? [
           {
             header: isWaitingForFirstMultisigSignature
@@ -57,7 +63,12 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
         ]
       : []),
     ...(isDecisionWindowOpen
-      ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
+      ? getStepsDecisionWindowOpen(
+          epoch?.toString() ?? '',
+          (epoch! + 1)?.toString() ?? '',
+          changeAWDate,
+          timeCurrentEpochEndFormatted,
+        )
       : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
   ];
 };
