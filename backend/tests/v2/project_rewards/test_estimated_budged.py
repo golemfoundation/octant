@@ -160,10 +160,22 @@ async def test_estimates_budget_for_multiple_epochs(
 
 @pytest.mark.asyncio
 async def test_validates_request_parameters(
+    fast_app: FastAPI,
     fast_client: AsyncClient,
     fast_session: AsyncSession,
+    fake_epochs_contract_factory: FakeEpochsContractCallable,
 ):
     """Should validate request parameters"""
+
+    # Mock contracts
+    fake_epochs_contract_factory(
+        FakeEpochsContractDetails(
+            finalized_epoch=1,
+            future_epoch_props=(0, 0, 1000000, 10000),
+        )
+    )
+    fast_app.dependency_overrides[get_glm_balance_of_deposits] = lambda: 5000 * 10**18
+
     async with fast_client as client:
         # Test negative GLM amount
         resp = await client.post(

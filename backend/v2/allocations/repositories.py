@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
 from pydantic import TypeAdapter
@@ -6,7 +7,7 @@ from app.infrastructure.database.models import Allocation
 from app.infrastructure.database.models import AllocationRequest as AllocationRequestDB
 from app.infrastructure.database.models import UniquenessQuotient, User
 from eth_utils import to_checksum_address
-from sqlalchemy import Numeric, cast, func, select, update
+from sqlalchemy import Numeric, cast, exists, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.functions import coalesce
@@ -41,18 +42,33 @@ async def get_allocations_with_user_uqs(
 ) -> list[AllocationWithUserUQScore]:
     """Get all allocations for a given epoch, including the uniqueness quotients of the users."""
 
+    # First, create a subquery to get the most recent UniquenessQuotient per user and epoch
+    uq_subquery = (
+        select(UniquenessQuotient)
+        .distinct(UniquenessQuotient.user_id, UniquenessQuotient.epoch)
+        .order_by(
+            UniquenessQuotient.user_id,
+            UniquenessQuotient.epoch,
+            UniquenessQuotient.created_at.desc(),
+        )
+        .subquery()
+    )
+
+    # Then use this subquery in the main query
     result = await session.execute(
         select(
             Allocation.project_address,
             Allocation.amount,
             User.address.label("user_address"),
-            UniquenessQuotient.score,
+            coalesce(uq_subquery.c.score, "0.0").label("uq_score"),
         )
         .join(User, Allocation.user_id == User.id)
-        .join(UniquenessQuotient, UniquenessQuotient.user_id == User.id)
+        .outerjoin(
+            uq_subquery,
+            (uq_subquery.c.user_id == User.id) & (uq_subquery.c.epoch == epoch_number),
+        )
         .filter(Allocation.epoch == epoch_number)
         .filter(Allocation.deleted_at.is_(None))
-        .filter(UniquenessQuotient.epoch == epoch_number)
     )
 
     rows = result.all()
@@ -267,3 +283,102 @@ async def get_last_allocation_request(
         .filter(AllocationRequestDB.epoch == epoch_number)
         .order_by(AllocationRequestDB.nonce.desc())
     )
+
+
+async def get_user_allocations_sum_by_epoch(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> int:
+    """Get the sum of all allocations for a user in a given epoch."""
+
+    result = await session.scalar(
+        select(func.sum(cast(Allocation.amount, Numeric)))
+        .join(User, Allocation.user_id == User.id)
+        .filter(
+            Allocation.epoch == epoch_number,
+            Allocation.deleted_at.is_(None),
+            User.address == user_address,
+        )
+    )
+
+    if result is None:
+        return 0
+
+    return int(result)
+
+
+async def has_allocation_requests(
+    session: AsyncSession,
+    user_address: Address,
+    epoch_number: int,
+) -> bool:
+    """Check if a user has allocation requests for a given epoch."""
+
+    result = await session.scalar(
+        select(
+            exists().where(
+                User.address == user_address,
+                AllocationRequestDB.user_id == User.id,
+                AllocationRequestDB.epoch == epoch_number,
+            )
+        )
+    )
+    return bool(result)
+
+
+async def get_user_allocations_history(
+    session: AsyncSession,
+    user_address: Address,
+    from_ts: int,
+    limit: int,
+) -> list[tuple[AllocationRequestDB, list[Allocation]]]:
+    """
+    Returns all allocation requests and allocation objects for a given user.
+    From the 'from_ts' timestamp, max 'limit' elements backwards.
+    """
+
+    user = await get_user_by_address(session, user_address)
+    if user is None:
+        return []
+
+    # Convert timestamp to datetime for comparison
+    from_datetime = datetime.utcfromtimestamp(from_ts)
+
+    # Get allocation requests ordered by creation time and nonce (descending)
+    allocation_requests_result = await session.scalars(
+        select(AllocationRequestDB)
+        .filter(AllocationRequestDB.user_id == user.id)
+        .filter(AllocationRequestDB.created_at <= from_datetime)
+        .order_by(
+            AllocationRequestDB.created_at.desc(), AllocationRequestDB.nonce.desc()
+        )
+        .limit(limit)
+    )
+    allocation_requests = list(allocation_requests_result.all())
+
+    if not allocation_requests:
+        return []
+
+    # Get all allocations that belong to the allocation requests
+    allocations_result = await session.scalars(
+        select(Allocation)
+        .filter(Allocation.user_id == user.id)
+        .filter(
+            Allocation.nonce.in_(
+                [alloc_request.nonce for alloc_request in allocation_requests]
+            )
+        )
+    )
+
+    allocations = list(allocations_result.all())
+
+    # Group allocations by nonce for easier connection to allocation request
+    allocations_by_nonce = defaultdict(list)
+    for alloc in allocations:
+        allocations_by_nonce[alloc.nonce].append(alloc)
+
+    return [
+        (alloc_request, allocations_by_nonce[alloc_request.nonce])
+        for alloc_request in allocation_requests
+    ]

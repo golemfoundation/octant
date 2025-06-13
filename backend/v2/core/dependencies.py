@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import time
 from functools import lru_cache
-from typing import Annotated, AsyncGenerator
+from typing import Annotated, AsyncGenerator, Literal
 
 from fastapi import Depends
 from pydantic import Field
@@ -93,7 +93,9 @@ def get_sessionmaker(
 
 
 async def get_db_session(
-    sessionmaker: Annotated[async_sessionmaker[AsyncSession], Depends(get_sessionmaker)]
+    sessionmaker: Annotated[
+        async_sessionmaker[AsyncSession], Depends(get_sessionmaker)
+    ],
 ) -> AsyncGenerator[AsyncSession, None]:
     async with sessionmaker() as session:
         try:
@@ -108,9 +110,12 @@ async def get_db_session(
 
 class ChainSettings(OctantSettings):
     chain_id: int = Field(
-        validation_alias="chain_id",
         default=11155111,
         description="The chain id to use for the signature verification.",
+    )
+    chain_name: str = Field(
+        default="unknown",
+        description="The name of the chain to use for the signature verification.",
     )
 
     @property
@@ -120,6 +125,30 @@ class ChainSettings(OctantSettings):
 
 def get_chain_settings() -> ChainSettings:
     return ChainSettings()
+
+
+class EnvironmentSettings(OctantSettings):
+    octant_env: str = Field(
+        default="development",
+        description="Octant environment of the deployment",
+    )
+    deployment_id: str = Field(
+        default="unknown",
+        description="Deployment id of the deployment",
+    )
+
+    scheduler_enabled: bool = Field(
+        default=False,
+        description="Whether the scheduler is enabled. If enabled, the scheduler will be started.",
+    )
+
+    @property
+    def env(self) -> Literal["prod", "dev"]:
+        return "prod" if self.octant_env == "production" else "dev"
+
+
+def get_environment_settings() -> EnvironmentSettings:
+    return EnvironmentSettings()
 
 
 class SocketioSettings(OctantSettings):
@@ -149,7 +178,11 @@ def get_current_datetime(
 
 GetSocketioSettings = Annotated[SocketioSettings, Depends(get_socketio_settings)]
 GetChainSettings = Annotated[ChainSettings, Depends(get_chain_settings)]
+GetEnvironmentSettings = Annotated[
+    EnvironmentSettings, Depends(get_environment_settings)
+]
 Web3 = Annotated[AsyncWeb3, Depends(get_w3)]
+GetSessionmaker = Annotated[async_sessionmaker[AsyncSession], Depends(get_sessionmaker)]
 GetSession = Annotated[AsyncSession, Depends(get_db_session)]
 GetCurrentTimestamp = Annotated[int, Depends(get_current_timestamp)]
 GetCurrentDatetime = Annotated[datetime, Depends(get_current_datetime)]

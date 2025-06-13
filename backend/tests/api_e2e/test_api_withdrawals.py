@@ -1,43 +1,50 @@
 import time
-
+import logging
 import pytest
 
-from flask import current_app as app
-from app.extensions import w3, vault
-from app.legacy.core import vault as vault_core
-from app.legacy.core.projects import get_projects_addresses
+from v2.core.dependencies import (
+    get_database_settings,
+    get_sessionmaker,
+    get_w3,
+    get_web3_provider_settings,
+)
+from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
+from v2.withdrawals.services import confirm_withdrawals
 from tests.helpers.constants import STARTING_EPOCH
-from tests.conftest import UserAccount
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
-def test_withdrawals(
+@pytest.mark.asyncio
+async def test_withdrawals(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
-    ua_carol: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
+    ua_carol: FastUserAccount,
     setup_funds,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
-    bob_proposals = get_projects_addresses(1)[:3]
-    carol_proposals = get_projects_addresses(1)[:3]
+    projects, _ = fclient.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
+    bob_proposals = projects["projectsAddresses"][:3]
+    carol_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM for three accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(10000)
-    ua_carol.lock(10000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(10000)
+    await ua_carol.lock(10000)
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # fund the vault (amount here is arbitrary)
-    vault.fund(deployer._account, 1000 * 10**18)
+    w3 = get_w3(get_web3_provider_settings())
+    vault = get_vault_contracts(w3, get_vault_settings())
+    await vault.fund(deployer._account, 1000 * 10**18)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
@@ -71,9 +78,9 @@ def test_withdrawals(
     ua_carol.allocate(0, carol_proposals)
 
     # TODO replace with helper to wait until end of voting
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a finalized snapshot
     # res = client.pending_snapshot()
@@ -81,13 +88,15 @@ def test_withdrawals(
     assert res["epoch"] == STARTING_EPOCH
 
     # write merkle root for withdrawals
-    vault_core.confirm_withdrawals()
+    session_maker = get_sessionmaker(get_database_settings())
+    async with session_maker() as session:
+        await confirm_withdrawals(session, vault)
 
-    while not vault.is_merkle_root_set(STARTING_EPOCH):
+    while not await vault.is_merkle_root_set(STARTING_EPOCH):
         time.sleep(1)
 
-    root = vault.get_merkle_root(STARTING_EPOCH).hex()
-    app.logger.debug(f"root is 0x{root}")
+    root = await vault.get_merkle_root(STARTING_EPOCH)
+    logging.debug(f"root is 0x{root.hex()}")
 
     # Save latest withdrawals for assertions
     alice_withdrawals = fclient.get_withdrawals_for_address(address=ua_alice.address)[0]
@@ -107,18 +116,14 @@ def test_withdrawals(
     bob_withdrawal_amount: int = int(bob_withdrawals["amount"])
     assert bob_withdrawal_amount == bob_budget
     bob_merkle_proof: list[str] = bob_withdrawals["proof"]
-    app.logger.debug(f"Bob Merkle proof: {bob_merkle_proof}")
+    logging.debug(f"Bob Merkle proof: {bob_merkle_proof}")
 
-    bob_wallet_before_withdraw = w3.eth.get_balance(ua_bob.address)
-    app.logger.debug(
-        f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}"
-    )
+    bob_wallet_before_withdraw = await w3.eth.get_balance(ua_bob.address)
+    logging.debug(f"Bob Wallet balance before withdrawal: {bob_wallet_before_withdraw}")
 
-    ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
-    bob_wallet_after_withdraw = w3.eth.get_balance(ua_bob.address)
-    app.logger.debug(
-        f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}"
-    )
+    await ua_bob.withdraw(epoch, bob_withdrawal_amount, bob_merkle_proof)
+    bob_wallet_after_withdraw = await w3.eth.get_balance(ua_bob.address)
+    logging.debug(f"Bob Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert bob_wallet_after_withdraw > bob_wallet_before_withdraw
 
     # Carol withdrawal
@@ -126,16 +131,14 @@ def test_withdrawals(
     carol_withdrawal_amount: int = int(carol_withdrawals["amount"])
     assert carol_withdrawal_amount == carol_budget
     carol_merkle_proof: list[str] = carol_withdrawals["proof"]
-    app.logger.debug(f"Carol Merkle proof: {carol_merkle_proof}")
+    logging.debug(f"Carol Merkle proof: {carol_merkle_proof}")
 
-    carol_wallet_before_withdraw = w3.eth.get_balance(ua_carol.address)
-    app.logger.debug(
+    carol_wallet_before_withdraw = await w3.eth.get_balance(ua_carol.address)
+    logging.debug(
         f"Carol Wallet balance before withdrawal: {carol_wallet_before_withdraw}"
     )
 
-    ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
-    carol_wallet_after_withdraw = w3.eth.get_balance(ua_carol.address)
-    app.logger.debug(
-        f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}"
-    )
+    await ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
+    carol_wallet_after_withdraw = await w3.eth.get_balance(ua_carol.address)
+    logging.debug(f"Carol Wallet balance after withdrawal: {bob_wallet_after_withdraw}")
     assert carol_wallet_after_withdraw > carol_wallet_before_withdraw

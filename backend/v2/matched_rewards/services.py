@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from v2.epoch_snapshots.repositories import get_pending_epoch_snapshot
+from v2.snapshots.repositories import get_pending_epoch_snapshot
 from v2.epochs.subgraphs import EpochsSubgraph
 from v2.user_patron_mode.repositories import get_patrons_rewards
 
