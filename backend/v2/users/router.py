@@ -1,3 +1,49 @@
+"""
+User management and information endpoints.
+
+This module provides endpoints for managing user-related operations including:
+- Patron mode management
+- Uniqueness quotient (UQ) score retrieval
+- Antisybil status management
+- Terms of Service (TOS) consent
+- Sablier stream information
+
+Key Concepts:
+    - Patron Mode:
+        - Users can toggle patron mode to opt out of receiving rewards
+        - Affects budget calculations and allocations
+        - Can be enabled/disabled with signature verification
+        - Toggling during allocation window revokes existing allocations
+
+    - Uniqueness Quotient (UQ):
+        - Measures user uniqueness to prevent sybil attacks
+        - Based on Gitcoin Passport score
+        - Three possible values:
+            - 1.0: High passport score (>15)
+            - 0.01: Low passport score
+            - 0.0: Timeout list or no score
+        - Used in matched rewards calculation
+
+    - Antisybil Status:
+        - Tracks user's Gitcoin Passport verification
+        - Includes score, expiration, and timeout status
+        - Can be refreshed manually (except for delegated addresses)
+        - Cached to reduce API calls
+
+    - Terms of Service:
+        - One-time acceptance required
+            - Can be revoked by us eg when we change the terms of service
+        - Requires signature verification
+        - Tracks IP address for security
+        - Prevents duplicate acceptances
+
+    - Sablier Streams:
+        - Tracks user's reward streams
+        - Includes amount, availability, and status
+        - Can be queried per user or globally
+        - Integrates with Sablier protocol
+"""
+
 from datetime import timezone
 from fastapi import APIRouter, Response, status
 
@@ -60,7 +106,21 @@ async def get_patrons_for_epoch_v1(
     epoch_number: int,
 ) -> EpochPatronsResponseV1:
     """
-    Returns a list of users who toggled patron mode and has a positive budget in given epoch
+    Get list of patron mode users with positive budgets for a specific epoch.
+
+    This endpoint returns addresses of users who:
+    1. Have enabled patron mode
+    2. Have a positive budget in the specified epoch
+    3. Were in patron mode at the epoch's finalization
+
+    Args:
+        epoch_number: The epoch to check patron status for
+
+    Returns:
+        EpochPatronsResponseV1: List of patron addresses with positive budgets
+
+    Raises:
+        InvalidEpoch: If the specified epoch doesn't exist
     """
 
     epoch_details = await epoch_subgraph.get_epoch_by_number(epoch_number)
@@ -89,7 +149,23 @@ async def get_uq_for_user_and_epoch_v1(
     epoch_number: int,
 ) -> UQResponseV1:
     """
-    Returns user's uniqueness quotient score for given epoch
+    Get user's uniqueness quotient score for a specific epoch.
+
+    This endpoint calculates or retrieves the cached UQ score for a user.
+    The score is based on their Gitcoin Passport verification and affects
+    their matched rewards eligibility.
+
+    Args:
+        user_address: The user's Ethereum address
+        epoch_number: The epoch to get the score for
+
+    Returns:
+        UQResponseV1: The user's UQ score (0.0, 0.01, or 1.0)
+
+    Note:
+        - Score is not persisted if not already cached
+        - Used in matched rewards calculation
+        - Based on Gitcoin Passport score
     """
 
     uq_score = await uq_score_getter.get_or_calculate(
@@ -108,7 +184,20 @@ async def get_all_uqs_for_epoch_v1(
     epoch_number: int,
 ) -> AllUsersUQResponseV1:
     """
-    Returns all uniqueness quotient scores for all users (that have a UQ score stored) for given epoch
+    Get all cached uniqueness quotient scores for an epoch.
+
+    This endpoint returns UQ scores for all users who have a cached score
+    in the specified epoch. Useful for batch processing and verification.
+
+    Args:
+        epoch_number: The epoch to get scores for
+
+    Returns:
+        AllUsersUQResponseV1: List of user addresses and their UQ scores
+
+    Note:
+        - Only returns scores that have been previously calculated and cached
+        - Does not calculate new scores
     """
 
     all_uqs = await get_all_uqs_by_epoch(session, epoch_number)
@@ -132,7 +221,24 @@ async def get_antisybil_status_for_user_v1(
     response: Response,
 ) -> AntisybilStatusResponseV1:
     """
-    Returns user's antisybil status.
+    Get user's current antisybil verification status.
+
+    This endpoint returns the user's Gitcoin Passport verification status,
+    including their score, expiration time, and timeout list status.
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
+        AntisybilStatusResponseV1: User's verification status and details
+
+    Raises:
+        GPStampsNotFound: If user has no Gitcoin Passport stamps
+
+    Note:
+        - Requires existing Gitcoin Passport stamps
+        - Score is based on valid stamps
+        - Includes timeout list status
     """
 
     # If the user has no stamps, we return an unknown status
@@ -164,12 +270,25 @@ async def refresh_antisybil_status_for_user_v1(
     user_address: Address,
 ):
     """
-    Refresh cached antisybil status for a user.
-    If the user delegated the score, it will raise an error.
+    Refresh user's antisybil verification status.
 
-    Responses:
+    This endpoint fetches fresh Gitcoin Passport data and updates the cached status.
+    Cannot be used for delegated addresses as they have pre-verified scores.
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
         204: Refresh successful
-        504: Could not refresh antisybil status. Upstream is unavailable.
+
+    Raises:
+        AddressAlreadyDelegated: If address has delegated score
+        504: If Gitcoin Passport service is unavailable
+
+    Note:
+        - Updates cached stamps and score
+        - Forces score to 0 for timeout list addresses
+        - Cannot refresh delegated addresses
     """
 
     # Delegated addresses should not be refreshed
@@ -197,7 +316,20 @@ async def get_tos_status_for_user_v1(
     user_address: Address,
 ) -> TosStatusResponseV1:
     """
-    Returns true if given user has already accepted Terms of Service, false in the other case.
+    Check if user has accepted Terms of Service.
+
+    This endpoint verifies whether a user has previously accepted the Terms of Service.
+    TOS acceptance is required for certain operations.
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
+        TosStatusResponseV1: Whether TOS has been accepted
+
+    Note:
+        - One-time acceptance is required
+        - Status is permanent once accepted
     """
 
     status = await get_user_tos_consent_status(session, user_address)
@@ -214,7 +346,27 @@ async def post_tos_status_for_user_v1(
     x_real_ip: GetXRealIp,
 ) -> TosStatusResponseV1:
     """
-    Updates user's Terms of Service status.
+    Accept Terms of Service for a user.
+
+    This endpoint records a user's acceptance of the Terms of Service.
+    Requires a valid signature to prevent unauthorized acceptances.
+
+    Args:
+        user_address: The user's Ethereum address
+        payload: Contains the signature for verification
+        x_real_ip: User's IP address for security tracking
+
+    Returns:
+        TosStatusResponseV1: Confirmation of acceptance
+
+    Raises:
+        DuplicateConsent: If TOS already accepted
+        InvalidSignature: If signature verification fails
+
+    Note:
+        - Requires valid signature
+        - Tracks IP address
+        - One-time acceptance only
     """
 
     # Terms of Service can only be accepted once
@@ -245,7 +397,20 @@ async def get_patron_mode_for_user_v1(
     user_address: Address,
 ) -> PatronModeResponseV1:
     """
-    Returns true if given user has enabled patron mode, false in the other case.
+    Check user's patron mode status.
+
+    This endpoint returns whether a user has enabled patron mode.
+    Patron mode affects reward distribution and allocation eligibility.
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
+        PatronModeResponseV1: Current patron mode status
+
+    Note:
+        - Affects reward calculations
+        - Can be toggled with signature
     """
 
     status = await get_user_patron_mode_status(session, user_address)
@@ -264,6 +429,24 @@ async def patch_patron_mode_for_user_v1(
 ):
     """
     Toggle user's patron mode status.
+
+    This endpoint enables or disables patron mode for a user.
+    Requires signature verification and may affect existing allocations.
+
+    Args:
+        user_address: The user's Ethereum address
+        payload: Contains the signature for verification
+
+    Returns:
+        PatronModeResponseV1: Updated patron mode status
+
+    Raises:
+        InvalidSignature: If signature verification fails
+
+    Note:
+        - Requires valid signature
+        - Revokes allocations if toggled during allocation window
+        - Changes take effect immediately
     """
 
     current_status = await get_user_patron_mode_status(session, user_address)
@@ -302,7 +485,25 @@ async def get_sablier_streams_for_user_v1(
     user_address: Address,
 ) -> SablierStreamsResponseV1:
     """
-    Returns an array of user's streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.
+    Get user's Sablier reward streams.
+
+    This endpoint returns details about a user's active and historical
+    reward streams from the Sablier protocol.
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
+        SablierStreamsResponseV1: List of stream details including:
+            - Amount
+            - Availability date
+            - Remaining amount
+            - Cancellation status
+            - Recipient address
+
+    Note:
+        - Includes both active and historical streams
+        - Streams are time-locked rewards
     """
 
     streams = await sablier_subgraph.get_user_events_history(user_address)
@@ -326,7 +527,22 @@ async def get_all_sablier_streams_v1(
     sablier_subgraph: GetSablierSubgraph,
 ) -> SablierStreamsResponseV1:
     """
-    Returns an array of all streams from Sablier with amounts, availability dates, remainingAmount and isCancelled flag.
+    Get all Sablier reward streams.
+
+    This endpoint returns details about all reward streams in the system,
+    regardless of recipient. Useful for monitoring and verification.
+
+    Returns:
+        SablierStreamsResponseV1: List of all stream details including:
+            - Amount
+            - Availability date
+            - Remaining amount
+            - Cancellation status
+            - Recipient address
+
+    Note:
+        - Includes all streams in the system
+        - Useful for global monitoring
     """
 
     streams = await sablier_subgraph.get_all_streams_history()

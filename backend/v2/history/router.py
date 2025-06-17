@@ -1,3 +1,39 @@
+"""
+User history management endpoints for tracking user actions and events.
+
+This module provides endpoints for retrieving a user's complete history of actions
+in the system, including deposits, withdrawals, allocations, and patron donations.
+
+Key Concepts:
+    - History Items: Individual events in a user's history
+    - Event Types:
+        - lock: Direct deposit of GLM tokens
+        - unlock: Withdrawal of locked GLM tokens
+        - allocation: Distribution of rewards to projects
+        - withdrawal: Claiming of rewards
+        - patron_mode_donation: Donations made in patron mode
+
+    - Event Data:
+        - amount: The amount involved in the action (in wei)
+        - transaction_hash: Blockchain transaction hash (for locks, unlocks, withdrawals)
+        - epoch: The epoch number (for patron donations)
+        - is_manually_edited: Whether allocation was manually edited
+        - leverage: The leverage applied to allocated funds
+        - allocations: List of project allocations with amounts
+
+    - Pagination:
+        - Cursor-based pagination
+        - Results ordered by timestamp (newest first)
+        - Configurable page size (max 100 items)
+        - Next cursor for subsequent pages
+
+    - Data Sources:
+        - Deposit Events Repository: For lock/unlock events
+        - Epochs Subgraph: For withdrawal events
+        - Database: For allocation history
+        - Patron Mode: For patron donations
+"""
+
 from typing import Annotated
 import asyncio
 
@@ -31,9 +67,45 @@ async def get_user_history(
     limit: Annotated[int | None, Query()] = None,
 ) -> UserHistoryResponseV1:
     """
-    Get the history for a given user.
-    We returns the history from the most recent to the oldest.
-    Keep that in mind when using pagination.
+    Get the complete history for a given user.
+
+    This endpoint retrieves and combines all historical events for a user, including:
+    - Lock events (direct deposits)
+    - Unlock events (withdrawals of locked tokens)
+    - Withdrawal events (claiming of rewards)
+    - Allocation events (distribution of rewards)
+    - Patron mode donations
+
+    The events are fetched concurrently from different sources and combined into a
+    single chronological timeline, ordered from newest to oldest.
+
+    Path Parameters:
+        - user_address: The Ethereum address of the user
+
+    Query Parameters:
+        - cursor: Pagination cursor for retrieving next page
+        - limit: Maximum number of items to return (default: 100, max: 100)
+
+    Returns:
+        UserHistoryResponseV1 containing:
+            - history: List of HistoryItemV1 objects, each containing:
+                - type: The type of event (lock, unlock, allocation, withdrawal, patron_mode_donation)
+                - timestamp: Unix timestamp of the event
+                - event_data: Additional event-specific data:
+                    - amount: Amount involved (for all types)
+                    - transaction_hash: Transaction hash (for locks, unlocks, withdrawals)
+                    - epoch: Epoch number (for patron donations)
+                    - is_manually_edited: Whether allocation was edited (for allocations)
+                    - leverage: Leverage value (for allocations)
+                    - allocations: List of project allocations (for allocations)
+            - next_cursor: Cursor for retrieving the next page of results
+
+    Note:
+        - Results are ordered by timestamp (newest first)
+        - Each event type has specific additional data
+        - Patron donations are only included for finalized epochs
+        - Maximum page size is 100 items
+        - Events are fetched concurrently for better performance
     """
 
     limit = limit if limit is not None and limit < 100 else 100
@@ -91,32 +163,6 @@ async def get_user_history(
                 ),
             )
         )
-
-    # for epoch_number in range(last_finalized_snapshot_epoch_number, 0, -1):
-    #     # epoch_details = await epochs_subgraph.get_epoch_by_number(epoch_number )
-
-    #     if epoch_details.finalized_timestamp > from_timestamp:
-    #         continue
-
-    #     patron_donation = await get_patron_epoch_donation(
-    #         session,
-    #         user_address,
-    #         epoch_number,
-    #         epoch_details.finalized_timestamp.datetime(),
-    #     )
-    #     if patron_donation is None:
-    #         continue
-
-    #     patron_donations.append(
-    #         HistoryItemV1(
-    #             type="patron_mode_donation",
-    #             timestamp=str(int(epoch_details.finalized_timestamp.timestamp_s())),
-    #             event_data=HistoryItemDataV1(
-    #                 amount=patron_donation,
-    #                 epoch=epoch_number,
-    #             ),
-    #         )
-    #     )
 
     sorted_history = sorted(
         locks + unlocks + withdrawals + allocations + patron_donations,

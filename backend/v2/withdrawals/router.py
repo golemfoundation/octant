@@ -1,3 +1,35 @@
+"""
+Withdrawal management endpoints.
+
+This module provides endpoints for managing user reward withdrawals, including:
+- Retrieving available withdrawals
+- Generating merkle proofs for verification
+- Tracking withdrawal status
+
+Key Concepts:
+    - Withdrawal Status:
+        - PENDING: Rewards not yet finalized (during allocation window)
+        - AVAILABLE: Rewards finalized and ready for withdrawal
+        - CLAIMED: Rewards already withdrawn
+
+    - Withdrawal Process:
+        - Rewards become available after epoch finalization
+        - Merkle proofs required for verification
+        - Can withdraw from multiple epochs
+        - Tracks last claimed epoch
+
+    - Reward Sources:
+        - Unallocated rewards from current epoch
+        - Finalized rewards from past epochs
+        - Project rewards with merkle proofs
+
+    - Merkle Verification:
+        - Proofs generated for each withdrawal
+        - Verifies reward eligibility
+        - Prevents double-claiming
+        - Root stored on-chain
+"""
+
 from fastapi import APIRouter
 
 from app.modules.dto import WithdrawalStatus
@@ -26,7 +58,35 @@ async def get_withdrawals(
     vault: GetVaultContract,
 ) -> list[WithdrawalsResponseV1]:
     """
-    Returns a list containing amount and merkle proofs for all not claimed epochs.
+    Get list of available withdrawals for a user.
+
+    This endpoint returns all unclaimed rewards for a user, including:
+    1. Pending rewards from the current allocation window
+    2. Available rewards from finalized epochs
+    3. Merkle proofs for verification
+
+    The response includes:
+    - Epoch number
+    - Withdrawal amount
+    - Merkle proof (if available)
+    - Withdrawal status
+
+    Args:
+        user_address: The user's Ethereum address
+
+    Returns:
+        list[WithdrawalsResponseV1]: List of available withdrawals with:
+            - epoch: The epoch number
+            - amount: The withdrawal amount
+            - proof: Merkle proof for verification
+            - status: PENDING or AVAILABLE
+
+    Note:
+        - PENDING status for current epoch rewards
+        - AVAILABLE status for finalized epochs
+        - Empty proof for pending rewards
+        - Merkle proof required for available rewards
+        - Tracks last claimed epoch to prevent double-claiming
     """
 
     withdrawable_eth: list[WithdrawalsResponseV1] = []

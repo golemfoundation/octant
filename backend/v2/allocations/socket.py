@@ -1,3 +1,38 @@
+"""
+WebSocket server for real-time allocation updates and interactions.
+
+This module implements a Socket.IO namespace for handling real-time allocation operations.
+It provides real-time updates about allocation thresholds, project rewards, and donor information
+during the allocation window.
+
+Events:
+    Client -> Server:
+        - connect: Establishes WebSocket connection and receives initial data
+        - allocate: Submits new allocation request
+        - disconnect: Client disconnects from the server
+
+    Server -> Client:
+        - threshold: Sends current allocation threshold
+        - project_rewards: Sends estimated rewards for all projects
+        - project_donors: Sends list of donors and their allocations for a specific project
+
+Connection Flow:
+    1. Client connects -> Server validates allocation window is open
+    2. Server sends initial data:
+        - Current allocation threshold
+        - Estimated project rewards
+        - Current donor allocations for each project
+    3. Client can submit allocations
+    4. After each allocation:
+        - Server processes the allocation
+        - Server sends updated threshold, rewards, and donor information (to all connected clients)
+
+Note:
+    - All operations are only available during the allocation window (pending_epoch returns not None)
+    - Redis is used to manage connections and send updates to all connected clients
+    - Real-time updates are sent to all connected clients
+"""
+
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Tuple
@@ -52,7 +87,20 @@ async def create_dependencies_on_connect() -> AsyncGenerator[
     None,
 ]:
     """
-    Create and return all service dependencies.
+    Create and return all service dependencies needed for WebSocket connection.
+
+    This context manager sets up the necessary services and database session for handling
+    WebSocket connections. It ensures all dependencies are properly initialized and cleaned up.
+
+    Returns:
+        Tuple containing:
+            - AsyncSession: Database session
+            - ProjectsAllocationThresholdGetter: Service for getting allocation thresholds
+            - ProjectRewardsEstimator: Service for estimating project rewards
+
+    Raises:
+        AllocationWindowClosed: If the allocation window is not open
+        Exception: For any other initialization errors
     """
     w3 = get_w3(get_web3_provider_settings())
     epochs_contracts = get_epochs_contracts(w3, get_epochs_settings())
@@ -105,7 +153,22 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
     None,
 ]:
     """
-    Create and return all service dependencies.
+    Create and return all service dependencies needed for handling allocation requests.
+
+    This context manager sets up the necessary services and database session for processing
+    allocation requests. It includes additional services needed for allocation validation
+    and processing.
+
+    Returns:
+        Tuple containing:
+            - AsyncSession: Database session
+            - Allocator: Service for handling allocations
+            - ProjectsAllocationThresholdGetter: Service for getting allocation thresholds
+            - ProjectRewardsEstimator: Service for estimating project rewards
+
+    Raises:
+        AllocationWindowClosed: If the allocation window is not open
+        Exception: For any other initialization errors
     """
 
     w3 = get_w3(get_web3_provider_settings())
@@ -181,7 +244,29 @@ async def create_dependencies_on_allocate() -> AsyncGenerator[
 
 
 class AllocateNamespace(socketio.AsyncNamespace):
+    """
+    Socket.IO namespace for handling allocation-related WebSocket events.
+
+    This namespace manages real-time allocation operations, including:
+    - Connection handling
+    - Allocation request processing
+    - Real-time updates broadcasting
+    """
+
     async def handle_on_connect(self, sid: str, environ: dict):
+        """
+        Handle new WebSocket connection.
+
+        On connection:
+        1. Validates allocation window is open
+        2. Sends current allocation threshold
+        3. Sends estimated project rewards
+        4. Sends current donor allocations for each project
+
+        Args:
+            sid: Socket.IO session ID
+            environ: Connection environment information
+        """
         async with create_dependencies_on_connect() as (
             session,
             threshold_getter,
@@ -235,6 +320,18 @@ class AllocateNamespace(socketio.AsyncNamespace):
                 )
 
     async def on_connect(self, sid: str, environ: dict):
+        """
+        Socket.IO connect event handler.
+
+        Wraps handle_on_connect with error handling for:
+        - AllocationWindowClosed
+        - OctantException
+        - General exceptions
+
+        Args:
+            sid: Socket.IO session ID
+            environ: Connection environment information
+        """
         try:
             await self.handle_on_connect(sid, environ)
 
@@ -248,9 +345,28 @@ class AllocateNamespace(socketio.AsyncNamespace):
             logging.error(f"Error handling on_connect ({e.__class__.__name__}): {e}")
 
     async def on_disconnect(self, sid):
+        """
+        Socket.IO disconnect event handler.
+
+        Args:
+            sid: Socket.IO session ID
+        """
         logging.debug("Client disconnected")
 
     async def handle_on_allocate(self, sid: str, data: str):
+        """
+        Handle allocation request from client.
+
+        Process:
+        1. Validates and processes the allocation request
+        2. Sends updated allocation threshold
+        3. Sends updated project rewards
+        4. Sends updated donor allocations for each project
+
+        Args:
+            sid: Socket.IO session ID
+            data: JSON string containing allocation request data
+        """
         logging.info(f"Received allocation data from client {sid}: {data}")
         async with create_dependencies_on_allocate() as (
             session,
@@ -312,6 +428,18 @@ class AllocateNamespace(socketio.AsyncNamespace):
                 )
 
     async def on_allocate(self, sid: str, data: str):
+        """
+        Socket.IO allocate event handler.
+
+        Wraps handle_on_allocate with error handling for:
+        - AllocationWindowClosed
+        - OctantException
+        - General exceptions
+
+        Args:
+            sid: Socket.IO session ID
+            data: JSON string containing allocation request data
+        """
         try:
             await self.handle_on_allocate(sid, data)
 
@@ -327,7 +455,9 @@ class AllocateNamespace(socketio.AsyncNamespace):
 
 def from_dict(data: str) -> UserAllocationRequest:
     """
-    Example of data:
+    Convert JSON string to UserAllocationRequest object.
+
+    Example of expected data format:
     {
         "userAddress": "0x123",
         "payload": {
@@ -346,6 +476,12 @@ def from_dict(data: str) -> UserAllocationRequest:
         },
         "isManuallyEdited": False
     }
+
+    Args:
+        data: JSON string containing allocation request data
+
+    Returns:
+        UserAllocationRequest: Parsed allocation request object
     """
 
     # TODO: maybe we can switcht to UserAllocationRequest from V1 ?
@@ -362,6 +498,15 @@ def from_dict(data: str) -> UserAllocationRequest:
 
 
 async def safe_session_cleanup(session: AsyncSession):
+    """
+    Safely clean up database session.
+
+    Handles session rollback and closure with proper error handling.
+    Logs any errors but doesn't raise them to prevent cascading failures.
+
+    Args:
+        session: Database session to clean up
+    """
     try:
         await session.rollback()
     except Exception:
