@@ -217,7 +217,6 @@ async def get_user_effective_deposit(
     deposit_events_repository: GetDepositEventsRepository,
     epochs_contracts: GetEpochsContracts,
     epochs_subgraph: GetEpochsSubgraph,
-    current_timestamp: GetCurrentTimestamp,
     # Request params
     user_address: Address,
     epoch_number: int,
@@ -254,7 +253,6 @@ async def get_user_effective_deposit(
             deposit_events_repository,
             epochs_contracts,
             epochs_subgraph,
-            current_timestamp,
             user_address,
         )
 

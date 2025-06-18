@@ -29,7 +29,7 @@ Key Concepts:
             - in_progress: Snapshot being finalized
             - done: Snapshot finalized
 
-    - Synchronization 
+    - Synchronization
         - Blockchain Height: Current block number
         - Indexed Height: Last indexed block
         - Blockchain Epoch: Current epoch number
