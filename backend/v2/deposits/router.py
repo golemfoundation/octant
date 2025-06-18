@@ -27,7 +27,7 @@ Data Sources:
 from fastapi import APIRouter
 
 from app.exceptions import EffectiveDepositNotFoundException, InvalidEpoch
-from v2.core.dependencies import GetCurrentTimestamp, GetSession
+from v2.core.dependencies import GetSession
 from v2.core.types import Address
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.deposits.repositories import get_user_deposit
