@@ -8,45 +8,67 @@ governance experiments in a real-life environment and rewards user participation
 
 Documentation is available [here](https://docs.octant.app/).
 
----
+## Architecture Overview
 
-## Runing development environment
+The backend is built using FastAPI with the following key components:
 
-Below is development setup instructions. More documentation, configuration, deployment information
-is available in directories of this repository.
+- **FastAPI Application**: Main application handling HTTP and WebSocket requests
+- **SocketIO**: Real-time communication support with optional Redis backend
+- **SQLAlchemy**: Database operations and models
+- **APScheduler**: Background task processing (used practially only on non-production environments to automate the epoch transitions)
 
-For the first build of contracts it is highly recommended to run the following command first (this
-step will require
-having [configured gcloud docker authentication](#gcloud-docker-images-repository-authentication) or
-[local build of anvil's fork](#local-build-of-patched-anvil)):
+The application has been fully migrated from Flask to FastAPI. The old Flask implementation is kept under the `/flask` endpoint as a safety measure for the next allocation window, but all new development is done in FastAPI.
+
+### Key Features
+
+- Async/await patterns throughout the codebase
+- WebSocket support for real-time updates
+- Background task processing
+- Comprehensive testing suite
+- Redis-based SocketIO manager (optional)
+
+## Development Setup
+
+### Prerequisites
+
+- Python 3.8+
+- Docker and Docker Compose
+- Node.js and Yarn
+- gcloud CLI (for Docker image authentication)
+
+### Initial Setup
+
+1. Build the anvil container (requires gcloud authentication or local build):
 
 ```bash
 yarn localenv:build-anvil
 ```
 
-Build images with the following command:
+2. Build the development images:
 
 ```bash
 yarn localenv:build-images
-````
+```
 
-Run local environment
+3. Start the development environment:
 
-```sh
+```bash
 yarn localenv:up
 ```
 
-To stop the environment, simply, run:
+4. Stop the environment:
 
-```sh
+```bash
 yarn localenv:down
 ```
 
-Local environemnt is available at [http://octant.localhost:8080](http://octant.localhost:8080) and
-at [http://localhost:8080](http://localhost:8080).
+The local environment will be available at:
+- [http://octant.localhost:8080](http://octant.localhost:8080)
+- [http://localhost:8080](http://localhost:8080)
 
-*NOTICE:* in order to make it work using octant.localhost domain one should add the following lines
-to `/ect/hosts` or `C:\Windows\system32\drivers\etc\hosts` file.
+### Host Configuration
+
+Add the following to your hosts file (`/etc/hosts` or `C:\Windows\system32\drivers\etc\hosts`):
 
 ```
 127.0.0.1 octant.localhost
@@ -56,43 +78,57 @@ to `/ect/hosts` or `C:\Windows\system32\drivers\etc\hosts` file.
 127.0.0.1 client.octant.localhost
 ```
 
-### Starting web client
+### Web Client Setup
 
-Full web client documentation is available [here](client/README.md).
-
-- go to `client` directory
-- copy `.env.localenv-template` to `.env`
-- Run client `yarn dev`
-- Go to [client webpage](http://octant.localhost:5173)
-
-**TL;DR version:**
-
-```shell
+1. Navigate to the client directory:
+```bash
 cd client
+```
+
+2. Copy the environment template:
+```bash
 cp .env.localenv-template .env
+```
+
+3. Start the development server:
+```bash
 yarn dev
 ```
 
-## gcloud docker images repository authentication
+The client will be available at [http://octant.localhost:5173](http://octant.localhost:5173)
 
-Please notice, that for the time being, we are using our own fork of `foundry` (especially `anvil`),
-and we have a pre-built image stored at Google Cloud.
-In order to configure access to this image one should have `gcloud` configured and then run command:
+## Testing
 
-`$ gcloud auth configure-docker europe-docker.pkg.dev`
+The project includes comprehensive test coverage:
 
-## Local build of patched anvil
+- Unit tests in `/tests/v2`
+- E2E API tests in `/tests/api_e2e`
+- Test utilities and factories
 
-If you don't have access to Golem Foundation image repository you can build image yourself from
-branch `foundry-4129/trace-filter-support` of our `foundry` fork.
+Run tests using:
+```bash
+pytest
+```
 
-```shell
+## Docker Image Authentication
+
+### gcloud Authentication
+
+Configure Docker to use gcloud authentication:
+
+```bash
+gcloud auth configure-docker europe-docker.pkg.dev
+```
+
+### Local Anvil Build
+
+If you don't have access to the Golem Foundation image repository, build the anvil image locally:
+
+```bash
 git clone https://github.com/golemfoundation/foundry.git --branch=foundry-4129/trace-filter-support --single-branch
 cd foundry
 docker build -t europe-docker.pkg.dev/wildland-dev/octant-test/foundry:latest .
 ```
-
----
 
 ## Contributor Agreement
 

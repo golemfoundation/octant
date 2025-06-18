@@ -1,3 +1,16 @@
+"""
+Delegation management endpoints for UQ (Uniqueness Quotient) score delegation.
+
+This module provides endpoints for managing delegations of UQ scores between addresses.
+It handles the delegation process, validation, and checking of existing delegations.
+
+Key Concepts:
+    - Primary Address: The address receiving the delegated UQ score
+    - Secondary Address: The address delegating its UQ score
+    - UQ Score: Uniqueness Quotient score from Gitcoin Passport
+    - Effective Deposit: User's deposit in the current epoch
+"""
+
 from fastapi import APIRouter
 
 from app.exceptions import (
@@ -42,7 +55,38 @@ async def delegate_uq_score_v1(
     current_datetime: GetCurrentDatetime,
 ) -> None:
     """
-    Delegate UQ score from secondary address to primary address
+    Delegate UQ score from secondary address to primary address.
+
+    This endpoint handles the delegation of UQ score from a secondary address to a primary address.
+    Both addresses must sign a message to confirm the delegation.
+
+    Request Body:
+        - primary_address: The address that will receive the delegated UQ score
+        - secondary_address: The address that is delegating its UQ score
+        - primary_signature: Signature from the primary address
+        - secondary_signature: Signature from the secondary address
+
+    Validation Rules:
+        - Both addresses must sign the delegation message
+        - Secondary address must not be on the timeout list
+        - Neither address can have an existing delegation
+        - Secondary address must have a Gitcoin Passport score >= MIN_SCORE
+        - Secondary address must not have an effective deposit in the current epoch
+
+    Process:
+        1. Verify signatures from both addresses
+        2. Check if addresses are eligible for delegation
+        3. Verify secondary address has sufficient UQ score
+        4. Check for existing deposits
+        5. Update Gitcoin Passport stamps for primary address
+        6. Save the delegation
+
+    Raises:
+        - InvalidSignature: If either signature is invalid
+        - InvalidDelegationRequest: If secondary address is on timeout list
+        - DelegationAlreadyExists: If either address has an existing delegation
+        - AntisybilScoreTooLow: If secondary address's UQ score is too low
+        - InvalidDelegationForLockingAddress: If secondary address has an effective deposit
     """
 
     # Validate signatures on the message
@@ -129,7 +173,17 @@ async def recalculate_uq_score_v1(
 ) -> None:
     """
     Recalculate UQ score from secondary address to primary address.
-    We keep this endpoint for compatibility with the old API, but it will always raise an error.
+
+    This endpoint is maintained for compatibility with the old API but is deprecated.
+    It will always raise an error as recalculations are no longer supported.
+
+    Request Body:
+        - primary_address: The address that received the delegated UQ score
+        - secondary_address: The address that delegated its UQ score
+
+    Raises:
+        - DelegationDoesNotExist: If no delegation exists between the addresses
+        - InvalidRecalculationRequest: Always raised as recalculations are not supported
     """
 
     # If the delegation exists we will have both_hash, primary_hash and secondary_hash in database
@@ -152,7 +206,26 @@ async def check_delegation_v1(
     user_addresses: str,
 ) -> DelegationCheckResponseV1:
     """
-    Check if the user has delegated UQ score to another address
+    Check if any of the provided addresses have delegated UQ scores.
+
+    This endpoint checks for existing delegations between any combination of the provided addresses.
+    It returns the first found delegation pair.
+
+    Path Parameters:
+        - user_addresses: Comma-separated list of Ethereum addresses to check
+
+    Returns:
+        DelegationCheckResponseV1 containing:
+            - primary: The address receiving the delegated UQ score
+            - secondary: The address that delegated its UQ score
+
+    Raises:
+        - DelegationDoesNotExist: If no delegation exists between any of the provided addresses
+
+    Note:
+        - Addresses must be provided as a comma-separated string
+        - Only the first found delegation is returned
+        - Addresses can be in any order in the input string
     """
 
     addresses = validate_comma_separated_addresses(user_addresses)

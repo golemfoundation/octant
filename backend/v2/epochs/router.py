@@ -1,3 +1,47 @@
+"""
+Epoch management endpoints for handling epoch information and statistics.
+
+This module provides endpoints for querying epoch information, including:
+- Current and indexed epoch numbers
+- Detailed epoch statistics
+- Rewards rate information
+
+Key Concepts:
+    - Epoch: A time period during which deposits are collected and rewards are distributed
+    - Current Epoch: The active epoch number from the blockchain
+    - Indexed Epoch: The last epoch that has been fully indexed in the subgraph
+    - Epoch States:
+        - Future: Epochs that haven't started yet
+        - Current: The currently active epoch
+        - Pre-Pending: Epoch that has ended but allocation window hasn't started
+        - Pending: Epoch in allocation window (snapshot taken, allocations open)
+        - Finalized: Epoch that has completed allocation window and rewards distribution
+
+    - Snapshots:
+        - Pending Snapshot: Taken at the start of allocation window, contains:
+            - Staking proceeds
+            - Total effective deposits
+            - Locked ratio
+            - Operational costs
+            - PPF and community fund
+        - Finalized Snapshot: Taken after allocation window, contains:
+            - All pending snapshot data
+            - Final allocations and rewards distribution
+            - Matched rewards calculations
+            - Leftover amounts
+
+    - Rewards Components:
+        - Staking Proceeds: ETH earned from staking
+        - Total Effective Deposit: Sum of all effective deposits
+        - Vanilla Individual Rewards: Base rewards for users
+        - Operational Cost: Octant's operational expenses
+        - Patrons Rewards: Matching funds from patrons
+        - Matched Rewards: Additional rewards from Golem Foundation and patrons
+        - PPF (Patronage Power Factor): Calculated from Individual Rewards Equilibrium
+        - Community Fund: Direct allocation from staking proceeds
+        - Leftover: Unused rewards for future operations
+"""
+
 from fastapi import APIRouter
 
 from app.exceptions import MissingSnapshot
@@ -49,9 +93,14 @@ async def get_current_epoch_v1(
     The epoch number is used throughout the system to track allocation periods
     and rewards distribution cycles.
 
-    Args:
-        current_epoch (int): Injected dependency representing the current epoch number
-                             retrieved from the blockchain.
+    Returns:
+        CurrentEpochResponseV1 containing:
+            - current_epoch: The current active epoch number from the blockchain
+
+    Note:
+        - This is the source of truth for the current epoch
+        - Used to determine which epoch state to show
+        - May differ from indexed_epoch if subgraph is still catching up
     """
     return CurrentEpochResponseV1(current_epoch=current_epoch)
 
@@ -68,11 +117,15 @@ async def get_indexed_epoch_v1(
     The indexed epoch will always be less than or equal to the current epoch.
     If they differ, it means the subgraph is still being updated.
 
-    Args:
-        current_epoch (int): Injected dependency representing the current epoch number
-                             retrieved from the blockchain.
-        indexed_epoch (int): Injected dependency representing the last indexed epoch number
-                             retrieved from the subgraph.
+    Returns:
+        IndexedEpochResponseV1 containing:
+            - current_epoch: The current active epoch number from the blockchain
+            - indexed_epoch: The last epoch fully indexed in the subgraph
+
+    Note:
+        - Used to determine if subgraph data is up to date
+        - Indexed epoch is always <= current epoch
+        - Some features may be limited if current_epoch > indexed_epoch
     """
     return IndexedEpochResponseV1(
         current_epoch=current_epoch, indexed_epoch=indexed_epoch
@@ -95,8 +148,64 @@ async def get_epoch_stats_v1(
     epoch_number: int,
 ) -> EpochStatsResponseV1:
     """
-    Returns statistics on a given epoch.
-    Returns data only for historic and currently pending epochs.
+    Returns detailed statistics for a specific epoch.
+
+    This endpoint provides comprehensive information about an epoch's state, including
+    deposits, rewards, and allocations. The response varies based on the epoch's state:
+
+    States and Data Sources:
+        - Future Epoch:
+            - Interpolated based on current contract state
+            - Uses current total effective deposit
+            - Estimates staking proceeds based on epoch duration
+            - No allocations or withdrawals data
+
+        - Current Epoch:
+            - Real-time data from subgraph and deposit events
+            - Calculates effective deposits from events
+            - Estimates staking proceeds
+            - No allocations or withdrawals data
+
+        - Pre-Pending Epoch:
+            - Uses subgraph data and deposit events
+            - Calculates staking proceeds from transactions
+            - No snapshot data available yet
+            - No allocations or withdrawals data
+
+        - Pending Epoch:
+            - Uses pending snapshot data
+            - Includes patron rewards
+            - Calculates matched rewards
+            - Includes allocation data
+            - Includes withdrawal data
+            - Calculates leftover amounts
+
+        - Finalized Epoch:
+            - Uses both pending and finalized snapshots
+            - Complete allocation and reward data
+            - Final withdrawal amounts
+            - Final leftover calculations
+
+    Returns:
+        EpochStatsResponseV1 containing:
+            - staking_proceeds: ETH earned from staking
+            - total_effective_deposit: Sum of all effective deposits
+            - total_rewards: Total rewards for the epoch
+            - vanilla_individual_rewards: Base rewards for users
+            - operational_cost: Octant's operational expenses
+            - total_withdrawals: Rewards withdrawn by users
+            - patrons_rewards: Matching funds from patrons
+            - matched_rewards: Additional rewards from Golem Foundation
+            - leftover: Unused rewards for future operations
+            - ppf: Patronage Power Factor
+            - community_fund: Direct allocation from staking proceeds
+            - donated_to_projects: Donations to projects below threshold
+
+    Note:
+        - Data availability depends on epoch state
+        - Some fields may be null for future/current epochs
+        - Finalized epochs have complete data
+        - Pending epochs show allocation window data
     """
 
     current_epoch_number = await epochs_contracts.get_current_epoch()
@@ -174,9 +283,13 @@ async def get_epoch_rewards_rate_v1(
     The rewards rate represents the percentage of rewards distributed for that epoch and is used
     in calculating final reward amounts.
 
-    Args:
-        epoch_number (int): The epoch number in the blockchain to fetch rewards rate for.
-        rewards_rate (float): Injected dependency representing the rewards rate retrieved
-                              from the blockchain.
+    Returns:
+        EpochRewardsRateResponseV1 containing:
+            - rewards_rate: The rewards rate percentage for the epoch
+
+    Note:
+        - Used in reward distribution calculations
+        - Affects final reward amounts
+        - Retrieved directly from blockchain
     """
     return EpochRewardsRateResponseV1(rewards_rate=rewards_rate)

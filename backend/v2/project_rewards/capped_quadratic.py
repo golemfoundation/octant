@@ -1,3 +1,35 @@
+"""
+Capped Quadratic Funding (CQF) implementation.
+
+This module implements the Capped Quadratic Funding algorithm for distributing
+matched rewards to projects based on user allocations and uniqueness scores.
+
+Key Concepts:
+    - Quadratic Funding:
+        - Rewards proportional to square of sum of square roots
+        - Encourages broad participation
+        - Formula: (Σ√(amount * uq_score))²
+        - Considers user uniqueness scores - applied as multiplier to matched rewards
+
+    - Funding Cap:
+        - Limits maximum rewards per project
+        - Default cap: 20% of total matched rewards
+        - Prevents single project dominance
+        - Ensures fair distribution
+
+    - Leverage:
+        - Measure of allocation impact
+        - Calculated as ratio of reward change to allocation amount
+        - Higher leverage means more efficient allocation
+        - Used for user feedback
+
+    - Project Funding:
+        - Tracks allocated and matched amounts
+        - Maintains project-specific totals
+        - Handles multiple allocations
+        - Supports simulation
+"""
+
 from collections import defaultdict
 from decimal import Decimal
 from math import sqrt
@@ -9,11 +41,28 @@ from v2.project_rewards.schemas import ProjectFundingSummaryV1
 
 
 class CappedQuadraticFunding(NamedTuple):
+    """
+    Results of capped quadratic funding calculation.
+
+    Attributes:
+        project_fundings: Dictionary mapping project addresses to their funding details:
+            - allocated: Total amount allocated to project
+            - matched: Total matched rewards received
+        allocations_total_for_all_projects: Sum of all allocations
+        matched_total_for_all_projects: Sum of all matched rewards
+
+    Note:
+        - All amounts are in base units (wei)
+        - Matched rewards are capped per project
+        - Totals include all projects
+    """
+
     project_fundings: dict[Address, ProjectFundingSummaryV1]
     allocations_total_for_all_projects: Decimal
     matched_total_for_all_projects: Decimal
 
 
+# Maximum percentage of matched rewards any single project can receive
 MR_FUNDING_CAP_PERCENT = Decimal("0.2")
 
 
@@ -26,14 +75,32 @@ def capped_quadratic_funding(
     """
     Calculate capped quadratic funding based on a list of allocations.
 
+    The algorithm:
+    1. Groups allocations by project
+    2. Calculates quadratic funding for each project:
+        - Sums √(amount * uq_score) for each allocation
+        - Squares the sum
+    3. Applies funding cap:
+        - Limits project rewards to cap percentage
+        - Distributes remaining rewards proportionally
+    4. Returns funding summary for all projects
+
     Args:
-        allocations (list[AllocationItem]): A list of allocation items, each containing a project address and an amount.
-        matched_rewards (int): The total amount of matched rewards available for distribution.
-        project_addresses (list[str] | None, optional): A list of project addresses to consider. If None, all projects in allocations are considered. Defaults to None.
-        MR_FUNDING_CAP_PERCENT (float, optional): The maximum percentage of matched rewards that any single project can receive. Defaults to MR_FUNDING_CAP_PERCENT.
+        allocations: List of allocations with user UQ scores
+        matched_rewards: Total matched rewards available
+        project_addresses: List of all project addresses
+        MR_FUNDING_CAP_PERCENT: Maximum percentage per project (default: 20%)
 
     Returns:
-        CappedQuadraticFunding: A named tuple containing the total and per-project amounts and matched rewards.
+        CappedQuadraticFunding: Funding results including:
+            - Per-project allocations and matches
+            - Total allocations and matches
+
+    Note:
+        - Uses square root of (amount * uq_score)
+        - Applies funding cap after QF calculation
+        - Handles zero allocations gracefully
+        - Returns results in base units
     """
 
     # Group allocations by project
@@ -112,6 +179,24 @@ def capped_quadratic_funding(
 
 
 def cqf_calculate_total_leverage(matched_rewards: int, total_allocated: int) -> float:
+    """
+    Calculate the total leverage of all allocations.
+
+    This is the ratio of total matched rewards to total allocated amount.
+    Higher leverage means more efficient use of allocated funds.
+
+    Args:
+        matched_rewards: Total matched rewards
+        total_allocated: Total amount allocated
+
+    Returns:
+        float: Leverage ratio (matched_rewards / total_allocated)
+
+    Note:
+        - Returns 0.0 if no allocations
+        - Higher ratio means better efficiency
+    """
+
     if total_allocated == 0:
         return 0.0
 
@@ -124,9 +209,26 @@ def cqf_calculate_individual_leverage(
     before_allocation: CappedQuadraticFunding,
     after_allocation: CappedQuadraticFunding,
 ) -> float:
-    """Calculate the leverage of a user's new allocations in capped quadratic funding.
+    """
+    Calculate the leverage of a user's new allocations.
 
-    This is a ratio of the sum of the absolute differences between the capped matched rewards before and after the user's allocation, to the total amount of the user's new allocations.
+    This is the ratio of the sum of absolute differences in matched rewards
+    (before and after allocation) to the total amount of new allocations.
+    Higher leverage means the allocation had more impact on reward distribution.
+
+    Args:
+        new_allocations_amount: Total amount of new allocations
+        project_addresses: List of projects receiving allocations
+        before_allocation: Funding state before new allocations
+        after_allocation: Funding state after new allocations
+
+    Returns:
+        float: Leverage ratio (total_difference / new_allocations_amount)
+
+    Note:
+        - Returns 0.0 if no new allocations
+        - Higher ratio means more impact
+        - Considers all affected projects
     """
 
     if new_allocations_amount == 0:
@@ -141,10 +243,7 @@ def cqf_calculate_individual_leverage(
         else:
             before = Decimal(0)
 
-        # before = before_allocation_matched.get(project_address, 0)
         after = after_allocation.project_fundings[project_address].matched
-        # after = after_allocation_matched[project_address]
-
         difference = abs(before - after)
         total_difference += difference
 
@@ -160,7 +259,33 @@ def cqf_simulate_leverage(
     project_addresses: list[str],
     MR_FUNDING_CAP_PERCENT: Decimal = MR_FUNDING_CAP_PERCENT,
 ) -> float:
-    """Simulate the leverage of a user's new allocations in capped quadratic funding."""
+    """
+    Simulate the leverage of new allocations.
+
+    This function:
+    1. Removes existing allocations from the user
+    2. Calculates funding state before new allocations
+    3. Calculates funding state after new allocations
+    4. Computes the leverage of the change
+
+    Args:
+        existing_allocations: Current allocations from all users
+        new_allocations: Proposed new allocations
+        matched_rewards: Total matched rewards available
+        project_addresses: List of all project addresses
+        MR_FUNDING_CAP_PERCENT: Maximum percentage per project
+
+    Returns:
+        float: Simulated leverage ratio
+
+    Raises:
+        ValueError: If no new allocations provided
+
+    Note:
+        - Simulates complete replacement of user's allocations
+        - Considers all affected projects
+        - Uses same cap percentage as main calculation
+    """
 
     if not new_allocations:
         raise ValueError("No new allocations provided")
