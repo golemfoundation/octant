@@ -13,7 +13,7 @@
       "history": {
         "loadingEncounteredAnError": "Se ha producido un problema al cargar el historial de operaciones. Por favor, inténtalo nuevamente más tarde."
       },
-      "userRejectedWalletOperation": "El usuario ha rechazado la operación de la billetera",
+      "userRejectedWalletOperation": "Cartera rechazó la operación",
       "default": {
         "title": "Lo siento, algo ha fallado.",
         "message": "Por favor, actualiza nuevamente la aplicación y vuelve a intentarlo."
@@ -31,6 +31,7 @@
     "copy": "Copiar enlace",
     "days": "Días",
     "donations": "Donaciones",
+    "withdrawlas": "Retiros",
     "done": "Hecho",
     "gettingStarted": "Empezando",
     "lockGlm": "Bloquea tus GLM",
@@ -54,15 +55,16 @@
     "unlockedGLM": "GLM desbloqueado",
     "total": "Total",
     "matching": "Coincidencia",
-    "confirmed": "Confirmado"
+    "confirmed": "Confirmado",
+    "update": "Actualizar"
   },
   "components": {
     "allocation": {
-      "emptyState": "Bloquea algunos GLM para obtener recompensas, luego añade proyectos aquí desde la vista de Proyectos <br/> para hacerles donaciones durante la ventana de Asignación",
+      "emptyState": "Bloquea 100 GLM o más para ganar recompensas, luego asigna una parte<br />para apoyar proyectos dentro de la Ventana de Asignación.<br /><0>Ver proyectos ↗</0>",
       "emptyStateAWOpen": "Visita la <0>vista Proyectos</0> para agregar tus proyectos favoritos <br/> y donarles recompensas aquí",
-      "emptyStateMobile": "Bloquea algunos GLM para obtener recompensas, <br/> luego agrega proyectos aquí desde la vista Proyectos <br/> para hacerles donaciones durante la ventana de Asignación",
+      "emptyStateMobile": "Bloquea 100 GLM o más para ganar recompensas, luego asigna una parte<br />para apoyar proyectos dentro de la Ventana de Asignación.<br /><0>Ver proyectos ↗</0>",
       "emptyStateMobileAWOpen": "Visita la <0>vista Proyectos</0> para agregar tus proyectos <br/> favoritos y así poder donarles recompensas aquí",
-      "allocateRewards": "Asigna tus recompensas",
+      "allocationList": "Lista de Asignación",
       "lowUQScoreModal": {
         "header": "Tu puntuación UQ es inferior a 15",
         "text": "Una puntuación de 15 o más en el Passport XYZ multiplicará por 10 tu financiación de emparejamiento. Para aumentar tu puntuación, antes de asignar, visita el panel de control personalizado del Passport que aparece a continuación para añadir más sellos.",
@@ -109,30 +111,31 @@
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Bloqueo GLM",
-        "editLockedGLM": "Editar GLM bloqueado",
+        "editLockedGLM": "Bloquear / desbloquear GLM",
         "effective": "Efectivo",
-        "tooltipText": "El bloqueo efectivo (EL) es la parte de tu GLM bloqueado que actualmente está generando recompensas. Bloquea más y el EL se incrementa proporcionalmente al tiempo de época restante. Desbloquea el GLM y esa cantidad se elimina del EL para la época. Ten en cuenta que si el EL cae por debajo de 100, no se calcularán recompensas.",
+        "tooltipText": "El Bloqueo Efectivo (EL) es tu GLM que está generando recompensas. Cuanto más bloquees y antes lo hagas, más ganas. Cualquier GLM desbloqueado se elimina del EL durante toda la época. El EL debe ser de 100 o más para ganar recompensas.",
         "modalLockGlm": {
           "unlockGLM": "Desbloquear GLM",
           "lockGlmBudgetBox": {
             "availableToUnlock": "Disponible para desbloquear",
-            "currentlyLocked": "Actualmente bloqueado",
-            "walletBalance": "Saldo de la billetera",
-            "raffleWinnings": {
-              "oneWin": "Bloqueado hasta {{date}}",
-              "multipleWins": "Ganancias con bloqueo temporal"
-            }
+            "currentlyLocked": "Bloqueado actualmente",
+            "walletBalance": "Saldo de la cartera",
+            "timeLockedInSablier": "Tiempo bloqueado en Sablier",
+            "lockedInSablier": "Bloqueado en Sablier",
+            "unlockInSablier": "Desbloquear en Sablier"
           }
         },
         "raffleWinnerBadge": {
-          "text": "{{value}} ganancias de GLM",
-          "tooltipWinningRow": "{{value}} de recompensa bloqueada hasta el {{date}}",
-          "tooltipCurrentBalanceRow": "{{value}} de tu saldo bloqueado"
+          "text": "{{value}} GLM",
+          "textCancelled": "Transmisión de {{value}} GLM cancelada",
+          "tooltipWinningRow": "{{value}} GLM bloqueados en Sablier hasta {{date}}",
+          "tooltipStreamCancelled": "Tu transmisión en Sablier fue cancelada debido a tu inactividad en la última ventana de asignación. Si crees que esto es un error, por favor abre un ticket de ayuda en Discord.",
+          "tooltipCurrentBalanceRow": "{{value}} tu saldo bloqueado"
         }
       },
       "homeGridPersonalAllocation": {
         "yourFunds": "Tus fondos",
-        "withdrawToWallet": "Retirar a la billetera",
+        "withdrawToWallet": "Retirar recompensas",
         "pendingFundsAvailableAfter": "Fondos pendientes disponibles a partir de",
         "modalWithdrawEth": {
           "withdrawETH": "Retirar ETH",
@@ -160,10 +163,14 @@
           "checkingAllowlist": "Verificando lista de permitidos"
         },
         "modalCalculatingYourUniqueness": {
-          "calculatingYourUniqueness": "Calculando tu singularidad",
-          "calculatingYourUniquenessStep1": "Para demostrar tu singularidad, necesitas un puntaje de <0>Passport XYZ</0> de 15 o más. <br/> <br/> Si lo tienes, tus donaciones atraerán la cantidad máxima de financiación equivalente. De lo contrario, la financiación equivalente máxima será del 10 %. <br/> <br/> Puedes aumentar tu puntuación de diferentes formas.",
-          "calculatingYourUniquenessStep2": "Puedes ir a nuestro <0>Panel de Pasaporte</0> y agregar sellos al puntaje de tu dirección Octant. <br/> <br/> Si tu puntaje de Pasaporte no está en tu dirección principal, puedes delegar tu puntaje desde otra dirección con un puntaje de Pasaporte de 15 o más. <br/> <br/> Solo puedes hacer esto una vez y debes hacerlo antes de asignar para beneficiar la época actual.",
-          "calculatingYourUniquenessStep3": "La delegación no vinculará tus direcciones ni comprometerá tu privacidad de forma alguna. <br/> <br/> Requerimos una prueba de singularidad para poder protegernos contra los ataques Sybil, ya que hemos cambiado a un modelo de financiación cuadrático. <br/> <br/> Para obtener más información, consulta la práctica <0>guía de Passport XYZ para mejorar tu puntuación.</0>"
+          "calculatingYourUniquenessHeaders": {
+            "step1": "¿Qué es la puntuación de Passport?",
+            "step2": "Cómo verificar tu puntuación de Passport",
+            "step3": "Manteniendo una financiación justa"
+          },
+          "calculatingYourUniquenessStep1": "Usamos <0>Passport\u00a0XYZ</0>, un sistema de reputación on-chain, para igualar y multiplicar asignaciones de personas reales.<br/><br/>Si tienes una puntuación de Passport de 15 o más, igualaremos tu asignación y aplicaremos el multiplicador máximo. Si no, el multiplicador se limita al 10%.",
+          "calculatingYourUniquenessStep2": "Para verificar tu puntuación de Passport, ve al <0>Panel de Passport.</0><br/><br/>Desde allí puedes agregar sellos para mejorar tu puntuación. También puedes delegar tu puntuación desde otra dirección.",
+          "calculatingYourUniquenessStep3": "Aplicando la puntuación de Passport XYZ, mantenemos la financiación de proyectos justa y efectiva.<br/><br/>Para saber más, consulta la <0>guía útil de Passport sobre cómo mejorar tu puntuación</0>"
         },
         "modalCalculatingUQScore": {
           "signMessages": "Firmar mensajes",
@@ -235,7 +242,7 @@
       "homeGridDonations": {
         "donationHistory": "Historial de donaciones",
         "noDonationsYet": "Aún no hay donaciones. Bloquea tokens GLM<br/> y obtén recompensas para donar",
-        "noDonationsYetAWOpen": "Consulta la <0>vista Proyectos</0> <br/> para encontrar proyectos para financiar"
+        "noDonationsYetAWOpen": "Apoya algunos de los proyectos listados en la<br/><0>página de Proyectos</0>"
       },
       "homeGridEpochResults": {
         "epochResults": "Resultados de Época {{epoch}}",
@@ -254,11 +261,8 @@
       "patronMode": {
         "enablePatronMode": "Habilitar modo mecenas",
         "disablePatronMode": "Deshabilitar el modo mecenas",
-        "firstParagraph": "Este modo es para los poseedores de tokens <br /> que desean apoyar a Octant.",
-        "secondParagraph": "Deshabilita y elimina todas las asignaciones personales y donaciones a proyectos.",
-        "thirdParagraph": "Todas las recompensas van directamente al fondo de contrapartida sin que se requiera acción por parte del patrocinador. Aprende más en los <0>Documentación</0>.",
-        "fourthParagraphEnable": "Desliza el interruptor de abajo completamente hacia la <br /> derecha para activar el modo de cliente.",
-        "fourthParagraphDisable": "Desliza el interruptor de abajo completamente hacia la <br /> izquierda para desactivar el modo de cliente.",
+        "firstParagraph": "Desactiva y elimina todas las asignaciones personales y donaciones a proyectos.",
+        "secondParagraph": "Dona automáticamente tus recompensas al Fondo de Igualación de Octant, impulsando las donaciones comunitarias a proyectos de bienes públicos.<br/><br/>El Modo Patrón desactiva todas las asignaciones actuales hasta que lo desactives.<br/><br/>Obtén más información en la <0>Documentación</0>.",
         "patronModeEnabled": "Modo mecenas habilitado",
         "patronModeDisabled": "Modo mecenas deshabilitado",
         "slideRightToConfirm": "Desliza hacia la derecha para confirmar",
@@ -280,7 +284,7 @@
         "waiting": "Esperando"
       },
       "allocationRewardsBox": {
-        "subtitleNoRewards": "Aún no hay recompensas",
+        "subtitleNoRewards": "Recompensas obtenidas",
         "donate": "Donar",
         "donateWithPercentage": "Donar {{percentage}} %",
         "personalWithPercentage": "{{percentage}} %",
@@ -322,7 +326,7 @@
             "lock": {
               "notApproved": {
                 "label": "Por favor, aprueba dos transacciones de billetera",
-                "text": "Una para permitir tokens ERC-20, la otra para depositar GLM."
+                "text": "Da permisos de GLM a la aplicación, luego deposita."
               }
             }
           }
@@ -390,20 +394,19 @@
       "hoursShort": "h",
       "minutes_one": "minuto",
       "minutes_other": "minutos",
-      "minutesShort": "mín."
+      "minutesShort": "mín.",
+      "calendar": "Calendario"
     },
     "footer": {
       "newsletterText": "Recibe noticias y actualizaciones de PGF de Octant. Sin spam",
       "octantText": "Octant es un proyecto de la <0>Fundación Golem</0>, <br/> lanzado en 2023.",
       "links": {
         "website": "Sitio web",
-        "discord": "Desacuerdo",
         "blog": "Blog",
-        "docs": "Documentos",
-        "brandAssets": "Activos de la marca",
-        "termsOfUse": "Condiciones de uso",
-        "farcaster": "Farcaster",
-        "twitterX": "Twitter/X",
+        "docs": "Documentación",
+        "brandAssets": "Recursos de marca",
+        "brand": "Marca",
+        "termsOfUse": "Términos de uso",
         "privacyPolicy": "Política de privacidad"
       }
     }
@@ -441,8 +444,8 @@
       "epoch": "Época",
       "epochAllocationWindow": "Ventana de asignación de época {{epoch}}",
       "epochAllocation": "Asignación de E {{epoch}}",
-      "generalMetrics": "Estadísticas generales",
-      "donationsVsPersonal": "Donaciones vs. personales",
+      "generalMetrics": "Métricas entre épocas",
+      "donationsVsWithdrawals": "Donaciones vs retiros",
       "donationsVsMatchFunding": "Donaciones vs financiación equiparada",
       "totalMatching": "Total Igualado",
       "totalProjects": "Proyectos totales",
@@ -451,12 +454,12 @@
       "of1BTotalSupply": "de 1B de suministro total",
       "cumulativeGlmLocked": "GLM bloqueado acumulado",
       "walletsWithGlmLocked": "Billeteras con GLM bloqueado",
-      "totalProjectsSinceEpoch0": "{{projectsAmount}} total desde E0",
+      "totalProjectsSinceLastEpoch": "{{projectsAmount}} desde la última época",
       "belowThreshold": "Por debajo del umbral",
       "ethBelowThreshold": "ETH por debajo del umbral",
       "totalDonations": "Donaciones totales",
       "averageLeverage": "Apalancamiento promedio",
-      "currentDonors": "Donantes actuales",
+      "totalDonors": "Total de donantes",
       "patrons": "Patrocinadores",
       "rewardsUnused": "Recompensas sin utilizar",
       "unallocatedValue": "Valor no asignado",
@@ -486,31 +489,31 @@
       },
       "stepsCommon": {
         "usingTheApp": {
-          "header": "Usando la aplicación",
+          "header": "Aceptar los Términos de Servicio de Octant",
           "text": "Antes de continuar, lee los términos de servicio y haz clic en la casilla de verificación a continuación para aceptarlos.",
           "waitingForWalletConfirmation": "Esperando la confirmación de la billetera"
         },
         "signingTheTerms": {
-          "header": "Firma de los términos",
+          "header": "Firmando los Términos de Servicio",
           "text": "Se requiere al menos una firma para aceptar los Términos de servicio. No cierre Octant hasta que se complete este paso."
         }
       },
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Bienvenido a Epoch {{epoch}} Asignación",
-          "text": "Si bloqueaste GLM en la época anterior, tendrás recompensas disponibles durante esta ventana de asignación, que se extiende hasta {{date}}. <br/> <br/> De lo contrario, bloquea algún GLM en la vista de Inicio y explora los proyectos de esta época para tener una idea de qué se trata Octant."
+          "text": "Octant te permite ganar recompensas en ETH y usar cualquier parte de esas recompensas para apoyar bienes públicos de Ethereum."
         },
         "earnRewards": {
           "header": "Obtén recompensas ETH",
-          "text": "Las recompensas de ETH se obtienen en función de un promedio ponderado, por lo que cuanto más GLM bloquees y cuanto más tiempo lo hagas, más ganarás. <br/> <br/> Puedes desbloquear en cualquier momento, pero al hacerlo reducirás tus recompensas. Usa la calculadora de recompensas en la vista de Inicio para estimar las posibles recompensas."
+          "text": "Bloquea 100 GLM o más para comenzar a ganar recompensas.<br/><br/>Cuantos más GLM bloquees y más tiempo los mantengas bloqueados, más ganas.<br/><br/>Cualquier GLM que desbloquees no contará para las recompensas de esa época."
         },
         "donateToProjects": {
           "header": "Donar a proyectos",
-          "text": "Consulta la programación de Época {{epoch}} en la vista de Proyectos. Pulsa el mosaico de un proyecto para leer sus detalles y donar a tus favoritos. <br/> <br/> Tu donación será igualada por la Fundación Golem. Solo pulsa el corazón para agregar un proyecto al apartado de Asignaciones donde puedes donar."
+          "text": "Las recompensas que ganes durante la época {{epoch}} pueden usarse para apoyar proyectos durante la Ventana de Asignación de la época {{epoch}}.<br/><br/>Esta Ventana de Asignación comienza el {{date}} y dura 14 días."
         },
         "slideIt": {
-          "header": "Solo deslízalo",
-          "text": "Si tienes recompensas, usa el deslizador en el panel de Asignación para dividirlas fácilmente entre los proyectos o para ti mismo.<br/><br/>Para cambiar tus elecciones en cualquier momento durante la asignación, simplemente haz clic en Editar, realiza algunos cambios y reconfírmalos en tu billetera."
+          "header": "Desliza para apoyar",
+          "text": "Bloquea tus GLM hoy y explora la aplicación. Regresa después del {{date}} y comienza a guardar proyectos en tu Lista de Asignación.<br/><br/>Desde esta lista, puedes asignar cualquier parte de tus recompensas para apoyar bienes públicos y, en última instancia, apoyar a Ethereum."
         }
       },
       "stepsDecisionWindowClosed": {
@@ -520,7 +523,7 @@
         },
         "earnRewards": {
           "header": "Obtén recompensas ETH",
-          "text": "Las recompensas de ETH se obtienen en función de un promedio ponderado, por lo que cuantos más GLM bloquees y más tiempo lo hagas, más ganarás. <br/> <br/> Puedes desbloquear en cualquier momento, pero al hacerlo reducirás tus recompensas. Usa la calculadora en el Inicio para estimar las posibles recompensas."
+          "text": "Las recompensas se calculan mediante un promedio ponderado. Bloquea más GLM por períodos más largos para ganar más.<br/><br/>Cualquier GLM desbloqueado durante una época no contará para tus recompensas. Usa la calculadora en la vista principal para estimar las recompensas potenciales."
         },
         "getReady": {
           "header": "Prepárate para la asignación",
@@ -563,28 +566,28 @@
         "allocationWindow": "Ventana de asignación",
         "epochStarts": "La época {{epoch}} comienza"
       },
-      "searchInputPlaceholder": "Buscar proyectos y épocas, p. ej. Tor E1, E2",
+      "searchInputPlaceholder": "Buscar por nombre de proyecto y época, por ejemplo Tor E1, E2",
       "sortOptions": {
-        "randomized": "Aleatorizado",
+        "randomized": "Aleatorio",
         "alphabeticalAscending": "A -> Z",
         "alphabeticalDescending": "Z -> A",
-        "totalsDescending": "Total de mayor a menor",
-        "totalsAscending": "Total de menor a mayor",
-        "donorsDescending": "Donantes (mayor a menor)",
-        "donorsAscending": "Donantes (menor a mayor)"
+        "totalsDescending": "Más financiados",
+        "totalsAscending": "Menos financiados",
+        "donorsDescending": "Más donantes",
+        "donorsAscending": "Menos donantes"
       }
     },
     "settings": {
       "epoch": "Época {{epoch}}",
       "golemFoundationProject": "Un proyecto de la Fundación Golem",
       "poweredByCoinGeckoApi": "Desarrollado por la API de CoinGecko",
-      "chooseDisplayCurrency": "Elige una moneda para visualizar",
-      "cryptoMainValueDisplay": "Utiliza ETH como valor principal de visualización",
+      "chooseDisplayCurrency": "Elige una moneda",
+      "cryptoMainValueDisplay": "Usar ETH como valor principal",
       "alwaysShowOnboarding": "Mostrar siempre la incorporación",
       "showQuickTour": "Mostrar recorrido rápido",
       "showHelpVideos": "Mostrar videos de ayuda",
       "enablePatronMode": "Habilitar modo mecenas",
-      "patronModeTooltip": "El modo patrocinador es para los poseedores de tokens que desean apoyar a Octant. Desactiva la asignación para ti o a proyectos. Todas las recompensas van directamente al fondo de contrapartida sin necesidad de que el patrocinador haga nada.",
+      "patronModeTooltip": "Asigna automáticamente todas tus recompensas entre todos los proyectos en cada época.",
       "docs": "Documentos",
       "language": "Idioma"
     },
