@@ -33,7 +33,9 @@ def get_x_real_ip(
 
         return x_real_ip
 
-    return request.client.host
+    if request.client is not None:
+        return request.client.host
+    return "127.0.0.1"
 
 
 GetXRealIp = Annotated[str, Depends(get_x_real_ip)]

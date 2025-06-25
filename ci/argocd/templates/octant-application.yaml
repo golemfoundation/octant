@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.72
+      targetRevision: 0.2.80
       chart: octant
       helm:
         parameters:
@@ -80,6 +80,8 @@ spec:
             value: '$BACKEND_RPC_URL'
           - name: 'backendServer.mainnetProposalCids'
             value: '$MAINNET_PROPOSAL_CIDS'
+          - name: 'backendServer.sablierSenderAddress'
+            value: '0x4BEbdb9792ed50eBB00611083ba384F05791a9FB'
           # Hardcoded in this file
           - name: 'ingress.tlsToReplicate.enable'
             value: 'true'
@@ -121,7 +123,7 @@ spec:
           - name: multideployer.enabled
             value: '$MULTIDEPLOYER_ENABLED'
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.0.11
+      targetRevision: 0.0.12
       chart: octant-anvil
       helm:
         parameters:

@@ -56,5 +56,4 @@ class AggregatedStakingProceeds(Model):
         )
         mev_value = sum_mev(withdrawals_target, normal, internal)
         withdrawals_value = sum_withdrawals(withdrawals)
-
         return aggregate_proceeds(mev_value, withdrawals_value, block_rewards_value)

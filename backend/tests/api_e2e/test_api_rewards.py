@@ -1,38 +1,45 @@
 import pytest
 import time
-
-from flask import current_app as app
-from app.extensions import vault
-from app.legacy.core.projects import get_projects_addresses
-from tests.conftest import UserAccount
+import logging
+from v2.core.dependencies import (
+    get_database_settings,
+    get_sessionmaker,
+    get_w3,
+    get_web3_provider_settings,
+)
+from v2.withdrawals.dependencies import get_vault_contracts, get_vault_settings
+from v2.withdrawals.services import confirm_withdrawals
 from tests.helpers.constants import STARTING_EPOCH
-from app.legacy.core import vault as vault_core
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
-def test_rewards_basic(
+@pytest.mark.asyncio
+async def test_rewards_basic(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
-    alice_proposals = get_projects_addresses(1)[:3]
+    projects, _ = ua_alice._client.get_projects(1)
+    alice_proposals = projects["projectsAddresses"][:3]
 
     # lock GLM from two accounts
-    ua_alice.lock(10000)
-    ua_bob.lock(15000)
+    await ua_alice.lock(10000)
+    await ua_bob.lock(15000)
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
 
     # fund the vault (amount here is arbitrary)
-    vault.fund(deployer._account, 1000 * 10**18)
+    w3 = get_w3(get_web3_provider_settings())
+    vault = get_vault_contracts(w3, get_vault_settings())
+    await vault.fund(deployer._account, 1000 * 10**18)
 
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
@@ -64,9 +71,9 @@ def test_rewards_basic(
     assert res["rewards"][0]["allocated"] == "1000"
 
     # TODO replace with helper to wait until end of voting
-    fclient.move_to_next_epoch(STARTING_EPOCH + 2)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 2)
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 2)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a finalized snapshot
     res = fclient.finalized_snapshot()
@@ -93,9 +100,11 @@ def test_rewards_basic(
     assert three_hundreds_days_budget_estimation > two_hundreds_days_budget_estimation
 
     # write merkle root for withdrawals
-    vault_core.confirm_withdrawals()
+    session_maker = get_sessionmaker(get_database_settings())
+    async with session_maker() as session:
+        await confirm_withdrawals(session, vault)
 
-    while not vault.is_merkle_root_set(STARTING_EPOCH):
+    while not await vault.is_merkle_root_set(STARTING_EPOCH):
         time.sleep(1)
 
     # check rewards for all projects are returned in proper schema

@@ -1,6 +1,7 @@
 import random
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import LazyAttribute
+from sqlalchemy import select
 
 from app.infrastructure.database.models import Budget, User
 from tests.v2.factories.base import FactorySetBase
@@ -53,3 +54,9 @@ class BudgetFactorySet(FactorySetBase):
 
         budget = await BudgetFactory.create(**factory_kwargs)
         return budget
+
+    async def get_for_epoch(self, epoch_number: int) -> list[Budget]:
+        results = await self.session.scalars(
+            select(Budget).filter(Budget.epoch == epoch_number)
+        )
+        return list(results)

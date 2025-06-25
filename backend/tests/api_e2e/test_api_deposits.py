@@ -1,19 +1,18 @@
 import pytest
-
+import logging
 from app.extensions import w3
 
-from tests.conftest import UserAccount
 from tests.helpers.constants import STARTING_EPOCH
-from flask import current_app as app
-from tests.api_e2e.conftest import FastAPIClient
+from tests.api_e2e.conftest import FastAPIClient, FastUserAccount
 
 
 @pytest.mark.api
-def test_deposit_basics(
+@pytest.mark.asyncio
+async def test_deposit_basics(
     fclient: FastAPIClient,
-    deployer: UserAccount,
-    ua_alice: UserAccount,
-    ua_bob: UserAccount,
+    deployer: FastUserAccount,
+    ua_alice: FastUserAccount,
+    ua_bob: FastUserAccount,
     setup_funds,
 ):
     # Check effective deposit before first GLM lock
@@ -40,11 +39,11 @@ def test_deposit_basics(
     # Lock GML for one account
     alice_GLM_budget = 10000
     alice_first_lock = 8000
-    deployer.transfer(ua_alice, alice_GLM_budget)
-    ua_alice.lock(alice_first_lock)
+    await deployer.transfer(ua_alice, alice_GLM_budget)
+    await ua_alice.lock(alice_first_lock)
 
     indexed_height = fclient.wait_for_height_sync()
-    app.logger.debug(f"indexed blockchain height: {indexed_height}")
+    logging.debug(f"indexed blockchain height: {indexed_height}")
 
     # Check effective deposit after first GLM lock
     user_deposit_after_lock1, _ = fclient.get_user_deposit(
@@ -71,10 +70,10 @@ def test_deposit_basics(
     )
 
     # Second GLM lock
-    ua_alice.lock(alice_GLM_budget - alice_first_lock)
+    await ua_alice.lock(alice_GLM_budget - alice_first_lock)
 
     indexed_height = fclient.wait_for_height_sync()
-    app.logger.debug(f"indexed blockchain height: {indexed_height}")
+    logging.debug(f"indexed blockchain height: {indexed_height}")
 
     # Check effective deposit after second GLM lock
     user_deposit_after_lock2, _ = fclient.get_user_deposit(
@@ -98,24 +97,24 @@ def test_deposit_basics(
     )
 
     # forward time to the beginning of the epoch 2
-    fclient.move_to_next_epoch(STARTING_EPOCH + 1)
+    await fclient.move_to_next_epoch(STARTING_EPOCH + 1)
     # wait for indexer to catch up
     epoch_no = fclient.wait_for_sync(STARTING_EPOCH + 1)
-    app.logger.debug(f"indexed epoch: {epoch_no}")
+    logging.debug(f"indexed epoch: {epoch_no}")
 
     # make a snapshot
     res = fclient.pending_snapshot()
     assert res["epoch"] > 0
 
     indexed_height = fclient.wait_for_height_sync()
-    app.logger.debug(f"indexed blockchain height: {indexed_height}")
+    logging.debug(f"indexed blockchain height: {indexed_height}")
 
     # Check effective deposit in following epoch (effective deposit from epoch 1 is smaller than deposit in epoch 2)
     user_deposit_epoch1, _ = fclient.get_user_deposit(ua_alice.address, STARTING_EPOCH)
     user_deposit_epoch2, _ = fclient.get_user_deposit(
         ua_alice.address, STARTING_EPOCH + 1
     )
-    app.logger.debug(
+    logging.debug(
         f"User deposit in epoch 1: {user_deposit_epoch1['effectiveDeposit']}, User deposit in epoch 2: {user_deposit_epoch2['effectiveDeposit']}"
     )
     assert int(user_deposit_after_lock2["effectiveDeposit"]) == int(
@@ -153,7 +152,7 @@ def test_deposit_basics(
     # Check if locked ratio for Epoch 1 is calculated properly
     locked_ratio, status_code = fclient.get_locked_ratio_in_epoch(STARTING_EPOCH)
     tolerance = 1e-15
-    app.logger.debug(f"GLM Locked Ratio: {locked_ratio['lockedRatio']}")
+    logging.debug(f"GLM Locked Ratio: {locked_ratio['lockedRatio']}")
     assert (
         abs(
             float(locked_ratio["lockedRatio"])

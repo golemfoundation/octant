@@ -22,11 +22,14 @@ class UserAllocationRequestPayloadV1(OctantModel):
     nonce: int
 
 
-class UserAllocationRequestV1(OctantModel):
-    user_address: Address
+class UserAllocationRequestRawV1(OctantModel):
     payload: UserAllocationRequestPayloadV1
-    signature: str
     is_manually_edited: bool
+
+
+class UserAllocationRequestV1(UserAllocationRequestRawV1):
+    user_address: Address
+    signature: str
 
 
 class UserAllocationRequest(OctantModel):

@@ -1,11 +1,11 @@
+import random
 import string
-from sqlalchemy import select
+
 from app.infrastructure.database.models import Allocation, AllocationRequest, User
+from pydantic import TypeAdapter
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from v2.core.types import Address, BigInteger
-import random
-
-from pydantic import TypeAdapter
 
 
 class FakeUser:

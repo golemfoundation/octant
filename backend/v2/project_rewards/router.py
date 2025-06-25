@@ -18,7 +18,7 @@ from v2.allocations.repositories import (
     sum_allocations_by_epoch,
 )
 from v2.core.types import Address
-from v2.epoch_snapshots.repositories import get_finalized_epoch_snapshot
+from v2.snapshots.repositories import get_finalized_epoch_snapshot
 from v2.epochs.dependencies import (
     GetEpochsContracts,
     GetEpochsSubgraph,

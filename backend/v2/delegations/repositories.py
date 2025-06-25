@@ -12,7 +12,7 @@ async def contains_hashed_address(session: AsyncSession, hashed_address: str) ->
         select(exists().where(ScoreDelegation.hashed_addr == hashed_address))
     )
 
-    return result
+    return bool(result)
 
 
 async def find_hashes(session: AsyncSession, hashes: list[str]) -> list[str]:
