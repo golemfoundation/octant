@@ -1,3 +1,41 @@
+"""
+Project rewards management endpoints for handling reward calculations, distributions, and estimations.
+
+This module provides endpoints for managing project rewards, including:
+1. User budget calculations and estimations
+2. Project reward distributions
+3. Leverage calculations
+4. Merkle tree generation for rewards
+5. Threshold management
+
+Key Concepts:
+    - Rewards Budget:
+        - User's available rewards for allocation
+        - Calculated based on effective deposits
+        - Can be estimated for future epochs
+        - Can be estimated for specific lock durations
+
+    - Project Rewards:
+        - Matched rewards based on allocations
+        - Calculated using leverage
+        - Distributed via merkle tree
+        - Subject to allocation thresholds
+
+    - Leverage:
+        - Ratio of matched rewards to total allocations
+        - Different for finalized vs pending epochs
+        - Used to estimate future rewards
+
+    - Merkle Tree:
+        - Used for efficient reward distribution
+        - Generated for finalized epochs
+        - Contains proof of rewards for each project
+
+    - Thresholds:
+        - Minimum allocation requirements
+        - Used to determine project eligibility
+        - Can vary by epoch
+"""
 from fastapi import APIRouter, Response, status
 from app.context.epoch_state import EpochState
 from app.exceptions import (
@@ -71,7 +109,22 @@ async def get_user_budget_for_epoch_v1(
 ) -> UserBudgetResponseV1 | None:
     """
     Returns user's rewards budget available to allocate for given epoch.
-    Returns 204 No Content if user does not have budget for given epoch.
+
+    This endpoint retrieves the user's available budget for a specific epoch.
+    The budget represents the amount of rewards the user can allocate to projects.
+
+    Path Parameters:
+        - user_address: The Ethereum address of the user
+        - epoch_number: The epoch number to get budget for
+
+    Returns:
+        - UserBudgetResponseV1 containing the budget amount
+        - 204 No Content if user has no budget for the epoch
+
+    Note:
+        - Budget is based on user's effective deposits
+        - Only returns budget for past or current epochs
+        - Returns None if user has no budget
     """
     budget = await get_budget_by_user_address_and_epoch(
         session,
@@ -99,15 +152,30 @@ async def get_user_budget_for_upcoming_epoch_v1(
     """
     Returns the upcoming user budget based on as-if allocation happened now.
 
-    This is done by simulating the epoch end as if it ended now.
-    So we simulate the pending snapshot for this epoch end.
-     - Get current epoch details
-     - Simulate the epoch end as if it ended now (end_time = now)
-     - Simulate the pending snapshot for this epoch end
+    This endpoint simulates the current epoch's end to calculate what the user's
+    budget would be if the epoch ended now. This is useful for users to estimate
+    their potential rewards before the epoch actually ends.
+
+    The calculation process:
+    1. Get current epoch details
+    2. Simulate epoch end as if it ended now
+    3. Calculate pending snapshot:
         - Estimate staking proceeds
-        - Calculate total effective deposit based on deposit events
+        - Calculate total effective deposits
         - Calculate octant rewards
-     - Calculate the user budget for this pending snapshot
+    4. Calculate user budget based on their deposits
+
+    Path Parameters:
+        - user_address: The Ethereum address of the user
+
+    Returns:
+        UpcomingUserBudgetResponseV1 containing:
+            - upcoming_budget: The estimated budget amount
+
+    Note:
+        - This is a simulation and actual rewards may differ
+        - Based on current state of deposits and staking proceeds
+        - Does not account for future changes in deposits
     """
 
     # Get current epoch details
@@ -157,6 +225,23 @@ async def get_epoch_budgets_v1(
 ) -> EpochBudgetsResponseV1:
     """
     Returns all users rewards budgets for the epoch.
+
+    This endpoint retrieves the budget information for all users in a specific epoch.
+    Useful for analyzing the distribution of rewards across all participants.
+
+    Path Parameters:
+        - epoch_number: The epoch number to get budgets for
+
+    Returns:
+        EpochBudgetsResponseV1 containing:
+            - budgets: List of EpochBudgetItemV1 objects, each with:
+                - address: User's Ethereum address
+                - amount: User's budget amount
+
+    Note:
+        - Includes all users with a budget in the epoch
+        - Budgets are based on effective deposits
+        - Order of budgets is not guaranteed
     """
     budgets = await get_all_users_budgets_by_epoch(session, epoch_number)
 
@@ -178,18 +263,38 @@ async def get_estimated_budget_v1(
 ) -> UserBudgetWithMatchedFundingResponseV1:
     """
     Returns the estimated budget if the user deposits GLMs for a given number of FULL epochs.
-    Each epoch is a 90 day period.
 
-    This is done based on the last finalized snapshot.
-    - Get the last finalized epoch
-    - Calculate the leverage based on the last finalized epoch
-    - Get the future epoch details (start_time, duration, end_time)
-    - Calculate rewards:
+    This endpoint calculates the estimated rewards a user would receive if they
+    deposited a specific amount of GLMs for a given number of epochs. Each epoch
+    is a 90-day period.
+
+    The difference between this endpoint and the `get_estimated_budget_by_days_v1` endpoint is that this endpoint
+    calculates the estimated budget for a given number of FULL FUTURE epochs, while the `get_estimated_budget_by_days_v1`
+    endpoint calculates the estimated budget for a given number of days starting from now and passing through to the future epochs.
+
+    Calculation process:
+    1. Get future epoch details (start time, duration)
+    2. Calculate rewards:
         - Estimate staking proceeds
-        - Assume total effective deposit as total GLMs from contract
+        - Use total GLMs from contract as effective deposit
         - Calculate octant rewards
-    - Simulate user events as if they deposited given amount of GLMs
-    - Calculate user budget for this pending snapshot
+    3. Simulate user deposits
+    4. Calculate user budget
+    5. Calculate matched funding based on last epoch's leverage
+
+    Request Body:
+        - glm_amount: Amount of GLMs to simulate depositing
+        - number_of_epochs: Number of full epochs to simulate
+
+    Returns:
+        UserBudgetWithMatchedFundingResponseV1 containing:
+            - budget: Total estimated budget
+            - matched_funding: Estimated matched funding
+
+    Note:
+        - Based on last finalized epoch's leverage
+        - Assumes full epoch participation
+        - Does not account for future changes in staking proceeds
     """
 
     future_epoch = await epoch_contracts.get_future_epoch_props()
@@ -249,7 +354,38 @@ async def get_estimated_budget_by_days_v1(
     """
     Returns the estimated budget if the user deposits GLMs for a given number of days.
 
-    This is done by first filling up the current epoch and then calculating the remaining budget for the future epochs.
+    This endpoint calculates the estimated rewards for a specific lock duration,
+    taking into account both the current epoch and future epochs.
+
+    Calculation process:
+    1. Calculate current epoch rewards:
+        - Get current epoch details
+        - Calculate remaining time
+        - Estimate staking proceeds
+        - Calculate effective deposits
+    2. Calculate future epoch rewards:
+        - Get future epoch details
+        - Calculate full epochs and remaining time
+        - Estimate staking proceeds
+        - Calculate effective deposits
+    3. Combine rewards from both periods
+
+    The difference between this endpoint and the `get_estimated_budget_by_days_v1` endpoint is that this endpoint
+    calculates the estimated budget for a given number of FULL FUTURE epochs, while the `get_estimated_budget_by_days_v1`
+    endpoint calculates the estimated budget for a given number of days starting from now and passing through to the future epochs.
+
+    Request Body:
+        - glm_amount: Amount of GLMs to simulate depositing
+        - lock_duration_sec: Duration of lock in seconds
+
+    Returns:
+        UserBudgetResponseV1 containing:
+            - budget: Total estimated budget
+
+    Note:
+        - Accounts for partial epoch participation (starts counting from the current epoch)
+        - Based on current state of deposits
+        - Does not account for future changes in staking proceeds
     """
 
     remaining_lock_duration = request.lock_duration_sec
@@ -359,8 +495,24 @@ async def get_rewards_leverage_v1(
     """
     Returns leverage for a given epoch.
 
-    For finalized epochs it returns the leverage based on the data from the finalized snapshot.
-    For pending and finalizing epochs it returns the leverage based on the estimated matched rewards of pending epoch.
+    This endpoint calculates the leverage ratio for a specific epoch. The leverage
+    represents the ratio of matched rewards to total allocations.
+
+    For different epoch states:
+        - Finalized epochs: Uses data from finalized snapshot
+        - Pending/Finalizing epochs: Uses estimated matched rewards
+
+    Path Parameters:
+        - epoch_number: The epoch number to get leverage for
+
+    Returns:
+        RewardsLeverageResponseV1 containing:
+            - leverage: The calculated leverage ratio
+
+    Note:
+        - Only available for finalized, finalizing, and pending epochs
+        - Returns 0 if no allocations exist
+        - Different calculation methods based on epoch state
     """
 
     epoch_state = await get_epoch_state(session, epochs_contracts, epoch_number)
@@ -395,6 +547,21 @@ async def get_rewards_merkle_tree_v1(
 ) -> RewardsMerkleTreeResponseV1:
     """
     Returns the rewards merkle tree for a given epoch.
+
+    This endpoint generates a merkle tree containing the reward proofs for all
+    projects in a finalized epoch. The merkle tree is used for efficient and
+    verifiable reward distribution.
+
+    Path Parameters:
+        - epoch_number: The epoch number to get merkle tree for
+
+    Returns:
+        RewardsMerkleTreeResponseV1 containing the merkle tree data
+
+    Note:
+        - Only available for finalized epochs
+        - Used for on-chain reward distribution
+        - Contains proofs for all project rewards
     """
 
     tree = await get_rewards_merkle_tree_for_epoch(session, epoch_number)
@@ -412,7 +579,23 @@ async def get_estimated_project_rewards_v1(
     """
     Returns foreach project current allocation sum and estimated matched rewards.
 
-    This endpoint is available only while allocation window is open.
+    This endpoint provides real-time estimates of project rewards during the
+    allocation window. It shows both the current allocation sum and the estimated
+    matched rewards for each project.
+
+    This is the same info that is propagated to all clients after any allocation via WebSocket API.
+
+    Returns:
+        EstimatedProjectRewardsResponseV1 containing:
+            - rewards: List of project funding summaries, each with:
+                - address: Project address
+                - allocated: Current allocation sum
+                - matched: Estimated matched rewards
+
+    Note:
+        - Only available during allocation window
+        - Estimates are based on current state
+        - May change as more allocations are made
     """
 
     estimated_funding = await project_rewards_estimator.get()
@@ -431,6 +614,23 @@ async def get_rewards_for_projects_in_epoch_v1(
     """
     Returns projects with matched rewards for a given finalized epoch.
 
+    This endpoint retrieves the final reward distribution for all projects in a
+    finalized epoch, showing both allocated and matched amounts.
+
+    Path Parameters:
+        - epoch_number: The epoch number to get rewards for
+
+    Returns:
+        EstimatedProjectRewardsResponseV1 containing:
+            - rewards: List of project funding summaries, each with:
+                - address: Project address
+                - allocated: Total allocated amount
+                - matched: Total matched rewards
+
+    Note:
+        - Only available for finalized epochs
+        - Shows final reward distribution
+        - Includes all projects that received allocations
     """
 
     # For epoch projects retrieve their rewards
@@ -453,6 +653,21 @@ async def get_rewards_for_projects_in_epoch_v1(
 async def get_rewards_threshold_v1(
     projects_allocation_threshold_getter: GetProjectsAllocationThresholdGetter,
 ) -> ThresholdResponseV1:
+    """
+    Returns the current allocation threshold for projects.
+
+    This endpoint retrieves the minimum allocation threshold that projects must
+    meet to be eligible for rewards in the current epoch.
+
+    Returns:
+        ThresholdResponseV1 containing:
+            - threshold: The current allocation threshold
+
+    Note:
+        - Threshold can vary by epoch
+        - Projects must meet threshold to receive rewards
+        - Used to ensure meaningful project participation
+    """
     threshold = await projects_allocation_threshold_getter.get()
 
     return ThresholdResponseV1(threshold=threshold)
@@ -467,7 +682,25 @@ async def get_unused_rewards_v1(
     """
     Returns list of users who didn't use their rewards in an epoch and the total sum of all unused rewards.
 
-    This is based on available budgets and excluding donors (users who have allocated funds) and patrons.
+    This endpoint identifies users who had a budget but did not make any allocations
+    during the epoch, excluding donors and patrons.
+
+    Allocation request with all projects amounts equal to 0 is considered as using
+    all the rewards but user withdraws all the rewards for themselves.
+
+    Path Parameters:
+        - epoch_number: The epoch number to check for unused rewards
+
+    Returns:
+        UnusedRewardsResponseV1 containing:
+            - addresses: List of user addresses with unused rewards
+            - value: Total sum of unused rewards
+
+    Note:
+        - Excludes users who made allocations (donors)
+        - Excludes users in patron mode
+        - Sorted list of addresses
+        - Total value is sum of all unused budgets
     """
 
     # All users budgets, donors and patrons for the epoch

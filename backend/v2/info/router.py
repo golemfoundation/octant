@@ -1,3 +1,42 @@
+"""
+System information and health monitoring endpoints.
+
+This module provides endpoints for retrieving system information, monitoring health,
+and checking synchronization status of various components.
+
+Key Concepts:
+    - System Components:
+        - Blockchain: The underlying blockchain network
+        - Database: The application's database
+        - Subgraph: The Graph Protocol indexer
+        - Smart Contracts: Deployed contract addresses
+        - Snapshots: Epoch state snapshots
+
+    - Health States:
+        - UP: Component is healthy and responsive
+        - DOWN: Component is not responding or has errors
+
+    - Snapshot States:
+        - Pending Snapshot (made right at the start of Allocation Window):
+            - not_applicable: No pending snapshot needed
+            - error: Error in snapshot processing
+            - in_progress: Snapshot being created
+            - done: Snapshot completed
+        - Finalized Snapshot (made at the end of Allocation Window):
+            - not_applicable: No finalized snapshot needed
+            - error: Error in snapshot processing
+            - too_early: Too early to finalize
+            - in_progress: Snapshot being finalized
+            - done: Snapshot finalized
+
+    - Synchronization
+        - Blockchain Height: Current block number
+        - Indexed Height: Last indexed block
+        - Blockchain Epoch: Current epoch number
+        - Indexed Epoch: Last indexed epoch
+        - Snapshot Status: State of pending/finalized snapshots
+"""
+
 import logging
 import os
 
@@ -41,7 +80,14 @@ api = APIRouter(prefix="/info", tags=["Info"])
 @api.get("/websockets-api")
 async def get_websockets_api_v1() -> FileResponse:
     """
-    The documentation for websockets can be found under this path
+    Returns the WebSocket API documentation.
+
+    This endpoint serves the HTML documentation for the WebSocket API,
+    providing details about available WebSocket endpoints, message formats,
+    and connection requirements.
+
+    Returns:
+        FileResponse: HTML documentation for WebSocket API
     """
     return FileResponse(
         f"{STATIC_DIR}/websockets-api-docs.html",
@@ -52,7 +98,13 @@ async def get_websockets_api_v1() -> FileResponse:
 @api.get("/websockets-api.yaml")
 async def get_websockets_api_yaml_v1():
     """
-    Returns websockets API documentation.
+    Returns the WebSocket API specification in YAML format.
+
+    This endpoint serves the OpenAPI/Swagger specification for the WebSocket API
+    in YAML format, which can be used to generate client code or documentation.
+
+    Returns:
+        FileResponse: YAML specification for WebSocket API
     """
     return FileResponse(
         f"{STATIC_DIR}/websockets-api.yaml",
@@ -71,7 +123,23 @@ async def get_chain_info_v1(
     vault: GetVaultSettings,
 ) -> ChainInfoResponseV1:
     """
-    Returns chain info.
+    Returns information about the blockchain and deployed smart contracts.
+
+    This endpoint provides details about the current blockchain network and
+    the addresses of all deployed smart contracts used by the application.
+
+    Returns:
+        ChainInfoResponseV1 containing:
+            - chain_name: Name of the blockchain network
+            - chain_id: Network identifier
+            - smart_contracts: List of deployed contracts:
+                - Auth: Authentication contract
+                - Deposits: Deposit management contract
+                - Epochs: Epoch management contract
+                - GLM: Token contract
+                - Projects: Project management contract
+                - Vault: Reward vault contract
+                - WithdrawalsTarget: Withdrawal target contract
     """
 
     contracts = {
@@ -101,6 +169,15 @@ async def get_version_v1(
 ) -> VersionResponseV1:
     """
     Returns application deployment information.
+
+    This endpoint provides details about the current deployment of the application,
+    including the deployment identifier, environment, and blockchain network.
+
+    Returns:
+        VersionResponseV1 containing:
+            - id: Unique deployment identifier
+            - env: Deployment environment (e.g., production, staging)
+            - chain: Name of the blockchain network
     """
 
     return VersionResponseV1(
@@ -119,10 +196,27 @@ async def get_healthcheck_v1(
     response: Response,
 ) -> HealthcheckResponseV1:
     """
-    Returns application healthcheck.
+    Returns the health status of system components.
 
-    Returns 200 OK if all services are up.
-    Returns 500 if some services are down.
+    This endpoint checks the health of all critical system components:
+    1. Blockchain RPC connection
+    2. Database connection
+    3. Subgraph indexer
+
+    Returns:
+        HealthcheckResponseV1 containing:
+            - blockchain: 'UP' if RPC is responsive, 'DOWN' otherwise
+            - db: 'UP' if database is responsive, 'DOWN' otherwise
+            - subgraph: 'UP' if indexer is responsive, 'DOWN' otherwise
+
+    Status Codes:
+        - 200: All components are healthy
+        - 500: One or more components are down
+
+    Note:
+        - Checks chain ID matches expected value
+        - Verifies database connection with test query
+        - Confirms subgraph is indexing blocks
     """
 
     # Run all health checks
@@ -154,10 +248,29 @@ async def get_sync_status_v1(
     response: Response,
 ) -> SyncStatusResponseV1:
     """
-    Returns synchronization status for indexer and database.
+    Returns detailed synchronization status of system components.
 
-    Returns 200 OK if all services are up and syncing.
-    Returns 500 if some services are down, sync status unknown.
+    This endpoint provides comprehensive information about the synchronization
+    state of all system components, including blockchain, indexer, and snapshots.
+
+    Returns:
+        SyncStatusResponseV1 containing:
+            - blockchain_epoch: Current epoch from blockchain
+            - indexed_epoch: Last indexed epoch
+            - blockchain_height: Current block number
+            - indexed_height: Last indexed block
+            - pending_snapshot: Status of pending snapshot
+            - finalized_snapshot: Status of finalized snapshot
+
+    Status Codes:
+        - 200: All components are healthy and syncing
+        - 500: One or more components are down or not syncing
+
+    Note:
+        - Checks blockchain health and current state
+        - Verifies subgraph indexing progress
+        - Monitors snapshot creation and finalization
+        - Reports decision window status
     """
 
     # Run all health checks

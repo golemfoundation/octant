@@ -1,3 +1,61 @@
+"""
+Snapshot management endpoints for handling epoch state transitions and reward calculations.
+
+This module provides endpoints for managing the snapshot lifecycle, including:
+1. Pending snapshot creation and simulation
+2. Finalized snapshot creation and simulation
+3. Snapshot status tracking
+4. Reward calculations and distributions
+
+Key Concepts:
+    - Snapshot Lifecycle:
+        - Pending: Created at the beginning of the decision window
+            (If we have pending epoch state but no pending snapshot
+                we consider this as pre-pending state)
+        - Finalized: Created at the end of the decision window
+            (If we have finalized epoch state but no finalized snapshot
+                we consider this as finalizing state)
+
+    - Reward Calculations:
+        - Staking Proceeds: ETH rewards from staking
+        - Effective Deposits: User deposits weighted by time
+        - Octant Rewards: Total rewards available for distribution
+        - Matched Rewards: Additional rewards based on allocation patterns
+        - Project Rewards: Quadratic funding distribution to projects
+        - User Rewards: Direct withdrawals and allocations
+
+    - Merkle Tree:
+        - Used for efficient reward distribution verification
+        - Contains proofs for all user and project rewards
+        - Generated during finalization
+        - Used for on-chain validation
+
+    - Budget Components:
+        - Staking Proceeds: Base rewards from staking
+        - Operational Cost: System maintenance costs
+        - Community Fund: Reserved for community initiatives
+        - PPF (Patron Protection Fund): Reserved for patron rewards
+        - Leftover: Unused rewards returned to staking
+
+    - Epoch States:
+        - Current: Active epoch
+        - Pending: Epoch ended, allocation window open
+        - Finalized: Allocation window closed, rewards distributed
+
+    - Reward Distribution:
+        - User Budgets: Based on effective deposits
+        - Project Rewards: Based on quadratic funding
+        - Matched Rewards: Based on allocation patterns
+        - Patron Rewards: Special rewards for patron mode
+        - Leftover: Returned to staking pool
+
+    - Security Features:
+        - Merkle tree for reward verification
+        - State validation for snapshot creation
+        - Duplicate prevention
+        - Epoch state validation
+"""
+
 from decimal import Decimal
 from fastapi import APIRouter, HTTPException, Response, status
 from multiproof import StandardMerkleTree
@@ -61,10 +119,40 @@ async def simulate_pending_snapshot_v1(
     current_timestamp: GetCurrentTimestamp,
 ) -> PendingSnapshotResponseV1:
     """
-    Simulates the pending snapshot (does not save anything)
+    Simulates the pending snapshot without saving any data.
 
-    When simulating we use the current epoch number to get the epoch details
-    and then assume that the current timestamp is the end of the epoch.
+    This endpoint calculates what the pending snapshot would look like if created now.
+    It's useful for previewing reward distributions before actual snapshot creation.
+
+    Calculation Process:
+    1. Get epoch time range (start to current timestamp)
+    2. Calculate staking proceeds:
+        - Mainnet: Based on aggregated transactions
+        - Testnet: Based on contract balance
+    3. Calculate effective deposits:
+        - Process all deposit events
+        - Weight deposits by time
+        - Calculate total effective deposit
+    4. Calculate octant rewards:
+        - Based on staking proceeds and effective deposits
+        - Include operational costs
+        - Include community fund
+        - Include PPF (Patron Protection Fund)
+    5. Calculate user budgets:
+        - Based on effective deposits
+        - Apply PPF adjustments
+        - Calculate individual rewards
+
+    Returns:
+        PendingSnapshotResponseV1 containing:
+            - rewards: OctantRewardsV1 with all reward components
+            - user_deposits: List of effective deposits per user
+            - user_budgets: List of calculated budgets per user
+
+    Note:
+        - This is a simulation and doesn't persist any data
+        - Uses current timestamp as epoch end
+        - All calculations are based on current state
     """
 
     # For simulation we need the time range of the epoch (start and end)
@@ -133,15 +221,37 @@ async def create_pending_snapshot_v1(
     epochs_subgraph: GetEpochsSubgraph,
 ) -> SnapshotCreatedResponseV1 | None:
     """
-    Take a database snapshot of the recently completed epoch.
-    This endpoint should be executed at the beginning of an epoch to activate
-    a decision window.
+    Creates a pending snapshot for the recently completed epoch.
 
-    If the epoch is not pending, this endpoint will return None.
+    This endpoint should be called at the beginning of an epoch to activate
+    the allocation window. It creates a snapshot of the epoch's final state
+    and calculates initial reward distributions.
+    Saves to the database:
+        - User deposits
+        - User budgets
+        - Pending snapshot
 
-    Status codes:
-        200: Snapshot could not be created due to an existing snapshot for previous epoch.
-        201: Snapshot created successfully.
+    On mainnet we call this endpoint at the beginning of the allocation window manually.
+    On testnets we have a cron job that calls this endpoint every minute so this will happen automatically.
+
+    Process:
+    1. Verify epoch is in pending state
+    2. Check no pending snapshot exists
+    3. Calculate snapshot using simulation
+    4. Persist results:
+        - Save user deposits
+        - Save user budgets
+        - Save reward calculations
+
+    Returns:
+        - 201: Snapshot created successfully
+        - 200: Snapshot already exists
+        - None: Epoch not in pending state
+
+    Note:
+        - Only one pending snapshot per epoch
+        - Must be called during allocation window
+        - Persists all calculated data
     """
 
     # Making snapshot outside of the allocation window does nothing
@@ -194,10 +304,55 @@ async def simulate_finalized_snapshot_v1(
     epoch_number: GetPendingEpoch,
 ) -> FinalizedSnapshotResponseV1:
     """
-    Simulates the finalized snapshot (does not save anything)
+    Simulates the finalized snapshot without saving any data.
 
-    Finalized snapshot can be created only in the open allocation window.
-    We also need to have a pending snapshot for the epoch already computed (and saved)
+    This endpoint calculates what the finalized snapshot would look like based on
+    current allocation data. It's useful for previewing final reward distributions
+    before actual snapshot creation.
+
+    Prerequisites:
+        - Must be in allocation window
+        - Pending snapshot must exist
+
+    Calculation Process:
+    1. Calculate patron rewards
+    2. Calculate matched rewards:
+        - Based on locked ratio
+        - Apply TR and IRE percentages
+        - Consider patron rewards
+    3. Calculate project rewards:
+        - Apply capped quadratic funding
+        - Calculate matched amounts
+        - Sum allocated and matched rewards
+    4. Calculate total withdrawals:
+        - Sum user claimed rewards
+        - Sum project donations
+    5. Calculate leftover:
+        - Consider PPF
+        - Consider matched rewards
+        - Consider total withdrawals
+        - Consider staking proceeds
+        - Consider operational costs
+        - Consider community fund
+    6. Generate merkle tree:
+        - Include user claimed rewards
+        - Include project rewards
+        - Calculate merkle root
+
+    Returns:
+        FinalizedSnapshotResponseV1 containing:
+            - patrons_rewards: Rewards for patron mode users
+            - matched_rewards: Total matched rewards
+            - projects_rewards: List of project rewards
+            - user_rewards: List of user claimed rewards
+            - total_withdrawals: Sum of all withdrawals
+            - leftover: Unused rewards
+            - merkle_root: Root of rewards merkle tree
+
+    Note:
+        - This is a simulation and doesn't persist any data
+        - Requires pending snapshot to exist
+        - Only available during allocation window
     """
 
     # We can only simulate if we are in the open allocation window
@@ -313,12 +468,47 @@ async def create_finalized_snapshot_v1(
     matched_rewards_settings: GetMatchedRewardsSettings,
 ) -> SnapshotCreatedResponseV1 | None:
     """
-    Take a database snapshot of the recenlty completed allocations.
-    This endpoint should be executed at the end of the decision window.
+    Creates a finalized snapshot for the recently completed allocation window.
 
-    Status codes:
-        200: Snapshot could not be created due to an existing snapshot for previous epoch
-        201: Snapshot created successfully.
+    This endpoint should be called at the end of the allocation window to finalize
+    reward distributions. It creates a snapshot of the final allocation state
+    and calculates all reward distributions.
+    Saves to the database:
+        - Project rewards
+        - User rewards
+        - Finalized snapshot
+
+    On mainnet:
+        - We call this endpoint at the end of the allocation window manually.
+        - We can also run epoch verifier to check the discrepancy between the snapshot values and expected values.
+        - Because of floating point precision issues we might have some small discrepancies between the snapshot values and expected values.
+    On testnets:
+        - We have a cron job that calls this endpoint every minute so this will happen automatically.
+
+    Prerequisites:
+        - Epoch must be in finalized state
+        - Pending snapshot must exist
+        - No finalized snapshot must exist
+
+    Process:
+    1. Verify epoch is in finalized state
+    2. Check pending snapshot exists
+    3. Check no finalized snapshot exists
+    4. Calculate snapshot using simulation
+    5. Persist results:
+        - Save project rewards
+        - Save user rewards
+        - Save final snapshot data
+
+    Returns:
+        - 201: Snapshot created successfully
+        - 200: Snapshot already exists
+        - None: Epoch not in finalized state
+
+    Note:
+        - Only one finalized snapshot per epoch
+        - Must be called after allocation window
+        - Persists all calculated data
     """
 
     # We can only create a snapshot if we are in the finalized state
@@ -367,7 +557,25 @@ async def get_snapshot_status_v1(
     epoch: int,
 ) -> EpochStatusResponseV1:
     """
-    Returns the status of the given epoch: current, pending, or finalized.
+    Returns the status of a specific epoch's snapshots.
+
+    This endpoint provides information about the state of snapshots for a given epoch,
+    indicating whether it's current, pending, or finalized.
+
+    Path Parameters:
+        - epoch: The epoch number to check
+
+    Returns:
+        EpochStatusResponseV1 containing:
+            - is_current: Whether epoch is currently active
+            - is_pending: Whether epoch has pending snapshot
+            - is_finalized: Whether epoch has finalized snapshot
+
+    Note:
+        - Future epochs raise EpochNotStartedYet
+        - Invalid epochs raise InvalidEpoch
+        - Finalized status requires snapshot to exist
+        - Pending status requires snapshot to exist
     """
     current = await epochs_contracts.get_current_epoch()
     pending = await epochs_contracts.get_pending_epoch()
