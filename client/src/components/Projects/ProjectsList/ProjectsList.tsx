@@ -62,24 +62,24 @@ const ProjectsList: FC<ProjectsListProps> = ({
       <Grid>
         {projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards
           ? projectsIpfsWithRewardsSorted.map((projectIpfsWithRewards, index) => (
-            <ProjectsListItem
-              key={projectIpfsWithRewards.address}
-              dataTest={
-                epoch
-                  ? `ProjectsView__ProjectsListItem--archive--${index}`
-                  : `ProjectsView__ProjectsListItem--${index}`
-              }
-              epoch={epoch}
-              isAnchorForTourguide={
-                projectsIpfsWithRewardsSorted.length > 4 ? index === 5 : index === 0
-              }
-              projectIpfsWithRewards={projectIpfsWithRewards}
-            />
-          ))
-        : projectsEpoch?.projectsAddresses?.map((_, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <ProjectsListSkeletonItem key={index} className={styles.element} />
-        ))}
+              <ProjectsListItem
+                key={projectIpfsWithRewards.address}
+                dataTest={
+                  epoch
+                    ? `ProjectsView__ProjectsListItem--archive--${index}`
+                    : `ProjectsView__ProjectsListItem--${index}`
+                }
+                epoch={epoch}
+                isAnchorForTourguide={
+                  projectsIpfsWithRewardsSorted.length > 4 ? index === 5 : index === 0
+                }
+                projectIpfsWithRewards={projectIpfsWithRewards}
+              />
+            ))
+          : projectsEpoch?.projectsAddresses?.map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <ProjectsListSkeletonItem key={index} className={styles.element} />
+            ))}
       </Grid>
     </div>
   );

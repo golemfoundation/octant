@@ -62,7 +62,13 @@ const Handler = (): ReactElement | null => {
     [stepsCurrentView.length],
   );
 
-  if (isProjectAdminMode || isPatronMode || !isQuickTourVisible || isOnboardingModalOpen || window.Cypress) {
+  if (
+    isProjectAdminMode ||
+    isPatronMode ||
+    !isQuickTourVisible ||
+    isOnboardingModalOpen ||
+    window.Cypress
+  ) {
     return null;
   }
 
