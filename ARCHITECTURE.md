@@ -50,8 +50,8 @@ The main application is built using FastAPI and is organized into modular compon
 - **External Services**:
   - Blockchain interaction (Web3)
   - Subgraph queries (GraphQL)
-    - Octant subgraph
-    - Sablier subgraph (streams of funds)
+    - Octant subgraph (locks, unlocks, withdrawals)
+    - Sablier subgraph (streams of funds - raffle winners + giveaway)
   - External APIs
     - UQ Score provided by Gitcoin passport
 
@@ -113,5 +113,5 @@ The application is deployed to multiple environments:
 
 ## Future Considerations
 
-1. Remove Flask implementation after next allocation window (currently available under /flask)
+1. Remove Flask implementation after next allocation window - currently available under /flask (After 8th epoch allocation window)
 2. Cache more - we should cache more data to reduce the number of queries to the database
