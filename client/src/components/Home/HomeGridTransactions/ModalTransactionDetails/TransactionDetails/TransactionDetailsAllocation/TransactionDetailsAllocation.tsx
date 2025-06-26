@@ -59,6 +59,11 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
 
   const sections: SectionProps[] = [
     {
+      childrenRight: <TransactionDetailsDateAndTime timestamp={timestamp} />,
+      dataTest: 'TransactionDetailsAllocation__when',
+      label: t('sections.when'),
+    },
+    {
       dataTest: 'TransactionDetailsAllocation__personal',
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
@@ -127,11 +132,6 @@ const TransactionDetailsAllocation: FC<TransactionDetailsAllocationProps> = ({
                 },
               },
         ] as SectionProps[])),
-    {
-      childrenRight: <TransactionDetailsDateAndTime timestamp={timestamp} />,
-      dataTest: 'TransactionDetailsAllocation__when',
-      label: t('sections.when'),
-    },
   ];
 
   return (

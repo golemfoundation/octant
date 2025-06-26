@@ -51,7 +51,7 @@ Object.values(viewports).forEach(
         cy.get('[data-test=MetricsGeneral__header__title]').should('be.visible');
         cy.get('[data-test=MetricsGeneral__header__title]')
           .invoke('text')
-          .should('eq', 'General metrics');
+          .should('eq', 'Cross-epoch metrics');
       });
 
       it('"Epoch" section title has "OPEN" badge when AW is open', () => {
@@ -133,13 +133,13 @@ Object.values(viewports).forEach(
           'MetricsEpochGridTopProjects',
           'MetricsEpochGridFundsUsage',
           'MetricsEpochGridTotalUsers',
+          'MetricsEpochGridCurrentDonors',
           'MetricsEpochGridPatrons',
+          'MetricsEpochGridAverageLeverage',
           'MetricsEpochGridRewardsUnused',
           'MetricsEpochGridUnallocatedValue',
           'MetricsEpochGridTotalDonations',
           'MetricsEpochGridTotalMatchingFund',
-          'MetricsEpochGridCurrentDonors',
-          'MetricsEpochGridAverageLeverage',
           'MetricsEpochGridDonationsVsMatching',
           'MetricsEpochGridDonationsVsPersonalAllocations',
         ];

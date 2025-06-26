@@ -65,7 +65,7 @@ Object.values(viewports).forEach(
             .invoke('text')
             .should(
               'eq',
-              'Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.',
+              'Automatically allocate all of your rewards across all projects for each epoch.',
             );
         });
 
@@ -78,22 +78,6 @@ Object.values(viewports).forEach(
           cy.wait(500);
           cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
           cy.get('[data-test=ModalPatronMode]').should('be.visible');
-        });
-
-        it('Patron mode modal last paragraph has correct text', () => {
-          if (isLargeDesktop || isDesktop) {
-            cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-          } else {
-            cy.get('[data-test=LayoutNavbar__Button--settings]').click();
-          }
-          cy.wait(500);
-          cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
-          cy.get('[data-test=SettingsPatronMode__fourthParagraph]')
-            .invoke('text')
-            .should(
-              'eq',
-              'Slide the switch below all the way to  the right to enable patron mode.',
-            );
         });
 
         it('Slider is visible', () => {
@@ -532,22 +516,6 @@ Object.values(viewports).forEach(
           cy.wait(500);
           cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
           cy.get('[data-test=ModalPatronMode]').should('be.visible');
-        });
-
-        it('Patron mode modal last paragraph has correct text', () => {
-          if (isLargeDesktop || isDesktop) {
-            cy.get('[data-test=LayoutTopBar__settingsButton]').click();
-          } else {
-            cy.get('[data-test=LayoutNavbar__Button--settings]').click();
-          }
-          cy.wait(500);
-          cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
-          cy.get('[data-test=SettingsPatronMode__fourthParagraph]')
-            .invoke('text')
-            .should(
-              'eq',
-              'Slide the switch below all the way to  the left to disable patron mode.',
-            );
         });
 
         it('Slider is visible', () => {

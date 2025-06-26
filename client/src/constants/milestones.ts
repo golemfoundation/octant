@@ -270,11 +270,11 @@ export default function getMilestones(): Milestone[] {
     {
       from: new Date('2025-05-22T00:00:00+0100'),
       // June 3 11:59 pm PST
-href: 'https://octant.fillout.com/epoch8-applications',
-      
-id: 'e8-applications-open',
-      
-label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'), 
+      href: 'https://octant.fillout.com/epoch8-applications',
+
+      id: 'e8-applications-open',
+
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
       to: new Date('2025-06-04T08:59:00+0100'),
     },
     {

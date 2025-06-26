@@ -185,7 +185,7 @@ const ModalOnboarding = (): ReactElement => {
     setIsUserTOSAcceptedInitial(isUserTOSAccepted);
     // isUserTOSAccepted mustn't be in deps here, otherwise once TOS is signed initial will flip too.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isFetchingUserTOS])
+  }, [address, isFetchingUserTOS]);
 
   return (
     <Modal

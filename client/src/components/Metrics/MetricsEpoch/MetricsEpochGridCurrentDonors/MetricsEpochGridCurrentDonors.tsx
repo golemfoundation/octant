@@ -32,7 +32,7 @@ const MetricsEpochGridCurrentDonors: FC<MetricsEpochGridCurrentDonorsProps> = ({
               value={currentDonorsString}
             />
           ),
-          title: t('currentDonors'),
+          title: t('totalDonors'),
         },
       ]}
       size="S"

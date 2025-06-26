@@ -35,7 +35,8 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
     setIsAllocationDrawerOpen: state.setIsAllocationDrawerOpen,
   }));
 
-  const { setCurrentView } = useAllocationsStore(state => ({
+  const { allocations, setCurrentView } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
     setCurrentView: state.setCurrentView,
   }));
 
@@ -70,13 +71,14 @@ const HomeGridDonations: FC<HomeGridDonationsProps> = ({ className }) => {
           <Button
             className={styles.editButton}
             dataTest="HomeGridDonations__Button--edit"
+            isDisabled={allocations.length === 0}
             onClick={() => {
               setCurrentView('edit');
               setIsAllocationDrawerOpen(!isAllocationDrawerOpen);
             }}
             variant="cta2"
           >
-            {i18n.t('common.edit')}
+            {i18n.t('common.update')}
           </Button>
         ) : null
       }
