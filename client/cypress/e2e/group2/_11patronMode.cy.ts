@@ -65,7 +65,7 @@ Object.values(viewports).forEach(
             .invoke('text')
             .should(
               'eq',
-              'Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.',
+              'Automatically allocate all of your rewards across all projects for each epoch.',
             );
         });
 
