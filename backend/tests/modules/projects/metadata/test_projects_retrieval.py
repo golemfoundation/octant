@@ -131,7 +131,7 @@ def test_get_projects_metadata_epoch_8():
 
     assert (
         projects_metadata.projects_cid
-        == "bafybeihpjm6yczteziofy5kh7xaxq52ceghgzzakkgw2spgwvc6fnvc6uy"
+        == "bafybeihixy3tfq3hlptwfp7cpikhkg76gse2ylvkcrmdiuqrfr2tdt5a74"
     )
     assert projects_metadata.projects_addresses == ["0x0", "0x1"]
 
