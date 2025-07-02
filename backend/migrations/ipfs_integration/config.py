@@ -8,7 +8,7 @@ class Config:
     EPOCH = 7  # change corresponding to the epoch
     JSON_FILEPATH = f"files/{build_filename(FILENAME_PREFIX, EPOCH)}"
     CID = [
-        "bafybeigxa4wpqhianuiltv3qqzqpitjyjyqzdeurpwqrvidgc3c4opw26m"
+        "bafybeihpjm6yczteziofy5kh7xaxq52ceghgzzakkgw2spgwvc6fnvc6uy"
     ]  # change corresponding to the epoch
     GATEWAY_URL = "https://turquoise-accused-gayal-88.mypinata.cloud/ipfs/"
 
