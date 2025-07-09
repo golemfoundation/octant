@@ -284,15 +284,15 @@ export default function getMilestones(): Milestone[] {
       label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
     },
     {
-      from: new Date('2025-07-11T17:00:00+0100'),
+      from: new Date('2025-07-10T17:00:00+0100'),
       id: 'e8-allocation-window',
       isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
-      to: new Date('2025-07-25T17:00:00+0100'),
+      to: new Date('2025-07-24T17:00:00+0100'),
     },
     {
-      from: new Date('2025-07-11T17:00:00+0100'),
+      from: new Date('2025-07-10T17:00:00+0100'),
       id: 'e9-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 9 }),
     },
