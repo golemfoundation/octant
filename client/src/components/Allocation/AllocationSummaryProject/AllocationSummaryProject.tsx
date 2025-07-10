@@ -13,6 +13,8 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
 
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+
 const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   address,
   amount,
@@ -20,6 +22,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   isLoadingAllocateSimulate,
   value,
 }) => {
+  const { data: currentEpoch } = useCurrentEpoch();
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.allocation.allocationItem',
   });
@@ -28,7 +31,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
     data: projectIpfs,
     isFetching: isFetchingProjectIpfs,
     isAnyIpfsError,
-  } = useProjectsIpfs([address]);
+  } = useProjectsIpfs([address], currentEpoch! - 1);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   // Real, not simulated threshold is used, because user won't change his decision here.
