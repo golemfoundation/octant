@@ -19,7 +19,7 @@ export async function apiPostDelegate({
   primaryAddressSignature,
   secondaryAddressSignature,
 }: DelegateProps): Promise<Response> {
-  return apiService.post(`${env.serverEndpoint}/delegation/delegate`, {
+  return apiService.post(`${env.serverEndpoint}delegation/delegate`, {
     primaryAddr: primaryAddress,
     primaryAddrSignature: primaryAddressSignature,
     secondaryAddr: secondaryAddress,
