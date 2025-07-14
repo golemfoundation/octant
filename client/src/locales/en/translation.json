@@ -445,7 +445,7 @@
       "epochAllocationWindow": "Epoch {{epoch}} Allocation Window",
       "epochAllocation": "E{{epoch}} Allocation",
       "generalMetrics": "Cross-epoch metrics",
-      "donationsVsWithdrawals": "Donations vs withdrawals",
+      "donationsVsPersonal": "Donations vs personal",
       "donationsVsMatchFunding": "Donations vs match funding",
       "totalMatching": "Total matching",
       "totalProjects": "Total projects",

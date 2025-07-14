@@ -445,7 +445,7 @@
       "epochAllocationWindow": "Ventana de asignación de época {{epoch}}",
       "epochAllocation": "Asignación de E {{epoch}}",
       "generalMetrics": "Métricas entre épocas",
-      "donationsVsWithdrawals": "Donaciones vs retiros",
+      "donationsVsPersonal": "Donaciones vs personal",
       "donationsVsMatchFunding": "Donaciones vs financiación equiparada",
       "totalMatching": "Total Igualado",
       "totalProjects": "Proyectos totales",

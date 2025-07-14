@@ -33,7 +33,7 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
               isLoading={isLoading}
             />
           ),
-          title: t('donationsVsWithdrawals'),
+          title: t('donationsVsPersonal'),
         },
       ]}
     />
