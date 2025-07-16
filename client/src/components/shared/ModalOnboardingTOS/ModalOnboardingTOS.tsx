@@ -10,7 +10,7 @@ import InputCheckbox from 'components/ui/InputCheckbox';
 import Loader from 'components/ui/Loader';
 import { TERMS_OF_USE } from 'constants/urls';
 import useUserAcceptsTOS from 'hooks/mutations/useUserAcceptsTOS';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useUserTOS from 'hooks/queries/useUserTOS';
 
 import styles from './ModalOnboardingTOS.module.scss';
@@ -28,7 +28,7 @@ const ModalOnboardingTOS: FC<ModalOnboardingTOSProps> = ({
     keyPrefix: 'views.onboarding.stepsCommon.usingTheApp',
   });
   const { address } = useAccount();
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const { data: isUserTOSAccepted, refetch: refetchUserTOS } = useUserTOS();
   const [isWaitingForAllMultisigSignatures, setIsWaitingForAllMultisigSignatures] = useState(false);
   const { mutateAsync: acceptTOSMutateAsync } = useUserAcceptsTOS(() => {
@@ -49,7 +49,7 @@ const ModalOnboardingTOS: FC<ModalOnboardingTOSProps> = ({
   };
 
   useEffect(() => {
-    if (!address || !isContract || isUserTOSAccepted) {
+    if (!address || !isGnosisSafeMultisig || isUserTOSAccepted) {
       return;
     }
 
@@ -68,7 +68,7 @@ const ModalOnboardingTOS: FC<ModalOnboardingTOSProps> = ({
       clearInterval(intervalId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, isContract, isUserTOSAccepted]);
+  }, [address, isGnosisSafeMultisig, isUserTOSAccepted]);
 
   return (
     <BoxRounded className={styles.box} dataTest="ModalOnboardingTOS" hasPadding={false} isGrey>
