@@ -13,7 +13,7 @@ export type QueryMutationErrorConfig = {
 export type IgnoredQueries = [
   QueryKeys['withdrawals'],
   Root['cryptoValues'],
-  Root['isContract'],
+  Root['isGnosisSafeMultisig'],
   Root['individualReward'],
   Root['projectsIpfsResults'],
   Root['uqScore'],

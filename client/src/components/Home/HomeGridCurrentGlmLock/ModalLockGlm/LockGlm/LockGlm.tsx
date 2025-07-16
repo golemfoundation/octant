@@ -19,7 +19,7 @@ import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useHistory from 'hooks/queries/useHistory';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import toastService from 'services/toastService';
@@ -36,7 +36,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const publicClient = usePublicClient({ chainId: networkConfig.id });
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
     string | undefined
   >(undefined);
@@ -114,7 +114,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   };
 
   const onSuccess = async ({ hash, value }): Promise<void> => {
-    if (isContract) {
+    if (isGnosisSafeMultisig) {
       const id = setInterval(async () => {
         const nextSafeTransactions = await apiGetSafeTransactions(address!);
         const safeTransaction = nextSafeTransactions.results.find(
@@ -142,7 +142,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
         amount: value,
         transactionHash: hash,
       },
-      isMultisig: !!isContract,
+      isMultisig: !!isGnosisSafeMultisig,
       // GET /history uses seconds. Normalization here.
       timestamp: Math.floor(Date.now() / 1000).toString(),
       type: currentMode,
@@ -230,7 +230,9 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
             className={styles.element}
             currentMode={currentMode}
             isLoading={
-              isLoadingTransactionReceipt || props.isSubmitting || (!!isContract && step === 2)
+              isLoadingTransactionReceipt ||
+              props.isSubmitting ||
+              (!!isGnosisSafeMultisig && step === 2)
             }
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}

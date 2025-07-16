@@ -12,7 +12,7 @@ import { MODAL_ONBOARDING_ID } from 'constants/domElementsIds';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useDelegationStore from 'store/delegation/store';
 import useOnboardingStore from 'store/onboarding/store';
@@ -62,7 +62,7 @@ const ModalOnboarding = (): ReactElement => {
   const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
 
   const { data: antisybilStatusScore } = useAntisybilStatusScore(address);
 
@@ -86,11 +86,11 @@ const ModalOnboarding = (): ReactElement => {
 
   // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
   const currentStep = useMemo(() => {
-    if (!stepsToUse.length || (isFetchingUserTOS && !isContract)) {
+    if (!stepsToUse.length || (isFetchingUserTOS && !isGnosisSafeMultisig)) {
       return null;
     }
     return stepsToUse[currentStepIndex];
-  }, [stepsToUse, currentStepIndex, isFetchingUserTOS, isContract]);
+  }, [stepsToUse, currentStepIndex, isFetchingUserTOS, isGnosisSafeMultisig]);
 
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {

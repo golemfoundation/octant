@@ -6,7 +6,7 @@ import { apiGetSafeMessages } from 'api/calls/safeMessages';
 import { handleError } from 'api/errorMessages';
 import { AllocationValues } from 'components/Allocation/types';
 import networkConfig from 'constants/networkConfig';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
 
@@ -46,7 +46,7 @@ export default function useAllocate({
   onMultisigMessageSign,
 }: UseAllocateProps): UseAllocate {
   const { address } = useAccount();
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signTypedData } = useSignTypedData({
@@ -61,7 +61,7 @@ export default function useAllocate({
       },
       onSuccess: async (data, variables) => {
         const { isManuallyEdited, ...restVariables } = variables.message;
-        if (isContract) {
+        if (isGnosisSafeMultisig) {
           return;
         }
         websocketService().then(socket => {
@@ -86,7 +86,7 @@ export default function useAllocate({
   });
 
   const allocate = async (allocations: AllocationValues, isManuallyEdited: boolean) => {
-    if (!isContract) {
+    if (!isGnosisSafeMultisig) {
       setIsLoading(true);
     }
     const allocationsMapped = getAllocationsMapped(allocations);
@@ -103,7 +103,7 @@ export default function useAllocate({
       types,
     });
 
-    if (isContract && !!onMultisigMessageSign) {
+    if (isGnosisSafeMultisig && !!onMultisigMessageSign) {
       const safeMessages = await apiGetSafeMessages(address!);
 
       const intervalId = setInterval(async () => {

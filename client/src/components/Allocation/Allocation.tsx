@@ -29,8 +29,8 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useIsContract from 'hooks/queries/useIsContract';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
@@ -76,7 +76,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const [isWaitingForAllMultisigSignatures, setIsWaitingForAllMultisigSignatures] = useState(false);
   const { isFetching: isFetchingUpcomingBudget, isRefetching: isRefetchingUpcomingBudget } =
     useUpcomingBudget();
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const { address: walletAddress } = useAccount();
   const [showAllocationNav, setShowAllocationNav] = useState(false);
   const [isEmptyStateImageVisible, setIsEmptyStateImageVisible] = useState(true);
@@ -326,7 +326,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
 
     // this condition must always be last due to ModalAllocationLowUqScore
     // if uqScore == 1n, the signature request is triggered in ModalAllocationLowUqScore
-    if (isContract) {
+    if (isGnosisSafeMultisig) {
       setIsWaitingForFirstMultisigSignature(true);
       toastService.showToast({
         message: t('multisigSignatureToast.message'),
@@ -537,7 +537,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
     isWaitingForFirstMultisigSignature;
 
   useEffect(() => {
-    if (!walletAddress || !isContract || isWaitingForFirstMultisigSignature) {
+    if (!walletAddress || !isGnosisSafeMultisig || isWaitingForFirstMultisigSignature) {
       return;
     }
     const getPendingMultisigSignatures = () => {
@@ -563,7 +563,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   }, [
     walletAddress,
     isWaitingForAllMultisigSignatures,
-    isContract,
+    isGnosisSafeMultisig,
     isWaitingForFirstMultisigSignature,
   ]);
 

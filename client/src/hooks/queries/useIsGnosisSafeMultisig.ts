@@ -4,13 +4,13 @@ import { useAccount } from 'wagmi';
 import { apiGetGnosisSafeAccountDetails } from 'api/calls/multisig';
 import { QUERY_KEYS } from 'api/queryKeys';
 
-export default function useIsContract(): UseQueryResult<boolean> {
+export default function useIsGnosisSafeMultisig(): UseQueryResult<boolean> {
   const { address } = useAccount();
 
   const query = useQuery({
     enabled: !!address,
     queryFn: () => apiGetGnosisSafeAccountDetails(address!),
-    queryKey: QUERY_KEYS.isContract(address!),
+    queryKey: QUERY_KEYS.isGnosisSafeMultisig(address!),
     retry: false,
     retryOnMount: false,
   });
