@@ -5,7 +5,7 @@ import { SignatureOpType, apiPostPendingMultisigSignatures } from 'api/calls/mul
 import { apiGetSafeMessages } from 'api/calls/safeMessages';
 import { apiPostUserTOS } from 'api/calls/userTOS';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 
 export default function useUserAcceptsTOS(
   onMultisigMessageSign?: () => void,
@@ -14,13 +14,13 @@ export default function useUserAcceptsTOS(
   const { signMessageAsync, signMessage } = useSignMessage();
   const queryClient = useQueryClient();
 
-  const { data: isContract } = useIsContract();
+  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
 
   return useMutation({
     mutationFn: async () => {
       const message = `Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n${address}`;
 
-      if (isContract && !!onMultisigMessageSign) {
+      if (isGnosisSafeMultisig && !!onMultisigMessageSign) {
         const safeMessages = await apiGetSafeMessages(address!);
         signMessage({
           message,
@@ -49,7 +49,7 @@ export default function useUserAcceptsTOS(
     },
 
     onSuccess: data => {
-      if (isContract) {
+      if (isGnosisSafeMultisig) {
         return;
       }
       queryClient.setQueryData(QUERY_KEYS.userTOS(address!), data);

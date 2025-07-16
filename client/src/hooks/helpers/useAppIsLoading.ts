@@ -1,5 +1,5 @@
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIsContract from 'hooks/queries/useIsContract';
+import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
@@ -33,7 +33,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isInitialized: isAllocationsInitialized } = useAllocationsStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
-  const { isFetching: isFetchingIsContract } = useIsContract();
+  const { isFetching: isFetchingIsContract } = useIsGnosisSafeMultisig();
 
   if (isDelegationInProgress) {
     return false;
