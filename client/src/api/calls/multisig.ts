@@ -1,3 +1,4 @@
+import networkConfig from 'constants/networkConfig';
 import apiService from 'services/apiService';
 
 type Response = {
@@ -13,5 +14,5 @@ type Response = {
 };
 
 export async function apiGetGnosisSafeAccountDetails(address: string): Promise<Response> {
-  return apiService.get(`https://safe-transaction-mainnet.safe.global/api/v1/safes/${address}`);
+  return apiService.get(`${networkConfig.gnosisSafeApi}api/v1/safes/${address}`);
 }
