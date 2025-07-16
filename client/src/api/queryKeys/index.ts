@@ -15,6 +15,7 @@ export const ROOTS: Root = {
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   individualReward: 'individualReward',
+  isContract: 'isContract',
   karmaGapMilestonesPerProjectPerGrantPerProgram: 'karmaGapMilestonesPerProjectPerGrantPerProgram',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
@@ -55,6 +56,7 @@ export const QUERY_KEYS: QueryKeys = {
   history: ['history'],
   individualProjectRewards: ['individualProjectRewards'],
   individualReward: epochNumber => [ROOTS.individualReward, epochNumber.toString()],
+  isContract: userAddress => [ROOTS.isContract, userAddress],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   karmaGapMilestonesPerProjectPerGrantPerProgram: (selectedProgramIds, projectAddress) => [
     ROOTS.karmaGapMilestonesPerProjectPerGrantPerProgram,

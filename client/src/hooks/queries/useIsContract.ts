@@ -1,10 +1,23 @@
-import { UseQueryResult } from '@tanstack/react-query';
-import { useAccount, useBytecode } from 'wagmi';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
 
-export default function useIsContract(): UseQueryResult<string | undefined, unknown> {
+import { apiGetGnosisSafeAccountDetails } from 'api/calls/multisig';
+import { QUERY_KEYS } from 'api/queryKeys';
+
+export default function useIsContract(): UseQueryResult<boolean> {
   const { address } = useAccount();
 
-  return useBytecode({
-    address,
+  const query = useQuery({
+    enabled: !!address,
+    queryFn: () => apiGetGnosisSafeAccountDetails(address!),
+    queryKey: QUERY_KEYS.isContract(address!),
+    retry: false,
+    retryOnMount: false,
   });
+
+  // @ts-expect-error It does not understand mapping of the response to boolean here.
+  return {
+    ...query,
+    data: !query.isFetching ? !query.isError : undefined,
+  };
 }

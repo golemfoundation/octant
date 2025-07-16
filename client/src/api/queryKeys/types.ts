@@ -15,6 +15,7 @@ export type Root = {
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
+  isContract: 'isContract';
   karmaGapMilestonesPerProjectPerGrantPerProgram: 'karmaGapMilestonesPerProjectPerGrantPerProgram';
   matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
@@ -57,6 +58,7 @@ export type QueryKeys = {
   history: ['history'];
   individualProjectRewards: ['individualProjectRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
+  isContract: (userAddress: string) => [Root['isContract'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   karmaGapMilestonesPerProjectPerGrantPerProgram: (
     selectedProgramIds: string,
