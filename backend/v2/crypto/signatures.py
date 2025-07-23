@@ -50,7 +50,16 @@ async def is_contract(w3: AsyncWeb3, address: str) -> bool:
 
     code = await w3.eth.get_code(address)
 
-    return code.hex() != "0x"
+    # EOA
+    if code.hex() == "0x":
+        return False
+
+    # EIP-7702 delegate
+    if code.hex().startswith("0xef0100") and len(code.hex()) == 48:
+        return False
+
+    # Otherwise assume a generic smart contract
+    return True
 
 
 async def _verify_multisig(
