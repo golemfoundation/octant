@@ -308,7 +308,7 @@ export default function getMilestones(): Milestone[] {
       to: new Date('2025-09-10T23:59:59+0100'),
     },
     {
-      from: new Date('2025-10-08T17:00:00+0200'),
+      from: new Date('2025-10-08T18:00:00+0200'),
       id: 'e9-allocation-window',
       isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
@@ -316,7 +316,7 @@ export default function getMilestones(): Milestone[] {
       to: new Date('2025-10-22T18:00:00+0200'),
     },
     {
-      from: new Date('2025-10-08T17:00:00+0200'),
+      from: new Date('2025-10-08T18:00:00+0200'),
       id: 'e10-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 10 }),
     },
