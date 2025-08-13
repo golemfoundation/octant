@@ -269,12 +269,10 @@ export default function getMilestones(): Milestone[] {
     },
     {
       from: new Date('2025-05-22T00:00:00+0100'),
-      // June 3 11:59 pm PST
       href: 'https://octant.fillout.com/epoch8-applications',
-
       id: 'e8-applications-open',
-
       label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      // June 3 11:59 pm PST
       to: new Date('2025-06-04T08:59:00+0100'),
     },
     {
@@ -284,17 +282,43 @@ export default function getMilestones(): Milestone[] {
       label: i18n.t('views.projects.projectsTimelineWidget.projectUpdatesClose'),
     },
     {
-      from: new Date('2025-07-10T17:00:00+0100'),
+      from: new Date('2025-07-10T18:00:00+0200'),
       id: 'e8-allocation-window',
       isAllocationWindowMilestone: true,
       label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
       shouldUseThirdPersonSingularVerb: true,
-      to: new Date('2025-07-24T17:00:00+0100'),
+      to: new Date('2025-07-24T18:00:00+0200'),
     },
     {
       from: new Date('2025-07-10T17:00:00+0100'),
       id: 'e9-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 9 }),
+    },
+    {
+      from: new Date('2025-08-14T20:00:00+0100'),
+      href: 'https://octant.fillout.com/epoch9-ethereum-stories',
+      id: 'e9-applications-open',
+      label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
+      to: new Date('2025-08-27T20:00:00+0100'),
+    },
+    {
+      from: new Date('2025-09-01T00:00:00+0200'),
+      id: 'e9-internal-review-and-selection',
+      label: i18n.t('views.projects.projectsTimelineWidget.internalReviewAndSelection'),
+      to: new Date('2025-09-10T23:59:59+0200'),
+    },
+    {
+      from: new Date('2025-10-08T18:00:00+0200'),
+      id: 'e9-allocation-window',
+      isAllocationWindowMilestone: true,
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2025-10-22T18:00:00+0200'),
+    },
+    {
+      from: new Date('2025-10-08T18:00:00+0200'),
+      id: 'e10-epoch-starts',
+      label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 10 }),
     },
   ];
 }

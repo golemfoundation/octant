@@ -564,7 +564,8 @@
         "projectUpdatesClose": "Project updates close",
         "snapshotVote": "Snapshot vote",
         "allocationWindow": "Allocation window",
-        "epochStarts": "Epoch {{epoch}} starts"
+        "epochStarts": "Epoch {{epoch}} starts",
+        "internalReviewAndSelection": "Internal review & selection"
       },
       "searchInputPlaceholder": "Search by project name and epoch e.g. Tor E1, E2",
       "sortOptions": {
