@@ -295,17 +295,17 @@ export default function getMilestones(): Milestone[] {
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 9 }),
     },
     {
-      from: new Date('2025-08-18T20:00:00+0100'),
-      href: 'CHANGE ME',
+      from: new Date('2025-08-14T20:00:00+0100'),
+      href: 'https://octant.fillout.com/epoch9-ethereum-stories',
       id: 'e9-applications-open',
       label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
       to: new Date('2025-08-27T20:00:00+0100'),
     },
     {
-      from: new Date('2025-09-01T00:00:00+0100'),
+      from: new Date('2025-09-01T00:00:00+0200'),
       id: 'e9-internal-review-and-selection',
       label: i18n.t('views.projects.projectsTimelineWidget.internalReviewAndSelection'),
-      to: new Date('2025-09-10T23:59:59+0100'),
+      to: new Date('2025-09-10T23:59:59+0200'),
     },
     {
       from: new Date('2025-10-08T18:00:00+0200'),
