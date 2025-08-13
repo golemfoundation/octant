@@ -564,7 +564,8 @@
         "projectUpdatesClose": "Cierre de actualizaciones del proyecto",
         "snapshotVote": "Votación instantánea",
         "allocationWindow": "Ventana de asignación",
-        "epochStarts": "La época {{epoch}} comienza"
+        "epochStarts": "La época {{epoch}} comienza",
+        "internalReviewAndSelection": "Revisión y selección interna"
       },
       "searchInputPlaceholder": "Buscar por nombre de proyecto y época, por ejemplo Tor E1, E2",
       "sortOptions": {
