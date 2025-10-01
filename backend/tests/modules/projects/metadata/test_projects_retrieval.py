@@ -136,7 +136,7 @@ def test_get_projects_metadata_epoch_8():
     assert projects_metadata.projects_addresses == ["0x0", "0x1"]
 
 
-def test_get_projects_metadata_epoch_8():
+def test_get_projects_metadata_epoch_9():
     context = get_context(8)
 
     service = StaticProjectsMetadataService()
