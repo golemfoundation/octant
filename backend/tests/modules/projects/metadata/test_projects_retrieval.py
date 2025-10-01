@@ -136,6 +136,21 @@ def test_get_projects_metadata_epoch_8():
     assert projects_metadata.projects_addresses == ["0x0", "0x1"]
 
 
+def test_get_projects_metadata_epoch_8():
+    context = get_context(8)
+
+    service = StaticProjectsMetadataService()
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(
+        context, is_mainnet=True
+    )
+
+    assert (
+        projects_metadata.projects_cid
+        == "bafybeifq2lvzdlau3cixza3yth7bqeibkyu5qry55fbii4ifr6ulkoatgi"
+    )
+    assert projects_metadata.projects_addresses == ["0x0", "0x1"]
+
+
 def test_get_projects_metadata_epoch_100():
     context = get_context(100)
 
