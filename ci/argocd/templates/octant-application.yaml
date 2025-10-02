@@ -119,6 +119,8 @@ spec:
             value: 'true'
           - name: ingress.cloudflareProxied.graph-ipfs
             value: 'true'
+          - name: ingress.cloudflareProxied.multideployer
+            value: 'true'
           # APITests / Multideployer
           - name: multideployer.enabled
             value: '$MULTIDEPLOYER_ENABLED'
