@@ -23,10 +23,9 @@
     @include fontBig($font-size-24);
     display: flex;
     align-items: center;
+    text-align: left;
     margin: 1.6rem 0 0.8rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: wrap;
 
     @media #{$tablet-up} {
       @include fontBig($font-size-32);
