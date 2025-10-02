@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -13,7 +14,6 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
 
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   address,
