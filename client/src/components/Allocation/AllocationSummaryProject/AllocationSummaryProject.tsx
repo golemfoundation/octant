@@ -14,7 +14,6 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
 
-
 const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   address,
   amount,
