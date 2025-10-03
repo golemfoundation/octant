@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -13,6 +14,7 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
 
+
 const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   address,
   amount,
@@ -20,6 +22,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   isLoadingAllocateSimulate,
   value,
 }) => {
+  const { data: currentEpoch } = useCurrentEpoch();
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.allocation.allocationItem',
   });
@@ -28,7 +31,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
     data: projectIpfs,
     isFetching: isFetchingProjectIpfs,
     isAnyIpfsError,
-  } = useProjectsIpfs([address]);
+  } = useProjectsIpfs([address], currentEpoch! - 1);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   // Real, not simulated threshold is used, because user won't change his decision here.
