@@ -16,6 +16,7 @@ depends_on = None
 FILENAME = "ipfs_projects_details_epoch_{}.json"
 EPOCH = 9
 
+
 def upgrade():
     filename = FILENAME.format(EPOCH)
     ipfs_migration.upgrade(filename, EPOCH)
