@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Dict
 from alembic import op
+from sqlalchemy import text
 
 
 def _load_json_data(filepath: str) -> Dict:
@@ -16,23 +17,33 @@ def _get_json_path(filename: str) -> str:
     return json_filename
 
 
-def _prepare_project_upsert_query(project: dict, epoch: int) -> str:
+def _prepare_project_upsert_query(project: dict, epoch: int):
     current_time = datetime.utcnow()
 
-    return f"""
+    return text(
+        """
         INSERT INTO project_details (name, address, created_at, epoch)
-        VALUES ('{project["name"]}', '{project["address"]}', '{current_time}', {epoch})
+        VALUES (:name, :address, :created_at, :epoch)
         ON CONFLICT (address, epoch)
         DO UPDATE SET
             name = EXCLUDED.name,
-            created_at = '{current_time}';
+            created_at = :created_at
     """
+    ).bindparams(
+        name=project["name"],
+        address=project["address"],
+        created_at=current_time,
+        epoch=epoch,
+    )
 
 
-def _prepare_delete_project_query(project: dict, epoch: int) -> str:
-    return f"""
-        DELETE FROM project_details WHERE address = '{project["address"]}' AND epoch = {epoch}
+def _prepare_delete_project_query(project: dict, epoch: int):
+    return text(
+        """
+        DELETE FROM project_details
+        WHERE address = :address AND epoch = :epoch
     """
+    ).bindparams(address=project["address"], epoch=epoch)
 
 
 def upgrade(filename: str, epoch: int):
