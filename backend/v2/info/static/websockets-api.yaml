@@ -60,7 +60,7 @@ channels:
               description: Wallet address of the user. EOA or EIP-1271
               type: string
             isManuallyEdited:
-              descritpion: Whether allocation has been manually edited by user
+              description: Whether allocation has been manually edited by user
               type: boolean
         examples:
           - payload:
