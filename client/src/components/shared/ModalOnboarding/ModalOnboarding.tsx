@@ -84,7 +84,7 @@ const ModalOnboarding = (): ReactElement => {
     isConnected &&
     (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed);
 
-  // For multisig users we refetch ToS in a setInternval, so isFetching here causes loop refreshes.
+  // For multisig users we refetch ToS in a setInterval, so isFetching here causes loop refreshes.
   const currentStep = useMemo(() => {
     if (!stepsToUse.length || (isFetchingUserTOS && !isGnosisSafeMultisig)) {
       return null;
