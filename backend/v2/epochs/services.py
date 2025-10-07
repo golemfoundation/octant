@@ -199,7 +199,7 @@ async def get_epoch_info_pending(
         all_projects,
     )
 
-    # How much each user took for themselfs (non zero only)
+    # How much each user took for themselves (non zero only)
     # How much was allocated towards projects
     # How much was distibuted in total
     user_claimed_rewards = await get_all_users_claimed_rewards(session, epoch_number)
