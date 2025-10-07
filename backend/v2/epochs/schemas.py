@@ -52,7 +52,7 @@ class EpochStatsResponseV1(OctantModel):
     ppf: Annotated[
         BigInteger | None,
         Field(
-            description="PPF for the given epoch. It's calculated based on substracting Vanillia Individual Rewards from Individual Rewards Equilibrium."
+            description="PPF for the given epoch. It's calculated based on subtracting Vanillia Individual Rewards from Individual Rewards Equilibrium."
         ),
     ]
     community_fund: Annotated[
