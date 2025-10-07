@@ -431,7 +431,7 @@ async def simulate_finalized_snapshot_v1(
     else:
         merkle_root = None
 
-    # Returning the snaphost simulation response
+    # Returning the snapshot simulation response
     return FinalizedSnapshotResponseV1(
         patrons_rewards=patron_rewards,
         matched_rewards=matched_rewards,
