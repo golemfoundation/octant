@@ -44,7 +44,7 @@ def _get_api_url(
 ) -> str:
     api_key = app.config["ETHERSCAN_API_KEY"]
     return (
-        f"{ETHERSCAN_API}?module=block"
+        f"{ETHERSCAN_API}?module=block&chainid=1"
         f"&action={rx_type.value}"
         f"&timestamp={timestamp}"
         f"&apikey={api_key}"

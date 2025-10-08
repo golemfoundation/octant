@@ -41,7 +41,7 @@ def get_transactions(
 def _get_api_url(address: str, tx_type: AccountAction) -> str:
     api_key = app.config["ETHERSCAN_API_KEY"]
     return (
-        f"{ETHERSCAN_API}?module=account"
+        f"{ETHERSCAN_API}?module=account&chainid=1"
         f"&action={tx_type.value}"
         f"&address={address}"
         f"&apikey={api_key}"
