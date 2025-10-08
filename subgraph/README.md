@@ -1,7 +1,7 @@
 # Octant subgraph (The Graph)
 
 Graph indexes events sourced from Ethereum. Ethereum clients (and RPCs) do not provide
-indexing capabilities. Graph allows to create easily queriable indexes, speeding up dApps.
+indexing capabilities. Graph allows to create easily queryable indexes, speeding up dApps.
 
 In current setup data about events follows this path: Ethereum -> Graph -> Backend -> Client.
 

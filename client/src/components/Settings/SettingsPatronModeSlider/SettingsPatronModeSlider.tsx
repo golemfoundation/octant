@@ -20,8 +20,8 @@ import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import styles from './SettingsPatronModeSlider.module.scss';
 import SettingsPatronModeSliderProps from './types';
 
-const backgroudColorStart = styles.colorOctantGrey12;
-const backgroudColorEnd = styles.colorOctantGreen_80;
+const backgroundColorStart = styles.colorOctantGrey12;
+const backgroundColorEnd = styles.colorOctantGreen_80;
 
 const labelOpacityStart = 1;
 const labelOpacityEnd = 0;
@@ -61,8 +61,8 @@ const SettingsPatronModeSlider: FC<SettingsPatronModeSliderProps> = ({
   const transformInputRange = isPatronModeEnabled ? [...constraints].reverse() : constraints;
 
   const backgroundColor = useTransform(x, transformInputRange, [
-    backgroudColorStart,
-    backgroudColorEnd,
+    backgroundColorStart,
+    backgroundColorEnd,
   ]);
   const labelOpacity = useTransform(x, transformInputRange, [labelOpacityStart, labelOpacityEnd]);
   const buttonBackgroundColor = useTransform(x, transformInputRange, [

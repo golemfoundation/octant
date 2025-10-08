@@ -44,7 +44,7 @@ async def get_all_users_claimed_rewards(
     Returns a dictionary of all users and their claimed rewards for a given epoch.
     Only users with claimed rewards are included in the dictionary (sum(allocations) < budget).
     Claimed rewards are calculated as the difference between the user's budget and the sum of their allocations for the epoch.
-    User needs to make an allocation request to claim rewards, if they did not allocate anythin, it means they claimed nothing.
+    User needs to make an allocation request to claim rewards, if they did not allocate anything, it means they claimed nothing.
     """
 
     # Fetch all user addresses and budgets for the epoch

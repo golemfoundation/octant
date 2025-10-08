@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-export const METRICS_GRID_TILE_SZIES = ['S', 'M', 'L', 'custom'] as const;
-export type MetricsGridTileSizes = (typeof METRICS_GRID_TILE_SZIES)[number];
+export const METRICS_GRID_TILE_SIZES = ['S', 'M', 'L', 'custom'] as const;
+export type MetricsGridTileSizes = (typeof METRICS_GRID_TILE_SIZES)[number];
 
 type MetricsGridTileGroup = {
   children: ReactNode;
