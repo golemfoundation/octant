@@ -19,7 +19,7 @@ UQ_THRESHOLD_NOT_MAINNET = 5
 UQ_THRESHOLD_MAINNET = 15
 
 BEACONCHAIN_API = "https://beaconcha.in/api"
-ETHERSCAN_API = "https://api.etherscan.io/api"
+ETHERSCAN_API = "https://api.etherscan.io/v2/api"
 BITQUERY_API = "https://streaming.bitquery.io/graphql"
 GC_PASSPORT_SCORER_API = "https://api.scorer.gitcoin.co"
 SAFE_API_MAINNET = "https://safe-transaction-mainnet.safe.global/api/v1"
