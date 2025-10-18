@@ -64,7 +64,7 @@ elif [[ "$ACTION" == "update" ]]; then
 	else
 		# This will make webclient use default (wagmi) endpoint
 		export FRONTEND_RPC_URL=""
-		export BACKEND_RPC_URL=https://sepolia.rpc.octant.build
+		export BACKEND_RPC_URL=http://sepolia-rpc-haproxy.operations.svc.cluster.local
 	fi
 
 	# Substitute Argo Octant app env values
