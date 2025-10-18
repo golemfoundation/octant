@@ -5,7 +5,7 @@
 set -e
 
 URL=$(curl -s -H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
-	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?namespace=${DEPLOYMENT_ID}&resourceName=anvil-fake&version=v1&kind=Ingress&group=networking.k8s.io" \
+	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?namespace=${DEPLOYMENT_ID}&resourceName=anvil&version=v1&kind=Ingress&group=networking.k8s.io" \
 	| jq -r .manifest | jq -r '.spec.rules[0].host')
 
 timeout --foreground -s TERM 300 bash -c \
