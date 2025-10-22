@@ -26,6 +26,3 @@ yarn verify:mainnet <epoch> --simulated
 ```
 
 Script has already defined several, most important deployments (`--deployment` option), but one can connect to any other octant backend using `--url` option.
-
-
-
