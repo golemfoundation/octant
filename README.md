@@ -15,7 +15,7 @@ The backend is built using FastAPI with the following key components:
 - **FastAPI Application**: Main application handling HTTP and WebSocket requests
 - **SocketIO**: Real-time communication support with optional Redis backend
 - **SQLAlchemy**: Database operations and models
-- **APScheduler**: Background task processing (used practially only on non-production environments to automate the epoch transitions)
+- **APScheduler**: Background task processing (used practically only on non-production environments to automate the epoch transitions)
 
 The application has been fully migrated from Flask to FastAPI. The old Flask implementation is kept under the `/flask` endpoint as a safety measure for the next allocation window, but all new development is done in FastAPI.
 
