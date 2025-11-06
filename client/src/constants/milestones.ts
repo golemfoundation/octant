@@ -320,5 +320,13 @@ export default function getMilestones(): Milestone[] {
       id: 'e10-epoch-starts',
       label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 10 }),
     },
+    {
+      from: new Date('2026-01-06T17:00:00+0100'),
+      id: 'e10-allocation-window',
+      isAllocationWindowMilestone: true,
+      label: i18n.t('views.projects.projectsTimelineWidget.allocationWindow'),
+      shouldUseThirdPersonSingularVerb: true,
+      to: new Date('2026-01-20T17:00:00+0100'),
+    },
   ];
 }
