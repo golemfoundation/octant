@@ -23,7 +23,7 @@ from v2.core.dependencies import (
 
 class EtherscanClientSettings(OctantSettings):
     etherscan_api_key: str
-    etherscan_url: str = "https://api.etherscan.io/api"
+    etherscan_url: str = "https://api.etherscan.io/v2/api"
 
 
 class BitqueryClientSettings(OctantSettings):
