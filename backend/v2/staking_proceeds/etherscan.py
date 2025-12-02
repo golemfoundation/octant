@@ -37,6 +37,7 @@ class EtherscanClient:
                 "sort": "asc",
                 "startblock": start_block,
                 "endblock": end_block,
+                "chainid": "1",
             }
 
             async with session.get(self.url, params=params) as response:
@@ -99,6 +100,7 @@ class EtherscanClient:
             "timestamp": timestamp,
             "apikey": self.api_key,
             "closest": "before",
+            "chainid": "1",
         }
 
         try:
