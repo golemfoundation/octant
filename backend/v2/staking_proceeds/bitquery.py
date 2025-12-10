@@ -18,10 +18,10 @@ class BitqueryClient:
                     "X-API-KEY": self.api_key,
                     "Authorization": f"Bearer {self.bearer}",
                 },
-                timeout=10,
+                timeout=60,
             ),
             fetch_schema_from_transport=False,
-            execute_timeout=60,  # This is very liberal, but we need to wait for the response
+            execute_timeout=180,  # This is very liberal, but we need to wait for the response
         )
 
     async def get_blocks_rewards(
