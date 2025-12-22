@@ -103,7 +103,7 @@ epoch_stats_model = api.model(
         ),
         "ppf": fields.String(
             required=False,
-            description="PPF for the given epoch. It's calculated based on substracting Vanillia Individual Rewards from Individual Rewards Equilibrium.",
+            description="PPF for the given epoch. It's calculated based on subtracting Vanillia Individual Rewards from Individual Rewards Equilibrium.",
         ),
         "communityFund": fields.String(
             required=False,

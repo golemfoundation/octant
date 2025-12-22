@@ -32,7 +32,7 @@ The main application is built using FastAPI and is organized into modular compon
 
 ### 2. Background Processing
 
-- **APScheduler**: Handles scheduled tasks (used practially only on non-production environments to automate the epoch transitions)
+- **APScheduler**: Handles scheduled tasks (used practically only on non-production environments to automate the epoch transitions)
   - Withdrawal confirmations
   - Epoch transitions
 
