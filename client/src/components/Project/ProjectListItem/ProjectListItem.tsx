@@ -2,7 +2,7 @@ import React, { FC, Fragment, useMemo } from 'react';
 
 import ProjectListItemButtonsWebsiteAndShare from 'components/Project/ProjectListItemButtonsWebsiteAndShare';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
-import ProjectMilestones from 'components/Project/ProjectMilestones';
+// import ProjectMilestones from 'components/Project/ProjectMilestones';
 import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -70,7 +70,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           website={website}
         />
       </div>
-      <ProjectMilestones projectAddress={address} />
+      {/* <ProjectMilestones projectAddress={address} /> */}
     </Fragment>
   );
 };

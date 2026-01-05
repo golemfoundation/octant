@@ -6,7 +6,7 @@ import HomeGridDivider from 'components/Home/HomeGridDivider';
 import HomeGridDonations from 'components/Home/HomeGridDonations';
 import HomeGridEpochResults from 'components/Home/HomeGridEpochResults';
 import HomeGridPersonalAllocation from 'components/Home/HomeGridPersonalAllocation';
-import HomeGridRewardsEstimator from 'components/Home/HomeGridRewardsEstimator';
+// import HomeGridRewardsEstimator from 'components/Home/HomeGridRewardsEstimator';
 import HomeGridTransactions from 'components/Home/HomeGridTransactions';
 import HomeGridUQScore from 'components/Home/HomeGridUQScore';
 import HomeGridVideoBar from 'components/Home/HomeGridVideoBar';
@@ -69,14 +69,14 @@ const HomeGrid = (): ReactElement => {
           isProjectAdminMode && styles.isProjectAdminMode,
         )}
       />
-      <HomeGridRewardsEstimator
-        className={cx(
-          styles.gridTile,
-          styles.rewardsEstimator,
-          isPatronMode && styles.isPatronMode,
-          isProjectAdminMode && styles.isProjectAdminMode,
-        )}
-      />
+      {/* <HomeGridRewardsEstimator */}
+      {/*  className={cx( */}
+      {/*    styles.gridTile, */}
+      {/*    styles.rewardsEstimator, */}
+      {/*    isPatronMode && styles.isPatronMode, */}
+      {/*    isProjectAdminMode && styles.isProjectAdminMode, */}
+      {/*  )} */}
+      {/* /> */}
       <HomeGridEpochResults
         className={cx(
           styles.gridTile,
