@@ -393,9 +393,9 @@ async def simulate_finalized_snapshot_v1(
         all_projects,
     )
 
-    # How much each user took for themselfs (non zero only)
+    # How much each user took for themselves (non zero only)
     # How much was allocated towards projects
-    # How much was distibuted in total
+    # How much was distributed in total
     user_claimed_rewards = await get_all_users_claimed_rewards(session, epoch_number)
     claimed_rewards_sum = sum(user_claimed_rewards.values())
     donated_to_projects = (
@@ -431,7 +431,7 @@ async def simulate_finalized_snapshot_v1(
     else:
         merkle_root = None
 
-    # Returning the snaphost simulation response
+    # Returning the snapshot simulation response
     return FinalizedSnapshotResponseV1(
         patrons_rewards=patron_rewards,
         matched_rewards=matched_rewards,

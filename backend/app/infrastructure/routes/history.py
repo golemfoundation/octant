@@ -34,7 +34,7 @@ history_item_data = api.model(
         ),
         "epoch": fields.Integer(
             required=False,
-            description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
+            description="Epoch in which action occurred. Field available only for patron_mode_donation items. ",
         ),
         "isManuallyEdited": fields.Boolean(
             required=False,

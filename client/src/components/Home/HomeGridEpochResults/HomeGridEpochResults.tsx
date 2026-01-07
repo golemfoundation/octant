@@ -14,7 +14,7 @@ import styles from './HomeGridEpochResults.module.scss';
 import HomeGridEpochResultsProps from './types';
 
 const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
-  const initalLoadingRef = useRef(true);
+  const initialLoadingRef = useRef(true);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const [epoch, setEpoch] = useState<number>(currentEpoch! - 1);
@@ -48,11 +48,11 @@ const HomeGridEpochResults: FC<HomeGridEpochResultsProps> = ({ className }) => {
   }, [isLoading]);
 
   useEffect(() => {
-    if ((initalLoadingRef.current && isLoading) || !initalLoadingRef.current) {
+    if ((initialLoadingRef.current && isLoading) || !initialLoadingRef.current) {
       return;
     }
 
-    initalLoadingRef.current = false;
+    initialLoadingRef.current = false;
   }, [isLoading]);
 
   return (

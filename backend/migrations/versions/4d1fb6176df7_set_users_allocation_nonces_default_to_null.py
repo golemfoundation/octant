@@ -1,4 +1,4 @@
-"""update exisitng users default allocation nonce to null
+"""update existing users default allocation nonce to null
 
 Revision ID: 4d1fb6176df7
 Revises: 5d527978012e
