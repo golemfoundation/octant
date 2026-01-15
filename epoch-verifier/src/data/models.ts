@@ -84,6 +84,8 @@ export interface EpochInfo {
   totalEffectiveDeposit: bigint;
   totalRewards: bigint;
   totalWithdrawals: bigint;
+  epochNumber: number;
+  stakingMatchedReservedForV2?: bigint;
 }
 
 export interface EpochUqs {
@@ -179,6 +181,10 @@ export class EpochInfoImpl implements Deserializable<EpochInfo> {
 
   communityFund: bigint;
 
+  epochNumber: number;
+
+  stakingMatchedReservedForV2?: bigint;
+
 
   from(input: any) {
     this.individualRewards = BigInt(input.vanillaIndividualRewards)
@@ -192,6 +198,10 @@ export class EpochInfoImpl implements Deserializable<EpochInfo> {
     this.leftover = BigInt(input.leftover)
     this.ppf = BigInt(input.ppf)
     this.communityFund = BigInt(input.communityFund)
+    this.epochNumber = input.epoch || input.epochNumber || 0
+    this.stakingMatchedReservedForV2 = input.stakingMatchedReservedForV2
+      ? BigInt(input.stakingMatchedReservedForV2)
+      : undefined
 
     return this
   }

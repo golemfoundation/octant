@@ -67,7 +67,10 @@ from v2.allocations.repositories import get_allocations_with_user_uqs
 from v2.deposits.dependencies import GetDepositEventsRepository
 from v2.deposits.repositories import save_deposits
 from v2.matched_rewards.dependencies import GetMatchedRewardsSettings
-from v2.matched_rewards.services import _calculate_percentage_matched_rewards
+from v2.matched_rewards.services import (
+    _calculate_percentage_matched_rewards,
+    calculate_staking_matched_rewards,
+)
 from v2.project_rewards.capped_quadratic import capped_quadratic_funding
 from v2.project_rewards.repositories import save_rewards
 from v2.project_rewards.services import (
@@ -76,6 +79,7 @@ from v2.project_rewards.services import (
 )
 from v2.projects.dependencies import GetProjectsContracts
 from v2.snapshots.services import calculate_leftover
+from app.engine.epochs_settings import should_reserve_staking_for_v2
 from v2.snapshots.repositories import (
     get_finalized_epoch_snapshot,
     get_pending_epoch_snapshot,
@@ -374,15 +378,35 @@ async def simulate_finalized_snapshot_v1(
         session, epoch_details.finalized_timestamp.datetime(), epoch_number
     )
 
-    # How much will octant match other donations?
-    matched_rewards = _calculate_percentage_matched_rewards(
-        locked_ratio=Decimal(pending_snapshot.locked_ratio),
-        tr_percent=matched_rewards_settings.TR_PERCENT,
-        ire_percent=matched_rewards_settings.IRE_PERCENT,
-        staking_proceeds=int(pending_snapshot.eth_proceeds),
-        patrons_rewards=patron_rewards,
-        matched_rewards_percent=matched_rewards_settings.MATCHED_REWARDS_PERCENT,
-    )
+    # Check if this epoch should reserve staking for v2
+    reserve_staking = should_reserve_staking_for_v2(epoch_number)
+
+    if reserve_staking:
+        # Separate staking portion from patron rewards
+        staking_matched_portion = calculate_staking_matched_rewards(
+            staking_proceeds=int(pending_snapshot.eth_proceeds),
+            locked_ratio=Decimal(pending_snapshot.locked_ratio),
+            ire_percent=matched_rewards_settings.IRE_PERCENT,
+            tr_percent=matched_rewards_settings.TR_PERCENT,
+            matched_rewards_percent=matched_rewards_settings.MATCHED_REWARDS_PERCENT,
+        )
+
+        # Matched rewards for distribution = patron rewards ONLY
+        matched_rewards = patron_rewards
+
+        # Store the staking portion separately (will NOT be distributed)
+        staking_matched_reserved = staking_matched_portion
+    else:
+        # Standard epochs: matched rewards include both staking + patron
+        matched_rewards = _calculate_percentage_matched_rewards(
+            locked_ratio=Decimal(pending_snapshot.locked_ratio),
+            tr_percent=matched_rewards_settings.TR_PERCENT,
+            ire_percent=matched_rewards_settings.IRE_PERCENT,
+            staking_proceeds=int(pending_snapshot.eth_proceeds),
+            patrons_rewards=patron_rewards,
+            matched_rewards_percent=matched_rewards_settings.MATCHED_REWARDS_PERCENT,
+        )
+        staking_matched_reserved = 0  # No reservation for standard epochs
 
     # Let's actually calculate QF for all projects here
     all_allocations = await get_allocations_with_user_uqs(session, epoch_number)
@@ -404,6 +428,7 @@ async def simulate_finalized_snapshot_v1(
     )
     total_withdrawals = claimed_rewards_sum + int(donated_to_projects)
 
+    # Calculate base leftover
     leftover = calculate_leftover(
         ppf=pending_snapshot.validated_ppf,
         total_matched_rewards=matched_rewards,
@@ -415,6 +440,10 @@ async def simulate_finalized_snapshot_v1(
         if pending_snapshot.validated_community_fund
         else 0,
     )
+
+    # For reserve epochs, add back the reserved staking portion (it's leftover since not distributed)
+    if reserve_staking:
+        leftover += staking_matched_reserved
 
     # Building merkle root for rewards validation
     LEAF_ENCODING: list[str] = ["address", "uint256"]
@@ -454,6 +483,7 @@ async def simulate_finalized_snapshot_v1(
         total_withdrawals=total_withdrawals,
         leftover=leftover,
         merkle_root=merkle_root,
+        staking_matched_reserved_for_v2=staking_matched_reserved,
     )
 
 
