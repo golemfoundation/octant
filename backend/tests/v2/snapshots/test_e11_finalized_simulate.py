@@ -132,9 +132,10 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
         # Staking portion: (0.7 - 0.5) * 1_000_000 = 200_000
         assert staking_reserved == 200_000, "Staking portion should be reserved"
 
-        # Leftover should include the reserved staking portion
+        # Leftover is calculated normally (unused matched rewards from QF)
+        # Reserved staking is a separate value, not part of leftover
         leftover = int(result["leftover"])
-        assert leftover > 0, "Leftover should include reserved staking"
+        assert leftover >= 0, "Leftover should exist (can be 0 if all matched rewards used)"
 
         # Verify projects received QF matching from patron rewards only
         assert len(result["projectsRewards"]) > 0, "Projects should receive rewards"

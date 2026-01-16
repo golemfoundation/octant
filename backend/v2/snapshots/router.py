@@ -441,9 +441,8 @@ async def simulate_finalized_snapshot_v1(
         else 0,
     )
 
-    # For reserve epochs, add back the reserved staking portion (it's leftover since not distributed)
-    if reserve_staking:
-        leftover += staking_matched_reserved
+    # NOTE: leftover is calculated normally - reserved staking is NOT added to leftover
+    # Reserved staking is a separate allocation with specific purpose (transfer to multisig for v2)
 
     # Building merkle root for rewards validation
     LEAF_ENCODING: list[str] = ["address", "uint256"]
