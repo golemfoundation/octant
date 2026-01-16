@@ -34,29 +34,6 @@ from app.engine.user.effective_deposit.weighted_average.weights.timebased.defaul
 )
 
 
-# Epochs that reserve staking portion for v2 (not distributed via QF)
-EPOCHS_RESERVING_STAKING_FOR_V2 = {11}  # Can add more epochs in future
-
-
-def should_reserve_staking_for_v2(epoch_number: int) -> bool:
-    """
-    Check if this epoch should reserve staking portion for v2.
-
-    Args:
-        epoch_number: The epoch number to check
-
-    Returns:
-        bool: True if the epoch reserves staking for v2, False otherwise
-
-    Note:
-        For epochs in EPOCHS_RESERVING_STAKING_FOR_V2:
-        - Staking matched portion is reserved (not distributed)
-        - Only patron rewards are used for QF distribution
-        - Reserved funds can be transferred to multisig for v2
-    """
-    return epoch_number in EPOCHS_RESERVING_STAKING_FOR_V2
-
-
 @dataclass
 class EpochSettings:
     octant_rewards: OctantRewardsSettings = field(default_factory=OctantRewardsSettings)

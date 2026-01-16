@@ -70,6 +70,7 @@ from v2.matched_rewards.dependencies import GetMatchedRewardsSettings
 from v2.matched_rewards.services import (
     _calculate_percentage_matched_rewards,
     calculate_staking_matched_rewards,
+    should_reserve_staking_for_v2,
 )
 from v2.project_rewards.capped_quadratic import capped_quadratic_funding
 from v2.project_rewards.repositories import save_rewards
@@ -79,7 +80,6 @@ from v2.project_rewards.services import (
 )
 from v2.projects.dependencies import GetProjectsContracts
 from v2.snapshots.services import calculate_leftover
-from app.engine.epochs_settings import should_reserve_staking_for_v2
 from v2.snapshots.repositories import (
     get_finalized_epoch_snapshot,
     get_pending_epoch_snapshot,

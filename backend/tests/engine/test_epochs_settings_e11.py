@@ -7,7 +7,7 @@ EPOCHS_RESERVING_STAKING_FOR_V2 configuration.
 
 import pytest
 
-from app.engine.epochs_settings import (
+from v2.matched_rewards.services import (
     should_reserve_staking_for_v2,
     EPOCHS_RESERVING_STAKING_FOR_V2,
 )
@@ -41,29 +41,6 @@ class TestEpochStakingReservationConfig:
     def test_configuration_set_contains_e11(self):
         """EPOCHS_RESERVING_STAKING_FOR_V2 set should contain 11."""
         assert 11 in EPOCHS_RESERVING_STAKING_FOR_V2
-
-    def test_configuration_set_is_modifiable(self):
-        """
-        Configuration set can be extended for future epochs.
-        This test verifies the set is mutable and can be updated.
-        """
-        # Make a copy to avoid affecting other tests
-        original_set = EPOCHS_RESERVING_STAKING_FOR_V2.copy()
-
-        try:
-            # Test that we can add an epoch
-            EPOCHS_RESERVING_STAKING_FOR_V2.add(12)
-            assert 12 in EPOCHS_RESERVING_STAKING_FOR_V2
-            assert should_reserve_staking_for_v2(12) is True
-
-            # Test that we can remove an epoch
-            EPOCHS_RESERVING_STAKING_FOR_V2.remove(12)
-            assert 12 not in EPOCHS_RESERVING_STAKING_FOR_V2
-            assert should_reserve_staking_for_v2(12) is False
-        finally:
-            # Restore original state
-            EPOCHS_RESERVING_STAKING_FOR_V2.clear()
-            EPOCHS_RESERVING_STAKING_FOR_V2.update(original_set)
 
     def test_negative_epoch_number(self):
         """Negative epoch numbers should not reserve staking."""

@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 revision = "a1f2e3b4c5d6"
-down_revision = "b5d0a4e49513"  # E10 truncate delegations migration
+down_revision = "b5d0a4e49513"
 branch_labels = None
 depends_on = None
 
