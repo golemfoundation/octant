@@ -339,5 +339,7 @@ async def get_epoch_info_finalized(
         ppf=pending_snapshot.validated_ppf,
         community_fund=pending_snapshot.validated_community_fund,
         donated_to_projects=donated_to_projects,
-        staking_matched_reserved_for_v2=int(finalized_snapshot.staking_matched_reserved_for_v2),
+        staking_matched_reserved_for_v2=int(
+            finalized_snapshot.staking_matched_reserved_for_v2
+        ),
     )

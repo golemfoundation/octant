@@ -99,7 +99,9 @@ async def test_standard_epochs_work_unchanged(
     )
 
     # Override dependencies
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: epoch_number
 
@@ -182,7 +184,9 @@ async def test_epochs_without_patrons_still_get_staking_matched_rewards(
 
     # Create only normal users (NO patrons)
     user = await factories.users.create()
-    await factories.uniqueness_quotients.create(user=user, epoch=epoch_number, score=20.0)
+    await factories.uniqueness_quotients.create(
+        user=user, epoch=epoch_number, score=20.0
+    )
     await factories.budgets.create(user=user, epoch=epoch_number, amount=100_000)
 
     await factories.allocations.create(
@@ -193,7 +197,9 @@ async def test_epochs_without_patrons_still_get_staking_matched_rewards(
         project_address=project_addresses[0],
     )
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: epoch_number
 
@@ -241,7 +247,11 @@ async def test_transition_from_epoch_10_to_11(
     mock_epochs_subgraph_e10 = MagicMock()
     mock_epochs_subgraph_e10.get_epoch_by_number = AsyncMock(
         return_value=EpochDetails(
-            epoch_num=10, start=1000, duration=1000, decision_window=1000, remaining_sec=0
+            epoch_num=10,
+            start=1000,
+            duration=1000,
+            decision_window=1000,
+            remaining_sec=0,
         )
     )
 
@@ -264,8 +274,12 @@ async def test_transition_from_epoch_10_to_11(
     await factories.uniqueness_quotients.create(user=patron_e10, epoch=10, score=20.0)
     await factories.budgets.create(user=patron_e10, epoch=10, amount=150_000)
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
-    fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph_e10
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_epochs_subgraph
+    ] = lambda: mock_epochs_subgraph_e10
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 10
 
     async with fast_client as client:
@@ -279,7 +293,11 @@ async def test_transition_from_epoch_10_to_11(
     mock_epochs_subgraph_e11 = MagicMock()
     mock_epochs_subgraph_e11.get_epoch_by_number = AsyncMock(
         return_value=EpochDetails(
-            epoch_num=11, start=1000, duration=1000, decision_window=1000, remaining_sec=0
+            epoch_num=11,
+            start=1000,
+            duration=1000,
+            decision_window=1000,
+            remaining_sec=0,
         )
     )
 
@@ -300,9 +318,13 @@ async def test_transition_from_epoch_10_to_11(
         user_address=patron_e11.address, patron_mode_enabled=True
     )
     await factories.uniqueness_quotients.create(user=patron_e11, epoch=11, score=20.0)
-    await factories.budgets.create(user=patron_e11, epoch=11, amount=150_000)  # Same as E10
+    await factories.budgets.create(
+        user=patron_e11, epoch=11, amount=150_000
+    )  # Same as E10
 
-    fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph_e11
+    fast_app.dependency_overrides[
+        get_epochs_subgraph
+    ] = lambda: mock_epochs_subgraph_e11
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 11
 
     async with fast_client as client:

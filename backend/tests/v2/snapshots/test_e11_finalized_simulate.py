@@ -88,7 +88,9 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
     # Create UQ scores
     await factories.uniqueness_quotients.create(user=alice_patron, epoch=11, score=20.0)
     await factories.uniqueness_quotients.create(user=bob_patron, epoch=11, score=20.0)
-    await factories.uniqueness_quotients.create(user=charlie_normal, epoch=11, score=20.0)
+    await factories.uniqueness_quotients.create(
+        user=charlie_normal, epoch=11, score=20.0
+    )
 
     # Create budgets
     # Patrons get budgets but donate everything automatically
@@ -106,7 +108,9 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
     )
 
     # Override dependencies
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: mock_pending_epoch_number
 
@@ -122,7 +126,9 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
         staking_reserved = int(result["stakingMatchedReservedForV2"])
 
         # Patron rewards = alice_budget + bob_budget = 100k + 50k = 150k
-        assert patron_rewards == 150_000, "Patron rewards should be sum of patron budgets"
+        assert (
+            patron_rewards == 150_000
+        ), "Patron rewards should be sum of patron budgets"
 
         # For E11: matched_rewards should equal patron_rewards (only patron rewards used for QF)
         assert (
@@ -135,7 +141,9 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
         # Leftover is calculated normally (unused matched rewards from QF)
         # Reserved staking is a separate value, not part of leftover
         leftover = int(result["leftover"])
-        assert leftover >= 0, "Leftover should exist (can be 0 if all matched rewards used)"
+        assert (
+            leftover >= 0
+        ), "Leftover should exist (can be 0 if all matched rewards used)"
 
         # Verify projects received QF matching from patron rewards only
         assert len(result["projectsRewards"]) > 0, "Projects should receive rewards"
@@ -158,12 +166,18 @@ async def test_e11_staking_portion_calculation_locked_ratio_below_ire(
     project_addresses = ["0x1234567890123456789012345678901234567890"]
 
     mock_projects_contracts = MagicMock()
-    mock_projects_contracts.get_project_addresses = AsyncMock(return_value=project_addresses)
+    mock_projects_contracts.get_project_addresses = AsyncMock(
+        return_value=project_addresses
+    )
 
     mock_epochs_subgraph = MagicMock()
     mock_epochs_subgraph.get_epoch_by_number = AsyncMock(
         return_value=EpochDetails(
-            epoch_num=11, start=1000, duration=1000, decision_window=1000, remaining_sec=0
+            epoch_num=11,
+            start=1000,
+            duration=1000,
+            decision_window=1000,
+            remaining_sec=0,
         )
     )
 
@@ -188,7 +202,9 @@ async def test_e11_staking_portion_calculation_locked_ratio_below_ire(
     await factories.uniqueness_quotients.create(user=patron, epoch=11, score=20.0)
     await factories.budgets.create(user=patron, epoch=11, amount=80_000)
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 11
 
@@ -221,12 +237,18 @@ async def test_e11_staking_portion_calculation_locked_ratio_at_tr(
     project_addresses = ["0x1234567890123456789012345678901234567890"]
 
     mock_projects_contracts = MagicMock()
-    mock_projects_contracts.get_project_addresses = AsyncMock(return_value=project_addresses)
+    mock_projects_contracts.get_project_addresses = AsyncMock(
+        return_value=project_addresses
+    )
 
     mock_epochs_subgraph = MagicMock()
     mock_epochs_subgraph.get_epoch_by_number = AsyncMock(
         return_value=EpochDetails(
-            epoch_num=11, start=1000, duration=1000, decision_window=1000, remaining_sec=0
+            epoch_num=11,
+            start=1000,
+            duration=1000,
+            decision_window=1000,
+            remaining_sec=0,
         )
     )
 
@@ -251,7 +273,9 @@ async def test_e11_staking_portion_calculation_locked_ratio_at_tr(
     await factories.uniqueness_quotients.create(user=patron, epoch=11, score=20.0)
     await factories.budgets.create(user=patron, epoch=11, amount=60_000)
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 11
 
@@ -284,12 +308,18 @@ async def test_e11_with_no_patrons(
     project_addresses = ["0x1234567890123456789012345678901234567890"]
 
     mock_projects_contracts = MagicMock()
-    mock_projects_contracts.get_project_addresses = AsyncMock(return_value=project_addresses)
+    mock_projects_contracts.get_project_addresses = AsyncMock(
+        return_value=project_addresses
+    )
 
     mock_epochs_subgraph = MagicMock()
     mock_epochs_subgraph.get_epoch_by_number = AsyncMock(
         return_value=EpochDetails(
-            epoch_num=11, start=1000, duration=1000, decision_window=1000, remaining_sec=0
+            epoch_num=11,
+            start=1000,
+            duration=1000,
+            decision_window=1000,
+            remaining_sec=0,
         )
     )
 
@@ -312,10 +342,16 @@ async def test_e11_with_no_patrons(
     await factories.budgets.create(user=alice, epoch=11, amount=100_000)
 
     await factories.allocations.create(
-        user=alice, epoch=11, nonce=1, amount=50_000, project_address=project_addresses[0]
+        user=alice,
+        epoch=11,
+        nonce=1,
+        amount=50_000,
+        project_address=project_addresses[0],
     )
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 11
 
@@ -340,7 +376,9 @@ async def test_e11_with_no_patrons(
         projects = result["projectsRewards"]
         if len(projects) > 0:
             for project in projects:
-                assert int(project["matched"]) == 0, "No QF matching without patron rewards"
+                assert (
+                    int(project["matched"]) == 0
+                ), "No QF matching without patron rewards"
 
 
 @pytest.mark.asyncio
@@ -356,7 +394,9 @@ async def test_standard_epoch_no_staking_reservation(
     project_addresses = ["0x1234567890123456789012345678901234567890"]
 
     mock_projects_contracts = MagicMock()
-    mock_projects_contracts.get_project_addresses = AsyncMock(return_value=project_addresses)
+    mock_projects_contracts.get_project_addresses = AsyncMock(
+        return_value=project_addresses
+    )
 
     mock_epochs_subgraph = MagicMock()
     mock_epochs_subgraph.get_epoch_by_number = AsyncMock(
@@ -390,7 +430,9 @@ async def test_standard_epoch_no_staking_reservation(
     await factories.uniqueness_quotients.create(user=patron, epoch=10, score=20.0)
     await factories.budgets.create(user=patron, epoch=10, amount=150_000)
 
-    fast_app.dependency_overrides[get_projects_contracts] = lambda: mock_projects_contracts
+    fast_app.dependency_overrides[
+        get_projects_contracts
+    ] = lambda: mock_projects_contracts
     fast_app.dependency_overrides[get_epochs_subgraph] = lambda: mock_epochs_subgraph
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 10
 
@@ -408,5 +450,7 @@ async def test_standard_epoch_no_staking_reservation(
         matched_rewards = int(result["matchedRewards"])
         patron_rewards = int(result["patronsRewards"])
         expected_matched = 200_000 + 150_000  # staking + patron
-        assert matched_rewards == expected_matched, "Standard epoch includes staking in matched rewards"
+        assert (
+            matched_rewards == expected_matched
+        ), "Standard epoch includes staking in matched rewards"
         assert patron_rewards == 150_000
