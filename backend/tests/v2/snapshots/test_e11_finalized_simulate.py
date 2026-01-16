@@ -6,6 +6,7 @@ E11 is a transitional epoch where the matching fund is split:
 - Patron rewards → Distributed via QF as usual
 """
 
+from datetime import datetime, timezone
 from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock
 
@@ -78,11 +79,12 @@ async def test_e11_simulate_finalized_snapshot_with_staking_reservation(
     charlie_normal = await factories.users.create()
 
     # Enable patron mode for alice and bob
-    await factories.patron_mode_events.create(
-        user_address=alice_patron.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=alice_patron, patron_mode_enabled=True, created_at=patron_created_at
     )
-    await factories.patron_mode_events.create(
-        user_address=bob_patron.address, patron_mode_enabled=True
+    await factories.patrons.create(
+        user=bob_patron, patron_mode_enabled=True, created_at=patron_created_at
     )
 
     # Create UQ scores
@@ -196,8 +198,9 @@ async def test_e11_staking_portion_calculation_locked_ratio_below_ire(
 
     # Create a patron user
     patron = await factories.users.create()
-    await factories.patron_mode_events.create(
-        user_address=patron.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron, patron_mode_enabled=True, created_at=patron_created_at
     )
     await factories.uniqueness_quotients.create(user=patron, epoch=11, score=20.0)
     await factories.budgets.create(user=patron, epoch=11, amount=80_000)
@@ -267,8 +270,9 @@ async def test_e11_staking_portion_calculation_locked_ratio_at_tr(
 
     # Create a patron user
     patron = await factories.users.create()
-    await factories.patron_mode_events.create(
-        user_address=patron.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron, patron_mode_enabled=True, created_at=patron_created_at
     )
     await factories.uniqueness_quotients.create(user=patron, epoch=11, score=20.0)
     await factories.budgets.create(user=patron, epoch=11, amount=60_000)
@@ -424,8 +428,9 @@ async def test_standard_epoch_no_staking_reservation(
 
     # Create patron user
     patron = await factories.users.create()
-    await factories.patron_mode_events.create(
-        user_address=patron.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron, patron_mode_enabled=True, created_at=patron_created_at
     )
     await factories.uniqueness_quotients.create(user=patron, epoch=10, score=20.0)
     await factories.budgets.create(user=patron, epoch=10, amount=150_000)

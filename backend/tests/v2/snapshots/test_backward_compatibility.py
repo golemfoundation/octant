@@ -4,6 +4,7 @@ Tests for backward compatibility with epochs 1-10.
 Ensures that E11 changes don't break existing epoch logic.
 """
 
+from datetime import datetime, timezone
 from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock
 
@@ -76,8 +77,9 @@ async def test_standard_epochs_work_unchanged(
     patron = await factories.users.create()
     normal_user = await factories.users.create()
 
-    await factories.patron_mode_events.create(
-        user_address=patron.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron, patron_mode_enabled=True, created_at=patron_created_at
     )
 
     await factories.uniqueness_quotients.create(
@@ -268,8 +270,9 @@ async def test_transition_from_epoch_10_to_11(
     )
 
     patron_e10 = await factories.users.create()
-    await factories.patron_mode_events.create(
-        user_address=patron_e10.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron_e10, patron_mode_enabled=True, created_at=patron_created_at
     )
     await factories.uniqueness_quotients.create(user=patron_e10, epoch=10, score=20.0)
     await factories.budgets.create(user=patron_e10, epoch=10, amount=150_000)
@@ -282,12 +285,11 @@ async def test_transition_from_epoch_10_to_11(
     ] = lambda: mock_epochs_subgraph_e10
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 10
 
-    async with fast_client as client:
-        resp_e10 = await client.get("snapshots/finalized/simulate")
-        result_e10 = resp_e10.json()
+    resp_e10 = await fast_client.get("snapshots/finalized/simulate")
+    result_e10 = resp_e10.json()
 
-        e10_staking_reserved = int(result_e10["stakingMatchedReservedForV2"])
-        e10_matched_rewards = int(result_e10["matchedRewards"])
+    e10_staking_reserved = int(result_e10["stakingMatchedReservedForV2"])
+    e10_matched_rewards = int(result_e10["matchedRewards"])
 
     # Now test E11 with IDENTICAL parameters
     mock_epochs_subgraph_e11 = MagicMock()
@@ -314,8 +316,9 @@ async def test_transition_from_epoch_10_to_11(
     )
 
     patron_e11 = await factories.users.create()
-    await factories.patron_mode_events.create(
-        user_address=patron_e11.address, patron_mode_enabled=True
+    patron_created_at = datetime.fromtimestamp(1000, tz=timezone.utc)
+    await factories.patrons.create(
+        user=patron_e11, patron_mode_enabled=True, created_at=patron_created_at
     )
     await factories.uniqueness_quotients.create(user=patron_e11, epoch=11, score=20.0)
     await factories.budgets.create(
@@ -327,12 +330,11 @@ async def test_transition_from_epoch_10_to_11(
     ] = lambda: mock_epochs_subgraph_e11
     fast_app.dependency_overrides[get_pending_epoch] = lambda: 11
 
-    async with fast_client as client:
-        resp_e11 = await client.get("snapshots/finalized/simulate")
-        result_e11 = resp_e11.json()
+    resp_e11 = await fast_client.get("snapshots/finalized/simulate")
+    result_e11 = resp_e11.json()
 
-        e11_staking_reserved = int(result_e11["stakingMatchedReservedForV2"])
-        e11_matched_rewards = int(result_e11["matchedRewards"])
+    e11_staking_reserved = int(result_e11["stakingMatchedReservedForV2"])
+    e11_matched_rewards = int(result_e11["matchedRewards"])
 
     # Verify the differences
     assert e10_staking_reserved == 0, "E10 should not reserve staking"
