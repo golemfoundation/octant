@@ -47,6 +47,11 @@ from v2.user_patron_mode.repositories import get_patrons_rewards
 # Epochs that reserve staking portion for v2 (not distributed via QF)
 EPOCHS_RESERVING_STAKING_FOR_V2 = {11}
 
+# Default percentage constants for matched rewards calculations
+DEFAULT_IRE_PERCENT = Decimal("0.35")
+DEFAULT_TR_PERCENT = Decimal("0.7")
+DEFAULT_MATCHED_REWARDS_PERCENT = Decimal("0.35")
+
 
 def should_reserve_staking_for_v2(epoch_number: int) -> bool:
     """
@@ -235,9 +240,9 @@ def _calculate_percentage_matched_rewards(
 def calculate_staking_matched_rewards(
     staking_proceeds: int,
     locked_ratio: Decimal,
-    ire_percent: Decimal = Decimal("0.35"),
-    tr_percent: Decimal = Decimal("0.7"),
-    matched_rewards_percent: Decimal = Decimal("0.35"),
+    ire_percent: Decimal = DEFAULT_IRE_PERCENT,
+    tr_percent: Decimal = DEFAULT_TR_PERCENT,
+    matched_rewards_percent: Decimal = DEFAULT_MATCHED_REWARDS_PERCENT,
 ) -> int:
     """
     Calculate ONLY the staking portion of matched rewards (Golem Foundation contribution).

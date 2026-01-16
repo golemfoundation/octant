@@ -7,8 +7,6 @@ that is reserved for v2 (excluding patron rewards).
 
 from decimal import Decimal
 
-import pytest
-
 from v2.matched_rewards.services import calculate_staking_matched_rewards
 
 

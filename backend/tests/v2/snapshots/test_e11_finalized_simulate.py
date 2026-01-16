@@ -7,7 +7,7 @@ E11 is a transitional epoch where the matching fund is split:
 """
 
 from http import HTTPStatus
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from fastapi import FastAPI
