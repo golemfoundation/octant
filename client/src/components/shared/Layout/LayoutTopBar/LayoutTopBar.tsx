@@ -228,6 +228,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             onClick={() => setIsModalMigrateOpen(true)}
             variant="cta"
           >
+            <div className={styles.dot} />
             {t('migration.topBar.buttonMigrate')}
           </Button>
           <Button
