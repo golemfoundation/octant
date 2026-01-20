@@ -313,17 +313,20 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
       });
     }
 
-    if (
-      !userAllocations?.hasUserAlreadyDoneAllocation &&
-      uqScore === UQ_MULTIPLIER_FOR_USERS_BELOW_THRESHOLD_FOR_LEVERAGE_1 &&
-      !isProceedingToAllocateWithLowUQScore
-    ) {
-      setShowLowUQScoreModal(true);
-      return;
-    }
+    // In migration mode there is no timeout list, but just for sure -- skip low uq logic.
+    if (!isInMigrationMode) {
+      if (
+        !userAllocations?.hasUserAlreadyDoneAllocation &&
+        uqScore === UQ_MULTIPLIER_FOR_USERS_BELOW_THRESHOLD_FOR_LEVERAGE_1 &&
+        !isProceedingToAllocateWithLowUQScore
+      ) {
+        setShowLowUQScoreModal(true);
+        return;
+      }
 
-    if (isProceedingToAllocateWithLowUQScore) {
-      setShowLowUQScoreModal(false);
+      if (isProceedingToAllocateWithLowUQScore) {
+        setShowLowUQScoreModal(false);
+      }
     }
 
     // this condition must always be last due to ModalAllocationLowUqScore
