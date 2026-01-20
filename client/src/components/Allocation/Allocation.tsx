@@ -22,6 +22,7 @@ import { UQ_MULTIPLIER_FOR_USERS_BELOW_THRESHOLD_FOR_LEVERAGE_1 } from 'constant
 import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
@@ -64,6 +65,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
+  const isInMigrationMode = useIsMigrationMode();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
     useState(false);
@@ -602,7 +604,9 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
 
   return (
     <div className={styles.root} data-test={dataTestRoot}>
-      <div className={styles.title}>{t('allocationList')}</div>
+      <div className={styles.title}>
+        {t(isInMigrationMode ? 'migration.title' : 'allocationList')}
+      </div>
       <div
         ref={boxesWrapperRef}
         className={cx(
@@ -611,6 +615,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
           isDesktop && allocations.length && styles.withPaddingBottom,
         )}
       >
+        {isInMigrationMode && <div className={styles.note}>{t('migration.note')}</div>}
         {!isEpoch1 && (
           <AllocationRewardsBox
             isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}

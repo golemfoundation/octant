@@ -7,6 +7,14 @@
   margin: 0 auto;
   @include layoutMaxWidth();
 
+  @media #{$tablet-down} {
+    justify-content: space-between;
+  }
+
+  .buttons {
+    display: flex;
+  }
+
   .logoWrapper {
     position: relative;
     height: 4rem;
@@ -135,7 +143,7 @@
     .buttonWalletArrow {
       margin: 1.1rem;
       path {
-        stroke: $color-white;
+        stroke: $color-black;
       }
     }
 
@@ -143,6 +151,10 @@
       justify-content: center;
       padding: 0;
     }
+  }
+
+  .buttonMigrate {
+    margin-right: 1.6rem;
   }
 
   .settingsButton,
@@ -261,4 +273,9 @@
       }
     }
   }
+}
+
+.calendar {
+  max-width: 35rem;
+  margin-bottom: 2.4rem;
 }

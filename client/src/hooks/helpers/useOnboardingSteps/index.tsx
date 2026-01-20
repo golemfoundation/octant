@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Step } from 'components/shared/ModalOnboarding/types';
 import ModalOnboardingTOS from 'components/shared/ModalOnboardingTOS';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -16,6 +17,7 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: isUserTOSAccepted } = useUserTOS();
+  const isInMigrationMode = useIsMigrationMode();
   const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
     useState(false);
 
@@ -62,14 +64,17 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
           },
         ]
       : []),
-    ...(isDecisionWindowOpen
-      ? getStepsDecisionWindowOpen(
-          epoch?.toString() ?? '',
-          (epoch! + 1)?.toString() ?? '',
-          changeAWDate,
-          timeCurrentEpochEndFormatted,
-        )
-      : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
+    // eslint-disable-next-line no-nested-ternary
+    ...(!isInMigrationMode
+      ? isDecisionWindowOpen
+        ? getStepsDecisionWindowOpen(
+            epoch?.toString() ?? '',
+            (epoch! + 1)?.toString() ?? '',
+            changeAWDate,
+            timeCurrentEpochEndFormatted,
+          )
+        : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)
+      : []),
   ];
 };
 

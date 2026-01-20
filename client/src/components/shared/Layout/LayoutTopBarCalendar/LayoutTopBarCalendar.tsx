@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { differenceInMinutes } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +9,7 @@ import Calendar from 'components/shared/Layout/LayoutTopBarCalendar/Calendar';
 import Modal from 'components/ui/Modal';
 import Svg from 'components/ui/Svg';
 import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -16,8 +17,9 @@ import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import { calendar } from 'svg/misc';
 
 import styles from './LayoutTopBarCalendar.module.scss';
+import LayoutTopBarCalendarProps from './types';
 
-const LayoutTopBarCalendar = (): ReactElement => {
+const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const dataTestRoot = 'LayoutTopBarCalendar';
   const { isMobile } = useMediaQuery();
@@ -25,6 +27,7 @@ const LayoutTopBarCalendar = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
     useEpochsStartEndTime();
+  const isInMigrationMode = useIsMigrationMode();
   const [durationToChangeAWInMinutes, setDurationToChangeAWInMinutes] = useState(0);
   const [showAWAlert, setShowAWAlert] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -124,13 +127,18 @@ const LayoutTopBarCalendar = (): ReactElement => {
   return (
     <>
       <div
-        className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
+        className={cx(
+          styles.allocationInfo,
+          isInMigrationMode && styles.isInMigrationMode,
+          showAWAlert && styles.showAWAlert,
+          className,
+        )}
         data-test={dataTestRoot}
         id={TOURGUIDE_ELEMENT_2}
-        onClick={() => setIsCalendarOpen(true)}
+        onClick={isInMigrationMode ? () => {} : () => setIsCalendarOpen(true)}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
-        {allocationInfoText}
+        {isInMigrationMode ? t('migration.calendar.text') : allocationInfoText}
       </div>
       {createPortal(
         <AnimatePresence>

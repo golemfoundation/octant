@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import Allocation from 'components/Allocation';
+import ModalMigration from 'components/Home/ModalMigration';
 import Settings from 'components/Settings';
 import LayoutTopBarCalendar from 'components/shared/Layout/LayoutTopBarCalendar';
 import Button from 'components/ui/Button';
@@ -63,6 +64,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     allocations: state.data.allocations,
   }));
   const [isCloseButtonExpanded, setIsCloseButtonExpanded] = useState(true);
+  const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
 
   const allocationsPrevRef = useRef(allocations);
 
@@ -160,160 +162,181 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   }, [isCloseButtonExpanded]);
 
   return (
-    <div className={cx(styles.root, className)} data-test={dataTestRoot}>
-      <div className={styles.logoWrapper}>
-        <Svg
-          classNameSvg={cx(styles.octantLogo, isTestnet && styles.isTestnet)}
-          dataTest={`${dataTestRoot}__Logo`}
-          img={octant}
-          onClick={onLogoClick}
-          size={4}
-        />
-        {isTestnet && (
-          <TinyLabel
-            className={styles.testnetIndicator}
-            dataTest={`${dataTestRoot}__Logo__testnetIndicator`}
+    <>
+      <div className={cx(styles.root, className)} data-test={dataTestRoot}>
+        <div className={styles.logoWrapper}>
+          <Svg
+            classNameSvg={cx(styles.octantLogo, isTestnet && styles.isTestnet)}
+            dataTest={`${dataTestRoot}__Logo`}
+            img={octant}
             onClick={onLogoClick}
-            text={networkConfig.name}
-            textClassName={styles.testnetIndicatorText}
+            size={4}
           />
+          {isTestnet && (
+            <TinyLabel
+              className={styles.testnetIndicator}
+              dataTest={`${dataTestRoot}__Logo__testnetIndicator`}
+              onClick={onLogoClick}
+              text={networkConfig.name}
+              textClassName={styles.testnetIndicatorText}
+            />
+          )}
+        </div>
+        {isDesktop && (
+          <div className={styles.links} data-test={`${dataTestRoot}__links`}>
+            {tabs.map(({ label, to, isActive, isDisabled, key }) => (
+              <div
+                key={key}
+                className={cx(
+                  styles.link,
+                  isActive && styles.isActive,
+                  isTestnet && styles.isTestnet,
+                )}
+                data-test={`${dataTestRoot}__link--${key}`}
+                onClick={
+                  isDisabled && to
+                    ? () => {}
+                    : () => {
+                        if (pathname === ROOT_ROUTES.projects.absolute) {
+                          window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
+                        }
+                        navigate(to);
+                      }
+                }
+              >
+                {label}
+                {isActive ? (
+                  <div className={styles.underlineWrapper}>
+                    <motion.div
+                      animate={{ opacity: 1 }}
+                      className={styles.underline}
+                      data-test={`${dataTestRoot}__underline--${key}`}
+                      initial={{ opacity: 0 }}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
+        {isDesktop && <LayoutTopBarCalendar />}
+        <div className={styles.buttons}>
+          <Button
+            className={styles.buttonMigrate}
+            dataTest={`${dataTestRoot}__ButtonMigrate`}
+            isDisabled={!isConnected}
+            onClick={() => setIsModalMigrateOpen(true)}
+            variant="cta"
+          >
+            {t('migration.topBar.buttonMigrate')}
+          </Button>
+          <Button
+            className={cx(
+              styles.buttonWallet,
+              !isConnected && styles.isConnectButton,
+              isPatronMode && styles.isPatronMode,
+              isProjectAdminMode && styles.isProjectAdminMode,
+            )}
+            dataTest={`${dataTestRoot}__Button`}
+            onClick={() =>
+              isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
+            }
+            variant="secondary"
+          >
+            {buttonWalletText}
+            {isConnected && (
+              <Svg classNameSvg={styles.buttonWalletArrow} img={chevronBottom} size={1} />
+            )}
+          </Button>
+        </div>
+        {isDesktop && (
+          <Fragment>
+            <div
+              className={cx(styles.settingsButton, isTestnet && styles.isTestnet)}
+              data-test={`${dataTestRoot}__settingsButton`}
+              onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
+            >
+              <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
+            </div>
+            {!(isProjectAdminMode || isPatronMode) && (
+              <div
+                className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
+                data-test={`${dataTestRoot}__allocationButton`}
+                id={TOURGUIDE_ELEMENT_3}
+                onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
+              >
+                <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
+                {allocations.length > 0 && (
+                  <div
+                    ref={scope}
+                    className={styles.numberOfAllocations}
+                    data-test={`${dataTestRoot}__numberOfAllocations`}
+                  >
+                    {allocations.length}
+                  </div>
+                )}
+              </div>
+            )}
+          </Fragment>
+        )}
+        {isDesktop && (
+          <>
+            <Drawer
+              dataTest="SettingsDrawer"
+              isOpen={isSettingsDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
+              onClose={() => setIsSettingsDrawerOpen(false)}
+            >
+              <Settings />
+            </Drawer>
+            {!(isPatronMode || isProjectAdminMode) && (
+              <Drawer
+                CustomCloseButton={
+                  <div
+                    ref={closeButtonRef}
+                    className={cx(
+                      styles.customCloseButton,
+                      isCloseButtonExpanded && styles.isCloseButtonExpanded,
+                    )}
+                    data-test="AllocationDrawer__closeButton"
+                    onClick={() => setIsAllocationDrawerOpen(false)}
+                  >
+                    <AnimatePresence>
+                      {isCloseButtonExpanded && (
+                        <motion.div
+                          animate={{ opacity: 1 }}
+                          className={styles.customCloseButtonText}
+                          exit={{ opacity: 0 }}
+                          initial={{ opacity: 0 }}
+                          transition={{ delay: 0.25 }}
+                        >
+                          {t('closeDrawerWithArrow')}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <Svg classNameSvg={styles.customCloseButtonSvg} img={cross} size={1} />
+                  </div>
+                }
+                dataTest="AllocationDrawer"
+                isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
+                onClose={() => setIsAllocationDrawerOpen(false)}
+                onMouseLeave={() => setIsCloseButtonExpanded(false)}
+                onMouseOver={() => setIsCloseButtonExpanded(true)}
+              >
+                <Allocation />
+              </Drawer>
+            )}
+          </>
         )}
       </div>
-      {isDesktop && (
-        <div className={styles.links} data-test={`${dataTestRoot}__links`}>
-          {tabs.map(({ label, to, isActive, isDisabled, key }) => (
-            <div
-              key={key}
-              className={cx(
-                styles.link,
-                isActive && styles.isActive,
-                isTestnet && styles.isTestnet,
-              )}
-              data-test={`${dataTestRoot}__link--${key}`}
-              onClick={
-                isDisabled && to
-                  ? () => {}
-                  : () => {
-                      if (pathname === ROOT_ROUTES.projects.absolute) {
-                        window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
-                      }
-                      navigate(to);
-                    }
-              }
-            >
-              {label}
-              {isActive ? (
-                <div className={styles.underlineWrapper}>
-                  <motion.div
-                    animate={{ opacity: 1 }}
-                    className={styles.underline}
-                    data-test={`${dataTestRoot}__underline--${key}`}
-                    initial={{ opacity: 0 }}
-                  />
-                </div>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      )}
-      <LayoutTopBarCalendar />
-      <Button
-        className={cx(
-          styles.buttonWallet,
-          !isConnected && styles.isConnectButton,
-          isPatronMode && styles.isPatronMode,
-          isProjectAdminMode && styles.isProjectAdminMode,
-        )}
-        dataTest={`${dataTestRoot}__Button`}
-        onClick={() =>
-          isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
-        }
-        variant="cta"
-      >
-        {buttonWalletText}
-        {isConnected && (
-          <Svg classNameSvg={styles.buttonWalletArrow} img={chevronBottom} size={1} />
-        )}
-      </Button>
-      {isDesktop && (
-        <Fragment>
-          <div
-            className={cx(styles.settingsButton, isTestnet && styles.isTestnet)}
-            data-test={`${dataTestRoot}__settingsButton`}
-            onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
-          >
-            <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
-          </div>
-          {!(isProjectAdminMode || isPatronMode) && (
-            <div
-              className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
-              data-test={`${dataTestRoot}__allocationButton`}
-              id={TOURGUIDE_ELEMENT_3}
-              onClick={() => setIsAllocationDrawerOpen(!isAllocationDrawerOpen)}
-            >
-              <Svg classNameSvg={styles.allocateButtonIcon} img={allocate} size={2} />
-              {allocations.length > 0 && (
-                <div
-                  ref={scope}
-                  className={styles.numberOfAllocations}
-                  data-test={`${dataTestRoot}__numberOfAllocations`}
-                >
-                  {allocations.length}
-                </div>
-              )}
-            </div>
-          )}
-        </Fragment>
-      )}
-      {isDesktop && (
-        <>
-          <Drawer
-            dataTest="SettingsDrawer"
-            isOpen={isSettingsDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
-            onClose={() => setIsSettingsDrawerOpen(false)}
-          >
-            <Settings />
-          </Drawer>
-          {!(isPatronMode || isProjectAdminMode) && (
-            <Drawer
-              CustomCloseButton={
-                <div
-                  ref={closeButtonRef}
-                  className={cx(
-                    styles.customCloseButton,
-                    isCloseButtonExpanded && styles.isCloseButtonExpanded,
-                  )}
-                  data-test="AllocationDrawer__closeButton"
-                  onClick={() => setIsAllocationDrawerOpen(false)}
-                >
-                  <AnimatePresence>
-                    {isCloseButtonExpanded && (
-                      <motion.div
-                        animate={{ opacity: 1 }}
-                        className={styles.customCloseButtonText}
-                        exit={{ opacity: 0 }}
-                        initial={{ opacity: 0 }}
-                        transition={{ delay: 0.25 }}
-                      >
-                        {t('closeDrawerWithArrow')}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  <Svg classNameSvg={styles.customCloseButtonSvg} img={cross} size={1} />
-                </div>
-              }
-              dataTest="AllocationDrawer"
-              isOpen={isAllocationDrawerOpen && !isTimeoutListPresenceModalOpen?.value}
-              onClose={() => setIsAllocationDrawerOpen(false)}
-              onMouseLeave={() => setIsCloseButtonExpanded(false)}
-              onMouseOver={() => setIsCloseButtonExpanded(true)}
-            >
-              <Allocation />
-            </Drawer>
-          )}
-        </>
-      )}
-    </div>
+      {!isDesktop && <LayoutTopBarCalendar className={styles.calendar} />}
+      <ModalMigration
+        modalProps={{
+          dataTest: 'ModalMigration',
+          isOpen: isModalMigrateOpen,
+          onClosePanel: () => setIsModalMigrateOpen(false),
+        }}
+      />
+    </>
   );
 };
 

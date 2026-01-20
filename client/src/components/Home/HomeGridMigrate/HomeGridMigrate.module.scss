@@ -1,14 +1,15 @@
 .root {
-  display: flex;
-  flex-direction: column;
+  @include homeGridMigrateRoot();
   padding: 1.4rem 2.4rem 2.4rem;
-
-  &.isMigration {
-    @include homeGridMigrateRoot();
-  }
 
   @media #{$tablet-up} {
     padding-top: 0.8rem;
+  }
+
+  .text {
+    font-size: $font-size-14;
+    font-weight: $font-weight-semibold;
+    color: $color-octant-grey5;
   }
 
   .divider {

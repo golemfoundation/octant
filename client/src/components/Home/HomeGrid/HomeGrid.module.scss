@@ -1,5 +1,9 @@
 .gridTile {
   height: 32.8rem;
+
+  &.isHigher {
+    height: 42rem;
+  }
 }
 
 .transactions {
@@ -89,6 +93,18 @@
       order: 2;
       grid-column: span 4;
     }
+  }
+}
+
+.glmLockMigration {
+  grid-column: span 1;
+
+  @media #{$tablet-up} {
+    grid-column: span 2;
+  }
+
+  @media #{$desktop-up} {
+    grid-column: span 3;
   }
 }
 

@@ -10,8 +10,12 @@
   background: $color-octant-green9;
   color: $color-octant-green;
   border-radius: $border-radius-16;
-  cursor: pointer;
   border: 0.2rem solid transparent;
+  user-select: none;
+
+  &:not(.isInMigrationMode) {
+    cursor: pointer;
+  }
 
   &:hover {
     border-color: $color-octant-green10;
@@ -21,7 +25,7 @@
     margin-right: 1.2rem;
   }
 
-  &.showAWAlert {
+  &.showAWAlert:not(.isInMigrationMode) {
     background: $color-octant-orange8;
     color: $color-octant-orange;
 

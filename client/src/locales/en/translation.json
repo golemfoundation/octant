@@ -59,6 +59,24 @@
     "update": "Update"
   },
   "components": {
+    "migrationModal":  {
+      "steps": {
+        "step1": {
+          "title": "Octant is evolving",
+          "text": "Octant v2 is now live.<br /><br />We've redesigned the protocol to support new features, future epochs, and a more scalable system.<br /><br />To continue using Octant, your account needs to be migrated to the new version.<br /><br />This is one-time transition an only takes a moment"
+        },
+        "step2": {
+          "title": "Migrate your account to Octant  v2",
+          "text": "To access Octant v2 and participate in future epochs, you'll need to complete a short migration.<br /><br />During this step, you'll be asked to confirm transaction in your wallet. Once completed, your account will be ready and you won't need to do this again"
+        }
+      },
+      "sablierText": "You have Sablier streams. Click here to check them",
+      "buttons": {
+        "ok": "OK",
+        "later": "I'll do it later",
+        "startMigration": "Start migration"
+      }
+    },
     "allocation": {
       "emptyState": "Lock 100 GLM or more to earn rewards, then allocate some<br />to support projects within the Allocation Window.<br /><0>View projects ↗</0>",
       "emptyStateAWOpen": "Visit the <0>Projects view</0> to add your favourite projects<br/> so you can donate rewards to them here",
@@ -87,6 +105,10 @@
         "standard": "{{sum}} / {{threshold}}",
         "simulate": "Your impact {{value}}",
         "simulateLoading": "Calculating..."
+      },
+      "migration": {
+        "title": "Donate to Protocol Guild",
+        "note": "In this Epoch, donations are not matched, as the matching fund is reserved for future rounds on v2. Protocol Guild will only receive your IR."
       }
     },
     "shared": {
@@ -108,6 +130,11 @@
       "homeGridVideoBar": {
         "learnHowToUseOctant": "Learn how to use Octant",
         "closeVideoWithArrow": "Close video ->"
+      },
+      "homeGridMigrate": {
+        "title": "Migrate to v2",
+        "text": "Start migration to access all features. This is a one-time action and takes less than a minute.",
+        "buttonLabel": "Migrate"
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
@@ -131,6 +158,10 @@
           "tooltipWinningRow": "{{value}} GLM locked in Sablier until {{date}}",
           "tooltipStreamCancelled": "Your Sablier stream was canceled due to your inactivity in the last allocation window. If you believe this is a mistake, please open a help ticket on Discord.",
           "tooltipCurrentBalanceRow": "{{value}} your locked balance"
+        },
+        "migration": {
+          "buttonLabel": "You have GLM locked. Click here to unlock without migration",
+          "sablierStreams": "You have Sablier streams. Click here to check them"
         }
       },
       "homeGridPersonalAllocation": {
@@ -141,6 +172,16 @@
           "withdrawETH": "Withdraw ETH",
           "estimatedGasPrice": "Est. gas price",
           "withdrawAll": "Withdraw all"
+        },
+        "migration": {
+          "text": "Withdraw Rewards"
+        }
+      },
+      "homeGridAllocate": {
+        "title": "Individual Rewards",
+        "button": {
+          "beforeAllocation": "Allocate",
+          "afterAllocation": "Change Allocation"
         }
       },
       "homeGridUQScore": {
@@ -330,6 +371,9 @@
               }
             }
           }
+        },
+        "migration": {
+          "buttonLabel": "Unlock all"
         }
       },
       "modalConnectWallet": {
@@ -395,7 +439,15 @@
       "minutes_one": "minute",
       "minutes_other": "minutes",
       "minutesShort": "min",
-      "calendar": "Calendar"
+      "calendar": "Calendar",
+      "migration":  {
+        "calendar": {
+          "text": "Epochs are Dead! Time to Migrate to v2!"
+        },
+        "topBar": {
+          "buttonMigrate": "Migrate to v2"
+        }
+      }
     },
     "footer": {
       "newsletterText": "Get PGF news and updates from Octant. No spam, ever",
@@ -427,6 +479,7 @@
   "views": {
     "home": {
       "title": {
+        "migration": "Welcome to Octant Migration Hub",
         "isDecisionWindowOpenFalse": "Welcome to Epoch {{epoch}}",
         "isDecisionWindowOpenTrue": {
           "desktop": "Welcome to Epoch {{epoch}} allocation window",
@@ -590,7 +643,10 @@
       "enablePatronMode": "Enable patron mode",
       "patronModeTooltip": "Automatically allocate all of your rewards across all projects for each epoch.",
       "docs": "Docs",
-      "language": "Language"
+      "language": "Language",
+      "migration": {
+        "title": "Migration to v2"
+      }
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
