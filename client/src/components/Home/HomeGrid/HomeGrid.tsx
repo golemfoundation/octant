@@ -46,7 +46,7 @@ const HomeGrid = (): ReactElement => {
     (isPatronMode && !showHelpVideos && (isLargeDesktop || isTablet));
 
   return (
-    <Grid dataTest={dataTestRoot}>
+    <Grid dataTest={dataTestRoot} isFourInARowEnabled={false}>
       {isInMigrationMode && <HomeGridAllocate className={cx(styles.gridTile, styles.isHigher)} />}
       {!isProjectAdminMode && !isInMigrationMode && (
         <HomeGridCurrentGlmLock className={styles.gridTile} />

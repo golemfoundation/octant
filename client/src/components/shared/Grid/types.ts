@@ -4,4 +4,5 @@ export default interface GridProps {
   children: ReactNode;
   className?: string;
   dataTest?: string;
+  isFourInARowEnabled?: boolean;
 }
