@@ -120,7 +120,7 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
         <Button
           className={styles.button}
           dataTest="HomeGridAllocate__Button"
-          isDisabled={!isConnected || isFetching}
+          isDisabled={!isConnected || isFetching || !isDecisionWindowOpen}
           isHigh
           onClick={() => {
             setIsAllocationDrawerOpen(true);
