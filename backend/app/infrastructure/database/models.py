@@ -132,6 +132,13 @@ class FinalizedEpochSnapshot(BaseModel):
     leftover = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
+    staking_matched_reserved_for_v2 = Column(
+        db.String,
+        nullable=False,
+        default="0",
+        server_default="0",
+        comment="Staking portion of matched rewards reserved for future v2 rounds (wei)",
+    )
 
 
 class Deposit(BaseModel):

@@ -114,5 +114,8 @@ async def save_finalized_snapshot(
         patrons_rewards=str(finalized_snapshot.patrons_rewards),
         leftover=str(finalized_snapshot.leftover),
         total_withdrawals=str(finalized_snapshot.total_withdrawals),
+        staking_matched_reserved_for_v2=str(
+            finalized_snapshot.staking_matched_reserved_for_v2
+        ),
     )
     session.add(snapshot)

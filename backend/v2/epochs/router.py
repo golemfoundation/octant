@@ -213,7 +213,7 @@ async def get_epoch_stats_v1(
     # FUTURE EPOCH
     if epoch_number > current_epoch_number:
         return await get_epoch_info_future(
-            epochs_contracts, glm_contracts, deposits_settings
+            epochs_contracts, glm_contracts, deposits_settings, epoch_number
         )
 
     # CURRENT EPOCH

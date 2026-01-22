@@ -36,6 +36,11 @@ jobs:
         path: __local
         ref: ${{ inputs.git-ref }}
 
+    - name: Set DOCKER_CONFIG
+      run: |
+        echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.SERVICE }}" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Login to Docker registry
       uses: docker/login-action@v3
       with:
@@ -87,6 +92,11 @@ jobs:
       with:
         path: __local
         ref: ${{ inputs.git-ref }}
+
+    - name: Set DOCKER_CONFIG
+      run: |
+        echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${GITHUB_JOB}" >> "$GITHUB_ENV"
+      shell: bash
 
     - name: Login to Docker registry
       uses: docker/login-action@v3
