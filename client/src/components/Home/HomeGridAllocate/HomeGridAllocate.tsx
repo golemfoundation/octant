@@ -125,10 +125,10 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
               ? // ? allocations!.includes(projectsEpoch.projectsAddresses[0])
                 allocations!.includes('0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79')
               : false;
+
             setIsAllocationDrawerOpen(true);
-            console.log({ projectsEpoch, isAddedToAllocate });
+
             if (projectsEpoch !== undefined && !isAddedToAllocate) {
-              console.log(1);
               // onAddRemoveFromAllocate(projectsEpoch.projectsAddresses[0]);
               // Protocol Guild address
               onAddRemoveFromAllocate('0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79');
