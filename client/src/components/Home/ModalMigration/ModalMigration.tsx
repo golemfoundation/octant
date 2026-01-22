@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import Button from 'components/ui/Button';
@@ -16,6 +16,12 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
     keyPrefix: 'components.migrationModal',
   });
   const [currentStep, setCurrentStep] = useState<0 | 1>(0);
+
+  useEffect(() => {
+    if (!modalProps.isOpen) {
+      setCurrentStep(0);
+    }
+  }, [modalProps.isOpen]);
 
   const { data: userSablierStreams } = useUserSablierStreams();
 
