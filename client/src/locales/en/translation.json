@@ -63,7 +63,7 @@
       "steps": {
         "step1": {
           "title": "Octant is evolving",
-          "text": "Octant v2 is now live.<br /><br />We've redesigned the protocol to support new features, future epochs, and a more scalable system.<br /><br />To continue using Octant, your account needs to be migrated to the new version.<br /><br />This is one-time transition an only takes a moment"
+          "text": "Octant v2 is now live.<br /><br />We've redesigned the protocol to support new features, future epochs, and a more scalable system.<br /><br />To continue using Octant, your account needs to be migrated to the new version.<br /><br />This is one-time transition, and only takes a moment"
         },
         "step2": {
           "title": "Migrate your account to Octant  v2",
