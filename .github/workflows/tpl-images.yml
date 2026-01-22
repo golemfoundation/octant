@@ -18,8 +18,6 @@ jobs:
     name: Build Docker Image
     runs-on:
       - general
-    env:
-      DOCKER_CONFIG: ${{ runner.temp }}/docker-config-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.SERVICE }}
     strategy:
       matrix:
         SERVICE:
@@ -37,6 +35,11 @@ jobs:
         # see: https://github.com/actions/checkout/issues/211
         path: __local
         ref: ${{ inputs.git-ref }}
+
+    - name: Set DOCKER_CONFIG
+      run: |
+        echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.SERVICE }}" >> "$GITHUB_ENV"
+      shell: bash
 
     - name: Login to Docker registry
       uses: docker/login-action@v3
@@ -84,13 +87,16 @@ jobs:
       - build-images
     runs-on:
       - general
-    env:
-      DOCKER_CONFIG: ${{ runner.temp }}/docker-config-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
     steps:
     - uses: actions/checkout@v4
       with:
         path: __local
         ref: ${{ inputs.git-ref }}
+
+    - name: Set DOCKER_CONFIG
+      run: |
+        echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${GITHUB_JOB}" >> "$GITHUB_ENV"
+      shell: bash
 
     - name: Login to Docker registry
       uses: docker/login-action@v3
