@@ -18,6 +18,8 @@ jobs:
     name: Build Docker Image
     runs-on:
       - general
+    env:
+      DOCKER_CONFIG: ${{ runner.temp }}/docker-config-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.SERVICE }}
     strategy:
       matrix:
         SERVICE:
@@ -82,6 +84,8 @@ jobs:
       - build-images
     runs-on:
       - general
+    env:
+      DOCKER_CONFIG: ${{ runner.temp }}/docker-config-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
     steps:
     - uses: actions/checkout@v4
       with:
