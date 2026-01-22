@@ -3,6 +3,6 @@
 export default function useIsMigrationMode(): boolean {
   // const { data: currentEpoch } = useCurrentEpoch();
 
-  return true;
+  return localStorage.getItem('DEBUG_MIGRATION_MODE_OFF') !== 'true';
   // return !!currentEpoch && currentEpoch > 10;
 }

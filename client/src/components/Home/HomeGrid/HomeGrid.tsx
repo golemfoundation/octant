@@ -48,7 +48,7 @@ const HomeGrid = (): ReactElement => {
   return (
     <Grid dataTest={dataTestRoot} isFourInARowEnabled={false}>
       {isInMigrationMode && <HomeGridAllocate className={cx(styles.gridTile, styles.isHigher)} />}
-      {(localStorage.getItem('DEBUG_SHOW_LOCK') === 'true' || (!isProjectAdminMode && !isInMigrationMode)) && (
+      {!isProjectAdminMode && !isInMigrationMode && (
         <HomeGridCurrentGlmLock className={styles.gridTile} />
       )}
       {!isPatronMode &&
