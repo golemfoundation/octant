@@ -44,6 +44,33 @@ from v2.epochs.subgraphs import EpochsSubgraph
 from v2.user_patron_mode.repositories import get_patrons_rewards
 
 
+# Epochs that reserve staking portion for v2 (not distributed via QF)
+EPOCHS_RESERVING_STAKING_FOR_V2 = {11}
+
+# Default percentage constants for matched rewards calculations
+DEFAULT_IRE_PERCENT = Decimal("0.35")
+DEFAULT_TR_PERCENT = Decimal("0.7")
+DEFAULT_MATCHED_REWARDS_PERCENT = Decimal("0.35")
+
+
+def should_reserve_staking_for_v2(epoch_number: int) -> bool:
+    """
+    Check if this epoch should reserve staking portion for v2.
+
+    For epochs in EPOCHS_RESERVING_STAKING_FOR_V2:
+    - Staking matched portion is reserved (not distributed via QF)
+    - Only patron rewards are used for QF distribution
+    - Reserved staking can be transferred to multisig for v2
+
+    Args:
+        epoch_number: The epoch number to check
+
+    Returns:
+        bool: True if the epoch reserves staking for v2, False otherwise
+    """
+    return epoch_number in EPOCHS_RESERVING_STAKING_FOR_V2
+
+
 @dataclass
 class MatchedRewardsEstimator:
     """
@@ -208,3 +235,48 @@ def _calculate_percentage_matched_rewards(
         return int((tr_percent - locked_ratio) * staking_proceeds + patrons_rewards)
 
     return patrons_rewards
+
+
+def calculate_staking_matched_rewards(
+    staking_proceeds: int,
+    locked_ratio: Decimal,
+    ire_percent: Decimal = DEFAULT_IRE_PERCENT,
+    tr_percent: Decimal = DEFAULT_TR_PERCENT,
+    matched_rewards_percent: Decimal = DEFAULT_MATCHED_REWARDS_PERCENT,
+) -> int:
+    """
+    Calculate ONLY the staking portion of matched rewards (Golem Foundation contribution).
+
+    This function calculates the staking matched rewards that come from staking proceeds,
+    excluding patron rewards. This is used for epochs that reserve the staking portion
+    for future v2 rounds instead of distributing it via quadratic funding.
+
+    The calculation follows three strategies based on the locked ratio:
+    1. If locked_ratio < ire_percent:
+       - Full staking matched rewards (matched_rewards_percent * staking_proceeds)
+    2. If ire_percent <= locked_ratio < tr_percent:
+       - Partial staking matched rewards ((tr_percent - locked_ratio) * staking_proceeds)
+    3. If locked_ratio >= tr_percent:
+       - No staking contribution (0)
+
+    Args:
+        staking_proceeds: Total staking proceeds for the epoch
+        locked_ratio: Current ratio of locked tokens to total supply
+        ire_percent: Initial Rewards threshold (default: 0.35)
+        tr_percent: Total Rewards threshold (default: 0.7)
+        matched_rewards_percent: Base percentage for matched rewards (default: 0.35)
+
+    Returns:
+        int: Staking matched portion in wei (excludes patron rewards)
+
+    Note:
+        - This returns only the staking component, not the total matched rewards
+        - Patron rewards are NOT included in this calculation
+        - Used for E11+ epochs that reserve staking for v2
+    """
+    if locked_ratio < ire_percent:
+        return int(matched_rewards_percent * staking_proceeds)
+    elif ire_percent <= locked_ratio < tr_percent:
+        return int((tr_percent - locked_ratio) * staking_proceeds)
+    else:  # locked_ratio >= tr_percent
+        return 0  # No staking contribution, only patron rewards would be available

@@ -71,3 +71,10 @@ class FinalizedSnapshotResponseV1(OctantModel):
     total_withdrawals: BigInteger
     leftover: BigInteger
     merkle_root: str | None
+    staking_matched_reserved_for_v2: Annotated[
+        BigInteger,
+        Field(
+            default=0,
+            description="Staking portion reserved for v2 (not distributed in this epoch)",
+        ),
+    ]

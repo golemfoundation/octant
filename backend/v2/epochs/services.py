@@ -38,6 +38,8 @@ async def get_epoch_info_future(
     epochs_contracts: EpochsContract,
     glm_contracts: GLMContracts,
     deposits_settings: DepositsSettings,
+    # Parameters
+    epoch_number: int,
 ) -> EpochStatsResponseV1:
     """
     Calculate information for a future epoch based on current contract state.
@@ -54,6 +56,7 @@ async def get_epoch_info_future(
     future_rewards = calculate_octant_rewards(eth_proceeds, total_effective_deposit)
 
     return EpochStatsResponseV1(
+        epoch=epoch_number,
         staking_proceeds=eth_proceeds,
         total_effective_deposit=total_effective_deposit,
         total_rewards=future_rewards.total_rewards,
@@ -66,6 +69,7 @@ async def get_epoch_info_future(
         ppf=future_rewards.ppf,
         community_fund=future_rewards.community_fund,
         donated_to_projects=None,  # Future so no donated to projects (yet)
+        staking_matched_reserved_for_v2=0,  # Future epochs don't reserve staking
     )
 
 
@@ -99,6 +103,7 @@ async def get_epoch_info_current(
     rewards = calculate_octant_rewards(eth_proceeds, total_effective_deposit)
 
     return EpochStatsResponseV1(
+        epoch=epoch_number,
         staking_proceeds=eth_proceeds,
         total_effective_deposit=total_effective_deposit,
         total_rewards=rewards.total_rewards,
@@ -111,6 +116,7 @@ async def get_epoch_info_current(
         ppf=rewards.ppf,
         community_fund=rewards.community_fund,
         donated_to_projects=None,  # Current epoch so no donated to projects yet
+        staking_matched_reserved_for_v2=0,  # Current epochs don't have finalized data yet
     )
 
 
@@ -146,6 +152,7 @@ async def get_epoch_info_pre_pending(
     rewards = calculate_octant_rewards(staking_proceeds, total_effective_deposit)
 
     return EpochStatsResponseV1(
+        epoch=epoch_number,
         staking_proceeds=staking_proceeds,
         total_effective_deposit=total_effective_deposit,
         total_rewards=rewards.total_rewards,
@@ -158,6 +165,7 @@ async def get_epoch_info_pre_pending(
         ppf=rewards.ppf,
         community_fund=rewards.community_fund,
         donated_to_projects=None,  # Pre-pending so no donated to projects yet
+        staking_matched_reserved_for_v2=0,  # Pre-pending doesn't have finalized data yet
     )
 
 
@@ -223,6 +231,7 @@ async def get_epoch_info_pending(
     )
 
     return EpochStatsResponseV1(
+        epoch=epoch_number,
         staking_proceeds=int(pending_snapshot.eth_proceeds),
         total_effective_deposit=int(pending_snapshot.total_effective_deposit),
         total_rewards=int(pending_snapshot.total_rewards),
@@ -235,6 +244,7 @@ async def get_epoch_info_pending(
         ppf=pending_snapshot.validated_ppf,
         community_fund=pending_snapshot.validated_community_fund,
         donated_to_projects=int(donated_to_projects),
+        staking_matched_reserved_for_v2=0,  # Pending epoch doesn't have finalized snapshot yet
     )
 
 
@@ -316,6 +326,7 @@ async def get_epoch_info_finalized(
     )
 
     return EpochStatsResponseV1(
+        epoch=epoch_number,
         staking_proceeds=int(pending_snapshot.eth_proceeds),
         total_effective_deposit=int(pending_snapshot.total_effective_deposit),
         total_rewards=int(pending_snapshot.total_rewards),
@@ -328,4 +339,7 @@ async def get_epoch_info_finalized(
         ppf=pending_snapshot.validated_ppf,
         community_fund=pending_snapshot.validated_community_fund,
         donated_to_projects=donated_to_projects,
+        staking_matched_reserved_for_v2=int(
+            finalized_snapshot.staking_matched_reserved_for_v2
+        ),
     )

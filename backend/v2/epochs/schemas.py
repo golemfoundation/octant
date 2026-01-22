@@ -14,6 +14,7 @@ class IndexedEpochResponseV1(OctantModel):
 
 
 class EpochStatsResponseV1(OctantModel):
+    epoch: Annotated[int, Field(description="Epoch number")]
     staking_proceeds: Annotated[
         BigInteger, Field(description="ETH proceeds from staking for the given epoch.")
     ]
@@ -64,6 +65,13 @@ class EpochStatsResponseV1(OctantModel):
     donated_to_projects: Annotated[
         BigInteger | None,
         Field(description="Donations to projects that didn't reach the threshold."),
+    ]
+    staking_matched_reserved_for_v2: Annotated[
+        BigInteger,
+        Field(
+            default=0,
+            description="Staking portion reserved for v2 (not distributed in this epoch)",
+        ),
     ]
 
 
