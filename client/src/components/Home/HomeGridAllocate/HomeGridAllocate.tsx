@@ -66,7 +66,6 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
     : BigInt(0);
 
   const isFetching = isFetchingProjectsEpoch || isFetchingUserAllocations;
-  console.log(isFetching, isDecisionWindowOpen);
 
   const sections = [
     {
@@ -118,7 +117,7 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
         <Button
           className={styles.button}
           dataTest="HomeGridAllocate__Button"
-          // isDisabled={!isConnected || isFetching || !isDecisionWindowOpen}
+          isDisabled={!isConnected || isFetching || !isDecisionWindowOpen}
           isHigh
           onClick={() => {
             const isAddedToAllocate = projectsEpoch

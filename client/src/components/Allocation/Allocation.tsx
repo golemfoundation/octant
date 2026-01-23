@@ -341,6 +341,8 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
       });
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
+
+    // OPEN MODAL
   };
 
   useEffect(() => {

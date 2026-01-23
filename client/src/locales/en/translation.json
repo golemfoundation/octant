@@ -63,11 +63,14 @@
       "steps": {
         "step1": {
           "title": "Octant is evolving",
-          "text": "Octant v2 is now live.<br /><br />We've redesigned the protocol to support new features, future epochs, and a more scalable system.<br /><br />To continue using Octant, your account needs to be migrated to the new version.<br /><br />This is one-time transition, and only takes a moment"
+          "text": "Octant v2 is now live.<br /><br />We've redesigned the protocol to support new features, future epochs, and a more scalable system.<br /><br />To continue using Octant, your account needs to be migrated to the new version.<br /><br />This is one-time transition, and only takes a moment."
         },
         "step2": {
           "title": "Migrate your account to Octant  v2",
-          "text": "To access Octant v2 and participate in future epochs, you'll need to complete a short migration.<br /><br />During this step, you'll be asked to confirm transaction in your wallet. Once completed, your account will be ready and you won't need to do this again"
+          "text": "To access Octant v2 and participate in future epochs, you'll need to complete a short migration.<br /><br />During this step, you'll be asked to confirm transaction in your wallet. Once completed, your account will be ready and you won't need to do this again.",
+          "consent": "By clicking \"Start migration\", you acknowledge that upon migration your wallet address and history will be transferred to Octant Labs and agree to their <0>Terms of Service</0> and <1>Privacy Policy</1>.",
+          "acknowledgment": "I read, understood and agree to the above",
+          "error": "This consent is required"
         }
       },
       "sablierText": "You have Sablier streams. Click here to check them",
