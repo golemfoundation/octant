@@ -44,6 +44,7 @@ const useV2DepositsQuery = (regenStakerAddress: Hash, owner: Hash): UseQueryResu
       console.log({ data });
       return data?.deposits;
     },
+    enabled: !!regenStakerAddress && !!owner,
     throwOnError: error => console.log({ error }),
   });
 };
