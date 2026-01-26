@@ -22,6 +22,8 @@ export const envViteKeys: EnvViteKeys = {
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
   websocketEndpoint: 'VITE_WEBSOCKET_ENDPOINT',
+  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS',
+  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS',
 };
 
 const env: Env = {
@@ -45,6 +47,8 @@ const env: Env = {
   subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
   walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
   websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
+  subgraphRegenStakerAddress: import.meta.env[envViteKeys.subgraphRegenStakerAddress],
+  contractRegenStakerAddress: import.meta.env[envViteKeys.contractRegenStakerAddress],
 };
 
 export default env;

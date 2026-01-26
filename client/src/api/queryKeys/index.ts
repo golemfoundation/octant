@@ -31,9 +31,14 @@ export const ROOTS: Root = {
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
   userTOS: 'userTOS',
+  v2Deposits: 'v2Deposits',
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  v2Deposits: (regenStakerAddress, userAddress) => [
+    ROOTS.v2Deposits,
+    regenStakerAddress, userAddress,
+  ],
   allSablierStreams: ['allSablierStreams'],
   antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],

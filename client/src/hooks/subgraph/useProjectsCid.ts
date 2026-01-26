@@ -8,8 +8,8 @@ import _last from 'lodash/last';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { QueryKeys } from 'api/queryKeys/types';
 import env from 'env';
-import { graphql } from 'gql/gql';
-import { GetProjectsMetadataPerEpochesQuery } from 'gql/graphql';
+import { graphql } from 'gql/v1/gql';
+import { GetProjectsMetadataPerEpochesQuery } from 'gql/v1/graphql';
 
 type QueryData = string | null | undefined;
 

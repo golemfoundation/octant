@@ -6,7 +6,7 @@ import request from 'graphql-request';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
-import { graphql } from 'gql/gql';
+import { graphql } from 'gql/v1/gql';
 
 type Meta = {
   // eslint-disable-next-line @typescript-eslint/naming-convention

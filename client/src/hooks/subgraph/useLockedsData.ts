@@ -6,8 +6,8 @@ import { request } from 'graphql-request';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
-import { graphql } from 'gql/gql';
-import { GetLockedsDataQuery } from 'gql/graphql';
+import { graphql } from 'gql/v1/gql';
+import { GetLockedsDataQuery } from 'gql/v1/graphql';
 import getMetricsChartDataGroupedByDate, {
   GroupedUsersByDateItem,
 } from 'utils/getMetricsChartDataGroupedByDate';

@@ -5,6 +5,7 @@ import env from 'env';
 import Deposits from './abi/Deposits.json';
 import ERC20 from './abi/ERC20.json';
 import Vault from './abi/Vault.json';
+import RegenStaker from './abi/RegenStaker.json';
 
 type WriteContract = {
   args: unknown[];
@@ -47,6 +48,19 @@ export function writeContractVault({
   return walletClient.writeContract({
     abi: Vault.abi,
     address: env.contractVaultAddress as `0x{string}`,
+    args,
+    functionName,
+  });
+}
+
+export function writeContractRegenStaker({
+  walletClient,
+  functionName,
+  args,
+}: WriteContract): Promise<Hash> {
+  return walletClient.writeContract({
+    abi: RegenStaker.abi,
+    address: env.contractRegenStakerAddress as `0x{string}`,
     args,
     functionName,
   });

@@ -5,28 +5,34 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-  [_ in K]?: never;
-};
-export type Incremental<T> =
-  | T
-  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  BigDecimal: { input: any; output: any };
-  BigInt: { input: any; output: any };
-  Bytes: { input: any; output: any };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  BigDecimal: { input: any; output: any; }
+  BigInt: { input: any; output: any; }
+  Bytes: { input: any; output: any; }
   /**
    * 8 bytes signed integer
    *
    */
-  Int8: { input: any; output: any };
+  Int8: { input: any; output: any; }
+  /**
+   * A string representation of microseconds UNIX timestamp (16 digits)
+   *
+   */
+  Timestamp: { input: any; output: any; }
 };
+
+export enum Aggregation_Interval {
+  Day = 'day',
+  Hour = 'hour'
+}
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int']['input'];
@@ -111,7 +117,7 @@ export enum Epoch_OrderBy {
   Epoch = 'epoch',
   FromTs = 'fromTs',
   Id = 'id',
-  ToTs = 'toTs',
+  ToTs = 'toTs'
 }
 
 export type Locked = {
@@ -220,7 +226,7 @@ export enum LockedSummaryLatest_OrderBy {
   LockedRatio = 'lockedRatio',
   LockedTotal = 'lockedTotal',
   Timestamp = 'timestamp',
-  TransactionHash = 'transactionHash',
+  TransactionHash = 'transactionHash'
 }
 
 export type LockedSummarySnapshot = {
@@ -308,7 +314,7 @@ export enum LockedSummarySnapshot_OrderBy {
   LockedRatio = 'lockedRatio',
   LockedTotal = 'lockedTotal',
   Timestamp = 'timestamp',
-  TransactionHash = 'transactionHash',
+  TransactionHash = 'transactionHash'
 }
 
 export type Locked_Filter = {
@@ -387,13 +393,13 @@ export enum Locked_OrderBy {
   Id = 'id',
   Timestamp = 'timestamp',
   TransactionHash = 'transactionHash',
-  User = 'user',
+  User = 'user'
 }
 
 /** Defines the order direction, either ascending or descending */
 export enum OrderDirection {
   Asc = 'asc',
-  Desc = 'desc',
+  Desc = 'desc'
 }
 
 export type ProjectsMetadataAccumulated = {
@@ -427,7 +433,7 @@ export type ProjectsMetadataAccumulated_Filter = {
 
 export enum ProjectsMetadataAccumulated_OrderBy {
   Id = 'id',
-  ProjectsAddresses = 'projectsAddresses',
+  ProjectsAddresses = 'projectsAddresses'
 }
 
 export type ProjectsMetadataPerEpoch = {
@@ -493,7 +499,7 @@ export enum ProjectsMetadataPerEpoch_OrderBy {
   Epoch = 'epoch',
   Id = 'id',
   ProjectsAddresses = 'projectsAddresses',
-  ProposalsCid = 'proposalsCid',
+  ProposalsCid = 'proposalsCid'
 }
 
 export type Query = {
@@ -520,15 +526,18 @@ export type Query = {
   withdrawals: Array<Withdrawal>;
 };
 
+
 export type Query_MetaArgs = {
   block?: InputMaybe<Block_Height>;
 };
+
 
 export type QueryEpochArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryEpochesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -540,17 +549,20 @@ export type QueryEpochesArgs = {
   where?: InputMaybe<Epoch_Filter>;
 };
 
+
 export type QueryLockedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
+
 export type QueryLockedSummaryLatestArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryLockedSummaryLatestsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -562,11 +574,13 @@ export type QueryLockedSummaryLatestsArgs = {
   where?: InputMaybe<LockedSummaryLatest_Filter>;
 };
 
+
 export type QueryLockedSummarySnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryLockedSummarySnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -578,6 +592,7 @@ export type QueryLockedSummarySnapshotsArgs = {
   where?: InputMaybe<LockedSummarySnapshot_Filter>;
 };
 
+
 export type QueryLockedsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -588,11 +603,13 @@ export type QueryLockedsArgs = {
   where?: InputMaybe<Locked_Filter>;
 };
 
+
 export type QueryProjectsMetadataAccumulatedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryProjectsMetadataAccumulatedsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -604,11 +621,13 @@ export type QueryProjectsMetadataAccumulatedsArgs = {
   where?: InputMaybe<ProjectsMetadataAccumulated_Filter>;
 };
 
+
 export type QueryProjectsMetadataPerEpochArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryProjectsMetadataPerEpochesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -620,11 +639,13 @@ export type QueryProjectsMetadataPerEpochesArgs = {
   where?: InputMaybe<ProjectsMetadataPerEpoch_Filter>;
 };
 
+
 export type QueryUnlockedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryUnlockedsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -636,11 +657,13 @@ export type QueryUnlockedsArgs = {
   where?: InputMaybe<Unlocked_Filter>;
 };
 
+
 export type QueryVaultMerkleRootArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryVaultMerkleRootsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -652,11 +675,13 @@ export type QueryVaultMerkleRootsArgs = {
   where?: InputMaybe<VaultMerkleRoot_Filter>;
 };
 
+
 export type QueryWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type QueryWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -692,15 +717,18 @@ export type Subscription = {
   withdrawals: Array<Withdrawal>;
 };
 
+
 export type Subscription_MetaArgs = {
   block?: InputMaybe<Block_Height>;
 };
+
 
 export type SubscriptionEpochArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionEpochesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -712,17 +740,20 @@ export type SubscriptionEpochesArgs = {
   where?: InputMaybe<Epoch_Filter>;
 };
 
+
 export type SubscriptionLockedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
+
 export type SubscriptionLockedSummaryLatestArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionLockedSummaryLatestsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -734,11 +765,13 @@ export type SubscriptionLockedSummaryLatestsArgs = {
   where?: InputMaybe<LockedSummaryLatest_Filter>;
 };
 
+
 export type SubscriptionLockedSummarySnapshotArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionLockedSummarySnapshotsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -750,6 +783,7 @@ export type SubscriptionLockedSummarySnapshotsArgs = {
   where?: InputMaybe<LockedSummarySnapshot_Filter>;
 };
 
+
 export type SubscriptionLockedsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -760,11 +794,13 @@ export type SubscriptionLockedsArgs = {
   where?: InputMaybe<Locked_Filter>;
 };
 
+
 export type SubscriptionProjectsMetadataAccumulatedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionProjectsMetadataAccumulatedsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -776,11 +812,13 @@ export type SubscriptionProjectsMetadataAccumulatedsArgs = {
   where?: InputMaybe<ProjectsMetadataAccumulated_Filter>;
 };
 
+
 export type SubscriptionProjectsMetadataPerEpochArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionProjectsMetadataPerEpochesArgs = {
   block?: InputMaybe<Block_Height>;
@@ -792,11 +830,13 @@ export type SubscriptionProjectsMetadataPerEpochesArgs = {
   where?: InputMaybe<ProjectsMetadataPerEpoch_Filter>;
 };
 
+
 export type SubscriptionUnlockedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionUnlockedsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -808,11 +848,13 @@ export type SubscriptionUnlockedsArgs = {
   where?: InputMaybe<Unlocked_Filter>;
 };
 
+
 export type SubscriptionVaultMerkleRootArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionVaultMerkleRootsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -824,11 +866,13 @@ export type SubscriptionVaultMerkleRootsArgs = {
   where?: InputMaybe<VaultMerkleRoot_Filter>;
 };
 
+
 export type SubscriptionWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
+
 
 export type SubscriptionWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -927,7 +971,7 @@ export enum Unlocked_OrderBy {
   Id = 'id',
   Timestamp = 'timestamp',
   TransactionHash = 'transactionHash',
-  User = 'user',
+  User = 'user'
 }
 
 export type VaultMerkleRoot = {
@@ -1007,7 +1051,7 @@ export enum VaultMerkleRoot_OrderBy {
   Id = 'id',
   Root = 'root',
   Timestamp = 'timestamp',
-  TransactionHash = 'transactionHash',
+  TransactionHash = 'transactionHash'
 }
 
 export type Withdrawal = {
@@ -1097,7 +1141,7 @@ export enum Withdrawal_OrderBy {
   Id = 'id',
   Timestamp = 'timestamp',
   TransactionHash = 'transactionHash',
-  User = 'user',
+  User = 'user'
 }
 
 export type _Block_ = {
@@ -1106,6 +1150,8 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']['output']>;
   /** The block number */
   number: Scalars['Int']['output'];
+  /** The hash of the parent block */
+  parentHash?: Maybe<Scalars['Bytes']['output']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars['Int']['output']>;
 };
@@ -1131,568 +1177,85 @@ export enum _SubgraphErrorPolicy_ {
   /** Data will be returned even if the subgraph has indexing errors */
   Allow = 'allow',
   /** If the subgraph has indexing errors, data will be omitted. The default. */
-  Deny = 'deny',
+  Deny = 'deny'
 }
 
-export type GetProjectsMetadataAccumulatedsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetProjectsMetadataAccumulatedsQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type GetProjectsMetadataAccumulatedsQuery = {
-  __typename?: 'Query';
-  projectsMetadataAccumulateds: Array<{
-    __typename?: 'ProjectsMetadataAccumulated';
-    projectsAddresses: Array<any>;
-  }>;
-};
 
-export type GetBlockNumberQueryVariables = Exact<{ [key: string]: never }>;
+export type GetProjectsMetadataAccumulatedsQuery = { __typename?: 'Query', projectsMetadataAccumulateds: Array<{ __typename?: 'ProjectsMetadataAccumulated', projectsAddresses: Array<any> }> };
 
-export type GetBlockNumberQuery = {
-  __typename?: 'Query';
-  _meta?: { __typename?: '_Meta_'; block: { __typename?: '_Block_'; number: number } } | null;
-};
+export type GetBlockNumberQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBlockNumberQuery = { __typename?: 'Query', _meta?: { __typename?: '_Meta_', block: { __typename?: '_Block_', number: number } } | null };
 
 export type GetEpochTimestampHappenedInQueryVariables = Exact<{
   timestamp?: InputMaybe<Scalars['BigInt']['input']>;
 }>;
 
-export type GetEpochTimestampHappenedInQuery = {
-  __typename?: 'Query';
-  epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
-};
 
-export type GetEpochesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetEpochTimestampHappenedInQuery = { __typename?: 'Query', epoches: Array<{ __typename?: 'Epoch', epoch: number }> };
 
-export type GetEpochesQuery = {
-  __typename?: 'Query';
-  epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
-};
+export type GetEpochesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEpochesQuery = { __typename?: 'Query', epoches: Array<{ __typename?: 'Epoch', epoch: number }> };
 
 export type GetEpochsStartEndTimeQueryVariables = Exact<{
   lastEpoch?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type GetEpochsStartEndTimeQuery = {
-  __typename?: 'Query';
-  epoches: Array<{
-    __typename?: 'Epoch';
-    epoch: number;
-    toTs: any;
-    fromTs: any;
-    decisionWindow: any;
-  }>;
-};
 
-export type GetLargestLockedAmountQueryVariables = Exact<{ [key: string]: never }>;
+export type GetEpochsStartEndTimeQuery = { __typename?: 'Query', epoches: Array<{ __typename?: 'Epoch', epoch: number, toTs: any, fromTs: any, decisionWindow: any }> };
 
-export type GetLargestLockedAmountQuery = {
-  __typename?: 'Query';
-  lockeds: Array<{ __typename?: 'Locked'; amount: any }>;
-};
+export type GetLargestLockedAmountQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type GetLockedSummaryLatestQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetLockedSummaryLatestQuery = {
-  __typename?: 'Query';
-  lockedSummaryLatest?: {
-    __typename?: 'LockedSummaryLatest';
-    id: string;
-    lockedTotal: any;
-    lockedRatio: any;
-  } | null;
-};
+export type GetLargestLockedAmountQuery = { __typename?: 'Query', lockeds: Array<{ __typename?: 'Locked', amount: any }> };
+
+export type GetLockedSummaryLatestQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLockedSummaryLatestQuery = { __typename?: 'Query', lockedSummaryLatest?: { __typename?: 'LockedSummaryLatest', id: string, lockedTotal: any, lockedRatio: any } | null };
 
 export type GetLockedSummarySnapshotsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type GetLockedSummarySnapshotsQuery = {
-  __typename?: 'Query';
-  lockedSummarySnapshots: Array<{
-    __typename?: 'LockedSummarySnapshot';
-    lockedTotal: any;
-    timestamp: number;
-  }>;
-};
+
+export type GetLockedSummarySnapshotsQuery = { __typename?: 'Query', lockedSummarySnapshots: Array<{ __typename?: 'LockedSummarySnapshot', lockedTotal: any, timestamp: number }> };
 
 export type GetLockedsDataQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type GetLockedsDataQuery = {
-  __typename?: 'Query';
-  lockeds: Array<{ __typename?: 'Locked'; user: any; timestamp: number; amount: any }>;
-};
 
-export type GetProjectsMetadataPerEpochesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetLockedsDataQuery = { __typename?: 'Query', lockeds: Array<{ __typename?: 'Locked', user: any, timestamp: number, amount: any }> };
 
-export type GetProjectsMetadataPerEpochesQuery = {
-  __typename?: 'Query';
-  projectsMetadataPerEpoches: Array<{
-    __typename?: 'ProjectsMetadataPerEpoch';
-    epoch: number;
-    proposalsCid: string;
-  }>;
-};
+export type GetProjectsMetadataPerEpochesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProjectsMetadataPerEpochesQuery = { __typename?: 'Query', projectsMetadataPerEpoches: Array<{ __typename?: 'ProjectsMetadataPerEpoch', epoch: number, proposalsCid: string }> };
 
 export type GetUserWithdrawalsQueryVariables = Exact<{
   address?: InputMaybe<Scalars['Bytes']['input']>;
 }>;
 
-export type GetUserWithdrawalsQuery = {
-  __typename?: 'Query';
-  withdrawals: Array<{ __typename?: 'Withdrawal'; amount: any }>;
-};
 
-export const GetProjectsMetadataAccumulatedsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetProjectsMetadataAccumulateds' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'projectsMetadataAccumulateds' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'projectsAddresses' } }],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetProjectsMetadataAccumulatedsQuery,
-  GetProjectsMetadataAccumulatedsQueryVariables
->;
-export const GetBlockNumberDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetBlockNumber' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: '_meta' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'block' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [{ kind: 'Field', name: { kind: 'Name', value: 'number' } }],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetBlockNumberQuery, GetBlockNumberQueryVariables>;
-export const GetEpochTimestampHappenedInDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetEpochTimestampHappenedIn' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'BigInt' } },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'epoches' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'where' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'fromTs_lte' },
-                      value: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
-                    },
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'toTs_gte' },
-                      value: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'epoch' } }],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetEpochTimestampHappenedInQuery,
-  GetEpochTimestampHappenedInQueryVariables
->;
-export const GetEpochesDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetEpoches' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'epoches' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'epoch' } }],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetEpochesQuery, GetEpochesQueryVariables>;
-export const GetEpochsStartEndTimeDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetEpochsStartEndTime' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'lastEpoch' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'epoches' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'lastEpoch' } },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'toTs' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'fromTs' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'decisionWindow' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetEpochsStartEndTimeQuery, GetEpochsStartEndTimeQueryVariables>;
-export const GetLargestLockedAmountDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLargestLockedAmount' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lockeds' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderBy' },
-                value: { kind: 'EnumValue', value: 'amount' },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderDirection' },
-                value: { kind: 'EnumValue', value: 'desc' },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: { kind: 'IntValue', value: '1' },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'amount' } }],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetLargestLockedAmountQuery, GetLargestLockedAmountQueryVariables>;
-export const GetLockedSummaryLatestDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLockedSummaryLatest' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lockedSummaryLatest' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'id' },
-                value: { kind: 'StringValue', value: 'latest', block: false },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'lockedTotal' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'lockedRatio' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
-export const GetLockedSummarySnapshotsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLockedSummarySnapshots' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          defaultValue: { kind: 'IntValue', value: '1000' },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          defaultValue: { kind: 'IntValue', value: '0' },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lockedSummarySnapshots' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'skip' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderBy' },
-                value: { kind: 'EnumValue', value: 'timestamp' },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'lockedTotal' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetLockedSummarySnapshotsQuery,
-  GetLockedSummarySnapshotsQueryVariables
->;
-export const GetLockedsDataDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLockedsData' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          defaultValue: { kind: 'IntValue', value: '100' },
-        },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
-          defaultValue: { kind: 'IntValue', value: '0' },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lockeds' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'first' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'skip' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetLockedsDataQuery, GetLockedsDataQueryVariables>;
-export const GetProjectsMetadataPerEpochesDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetProjectsMetadataPerEpoches' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'projectsMetadataPerEpoches' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderBy' },
-                value: { kind: 'EnumValue', value: 'epoch' },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'orderDirection' },
-                value: { kind: 'EnumValue', value: 'asc' },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'proposalsCid' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  GetProjectsMetadataPerEpochesQuery,
-  GetProjectsMetadataPerEpochesQueryVariables
->;
-export const GetUserWithdrawalsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetUserWithdrawals' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Bytes' } },
-        },
-      ],
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'withdrawals' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'where' },
-                value: {
-                  kind: 'ObjectValue',
-                  fields: [
-                    {
-                      kind: 'ObjectField',
-                      name: { kind: 'Name', value: 'user' },
-                      value: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
-                    },
-                  ],
-                },
-              },
-            ],
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'amount' } }],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetUserWithdrawalsQuery, GetUserWithdrawalsQueryVariables>;
+export type GetUserWithdrawalsQuery = { __typename?: 'Query', withdrawals: Array<{ __typename?: 'Withdrawal', amount: any }> };
+
+
+export const GetProjectsMetadataAccumulatedsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsMetadataAccumulateds"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsMetadataAccumulateds"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsAddresses"}}]}}]}}]} as unknown as DocumentNode<GetProjectsMetadataAccumulatedsQuery, GetProjectsMetadataAccumulatedsQueryVariables>;
+export const GetBlockNumberDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetBlockNumber"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_meta"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"block"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"number"}}]}}]}}]}}]} as unknown as DocumentNode<GetBlockNumberQuery, GetBlockNumberQueryVariables>;
+export const GetEpochTimestampHappenedInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEpochTimestampHappenedIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"timestamp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"BigInt"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoches"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"fromTs_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"timestamp"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"toTs_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"timestamp"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}}]}}]}}]} as unknown as DocumentNode<GetEpochTimestampHappenedInQuery, GetEpochTimestampHappenedInQueryVariables>;
+export const GetEpochesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEpoches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}}]}}]}}]} as unknown as DocumentNode<GetEpochesQuery, GetEpochesQueryVariables>;
+export const GetEpochsStartEndTimeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEpochsStartEndTime"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lastEpoch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoches"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lastEpoch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"toTs"}},{"kind":"Field","name":{"kind":"Name","value":"fromTs"}},{"kind":"Field","name":{"kind":"Name","value":"decisionWindow"}}]}}]}}]} as unknown as DocumentNode<GetEpochsStartEndTimeQuery, GetEpochsStartEndTimeQueryVariables>;
+export const GetLargestLockedAmountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLargestLockedAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lockeds"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"amount"}},{"kind":"Argument","name":{"kind":"Name","value":"orderDirection"},"value":{"kind":"EnumValue","value":"desc"}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}}]}}]} as unknown as DocumentNode<GetLargestLockedAmountQuery, GetLargestLockedAmountQueryVariables>;
+export const GetLockedSummaryLatestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLockedSummaryLatest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lockedSummaryLatest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"StringValue","value":"latest","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lockedTotal"}},{"kind":"Field","name":{"kind":"Name","value":"lockedRatio"}}]}}]}}]} as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
+export const GetLockedSummarySnapshotsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLockedSummarySnapshots"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"1000"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lockedSummarySnapshots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"timestamp"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lockedTotal"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}}]}}]}}]} as unknown as DocumentNode<GetLockedSummarySnapshotsQuery, GetLockedSummarySnapshotsQueryVariables>;
+export const GetLockedsDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLockedsData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"100"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lockeds"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}}]}}]} as unknown as DocumentNode<GetLockedsDataQuery, GetLockedsDataQueryVariables>;
+export const GetProjectsMetadataPerEpochesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProjectsMetadataPerEpoches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"projectsMetadataPerEpoches"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"EnumValue","value":"epoch"}},{"kind":"Argument","name":{"kind":"Name","value":"orderDirection"},"value":{"kind":"EnumValue","value":"asc"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"epoch"}},{"kind":"Field","name":{"kind":"Name","value":"proposalsCid"}}]}}]}}]} as unknown as DocumentNode<GetProjectsMetadataPerEpochesQuery, GetProjectsMetadataPerEpochesQueryVariables>;
+export const GetUserWithdrawalsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserWithdrawals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Bytes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"withdrawals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}}]}}]}}]} as unknown as DocumentNode<GetUserWithdrawalsQuery, GetUserWithdrawalsQueryVariables>;

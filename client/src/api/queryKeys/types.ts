@@ -31,11 +31,13 @@ export type Root = {
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
+  v2Deposits: 'v2Deposits';
 };
 
 export type QueryKeys = {
   allSablierStreams: ['allSablierStreams'];
   antisybilStatus: (userAddress: string) => [Root['antisybilStatus'], string];
+  v2Deposits: (regenStakerAddress: string, userAddress: string) => [Root['v2Deposits'], string, string];
   blockNumber: ['blockNumber'];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (

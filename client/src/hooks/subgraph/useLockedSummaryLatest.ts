@@ -6,8 +6,8 @@ import { request } from 'graphql-request';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
-import { graphql } from 'gql/gql';
-import { GetLockedSummaryLatestQuery } from 'gql/graphql';
+import { graphql } from 'gql/v1/gql';
+import { GetLockedSummaryLatestQuery } from 'gql/v1/graphql';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type LockedSummaryLatest = {

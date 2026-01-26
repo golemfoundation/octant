@@ -17,9 +17,13 @@ export type EnvViteKeys = {
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS';
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID';
   websocketEndpoint: 'VITE_WEBSOCKET_ENDPOINT';
+  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS';
+  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS';
 };
 
 export type Env = {
+  subgraphRegenStakerAddress: string;
+  contractRegenStakerAddress: string;
   alchemyId: string;
   areCurrentEpochsProjectsHiddenOutsideAllocationWindow: string;
   clientEndpoint: string;
