@@ -106,15 +106,16 @@ class SocketIOClient:
         print("Allocate event emitted")
 
     async def wait_for_events(self, timeout: int, alice_proposals: List[str]):
-        start_time = asyncio.get_event_loop().time()
+        loop = asyncio.get_running_loop()
+        start_time = loop.time()
         last_log_time = start_time
 
         while (
             self.results.threshold is None
             or self.results.project_rewards is None
             or len(self.results.project_donors) < len(alice_proposals)
-        ) and asyncio.get_event_loop().time() - start_time < timeout:
-            current_time = asyncio.get_event_loop().time()
+        ) and loop.time() - start_time < timeout:
+            current_time = loop.time()
             if current_time - last_log_time >= 1.0:
                 print(
                     f"Waiting for events... Time elapsed: {current_time - start_time:.1f}s"
@@ -130,5 +131,5 @@ class SocketIOClient:
 
             await asyncio.sleep(0.1)
 
-        elapsed = asyncio.get_event_loop().time() - start_time
+        elapsed = loop.time() - start_time
         print(f"Done waiting after {elapsed:.1f} seconds")
