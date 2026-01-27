@@ -136,9 +136,10 @@
       },
       "homeGridMigrate": {
         "title": "Migrate to v2",
-        "text": "Start migration to access all features. This is a one-time action and takes less than a minute.",
+        "text": "Migrate your locked GLM to v2. This is a one-time process and takes less than a minute.",
         "buttonLabel": {
-          "beforeMigration": "Migrate"
+          "beforeMigration": "Migrate",
+          "afterMigration": "You have successfully migrated"
         }
       },
       "homeGridCurrentGlmLock": {
@@ -447,12 +448,12 @@
       "calendar": "Calendar",
       "migration":  {
         "calendar": {
-          "text": "Epochs are Dead! Time to Migrate to v2!"
+          "text": "We are evolving! Migrate to v2 below"
         },
         "topBar": {
           "buttonMigrate": {
             "beforeMigration": "Migrate to v2",
-            "afterMigration": "You migrated to v2"
+            "afterMigration": "You have successfully migrated"
           }
         }
       }

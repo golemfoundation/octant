@@ -106,8 +106,8 @@ const Button = <T extends ButtonProps>(
               }
             }
       }
+      target={target}
       // eslint-disable-next-line react/button-has-type
-      type={type}
       {...filteredProps}
     >
       <Fragment>

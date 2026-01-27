@@ -6,12 +6,14 @@ import ModalMigration from 'components/Home/ModalMigration';
 import GridTile from 'components/shared/Grid/GridTile';
 import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
+import env from 'env';
 import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
 
 import styles from './HomeGridMigrate.module.scss';
 import HomeGridMigrateProps from './types';
 
 const HomeGridMigrate: FC<HomeGridMigrateProps> = ({ className }) => {
+  const { regenStakerUrl } = env;
   const { isConnected } = useAccount();
   const { data: isUserMigrationDone, isFetching: isFetchingIsUserMigrationDone } =
     useIsUserMigrationDone();
@@ -29,10 +31,11 @@ const HomeGridMigrate: FC<HomeGridMigrateProps> = ({ className }) => {
           <Button
             className={styles.button}
             dataTest="HomeGridMigrate__Button"
-            isDisabled={!isConnected || (isConnected && isUserMigrationDone)}
+            isDisabled={!isConnected}
             isHigh
             isLoading={isFetchingIsUserMigrationDone}
-            onClick={() => setIsModalMigrateOpen(true)}
+            onClick={isUserMigrationDone ? undefined : () => setIsModalMigrateOpen(true)}
+            to={isUserMigrationDone ? regenStakerUrl : undefined}
             variant="cta"
           >
             {t(isUserMigrationDone ? 'buttonLabel.afterMigration' : 'buttonLabel.beforeMigration')}

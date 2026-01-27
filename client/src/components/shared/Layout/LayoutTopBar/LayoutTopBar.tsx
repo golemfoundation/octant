@@ -16,6 +16,7 @@ import TinyLabel from 'components/ui/TinyLabel';
 import { TOURGUIDE_ELEMENT_3 } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
+import env from 'env';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
@@ -35,6 +36,7 @@ import LayoutTopBarProps from './types';
 
 const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const dataTestRoot = 'LayoutTopBar';
+  const { regenStakerUrl } = env;
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
@@ -227,9 +229,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           <Button
             className={styles.buttonMigrate}
             dataTest={`${dataTestRoot}__ButtonMigrate`}
-            isDisabled={!isConnected || (isConnected && isUserMigrationDone)}
+            isDisabled={!isConnected}
             isLoading={isFetchingIsUserMigrationDone}
-            onClick={() => setIsModalMigrateOpen(true)}
+            onClick={isUserMigrationDone ? undefined : () => setIsModalMigrateOpen(true)}
+            to={isUserMigrationDone ? regenStakerUrl : undefined}
             variant="cta"
           >
             <div className={cx(styles.dot, isUserMigrationDone && styles.isUserMigrationDone)} />
