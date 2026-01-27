@@ -137,7 +137,9 @@
       "homeGridMigrate": {
         "title": "Migrate to v2",
         "text": "Start migration to access all features. This is a one-time action and takes less than a minute.",
-        "buttonLabel": "Migrate"
+        "buttonLabel": {
+          "beforeMigration": "Migrate"
+        }
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Current GLM lock",
@@ -448,7 +450,10 @@
           "text": "Epochs are Dead! Time to Migrate to v2!"
         },
         "topBar": {
-          "buttonMigrate": "Migrate to v2"
+          "buttonMigrate": {
+            "beforeMigration": "Migrate to v2",
+            "afterMigration": "You migrated to v2"
+          }
         }
       }
     },

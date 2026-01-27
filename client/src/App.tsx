@@ -12,12 +12,10 @@ import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
 import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useCypressHelpers from 'hooks/helpers/useCypressHelpers';
-import useV2DepositsQuery from 'hooks/subgraphRegenStaker/useV2DepositsQuery';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useOnboardingStore from 'store/onboarding/store';
-import env from 'env';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';
@@ -26,7 +24,6 @@ import 'i18n';
 const App = (): ReactElement => {
   useManageTransactionsPending();
   useAppPopulateState();
-  const { address } = useAccount();
 
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const { isSyncingInProgress, isLocalStorageInitialized } = useAppConnectManager(
@@ -43,9 +40,6 @@ const App = (): ReactElement => {
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
-
-  const { data: depositsData } = useV2DepositsQuery(env.contractRegenStakerAddress as any, address!);
-  console.log({ depositsData }, env.contractRegenStakerAddress, address);
 
   if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
     return <AppLoader />;

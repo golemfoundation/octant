@@ -37,7 +37,6 @@ export type Root = {
 export type QueryKeys = {
   allSablierStreams: ['allSablierStreams'];
   antisybilStatus: (userAddress: string) => [Root['antisybilStatus'], string];
-  v2Deposits: (regenStakerAddress: string, userAddress: string) => [Root['v2Deposits'], string, string];
   blockNumber: ['blockNumber'];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
@@ -96,6 +95,10 @@ export type QueryKeys = {
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];
+  v2Deposits: (
+    regenStakerAddress: string,
+    userAddress: string,
+  ) => [Root['v2Deposits'], string, string];
   vimeoVideos: ['vimeoVideos'];
   withdrawals: ['withdrawals'];
 };

@@ -6,6 +6,7 @@ export type EnvViteKeys = {
   contractEpochsAddress: 'VITE_EPOCHS_ADDRESS';
   contractGlmAddress: 'VITE_GLM_ADDRESS';
   contractProposalsAddress: 'VITE_PROPOSALS_ADDRESS';
+  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS';
   contractVaultAddress: 'VITE_VAULT_ADDRESS';
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT';
   ipfsGateways: 'VITE_IPFS_GATEWAYS';
@@ -15,15 +16,12 @@ export type EnvViteKeys = {
   sentryAuthToken: 'VITE_SENTRY_AUTH_TOKEN';
   serverEndpoint: 'VITE_SERVER_ENDPOINT';
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS';
+  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS';
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID';
   websocketEndpoint: 'VITE_WEBSOCKET_ENDPOINT';
-  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS';
-  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS';
 };
 
 export type Env = {
-  subgraphRegenStakerAddress: string;
-  contractRegenStakerAddress: string;
   alchemyId: string;
   areCurrentEpochsProjectsHiddenOutsideAllocationWindow: string;
   clientEndpoint: string;
@@ -31,6 +29,7 @@ export type Env = {
   contractEpochsAddress: string;
   contractGlmAddress: string;
   contractProposalsAddress: string;
+  contractRegenStakerAddress: string;
   contractVaultAddress: string;
   cryptoValuesEndpoint: string;
   ipfsGateways: string;
@@ -40,6 +39,7 @@ export type Env = {
   sentryAuthToken: string;
   serverEndpoint: string;
   subgraphAddress: string;
+  subgraphRegenStakerAddress: string;
   walletConnectProjectId: string;
   websocketEndpoint: string;
 };

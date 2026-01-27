@@ -14,6 +14,7 @@ import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import ModalAllocationLowUqScore from 'components/Allocation/ModalAllocationLowUqScore';
+import ModalMigration from 'components/Home/ModalMigration';
 import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
 import { DRAWER_TRANSITION_TIME } from 'constants/animations';
@@ -23,6 +24,7 @@ import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
+import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
@@ -65,6 +67,8 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
+  const { data: isUserMigrationDone } = useIsUserMigrationDone();
+  const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
   const isInMigrationMode = useIsMigrationMode();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
@@ -342,7 +346,11 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
 
-    // OPEN MODAL
+    if (isUserMigrationDone) {
+      return;
+    }
+
+    setIsModalMigrateOpen(true);
   };
 
   useEffect(() => {
@@ -608,140 +616,149 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   }, [allocations.length, isMobile, isTablet]);
 
   return (
-    <div className={styles.root} data-test={dataTestRoot}>
-      <div className={styles.title}>
-        {t(isInMigrationMode ? 'migration.title' : 'allocationList')}
-      </div>
-      <div
-        ref={boxesWrapperRef}
-        className={cx(
-          styles.boxesWrapper,
-          isDesktop && styles.withMarginBottom,
-          isDesktop && allocations.length && styles.withPaddingBottom,
-        )}
-      >
-        {isInMigrationMode && <div className={styles.note}>{t('migration.note')}</div>}
-        {!isEpoch1 && (
-          <AllocationRewardsBox
-            isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-            isLocked={currentView === 'summary'}
-            isManuallyEdited={isManualMode}
-          />
-        )}
-        {hasUserIndividualReward && isDecisionWindowOpen && !isEpoch1 && (
-          <AllocationSliderBox
-            className={styles.box}
-            isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-            isError={addressesWithError.length > 0}
-            isLocked={currentView === 'summary'}
-            setRewardsForProjectsCallback={onResetAllocationValues}
-          />
-        )}
-        {!allocations.length && currentView === 'edit' && (
-          <div
-            ref={allocationEmptyStateRef}
-            className={styles.emptyState}
-            data-test={`${dataTestRoot}__emptyState`}
-          >
-            {isEmptyStateImageVisible && (
-              <Img className={styles.emptyStateImage} src="/images/window-with-dog.webp" />
-            )}
-            <div className={styles.emptyStateText}>
-              <Trans
-                components={[
-                  <Button
-                    className={styles.projectsLink}
-                    to={ROOT_ROUTES.projects.absolute}
-                    variant="link3"
-                  />,
-                ]}
-                i18nKey={emptyStateI18nKey}
-              />
-            </div>
-          </div>
-        )}
-
-        {currentView === 'edit' ? (
-          areAllocationsAvailableOrAlreadyDone && (
-            <AnimatePresence initial={false}>
-              {allocationsWithRewards.length > 0
-                ? allocationsWithRewards!.map(
-                    ({
-                      address,
-                      isAllocatedTo,
-                      isLoadingError,
-                      value,
-                      profileImageSmall,
-                      name,
-                    }) => (
-                      <AllocationItem
-                        key={address}
-                        address={address}
-                        className={styles.box}
-                        isAllocatedTo={isAllocatedTo}
-                        isError={addressesWithError.includes(address)}
-                        isLoadingError={isLoadingError}
-                        isThereAnyError={addressesWithError.length > 0}
-                        name={name}
-                        onChange={onChangeAllocationItemValue}
-                        onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
-                        profileImageSmall={profileImageSmall}
-                        rewardsProps={{
-                          isLoadingAllocateSimulate,
-                          simulatedMatched: allocationSimulated?.matched.find(
-                            element => element.address === address,
-                          )?.value,
-                        }}
-                        setAddressesWithError={setAddressesWithError}
-                        value={value}
-                      />
-                    ),
-                  )
-                : allocations.map(allocation => (
-                    <AllocationItemSkeleton key={allocation} className={styles.box} />
-                  ))}
-            </AnimatePresence>
-          )
-        ) : (
-          <AllocationSummary
-            allocationSimulated={allocationSimulated}
-            isLoadingAllocateSimulate={isLoadingAllocateSimulate}
-          />
-        )}
-        <ModalAllocationLowUqScore
-          modalProps={{
-            isOpen: showLowUQScoreModal,
-            onClosePanel: () => setShowLowUQScoreModal(false),
-          }}
-          onAllocate={() => onAllocate(true)}
-        />
-        {showAllocationNav &&
-          (isDesktop ? boxesWrapperRef.current : navRef.current) &&
-          createPortal(
-            <AllocationNavigation
-              areButtonsDisabled={areButtonsDisabled}
-              isLeftButtonDisabled={
-                currentView === 'summary' ||
-                isWaitingForAllMultisigSignatures ||
-                isWaitingForFirstMultisigSignature
-              }
-              isLoading={
-                !areButtonsDisabled &&
-                (allocateEvent.isLoading ||
-                  isWaitingForAllMultisigSignatures ||
-                  isWaitingForFirstMultisigSignature ||
-                  isLoading)
-              }
-              isWaitingForAllMultisigSignatures={
-                isWaitingForAllMultisigSignatures || isWaitingForFirstMultisigSignature
-              }
-              onAllocate={onAllocate}
-              onResetValues={() => onResetAllocationValues({ shouldReset: true })}
-            />,
-            isDesktop ? boxesWrapperRef.current! : navRef.current!,
+    <>
+      <div className={styles.root} data-test={dataTestRoot}>
+        <div className={styles.title}>
+          {t(isInMigrationMode ? 'migration.title' : 'allocationList')}
+        </div>
+        <div
+          ref={boxesWrapperRef}
+          className={cx(
+            styles.boxesWrapper,
+            isDesktop && styles.withMarginBottom,
+            isDesktop && allocations.length && styles.withPaddingBottom,
           )}
+        >
+          {isInMigrationMode && <div className={styles.note}>{t('migration.note')}</div>}
+          {!isEpoch1 && (
+            <AllocationRewardsBox
+              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+              isLocked={currentView === 'summary'}
+              isManuallyEdited={isManualMode}
+            />
+          )}
+          {hasUserIndividualReward && isDecisionWindowOpen && !isEpoch1 && (
+            <AllocationSliderBox
+              className={styles.box}
+              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+              isError={addressesWithError.length > 0}
+              isLocked={currentView === 'summary'}
+              setRewardsForProjectsCallback={onResetAllocationValues}
+            />
+          )}
+          {!allocations.length && currentView === 'edit' && (
+            <div
+              ref={allocationEmptyStateRef}
+              className={styles.emptyState}
+              data-test={`${dataTestRoot}__emptyState`}
+            >
+              {isEmptyStateImageVisible && (
+                <Img className={styles.emptyStateImage} src="/images/window-with-dog.webp" />
+              )}
+              <div className={styles.emptyStateText}>
+                <Trans
+                  components={[
+                    <Button
+                      className={styles.projectsLink}
+                      to={ROOT_ROUTES.projects.absolute}
+                      variant="link3"
+                    />,
+                  ]}
+                  i18nKey={emptyStateI18nKey}
+                />
+              </div>
+            </div>
+          )}
+
+          {currentView === 'edit' ? (
+            areAllocationsAvailableOrAlreadyDone && (
+              <AnimatePresence initial={false}>
+                {allocationsWithRewards.length > 0
+                  ? allocationsWithRewards!.map(
+                      ({
+                        address,
+                        isAllocatedTo,
+                        isLoadingError,
+                        value,
+                        profileImageSmall,
+                        name,
+                      }) => (
+                        <AllocationItem
+                          key={address}
+                          address={address}
+                          className={styles.box}
+                          isAllocatedTo={isAllocatedTo}
+                          isError={addressesWithError.includes(address)}
+                          isLoadingError={isLoadingError}
+                          isThereAnyError={addressesWithError.length > 0}
+                          name={name}
+                          onChange={onChangeAllocationItemValue}
+                          onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
+                          profileImageSmall={profileImageSmall}
+                          rewardsProps={{
+                            isLoadingAllocateSimulate,
+                            simulatedMatched: allocationSimulated?.matched.find(
+                              element => element.address === address,
+                            )?.value,
+                          }}
+                          setAddressesWithError={setAddressesWithError}
+                          value={value}
+                        />
+                      ),
+                    )
+                  : allocations.map(allocation => (
+                      <AllocationItemSkeleton key={allocation} className={styles.box} />
+                    ))}
+              </AnimatePresence>
+            )
+          ) : (
+            <AllocationSummary
+              allocationSimulated={allocationSimulated}
+              isLoadingAllocateSimulate={isLoadingAllocateSimulate}
+            />
+          )}
+          <ModalAllocationLowUqScore
+            modalProps={{
+              isOpen: showLowUQScoreModal,
+              onClosePanel: () => setShowLowUQScoreModal(false),
+            }}
+            onAllocate={() => onAllocate(true)}
+          />
+          {showAllocationNav &&
+            (isDesktop ? boxesWrapperRef.current : navRef.current) &&
+            createPortal(
+              <AllocationNavigation
+                areButtonsDisabled={areButtonsDisabled}
+                isLeftButtonDisabled={
+                  currentView === 'summary' ||
+                  isWaitingForAllMultisigSignatures ||
+                  isWaitingForFirstMultisigSignature
+                }
+                isLoading={
+                  !areButtonsDisabled &&
+                  (allocateEvent.isLoading ||
+                    isWaitingForAllMultisigSignatures ||
+                    isWaitingForFirstMultisigSignature ||
+                    isLoading)
+                }
+                isWaitingForAllMultisigSignatures={
+                  isWaitingForAllMultisigSignatures || isWaitingForFirstMultisigSignature
+                }
+                onAllocate={onAllocate}
+                onResetValues={() => onResetAllocationValues({ shouldReset: true })}
+              />,
+              isDesktop ? boxesWrapperRef.current! : navRef.current!,
+            )}
+        </div>
       </div>
-    </div>
+      <ModalMigration
+        modalProps={{
+          dataTest: 'ModalMigration',
+          isOpen: isModalMigrateOpen,
+          onClosePanel: () => setIsModalMigrateOpen(false),
+        }}
+      />
+    </>
   );
 };
 

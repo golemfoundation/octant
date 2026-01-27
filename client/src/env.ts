@@ -11,6 +11,7 @@ export const envViteKeys: EnvViteKeys = {
   contractEpochsAddress: 'VITE_EPOCHS_ADDRESS',
   contractGlmAddress: 'VITE_GLM_ADDRESS',
   contractProposalsAddress: 'VITE_PROPOSALS_ADDRESS',
+  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS',
   contractVaultAddress: 'VITE_VAULT_ADDRESS',
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT',
   ipfsGateways: 'VITE_IPFS_GATEWAYS',
@@ -20,10 +21,9 @@ export const envViteKeys: EnvViteKeys = {
   sentryAuthToken: 'VITE_SENTRY_AUTH_TOKEN',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
+  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
   websocketEndpoint: 'VITE_WEBSOCKET_ENDPOINT',
-  subgraphRegenStakerAddress: 'VITE_SUBGRAPH_REGEN_STAKER_ADDRESS',
-  contractRegenStakerAddress: 'VITE_REGEN_STAKER_ADDRESS',
 };
 
 const env: Env = {
@@ -36,6 +36,7 @@ const env: Env = {
   contractEpochsAddress: import.meta.env[envViteKeys.contractEpochsAddress],
   contractGlmAddress: import.meta.env[envViteKeys.contractGlmAddress],
   contractProposalsAddress: import.meta.env[envViteKeys.contractProposalsAddress],
+  contractRegenStakerAddress: import.meta.env[envViteKeys.contractRegenStakerAddress],
   contractVaultAddress: import.meta.env[envViteKeys.contractVaultAddress],
   cryptoValuesEndpoint: import.meta.env[envViteKeys.cryptoValuesEndpoint],
   ipfsGateways: import.meta.env[envViteKeys.ipfsGateways],
@@ -45,10 +46,9 @@ const env: Env = {
   sentryAuthToken: import.meta.env[envViteKeys.sentryAuthToken],
   serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
   subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
+  subgraphRegenStakerAddress: import.meta.env[envViteKeys.subgraphRegenStakerAddress],
   walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
   websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
-  subgraphRegenStakerAddress: import.meta.env[envViteKeys.subgraphRegenStakerAddress],
-  contractRegenStakerAddress: import.meta.env[envViteKeys.contractRegenStakerAddress],
 };
 
 export default env;

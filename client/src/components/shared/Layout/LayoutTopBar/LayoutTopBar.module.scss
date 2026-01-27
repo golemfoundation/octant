@@ -162,6 +162,10 @@
       background: #F04;
       border-radius: 50%;
       margin-right: 0.8rem;
+
+      &.isUserMigrationDone {
+        background: $color-octant-green;
+      }
     }
   }
 

@@ -5,29 +5,33 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
+  [_ in K]?: never;
+};
+export type Incremental<T> =
+  | T
+  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  BigDecimal: { input: any; output: any; }
-  BigInt: { input: any; output: any; }
-  Bytes: { input: any; output: any; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
+  BigDecimal: { input: any; output: any };
+  BigInt: { input: any; output: any };
+  Bytes: { input: any; output: any };
   /** 8 bytes signed integer */
-  Int8: { input: any; output: any; }
+  Int8: { input: any; output: any };
   /** A string representation of microseconds UNIX timestamp (16 digits) */
-  Timestamp: { input: any; output: any; }
+  Timestamp: { input: any; output: any };
 };
 
 /** Access control modes for address set validation */
 export enum AccessMode {
   Allowset = 'ALLOWSET',
   Blockset = 'BLOCKSET',
-  None = 'NONE'
+  None = 'NONE',
 }
 
 export type Account = {
@@ -67,7 +71,7 @@ export type Account_Filter = {
 
 export enum Account_OrderBy {
   Address = 'address',
-  Id = 'id'
+  Id = 'id',
 }
 
 /** Staker addressset */
@@ -79,7 +83,6 @@ export type AddressSet = {
   contractAddress: Scalars['Bytes']['output'];
   id: Scalars['Bytes']['output'];
 };
-
 
 /** Staker addressset */
 export type AddressSetAddressSetListArgs = {
@@ -127,12 +130,12 @@ export type AddressSet_Filter = {
 export enum AddressSet_OrderBy {
   AddressSetList = 'addressSetList',
   ContractAddress = 'contractAddress',
-  Id = 'id'
+  Id = 'id',
 }
 
 export enum Aggregation_Interval {
   Day = 'day',
-  Hour = 'hour'
+  Hour = 'hour',
 }
 
 export type Asset = {
@@ -229,7 +232,7 @@ export enum Asset_OrderBy {
   Decimals = 'decimals',
   Id = 'id',
   Name = 'name',
-  Symbol = 'symbol'
+  Symbol = 'symbol',
 }
 
 export type BlockChangedFilter = {
@@ -407,7 +410,7 @@ export enum Contribution_OrderBy {
   RegenStakerStakerAccessMode = 'regenStaker__stakerAccessMode',
   RegenStakerTotalStakedWei = 'regenStaker__totalStakedWei',
   RegenStakerVariant = 'regenStaker__variant',
-  TransactionHash = 'transactionHash'
+  TransactionHash = 'transactionHash',
 }
 
 export type Deposit = {
@@ -636,13 +639,13 @@ export enum Deposit_OrderBy {
   RegenStakerStakerAccessMode = 'regenStaker__stakerAccessMode',
   RegenStakerTotalStakedWei = 'regenStaker__totalStakedWei',
   RegenStakerVariant = 'regenStaker__variant',
-  TransactionHash = 'transactionHash'
+  TransactionHash = 'transactionHash',
 }
 
 /** Defines the order direction, either ascending or descending */
 export enum OrderDirection {
   Asc = 'asc',
-  Desc = 'desc'
+  Desc = 'desc',
 }
 
 export type Query = {
@@ -669,18 +672,15 @@ export type Query = {
   withdrawals: Array<Withdrawal>;
 };
 
-
 export type Query_MetaArgs = {
   block?: InputMaybe<Block_Height>;
 };
-
 
 export type QueryAccountArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryAccountsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -692,13 +692,11 @@ export type QueryAccountsArgs = {
   where?: InputMaybe<Account_Filter>;
 };
 
-
 export type QueryAddressSetArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryAddressSetsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -710,13 +708,11 @@ export type QueryAddressSetsArgs = {
   where?: InputMaybe<AddressSet_Filter>;
 };
 
-
 export type QueryAssetArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryAssetsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -728,13 +724,11 @@ export type QueryAssetsArgs = {
   where?: InputMaybe<Asset_Filter>;
 };
 
-
 export type QueryContributionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryContributionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -746,13 +740,11 @@ export type QueryContributionsArgs = {
   where?: InputMaybe<Contribution_Filter>;
 };
 
-
 export type QueryDepositArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryDepositsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -764,20 +756,17 @@ export type QueryDepositsArgs = {
   where?: InputMaybe<Deposit_Filter>;
 };
 
-
 export type QueryRegenStakerArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
-
 export type QueryRegenStakerStatsArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryRegenStakerStats_CollectionArgs = {
   block?: InputMaybe<Block_Height>;
@@ -789,7 +778,6 @@ export type QueryRegenStakerStats_CollectionArgs = {
   where?: InputMaybe<RegenStakerStats_Filter>;
 };
 
-
 export type QueryRegenStakersArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -800,13 +788,11 @@ export type QueryRegenStakersArgs = {
   where?: InputMaybe<RegenStaker_Filter>;
 };
 
-
 export type QueryTransactionArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryTransactionsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -818,13 +804,11 @@ export type QueryTransactionsArgs = {
   where?: InputMaybe<Transaction_Filter>;
 };
 
-
 export type QueryWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
-
 
 export type QueryWithdrawalsArgs = {
   block?: InputMaybe<Block_Height>;
@@ -926,13 +910,13 @@ export type RegenStakerStats_Filter = {
 
 export enum RegenStakerStats_OrderBy {
   Id = 'id',
-  StakerCount = 'stakerCount'
+  StakerCount = 'stakerCount',
 }
 
 /** Represents Solidity enum RegenStakerVariant as readable values */
 export enum RegenStakerVariant {
   WithoutDelegation = 'WITHOUT_DELEGATION',
-  WithDelegation = 'WITH_DELEGATION'
+  WithDelegation = 'WITH_DELEGATION',
 }
 
 export type RegenStaker_Filter = {
@@ -1278,7 +1262,7 @@ export enum RegenStaker_OrderBy {
   VotingTokenDecimals = 'votingToken__decimals',
   VotingTokenId = 'votingToken__id',
   VotingTokenName = 'votingToken__name',
-  VotingTokenSymbol = 'votingToken__symbol'
+  VotingTokenSymbol = 'votingToken__symbol',
 }
 
 export type Transaction = {
@@ -1307,7 +1291,7 @@ export enum TransactionType {
   ClaimReward = 'CLAIM_REWARD',
   Stake = 'STAKE',
   StakeMore = 'STAKE_MORE',
-  Withdraw = 'WITHDRAW'
+  Withdraw = 'WITHDRAW',
 }
 
 export type Transaction_Filter = {
@@ -1420,7 +1404,7 @@ export enum Transaction_OrderBy {
   Id = 'id',
   Receiver = 'receiver',
   TransactionHash = 'transactionHash',
-  Type = 'type'
+  Type = 'type',
 }
 
 /** Withdrawals from a RegenStaker */
@@ -1537,7 +1521,7 @@ export enum Withdrawal_OrderBy {
   DepositTransactionHash = 'deposit__transactionHash',
   Id = 'id',
   LogIndex = 'logIndex',
-  TransactionHash = 'transactionHash'
+  TransactionHash = 'transactionHash',
 }
 
 export type _Block_ = {
@@ -1572,7 +1556,7 @@ export enum _SubgraphErrorPolicy_ {
   /** Data will be returned even if the subgraph has indexing errors */
   Allow = 'allow',
   /** If the subgraph has indexing errors, data will be omitted. The default. */
-  Deny = 'deny'
+  Deny = 'deny',
 }
 
 export type DepositsQueryVariables = Exact<{
@@ -1580,8 +1564,74 @@ export type DepositsQueryVariables = Exact<{
   regenStaker: Scalars['String']['input'];
 }>;
 
+export type DepositsQuery = {
+  __typename?: 'Query';
+  deposits: Array<{ __typename?: 'Deposit'; id: any; depositId: any; balanceWei: any }>;
+};
 
-export type DepositsQuery = { __typename?: 'Query', deposits: Array<{ __typename?: 'Deposit', id: any, depositId: any, balanceWei: any }> };
-
-
-export const DepositsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Deposits"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"owner"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"regenStaker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deposits"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner"},"value":{"kind":"Variable","name":{"kind":"Name","value":"owner"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"regenStaker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"regenStaker"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"depositId"}},{"kind":"Field","name":{"kind":"Name","value":"balanceWei"}}]}}]}}]} as unknown as DocumentNode<DepositsQuery, DepositsQueryVariables>;
+export const DepositsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'Deposits' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'owner' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'regenStaker' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'deposits' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'where' },
+                value: {
+                  kind: 'ObjectValue',
+                  fields: [
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'owner' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'owner' } },
+                    },
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'regenStaker' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'regenStaker' } },
+                    },
+                  ],
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'depositId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'balanceWei' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<DepositsQuery, DepositsQueryVariables>;

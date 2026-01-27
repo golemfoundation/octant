@@ -17,6 +17,7 @@ import { TOURGUIDE_ELEMENT_3 } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -37,6 +38,8 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
+  const { data: isUserMigrationDone, isFetching: isFetchingIsUserMigrationDone } =
+    useIsUserMigrationDone();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const {
@@ -224,12 +227,17 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           <Button
             className={styles.buttonMigrate}
             dataTest={`${dataTestRoot}__ButtonMigrate`}
-            isDisabled={!isConnected}
+            isDisabled={!isConnected || (isConnected && isUserMigrationDone)}
+            isLoading={isFetchingIsUserMigrationDone}
             onClick={() => setIsModalMigrateOpen(true)}
             variant="cta"
           >
-            <div className={styles.dot} />
-            {t('migration.topBar.buttonMigrate')}
+            <div className={cx(styles.dot, isUserMigrationDone && styles.isUserMigrationDone)} />
+            {t(
+              isUserMigrationDone
+                ? 'migration.topBar.buttonMigrate.afterMigration'
+                : 'migration.topBar.buttonMigrate.beforeMigration',
+            )}
           </Button>
           <Button
             className={cx(

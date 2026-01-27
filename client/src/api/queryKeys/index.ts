@@ -35,10 +35,6 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
-  v2Deposits: (regenStakerAddress, userAddress) => [
-    ROOTS.v2Deposits,
-    regenStakerAddress, userAddress,
-  ],
   allSablierStreams: ['allSablierStreams'],
   antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],
@@ -96,6 +92,11 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
+  v2Deposits: (regenStakerAddress, userAddress) => [
+    ROOTS.v2Deposits,
+    regenStakerAddress,
+    userAddress,
+  ],
   vimeoVideos: ['vimeoVideos'],
   withdrawals: ['withdrawals'],
 };

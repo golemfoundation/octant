@@ -4,8 +4,8 @@ import env from 'env';
 
 import Deposits from './abi/Deposits.json';
 import ERC20 from './abi/ERC20.json';
-import Vault from './abi/Vault.json';
 import RegenStaker from './abi/RegenStaker.json';
+import Vault from './abi/Vault.json';
 
 type WriteContract = {
   args: unknown[];

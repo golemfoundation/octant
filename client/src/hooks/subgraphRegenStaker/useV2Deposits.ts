@@ -8,7 +8,6 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
 import { graphql } from 'gql/regenStaker/gql';
 import { DepositsQuery } from 'gql/regenStaker/graphql';
-import { QueryKeys } from 'api/queryKeys/types';
 
 type DepositData = {
   balanceWei: string;
@@ -26,27 +25,18 @@ const depositsQueryDocument = graphql(`
   }
 `);
 
-// export const initialDepositData: DepositData = {
-//   balanceWei: '',
-//   depositId: '',
-//   id: '',
-// };
-
-const useV2DepositsQuery = (regenStakerAddress: Hash, owner: Hash): UseQueryResult<DepositData[]> => {
+const useV2Deposits = (owner: Hash): UseQueryResult<DepositData[]> => {
+  const { subgraphRegenStakerAddress, contractRegenStakerAddress } = env;
   return useQuery<DepositsQuery, any, any, any>({
+    enabled: !!contractRegenStakerAddress && !!owner,
     queryFn: () =>
-      request(env.subgraphRegenStakerAddress, depositsQueryDocument, {
+      request(subgraphRegenStakerAddress, depositsQueryDocument, {
         owner,
-        regenStaker: regenStakerAddress,
+        regenStaker: contractRegenStakerAddress,
       }),
-    queryKey: QUERY_KEYS.v2Deposits(regenStakerAddress, owner),
-    select(data) {
-      console.log({ data });
-      return data?.deposits;
-    },
-    enabled: !!regenStakerAddress && !!owner,
-    throwOnError: error => console.log({ error }),
+    queryKey: QUERY_KEYS.v2Deposits(contractRegenStakerAddress, owner),
+    select: data => data?.deposits,
   });
 };
 
-export default useV2DepositsQuery;
+export default useV2Deposits;
