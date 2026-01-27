@@ -6,6 +6,7 @@ import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { SABLIER_APP_LINK, V2_PRIVACY_POLICY_URL, V2_TERMS_OF_SERVICE_URL } from 'constants/urls';
+import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 
 import styles from './ModalMigration.module.scss';
@@ -19,6 +20,9 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
   const [currentStep, setCurrentStep] = useState<0 | 1>(0);
   const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+
+  const { mutateAsync: migrateDepositToV2MutateAsync, isPending: isPendingMigrateDepositToV2 } =
+    useMigrateDepositToV2();
 
   useEffect(() => {
     if (!modalProps.isOpen) {
@@ -103,13 +107,14 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
         <Button
           className={styles.button}
           isHigh
+          isLoading={isPendingMigrateDepositToV2}
           label={currentStep === 0 ? t('buttons.ok') : t('buttons.startMigration')}
           onClick={
             currentStep === 0
               ? () => setCurrentStep(1)
               : () => {
                   if (isConsentGiven) {
-                    window.open('https://golem.foundation/', '_blank');
+                    migrateDepositToV2MutateAsync();
                     return;
                   }
                   if (step.error) {

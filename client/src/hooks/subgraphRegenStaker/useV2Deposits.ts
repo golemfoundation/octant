@@ -25,7 +25,7 @@ const depositsQueryDocument = graphql(`
   }
 `);
 
-const useV2Deposits = (owner: Hash): UseQueryResult<DepositData[]> => {
+export default function useV2Deposits(owner: Hash): UseQueryResult<DepositData[]> {
   const { subgraphRegenStakerAddress, contractRegenStakerAddress } = env;
   return useQuery<DepositsQuery, any, any, any>({
     enabled: !!contractRegenStakerAddress && !!owner,
@@ -37,6 +37,4 @@ const useV2Deposits = (owner: Hash): UseQueryResult<DepositData[]> => {
     queryKey: QUERY_KEYS.v2Deposits(contractRegenStakerAddress, owner),
     select: data => data?.deposits,
   });
-};
-
-export default useV2Deposits;
+}
