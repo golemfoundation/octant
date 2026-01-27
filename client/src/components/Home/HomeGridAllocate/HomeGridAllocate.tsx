@@ -121,16 +121,13 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
           isHigh
           onClick={() => {
             const isAddedToAllocate = projectsEpoch
-              ? // ? allocations!.includes(projectsEpoch.projectsAddresses[0])
-                allocations!.includes('0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79')
+              ? allocations!.includes(projectsEpoch.projectsAddresses[0])
               : false;
 
             setIsAllocationDrawerOpen(true);
 
             if (projectsEpoch !== undefined && !isAddedToAllocate) {
-              // onAddRemoveFromAllocate(projectsEpoch.projectsAddresses[0]);
-              // Protocol Guild address
-              onAddRemoveFromAllocate('0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79');
+              onAddRemoveFromAllocate(projectsEpoch.projectsAddresses[0]);
             }
           }}
           variant="cta"
