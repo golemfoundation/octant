@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 
 @pytest.mark.api
-@pytest.mark.skip(reason="Skipping antisybil test because it is deprecated")
+@pytest.mark.skip(reason="Requires real Gitcoin Passport API - test disabled for CI")
 def test_antisybil(
     fclient: FastAPIClient, ua_alice: FastUserAccount, sync_session: Session
 ):

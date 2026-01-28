@@ -15,14 +15,15 @@ from tests.helpers.constants import STARTING_EPOCH
 
 
 async def wait_for_server(host: str, port: int, timeout: float = 3.0) -> None:
-    start_time = asyncio.get_event_loop().time()
+    loop = asyncio.get_running_loop()
+    start_time = loop.time()
     while True:
         try:
             with socket.create_connection((host, port), timeout=0.5):
                 return
         except (ConnectionRefusedError, socket.timeout):
             await asyncio.sleep(0.1)
-        if asyncio.get_event_loop().time() - start_time > timeout:
+        if loop.time() - start_time > timeout:
             raise TimeoutError(
                 f"Server at {host}:{port} did not start within {timeout} seconds"
             )
