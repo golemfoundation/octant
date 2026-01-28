@@ -24,7 +24,7 @@ import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
-import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
+import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
@@ -67,7 +67,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
-  const { data: isUserMigrationDone } = useIsUserMigrationDone();
+  const { isUserMigrationRequired } = useIsUserMigrationDoneOrRequired();
   const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
   const isInMigrationMode = useIsMigrationMode();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
@@ -346,11 +346,9 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
 
-    if (isUserMigrationDone) {
-      return;
+    if (isUserMigrationRequired) {
+      setIsModalMigrateOpen(true);
     }
-
-    setIsModalMigrateOpen(true);
   };
 
   useEffect(() => {

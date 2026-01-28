@@ -139,7 +139,8 @@
         "text": "Migrate your locked GLM to v2. This is a one-time process and takes less than a minute.",
         "buttonLabel": {
           "beforeMigration": "Migrate",
-          "afterMigration": "You have successfully migrated"
+          "afterMigration": "You have successfully migrated",
+          "noMigration": "No migration needed"
         }
       },
       "homeGridCurrentGlmLock": {
@@ -448,12 +449,17 @@
       "calendar": "Calendar",
       "migration":  {
         "calendar": {
-          "text": "We are evolving! Migrate to v2 below"
+          "text": {
+            "beforeMigration": "We are evolving! Migrate to v2 below",
+            "afterMigration": "We are evolving! You have migrated!",
+            "noMigration": "We are evolving! No migration needed"
+          }
         },
         "topBar": {
           "buttonMigrate": {
             "beforeMigration": "Migrate to v2",
-            "afterMigration": "You have successfully migrated"
+            "afterMigration": "You have successfully migrated",
+            "noMigration": "No migration needed"
           }
         }
       }

@@ -12,7 +12,7 @@ import Svg from 'components/ui/Svg';
 import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
 import env from 'env';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
-import useIsUserMigrationDone from 'hooks/helpers/useIsUserMigrationDone';
+import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired.ts';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -27,8 +27,8 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const dataTestRoot = 'LayoutTopBarCalendar';
   const { isMobile } = useMediaQuery();
-  const { data: isUserMigrationDone, isFetching: isFetchingIsUserMigrationDone } =
-    useIsUserMigrationDone();
+  const { data: { isUserMigrationRequired, isUserMigrationDone }, isFetching: isFetchingIsUserMigrationDoneOrRequired } =
+    useIsUserMigrationDoneOrRequired();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
@@ -130,7 +130,7 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
   }, [!!epochsStartEndTime, isDecisionWindowOpen, isFetchingEpochStartEndTime]);
 
   const onClickAllocationInfo = () => {
-    if (isFetchingIsUserMigrationDone) {
+    if (isFetchingIsUserMigrationDoneOrRequired) {
       return;
     }
       if (isInMigrationMode) {
@@ -138,11 +138,31 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
           window.open(regenStakerUrl, '_blank');
           return;
         }
-        setIsModalMigrateOpen(true);
+        if (isUserMigrationRequired) {
+          setIsModalMigrateOpen(true);
+          return;
+        }
         return;
       }
     setIsCalendarOpen(true);
   };
+
+  const labelMain = useMemo(() => {
+    if (!isInMigrationMode) {
+      return allocationInfoText;
+    }
+    if (isUserMigrationRequired) {
+      return t('migration.calendar.text.beforeMigration');
+    }
+    if (isUserMigrationDone) {
+      return t('migration.calendar.text.afterMigration');
+    }
+    if (!isUserMigrationRequired) {
+      return t('migration.calendar.text.noMigration');
+    }
+    return t('migration.calendar.text.beforeMigration');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allocationInfoText, isUserMigrationRequired, isUserMigrationDone]);
 
   const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 
@@ -160,7 +180,7 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
         onClick={onClickAllocationInfo}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
-        {isInMigrationMode ? t('migration.calendar.text') : allocationInfoText}
+        {labelMain}
       </div>
       {createPortal(
         <AnimatePresence>
