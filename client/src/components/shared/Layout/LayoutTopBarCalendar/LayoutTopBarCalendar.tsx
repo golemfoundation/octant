@@ -12,7 +12,7 @@ import Svg from 'components/ui/Svg';
 import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
 import env from 'env';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
-import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired.ts';
+import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -27,8 +27,10 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const dataTestRoot = 'LayoutTopBarCalendar';
   const { isMobile } = useMediaQuery();
-  const { data: { isUserMigrationRequired, isUserMigrationDone }, isFetching: isFetchingIsUserMigrationDoneOrRequired } =
-    useIsUserMigrationDoneOrRequired();
+  const {
+    data: { isUserMigrationRequired, isUserMigrationDone },
+    isFetching: isFetchingIsUserMigrationDoneOrRequired,
+  } = useIsUserMigrationDoneOrRequired();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
@@ -133,17 +135,17 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
     if (isFetchingIsUserMigrationDoneOrRequired) {
       return;
     }
-      if (isInMigrationMode) {
-        if (isUserMigrationDone) {
-          window.open(regenStakerUrl, '_blank');
-          return;
-        }
-        if (isUserMigrationRequired) {
-          setIsModalMigrateOpen(true);
-          return;
-        }
+    if (isInMigrationMode) {
+      if (isUserMigrationDone) {
+        window.open(regenStakerUrl, '_blank');
         return;
       }
+      if (isUserMigrationRequired) {
+        setIsModalMigrateOpen(true);
+        return;
+      }
+      return;
+    }
     setIsCalendarOpen(true);
   };
 

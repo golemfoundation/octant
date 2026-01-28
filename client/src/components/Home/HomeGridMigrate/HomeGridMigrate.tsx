@@ -15,8 +15,10 @@ import HomeGridMigrateProps from './types';
 const HomeGridMigrate: FC<HomeGridMigrateProps> = ({ className }) => {
   const { regenStakerUrl } = env;
   const { isConnected } = useAccount();
-  const { data: { isUserMigrationRequired, isUserMigrationDone }, isFetching: isFetchingIsUserMigrationDoneOrRequired } =
-    useIsUserMigrationDoneOrRequired();
+  const {
+    data: { isUserMigrationRequired, isUserMigrationDone },
+    isFetching: isFetchingIsUserMigrationDoneOrRequired,
+  } = useIsUserMigrationDoneOrRequired();
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridMigrate',
   });
@@ -48,10 +50,10 @@ const HomeGridMigrate: FC<HomeGridMigrateProps> = ({ className }) => {
             isDisabled={!isConnected || (isConnected && !isUserMigrationRequired)}
             isHigh
             isLoading={isFetchingIsUserMigrationDoneOrRequired}
+            label={buttonMigrateLabel}
             onClick={isUserMigrationRequired ? () => setIsModalMigrateOpen(true) : undefined}
             to={isUserMigrationDone ? regenStakerUrl : undefined}
             variant="cta"
-            label={buttonMigrateLabel}
           />
         </div>
       </GridTile>

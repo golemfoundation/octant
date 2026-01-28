@@ -40,8 +40,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
-  const { data: { isUserMigrationRequired, isUserMigrationDone }, isFetching: isFetchingIsUserMigrationDoneOrRequired } =
-    useIsUserMigrationDoneOrRequired();
+  const {
+    data: { isUserMigrationRequired, isUserMigrationDone },
+    isFetching: isFetchingIsUserMigrationDoneOrRequired,
+  } = useIsUserMigrationDoneOrRequired();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const {
@@ -249,7 +251,12 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             to={isUserMigrationDone ? regenStakerUrl : undefined}
             variant="cta"
           >
-            <div className={cx(styles.dot, (!isUserMigrationRequired || isUserMigrationDone) && styles.isOK)} />
+            <div
+              className={cx(
+                styles.dot,
+                (!isUserMigrationRequired || isUserMigrationDone) && styles.isOK,
+              )}
+            />
             {buttonMigrateLabel}
           </Button>
           <Button
