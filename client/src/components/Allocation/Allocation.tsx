@@ -67,7 +67,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
-  const { isUserMigrationRequired } = useIsUserMigrationDoneOrRequired();
+  const { data: { isUserMigrationRequired } } = useIsUserMigrationDoneOrRequired();
   const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
   const isInMigrationMode = useIsMigrationMode();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
