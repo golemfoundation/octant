@@ -119,7 +119,7 @@ const HomeGridCurrentGlmLock: FC<HomeGridCurrentGlmLockProps> = ({ className }) 
             variant="standard"
           />
           <Button
-            className={styles.lockGlmButton}
+            className={styles.button}
             dataTest="HomeGridCurrentGlmLock__Button"
             isDisabled={!isConnected}
             isHigh

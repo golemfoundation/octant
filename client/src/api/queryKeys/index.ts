@@ -31,6 +31,7 @@ export const ROOTS: Root = {
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
   userTOS: 'userTOS',
+  v2Deposits: 'v2Deposits',
 };
 
 export const QUERY_KEYS: QueryKeys = {
@@ -91,6 +92,11 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
+  v2Deposits: (regenStakerAddress, userAddress) => [
+    ROOTS.v2Deposits,
+    regenStakerAddress,
+    userAddress,
+  ],
   vimeoVideos: ['vimeoVideos'],
   withdrawals: ['withdrawals'],
 };

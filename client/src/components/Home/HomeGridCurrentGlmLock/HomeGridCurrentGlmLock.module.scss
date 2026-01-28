@@ -1,5 +1,6 @@
 .root {
   position: relative;
+  flex: 1;
   padding: 1.4rem 2.4rem 2.4rem;
 
   @media #{$tablet-up} {
@@ -13,10 +14,11 @@
     background-color: $color-octant-grey1;
   }
 
-  .lockGlmButton {
+  .button {
     margin-top: 2.4rem;
     width: 100%;
   }
+
   .effective {
     min-height: 6.4rem;
   }

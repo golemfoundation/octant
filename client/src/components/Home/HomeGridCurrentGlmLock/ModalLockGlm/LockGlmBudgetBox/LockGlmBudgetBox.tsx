@@ -6,6 +6,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import { SABLIER_APP_LINK } from 'constants/urls';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 import getFormattedGlmValue from 'utils/getFormattedGlmValue';
@@ -25,6 +26,7 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
     useAvailableFundsGlm();
   const { data: userSablierStreams, isFetching: isFetchinguserSablierStreams } =
     useUserSablierStreams();
+  const isInMigrationMode = useIsMigrationMode();
 
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.home.homeGridCurrentGlmLock.modalLockGlm.lockGlmBudgetBox',
@@ -99,15 +101,17 @@ const LockGlmBudgetBox: FC<LockGlmBudgetBoxProps> = ({
           </div>
         )}
       </div>
-      <div className={styles.budgetRow}>
-        <div className={styles.budgetLabel}>{secondRowLabel}</div>
-        <AvailableFundsGlm
-          classNameBudgetValue={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}
-          classNameSkeleton={styles.skeleton}
-          isLoading={areFundsFetching}
-          value={secondRowValue}
-        />
-      </div>
+      {!isInMigrationMode && (
+        <div className={styles.budgetRow}>
+          <div className={styles.budgetLabel}>{secondRowLabel}</div>
+          <AvailableFundsGlm
+            classNameBudgetValue={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}
+            classNameSkeleton={styles.skeleton}
+            isLoading={areFundsFetching}
+            value={secondRowValue}
+          />
+        </div>
+      )}
     </BoxRounded>
   );
 };

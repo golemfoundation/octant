@@ -56,6 +56,11 @@
     }
   }
 
+  .note {
+    color: $color-octant-grey5;
+    margin-bottom: 1.6rem;
+  }
+
   .emptyState {
     display: flex;
     flex-direction: column;

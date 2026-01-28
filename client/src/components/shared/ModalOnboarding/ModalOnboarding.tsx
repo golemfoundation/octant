@@ -103,6 +103,19 @@ const ModalOnboarding = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
+  /**
+   * Specifically when ToS is the only step.
+   * After signing ToS stepsToUse.length changes from 1 to 0.
+   * Then, close the onboarding.
+   */
+  useEffect(() => {
+    if (isUserTOSAccepted && stepsToUse.length === 0) {
+      setIsOnboardingDone(true);
+      setIsOnboardingModalOpen(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUserTOSAccepted, stepsToUse.length]);
+
   useEffect(() => {
     if (isOnboardingModalOpen || !antisybilStatusScore || shouldOnboardingBeOpened) {
       return;

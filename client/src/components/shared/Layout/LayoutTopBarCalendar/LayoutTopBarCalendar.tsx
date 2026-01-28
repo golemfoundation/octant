@@ -1,14 +1,18 @@
 import cx from 'classnames';
 import { differenceInMinutes } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
+import ModalMigration from 'components/Home/ModalMigration';
 import Calendar from 'components/shared/Layout/LayoutTopBarCalendar/Calendar';
 import Modal from 'components/ui/Modal';
 import Svg from 'components/ui/Svg';
 import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
+import env from 'env';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
+import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired.ts';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -16,18 +20,24 @@ import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import { calendar } from 'svg/misc';
 
 import styles from './LayoutTopBarCalendar.module.scss';
+import LayoutTopBarCalendarProps from './types';
 
-const LayoutTopBarCalendar = (): ReactElement => {
+const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
+  const { regenStakerUrl } = env;
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const dataTestRoot = 'LayoutTopBarCalendar';
   const { isMobile } = useMediaQuery();
+  const { data: { isUserMigrationRequired, isUserMigrationDone }, isFetching: isFetchingIsUserMigrationDoneOrRequired } =
+    useIsUserMigrationDoneOrRequired();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
     useEpochsStartEndTime();
+  const isInMigrationMode = useIsMigrationMode();
   const [durationToChangeAWInMinutes, setDurationToChangeAWInMinutes] = useState(0);
   const [showAWAlert, setShowAWAlert] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
 
   const allocationInfoText = useMemo(() => {
     const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!;
@@ -119,18 +129,58 @@ const LayoutTopBarCalendar = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!epochsStartEndTime, isDecisionWindowOpen, isFetchingEpochStartEndTime]);
 
+  const onClickAllocationInfo = () => {
+    if (isFetchingIsUserMigrationDoneOrRequired) {
+      return;
+    }
+      if (isInMigrationMode) {
+        if (isUserMigrationDone) {
+          window.open(regenStakerUrl, '_blank');
+          return;
+        }
+        if (isUserMigrationRequired) {
+          setIsModalMigrateOpen(true);
+          return;
+        }
+        return;
+      }
+    setIsCalendarOpen(true);
+  };
+
+  const labelMain = useMemo(() => {
+    if (!isInMigrationMode) {
+      return allocationInfoText;
+    }
+    if (isUserMigrationRequired) {
+      return t('migration.calendar.text.beforeMigration');
+    }
+    if (isUserMigrationDone) {
+      return t('migration.calendar.text.afterMigration');
+    }
+    if (!isUserMigrationRequired) {
+      return t('migration.calendar.text.noMigration');
+    }
+    return t('migration.calendar.text.beforeMigration');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allocationInfoText, isUserMigrationRequired, isUserMigrationDone]);
+
   const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 
   return (
     <>
       <div
-        className={cx(styles.allocationInfo, showAWAlert && styles.showAWAlert)}
+        className={cx(
+          styles.allocationInfo,
+          isInMigrationMode && styles.isInMigrationMode,
+          showAWAlert && styles.showAWAlert,
+          className,
+        )}
         data-test={dataTestRoot}
         id={TOURGUIDE_ELEMENT_2}
-        onClick={() => setIsCalendarOpen(true)}
+        onClick={onClickAllocationInfo}
       >
         {!isMobile && <Svg classNameSvg={styles.calendarIcon} img={calendar} size={1.6} />}
-        {allocationInfoText}
+        {labelMain}
       </div>
       {createPortal(
         <AnimatePresence>
@@ -170,6 +220,13 @@ const LayoutTopBarCalendar = (): ReactElement => {
       >
         <Calendar {...calendarProps} />
       </Modal>
+      <ModalMigration
+        modalProps={{
+          dataTest: 'ModalMigration',
+          isOpen: isModalMigrateOpen,
+          onClosePanel: () => setIsModalMigrateOpen(false),
+        }}
+      />
     </>
   );
 };

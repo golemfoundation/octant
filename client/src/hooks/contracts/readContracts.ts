@@ -6,6 +6,7 @@ import Deposits from './abi/Deposits.json';
 import Epochs from './abi/Epochs.json';
 import ERC20 from './abi/ERC20.json';
 import Proposals from './abi/Proposals.json';
+import RegenStaker from './abi/RegenStaker.json';
 
 type ReadContract = {
   args?: unknown[];
@@ -59,6 +60,19 @@ export function readContractProposals({
   return publicClient!.readContract({
     abi: Proposals.abi,
     address: env.contractProposalsAddress as `0x{string}`,
+    args,
+    functionName,
+  });
+}
+
+export function readContractRegenStaker({
+  publicClient,
+  functionName,
+  args,
+}: ReadContract): Promise<any> {
+  return publicClient!.readContract({
+    abi: RegenStaker.abi,
+    address: env.contractRegenStakerAddress as `0x{string}`,
     args,
     functionName,
   });

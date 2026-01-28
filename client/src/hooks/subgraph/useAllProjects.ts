@@ -7,8 +7,8 @@ import { request } from 'graphql-request';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { QueryKeys } from 'api/queryKeys/types';
 import env from 'env';
-import { graphql } from 'gql/gql';
-import { GetProjectsMetadataAccumulatedsQuery } from 'gql/graphql';
+import { graphql } from 'gql/v1/gql';
+import { GetProjectsMetadataAccumulatedsQuery } from 'gql/v1/graphql';
 
 const GET_PROJECTS_METADATA_ACCUMULATEDS = graphql(`
   query GetProjectsMetadataAccumulateds {

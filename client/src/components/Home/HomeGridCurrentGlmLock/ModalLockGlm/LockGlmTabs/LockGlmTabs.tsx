@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { useFormikContext } from 'formik';
-import React, { FC, useMemo, useRef } from 'react';
+import React, { FC, useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { FormFields } from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm/LockGlm/types';
@@ -9,6 +9,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import ButtonProps from 'components/ui/Button/types';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -38,10 +39,20 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: depositsValue } = useDepositValue();
+  const { data: depositsValue, isFetching: isFetchingDepositsValue } = useDepositValue();
   const { data: userSablierStreams } = useUserSablierStreams();
+  const isInMigrationMode = useIsMigrationMode();
 
   const isMaxDisabled = isLoading || step > 1;
+
+  useEffect(() => {
+    if (isFetchingDepositsValue || depositsValue === undefined) {
+      return;
+    }
+    formik.setFieldValue('valueToDeposeOrWithdraw', formatUnitsBigInt(depositsValue));
+    setValueToDepose(depositsValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depositsValue, isFetchingDepositsValue]);
 
   const onSetValue = (value: string): void => {
     formik.setFieldValue('valueToDeposeOrWithdraw', value);
@@ -78,11 +89,14 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
     if (step === 3) {
       return i18n.t('common.close');
     }
+    if (isInMigrationMode) {
+      return t('migration.buttonLabel');
+    }
     if (currentMode === 'unlock') {
       return t('unlock');
     }
     return t('lock');
-  }, [currentMode, step, t, isLoading, i18n]);
+  }, [isInMigrationMode, currentMode, step, t, isLoading, i18n]);
 
   const isButtonDisabled =
     !formik.isValid || parseUnitsBigInt(formik.values.valueToDeposeOrWithdraw || '0') === 0n;
@@ -94,85 +108,99 @@ const LockGlmTabs: FC<LockGlmTabsProps> = ({
       className={cx(styles.box, className)}
       dataTest="LockGlmTabs"
       isGrey
-      tabs={[
-        {
-          isActive: currentMode === 'lock',
-          isDisabled: isLoading,
-          onClick: () => onReset({ newMode: 'lock', setFieldValue }),
-          title: t('lock'),
-        },
-        {
-          isActive: currentMode === 'unlock',
-          isDisabled: isLoading,
-          onClick: () => onReset({ newMode: 'unlock', setFieldValue }),
-          title: t('unlock'),
-        },
-      ]}
+      tabs={
+        isInMigrationMode
+          ? undefined
+          : [
+              {
+                isActive: currentMode === 'lock',
+                isDisabled: isLoading,
+                onClick: () => onReset({ newMode: 'lock', setFieldValue }),
+                title: t('lock'),
+              },
+              {
+                isActive: currentMode === 'unlock',
+                isDisabled: isLoading,
+                onClick: () => onReset({ newMode: 'unlock', setFieldValue }),
+                title: t('unlock'),
+              },
+            ]
+      }
     >
-      <Button
-        ref={buttonUseMaxRef}
-        className={cx(styles.max, isMaxDisabled && styles.isDisabled)}
-        onClick={onMax}
-        variant="iconOnlyTransparent2"
-      >
-        {t('glmLockTabs.useMax')}
-      </Button>
-      <LockGlmTabsInputs
-        ref={inputRef}
-        areInputsDisabled={isLoading}
-        cryptoCurrency="golem"
-        error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
-        inputCryptoProps={{
-          name: 'valueToDeposeOrWithdraw',
-          onClear: formik.resetForm,
-          suffix: 'GLM',
-          value: formik.values.valueToDeposeOrWithdraw,
-        }}
-        label={
-          <div className={styles.inputsLabel}>
-            {t(currentMode === 'lock' ? 'glmLockTabs.amountToLock' : 'glmLockTabs.amountToUnlock')}
-            {showBalances && (
-              <div className={styles.inputsLabelBalance}>
-                <div
-                  className={cx(
-                    styles.lockedValue,
-                    formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
-                  )}
-                >
-                  {
-                    getFormattedGlmValue({
-                      value: shouldRaffleLabelBeVisible
-                        ? userSablierStreams?.sum
-                        : depositsValue || BigInt(0),
-                    }).value
-                  }
-                </div>
-                {t(shouldRaffleLabelBeVisible ? 'glmLockTabs.timeLocked' : 'glmLockTabs.locked')}
-                <div
-                  className={cx(
-                    styles.availableValue,
-                    formik.errors.valueToDeposeOrWithdraw === 'dontHaveEnough' &&
-                      styles.dontHaveEnough,
-                  )}
-                >
-                  {
-                    getFormattedGlmValue({
-                      value:
-                        currentMode === 'lock'
-                          ? BigInt(availableFundsGlm ? availableFundsGlm?.value : 0)
-                          : depositsValue || 0n,
-                    }).value
-                  }
-                </div>
-                {i18n.t('common.available')}
+      {!isInMigrationMode && (
+        <>
+          <Button
+            ref={buttonUseMaxRef}
+            className={cx(styles.max, isMaxDisabled && styles.isDisabled)}
+            onClick={onMax}
+            variant="iconOnlyTransparent2"
+          >
+            {t('glmLockTabs.useMax')}
+          </Button>
+          <LockGlmTabsInputs
+            ref={inputRef}
+            areInputsDisabled={isLoading}
+            cryptoCurrency="golem"
+            error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
+            inputCryptoProps={{
+              name: 'valueToDeposeOrWithdraw',
+              onClear: formik.resetForm,
+              suffix: 'GLM',
+              value: formik.values.valueToDeposeOrWithdraw,
+            }}
+            label={
+              <div className={styles.inputsLabel}>
+                {t(
+                  currentMode === 'lock'
+                    ? 'glmLockTabs.amountToLock'
+                    : 'glmLockTabs.amountToUnlock',
+                )}
+                {showBalances && (
+                  <div className={styles.inputsLabelBalance}>
+                    <div
+                      className={cx(
+                        styles.lockedValue,
+                        formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
+                      )}
+                    >
+                      {
+                        getFormattedGlmValue({
+                          value: shouldRaffleLabelBeVisible
+                            ? userSablierStreams?.sum
+                            : depositsValue || BigInt(0),
+                        }).value
+                      }
+                    </div>
+                    {t(
+                      shouldRaffleLabelBeVisible ? 'glmLockTabs.timeLocked' : 'glmLockTabs.locked',
+                    )}
+                    <div
+                      className={cx(
+                        styles.availableValue,
+                        formik.errors.valueToDeposeOrWithdraw === 'dontHaveEnough' &&
+                          styles.dontHaveEnough,
+                      )}
+                    >
+                      {
+                        getFormattedGlmValue({
+                          value:
+                            currentMode === 'lock'
+                              ? BigInt(availableFundsGlm ? availableFundsGlm?.value : 0)
+                              : depositsValue || 0n,
+                        }).value
+                      }
+                    </div>
+                    {i18n.t('common.available')}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        }
-        mode={currentMode}
-        onChange={onSetValue}
-        onInputsFocusChange={onInputsFocusChange}
-      />
+            }
+            mode={currentMode}
+            onChange={onSetValue}
+            onInputsFocusChange={onInputsFocusChange}
+          />
+        </>
+      )}
       <Button
         className={styles.button}
         dataTest="LockGlmTabs__Button"
