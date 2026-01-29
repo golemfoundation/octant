@@ -14,13 +14,14 @@ import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 
-export default function useMigrateDepositToV2(): UseMutationResult<
-  TransactionReceipt,
-  Error,
-  void,
-  unknown
-> {
-  const { contractGlmAddress } = env;
+type ActionAfterUnlock = 'deposit_in_v2' | 'redirect_to_v2';
+
+export default function useMigrateDepositToV2({
+  actionAfterUnlock,
+}: {
+  actionAfterUnlock: ActionAfterUnlock;
+}): UseMutationResult<TransactionReceipt | null, Error, void, unknown> {
+  const { contractGlmAddress, regenStakerUrl } = env;
   const { address } = useAccount();
   const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
@@ -79,7 +80,7 @@ export default function useMigrateDepositToV2(): UseMutationResult<
 
   const unlockMutation = useUnlock({ onSuccess });
 
-  return useMutation<TransactionReceipt, Error, void, unknown>({
+  return useMutation<TransactionReceipt | null, Error, void, unknown>({
     mutationFn: async () => {
       if (!depositsValue) {
         throw new Error('depositsValue is undefined');
@@ -124,6 +125,11 @@ export default function useMigrateDepositToV2(): UseMutationResult<
         await waitUntil(
           () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
         );
+      }
+
+      if (actionAfterUnlock === 'redirect_to_v2') {
+        window.open(regenStakerUrl, '_blank');
+        return null;
       }
 
       return stakeMutationAsync({

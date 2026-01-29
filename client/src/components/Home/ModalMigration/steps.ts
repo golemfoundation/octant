@@ -9,7 +9,10 @@ type Step = {
   title: string;
 };
 
-export const getSteps = (t: TFunction): Step[] => [
+export const getSteps = (
+  t: TFunction,
+  variant: 'migrationLockTooSmallForV2' | 'migrationRequired',
+): Step[] => [
   {
     imgPath: '/images/migration/migration.webp',
     text: 'components.migrationModal.steps.step1.text',
@@ -19,7 +22,7 @@ export const getSteps = (t: TFunction): Step[] => [
     acknowledgment: t('steps.step2.acknowledgment'),
     error: t('steps.step2.error'),
     imgPath: '/images/migration/migration.webp',
-    text: 'components.migrationModal.steps.step2.text',
+    text: `components.migrationModal.steps.step2.text.${variant}`,
     textConsent: 'components.migrationModal.steps.step2.consent',
     title: t('steps.step2.title'),
   },

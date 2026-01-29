@@ -27,16 +27,18 @@ function useUserMigrationStatus(): {
   const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
   const doesUserHaveV2Deposits = v2Deposits !== undefined && v2Deposits.length > 0;
 
-  let status: UserMigrationStatus;
-  if (!doesUserHaveV1Lock && doesUserHaveV2Deposits) {
-    status = 'migration_done';
-  } else if (doesUserHaveV1Lock && depositsValue! >= GLM_100) {
-    status = 'migration_required';
-  } else if (doesUserHaveV1Lock && depositsValue! < GLM_100) {
-    status = 'lock_too_small_for_v2';
-  } else {
-    status = 'migration_not_required';
-  }
+  const status = useMemo(() => {
+    if (!doesUserHaveV1Lock && doesUserHaveV2Deposits) {
+      return 'migration_done';
+    }
+    if (doesUserHaveV1Lock && depositsValue! >= GLM_100) {
+      return 'migration_required';
+    }
+    if (doesUserHaveV1Lock && depositsValue! < GLM_100) {
+      return 'lock_too_small_for_v2';
+    }
+    return 'migration_not_required';
+  }, [doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue]);
 
   const translationSuffix = useMemo(() => {
     if (status === 'migration_required') {
