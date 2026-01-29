@@ -18,9 +18,9 @@ import networkConfig from 'constants/networkConfig';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
-import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
+import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -41,9 +41,9 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const {
-    data: { isUserMigrationRequired, isUserMigrationDone },
+    data: { userMigrationStatus, shouldButtonOpenModal: shouldButtonMigrateOpenModal, translationSuffix },
     isFetching: isFetchingIsUserMigrationDoneOrRequired,
-  } = useIsUserMigrationDoneOrRequired();
+  } = useUserMigrationStatus();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const {
@@ -168,20 +168,6 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCloseButtonExpanded]);
 
-  const buttonMigrateLabel = useMemo(() => {
-    if (isUserMigrationRequired) {
-      return t('migration.topBar.buttonMigrate.beforeMigration');
-    }
-    if (isUserMigrationDone) {
-      return t('migration.topBar.buttonMigrate.afterMigration');
-    }
-    if (!isUserMigrationRequired) {
-      return t('migration.topBar.buttonMigrate.noMigration');
-    }
-    return t('buttonLabel.beforeMigration');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserMigrationRequired, isUserMigrationDone]);
-
   return (
     <>
       <div className={cx(styles.root, className)} data-test={dataTestRoot}>
@@ -245,19 +231,23 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
           <Button
             className={styles.buttonMigrate}
             dataTest={`${dataTestRoot}__ButtonMigrate`}
-            isDisabled={!isConnected || (isConnected && !isUserMigrationRequired)}
+            isDisabled={!isConnected}
             isLoading={isFetchingIsUserMigrationDoneOrRequired}
-            onClick={isUserMigrationDone ? undefined : () => setIsModalMigrateOpen(true)}
-            to={isUserMigrationDone ? regenStakerUrl : undefined}
+            onClick={shouldButtonMigrateOpenModal ? () => setIsModalMigrateOpen(true) : undefined}
+            to={shouldButtonMigrateOpenModal ? undefined : regenStakerUrl}
             variant="cta"
           >
             <div
               className={cx(
                 styles.dot,
-                (!isUserMigrationRequired || isUserMigrationDone) && styles.isOK,
+                userMigrationStatus === 'migration_required' && styles.isUserMigrationRequired,
+                (userMigrationStatus === 'migration_done' ||
+                  userMigrationStatus === 'lock_too_small_for_v2') &&
+                  styles.isGreen,
+                userMigrationStatus === 'migration_not_required' && styles.noMigration,
               )}
             />
-            {buttonMigrateLabel}
+            {t(`migration.topBar.buttonMigrate.${translationSuffix}`)}
           </Button>
           <Button
             className={cx(

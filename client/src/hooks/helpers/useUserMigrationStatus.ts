@@ -1,0 +1,65 @@
+import { useAccount } from 'wagmi';
+
+import useDepositValue from 'hooks/queries/useDepositValue';
+import useV2Deposits from 'hooks/subgraphRegenStaker/useV2Deposits';
+import { useMemo } from 'react';
+
+const GLM_100 = 100000000000000000000n;
+
+type UserMigrationStatus =
+  | 'migration_done'
+  | 'migration_required'
+  | 'migration_not_required'
+  | 'lock_too_small_for_v2';
+
+function useUserMigrationStatus(): {
+  data: {
+    shouldButtonOpenModal: boolean;
+    userMigrationStatus: UserMigrationStatus;
+    translationSuffix: string;
+  };
+  isFetching: boolean;
+} {
+  const { address } = useAccount();
+  const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
+  const { data: v2Deposits, isFetching: isFetchingV2Deposits } = useV2Deposits(address!);
+
+  const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
+  const doesUserHaveV2Deposits = v2Deposits !== undefined && v2Deposits.length > 0;
+
+  let status: UserMigrationStatus;
+  if (!doesUserHaveV1Lock && doesUserHaveV2Deposits) {
+    status = 'migration_done';
+  } else if (doesUserHaveV1Lock && depositsValue! >= GLM_100) {
+    status = 'migration_required';
+  } else if (doesUserHaveV1Lock && depositsValue! < GLM_100) {
+    status = 'lock_too_small_for_v2';
+  } else {
+    status = 'migration_not_required';
+  }
+
+  const translationSuffix = useMemo(() => {
+    if (status === 'migration_required') {
+      return 'migrationRequired';
+    }
+    if (status === 'migration_done') {
+      return 'migrationDone';
+    }
+    if (status === 'migration_not_required') {
+      return 'migrationNotRequired';
+    }
+    return 'migrationLockTooSmallForV2';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  return {
+    data: {
+      shouldButtonOpenModal: ['migration_required', 'lock_too_small_for_v2'].includes(status),
+      userMigrationStatus: status,
+      translationSuffix,
+    },
+    isFetching: isFetchingDepositValue || isFetchingV2Deposits,
+  };
+}
+
+export default useUserMigrationStatus;

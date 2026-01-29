@@ -24,8 +24,8 @@ import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
-import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -68,8 +68,8 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const {
-    data: { isUserMigrationRequired },
-  } = useIsUserMigrationDoneOrRequired();
+    data: { shouldButtonOpenModal: shouldButtonMigrateOpenModal },
+  } = useUserMigrationStatus();
   const [isModalMigrateOpen, setIsModalMigrateOpen] = useState<boolean>(false);
   const isInMigrationMode = useIsMigrationMode();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
@@ -348,7 +348,7 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
 
-    if (isUserMigrationRequired) {
+    if (shouldButtonMigrateOpenModal) {
       setIsModalMigrateOpen(true);
     }
   };

@@ -12,8 +12,8 @@ import Svg from 'components/ui/Svg';
 import { TOURGUIDE_ELEMENT_2 } from 'constants/domElementsIds';
 import env from 'env';
 import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
-import useIsUserMigrationDoneOrRequired from 'hooks/helpers/useIsUserMigrationDoneOrRequired';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
@@ -28,9 +28,9 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
   const dataTestRoot = 'LayoutTopBarCalendar';
   const { isMobile } = useMediaQuery();
   const {
-    data: { isUserMigrationRequired, isUserMigrationDone },
+    data: { userMigrationStatus },
     isFetching: isFetchingIsUserMigrationDoneOrRequired,
-  } = useIsUserMigrationDoneOrRequired();
+  } = useUserMigrationStatus();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochsStartEndTime, isFetching: isFetchingEpochStartEndTime } =
@@ -135,36 +135,44 @@ const LayoutTopBarCalendar: FC<LayoutTopBarCalendarProps> = ({ className }) => {
     if (isFetchingIsUserMigrationDoneOrRequired) {
       return;
     }
-    if (isInMigrationMode) {
-      if (isUserMigrationDone) {
-        window.open(regenStakerUrl, '_blank');
-        return;
-      }
-      if (isUserMigrationRequired) {
-        setIsModalMigrateOpen(true);
-        return;
-      }
+
+    if (!isInMigrationMode) {
+      setIsCalendarOpen(true);
       return;
     }
-    setIsCalendarOpen(true);
+
+    if (
+      userMigrationStatus === 'migration_done' ||
+      userMigrationStatus === 'migration_not_required'
+    ) {
+      window.open(regenStakerUrl, '_blank');
+      return;
+    }
+
+    if (
+      userMigrationStatus === 'migration_required' ||
+      userMigrationStatus === 'lock_too_small_for_v2'
+    ) {
+      setIsModalMigrateOpen(true);
+    }
   };
 
   const labelMain = useMemo(() => {
     if (!isInMigrationMode) {
       return allocationInfoText;
     }
-    if (isUserMigrationRequired) {
-      return t('migration.calendar.text.beforeMigration');
+    if (userMigrationStatus === 'migration_required') {
+      return t('migration.calendar.text.migrationRequired');
     }
-    if (isUserMigrationDone) {
-      return t('migration.calendar.text.afterMigration');
+    if (userMigrationStatus === 'migration_done') {
+      return t('migration.calendar.text.migrationDone');
     }
-    if (!isUserMigrationRequired) {
-      return t('migration.calendar.text.noMigration');
+    if (userMigrationStatus === 'migration_not_required') {
+      return t('migration.calendar.text.migrationNotRequired');
     }
-    return t('migration.calendar.text.beforeMigration');
+    return t('migration.calendar.text.migrationLockTooSmallForV2');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allocationInfoText, isUserMigrationRequired, isUserMigrationDone]);
+  }, [allocationInfoText, userMigrationStatus]);
 
   const calendarProps = { durationToChangeAWInMinutes, showAWAlert };
 

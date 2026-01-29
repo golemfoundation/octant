@@ -133,7 +133,7 @@ const HomeGridAllocate: FC<HomeAllocateProps> = ({ className }) => {
           variant="cta"
         >
           {t(
-            userAllocations?.hasUserAlreadyDoneAllocation
+            isDecisionWindowOpen && userAllocations?.hasUserAlreadyDoneAllocation
               ? 'button.afterAllocation'
               : 'button.beforeAllocation',
           )}

@@ -159,12 +159,19 @@
     .dot {
       height: 0.8rem;
       width: 0.8rem;
-      background: #F04;
       border-radius: 50%;
       margin-right: 0.8rem;
 
-      &.isOK {
+      &.isUserMigrationRequired {
+        background: #F04;
+      }
+
+      &.isGreen {
         background: $color-octant-green;
+      }
+
+      &.noMigration {
+        background: $color-octant-grey5;
       }
     }
   }
