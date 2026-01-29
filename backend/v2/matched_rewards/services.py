@@ -44,8 +44,8 @@ from v2.epochs.subgraphs import EpochsSubgraph
 from v2.user_patron_mode.repositories import get_patrons_rewards
 
 
-# Epochs that reserve staking portion for v2 (not distributed via QF)
-EPOCHS_RESERVING_STAKING_FOR_V2 = {11}
+# Minimum epoch number from which staking is reserved for v2
+FIRST_EPOCH_RESERVING_STAKING_FOR_V2 = 11
 
 # Default percentage constants for matched rewards calculations
 DEFAULT_IRE_PERCENT = Decimal("0.35")
@@ -57,7 +57,7 @@ def should_reserve_staking_for_v2(epoch_number: int) -> bool:
     """
     Check if this epoch should reserve staking portion for v2.
 
-    For epochs in EPOCHS_RESERVING_STAKING_FOR_V2:
+    For epochs >= FIRST_EPOCH_RESERVING_STAKING_FOR_V2:
     - Staking matched portion is reserved (not distributed via QF)
     - Only patron rewards are used for QF distribution
     - Reserved staking can be transferred to multisig for v2
@@ -68,7 +68,7 @@ def should_reserve_staking_for_v2(epoch_number: int) -> bool:
     Returns:
         bool: True if the epoch reserves staking for v2, False otherwise
     """
-    return epoch_number in EPOCHS_RESERVING_STAKING_FOR_V2
+    return epoch_number >= FIRST_EPOCH_RESERVING_STAKING_FOR_V2
 
 
 @dataclass
