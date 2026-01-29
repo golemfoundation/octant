@@ -1,8 +1,8 @@
+import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useV2Deposits from 'hooks/subgraphRegenStaker/useV2Deposits';
-import { useMemo } from 'react';
 
 const GLM_100 = 100000000000000000000n;
 
@@ -15,8 +15,8 @@ type UserMigrationStatus =
 function useUserMigrationStatus(): {
   data: {
     shouldButtonOpenModal: boolean;
-    userMigrationStatus: UserMigrationStatus;
     translationSuffix: string;
+    userMigrationStatus: UserMigrationStatus;
   };
   isFetching: boolean;
 } {
@@ -55,8 +55,8 @@ function useUserMigrationStatus(): {
   return {
     data: {
       shouldButtonOpenModal: ['migration_required', 'lock_too_small_for_v2'].includes(status),
-      userMigrationStatus: status,
       translationSuffix,
+      userMigrationStatus: status,
     },
     isFetching: isFetchingDepositValue || isFetchingV2Deposits,
   };

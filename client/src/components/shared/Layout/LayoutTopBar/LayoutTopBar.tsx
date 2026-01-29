@@ -41,7 +41,11 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
   const {
-    data: { userMigrationStatus, shouldButtonOpenModal: shouldButtonMigrateOpenModal, translationSuffix },
+    data: {
+      userMigrationStatus,
+      shouldButtonOpenModal: shouldButtonMigrateOpenModal,
+      translationSuffix,
+    },
     isFetching: isFetchingIsUserMigrationDoneOrRequired,
   } = useUserMigrationStatus();
   const { pathname } = useLocation();
