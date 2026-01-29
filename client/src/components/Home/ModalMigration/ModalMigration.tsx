@@ -6,6 +6,7 @@ import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { SABLIER_APP_LINK, V2_PRIVACY_POLICY_URL, V2_TERMS_OF_SERVICE_URL } from 'constants/urls';
+import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 
@@ -21,8 +22,14 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
   const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
+  const {
+    data: { userMigrationStatus },
+  } = useUserMigrationStatus();
+
+  const shouldV2DepositBeTriggered = userMigrationStatus === 'migration_required';
+
   const { mutateAsync: migrateDepositToV2MutateAsync, isPending: isPendingMigrateDepositToV2 } =
-    useMigrateDepositToV2();
+    useMigrateDepositToV2({ actionAfterUnlock: shouldV2DepositBeTriggered ? 'deposit_in_v2' : 'redirect_to_v2' });
 
   useEffect(() => {
     if (!modalProps.isOpen) {
@@ -42,7 +49,10 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
 
   const { data: userSablierStreams } = useUserSablierStreams();
 
-  const steps = getSteps(t);
+  const steps = getSteps(
+    t,
+    shouldV2DepositBeTriggered ? 'migrationRequired' : 'migrationLockTooSmallForV2',
+  );
   const step = steps[currentStep];
 
   const userSablierStreamsValue =
@@ -58,31 +68,43 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
       {...modalProps}
     >
       <Trans i18nKey={step.text} />
-      {step.textConsent && (
-        <div className={styles.consent}>
-          <Trans
-            components={[
-              <Button className={styles.docsLink} href={V2_TERMS_OF_SERVICE_URL} variant="link3" />,
-              <Button className={styles.docsLink} href={V2_PRIVACY_POLICY_URL} variant="link3" />,
-            ]}
-            i18nKey={step.textConsent}
-          />
-        </div>
-      )}
-      {currentStep === 1 && (
-        <div className={styles.checkboxWrapper}>
-          <InputCheckbox
-            inputId="modal-migration-consent"
-            isChecked={isConsentGiven}
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            onChange={() => onSetIsConsentGiven(!isConsentGiven)}
-          />
-          <label className={styles.checkboxLabel} htmlFor="modal-migration-consent">
-            {step.acknowledgment}
+      {shouldV2DepositBeTriggered && (
+        <>
+          {step.textConsent && (
+            <div className={styles.consent}>
+              <Trans
+                components={[
+                  <Button
+                    className={styles.docsLink}
+                    href={V2_TERMS_OF_SERVICE_URL}
+                    variant="link3"
+                  />,
+                  <Button
+                    className={styles.docsLink}
+                    href={V2_PRIVACY_POLICY_URL}
+                    variant="link3"
+                  />,
+                ]}
+                i18nKey={step.textConsent}
+              />
+            </div>
+          )}
+          {currentStep === 1 && (
+            <div className={styles.checkboxWrapper}>
+              <InputCheckbox
+                inputId="modal-migration-consent"
+                isChecked={isConsentGiven}
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                onChange={() => onSetIsConsentGiven(!isConsentGiven)}
+              />
+              <label className={styles.checkboxLabel} htmlFor="modal-migration-consent">
+                {step.acknowledgment}
 
-            {error && <div className={styles.error}>{error}</div>}
-          </label>
-        </div>
+                {error && <div className={styles.error}>{error}</div>}
+              </label>
+            </div>
+          )}
+        </>
       )}
       {userSablierStreamsValue !== 0n && (
         <Button
