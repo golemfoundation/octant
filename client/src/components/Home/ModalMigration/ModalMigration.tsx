@@ -135,7 +135,7 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
             currentStep === 0
               ? () => setCurrentStep(1)
               : () => {
-                  if (isConsentGiven) {
+                  if ((userMigrationStatus === 'migration_required' && isConsentGiven) || userMigrationStatus === 'lock_too_small_for_v2') {
                     migrateDepositToV2MutateAsync();
                     return;
                   }
