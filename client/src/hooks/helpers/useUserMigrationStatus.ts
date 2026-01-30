@@ -31,7 +31,7 @@ function useUserMigrationStatus(): {
   const doesUserHaveV2Deposits = v2Deposits !== undefined && v2Deposits.length > 0;
 
   const status = useMemo(() => {
-    if (!depositsValue || !regenStakerMinimumStakeAmount) {
+    if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
       // Does not matter, isFetching won't show status in UI anyway.
       return 'migration_required';
     }

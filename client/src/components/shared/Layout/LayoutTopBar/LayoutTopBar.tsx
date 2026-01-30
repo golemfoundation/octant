@@ -248,7 +248,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
                 (userMigrationStatus === 'migration_done' ||
                   userMigrationStatus === 'lock_too_small_for_v2') &&
                   styles.isGreen,
-                userMigrationStatus === 'migration_not_required' && styles.noMigration,
+                (!isConnected || userMigrationStatus === 'migration_not_required') && styles.noMigration,
               )}
             />
             {t(`migration.topBar.buttonMigrate.${translationSuffix}`)}
