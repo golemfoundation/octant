@@ -3,7 +3,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 export default function useIsMigrationMode(): boolean {
   const { data: currentEpoch } = useCurrentEpoch();
 
-  const migrationModeBypass = localStorage.getItem('DEBUG_MIGRATION_MODE');
+  const migrationModeBypass = JSON.parse(localStorage.getItem('DEBUG_MIGRATION_MODE') || 'null');
 
   if (migrationModeBypass === 'off') {
     return false;
