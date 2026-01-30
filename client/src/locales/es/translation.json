@@ -69,7 +69,7 @@
           "title": "Migra tu cuenta a Octant v2",
           "text": {
             "migrationLockTooSmallForV2": "No cumples los requisitos para la migración automática ya que Octant v2 requiere un depósito mínimo de 100 GLM y tienes bloqueado menos que esa cantidad en v1.<br /><br />Cuando hagas click en \"iniciar migración\" abajo, desbloquearás tus GLM y serás redirigido a glm.octant.app (Octant v2) donde podrás bloquear 100 GLM para comenzar a ganar Recompensas Individuales (IR) para participar en rondas futuras.",
-            "migrationRequired": "Para acceder a Octant v2 y participar en epochs futuras, deberás completar una breve migración.<br /><br />Durante este paso, se te pedirá que confirmes 2 transacciones en tu billetera. Una vez completadas, tu cuenta estará lista y no necesitarás hacer esto de nuevo."
+            "migrationRequired": "Para acceder a Octant v2 y participar en epochs futuras, deberás completar una breve migración.<br /><br />Durante este paso, se te pedirá que confirmes 2-3 transacciones en tu billetera. Una vez completadas, tu cuenta estará lista y no necesitarás hacer esto de nuevo."
           },
           "consent": "Al hacer click en \"Iniciar migración\", reconoces que al migrar la dirección de tu billetera y su historial serán transferidos a Octant Labs y que aceptas sus <0>Términos de Servicio</0> y <1>Política de Privacidad</1>.",
           "acknowledgment": "He leído, entiendo y acepto lo mencionado arriba",

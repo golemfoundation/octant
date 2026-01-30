@@ -9,6 +9,7 @@ import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
 import { MODAL_ONBOARDING_ID } from 'constants/domElementsIds';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useModalStepperNavigation from 'hooks/helpers/useModalStepperNavigation';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
@@ -30,7 +31,8 @@ const motionAnimationProps: AnimationProps = {
 const ModalOnboarding = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted, isFetching: isFetchingUserTOS } = useUserTOS();
-  const { address } = useAccount();
+  // const { address } = useAccount();
+  const address = '0x208de0d42a5f3f6e3bbd0e6121bd30a768824fc7';
 
   const [isUserTOSAcceptedInitial, setIsUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
@@ -62,8 +64,8 @@ const ModalOnboarding = (): ReactElement => {
   const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
+  const isInMigrationMode = useIsMigrationMode();
   const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
-
   const { data: antisybilStatusScore } = useAntisybilStatusScore(address);
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
@@ -80,9 +82,15 @@ const ModalOnboarding = (): ReactElement => {
     steps: stepsToUse,
   });
 
-  const shouldOnboardingBeOpened =
+  const shouldOnboardingBeOpenedOutsideMigrationMode =
     isConnected &&
     (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed);
+
+  const shouldOnboardingBeOpenedInMigrationMode = isConnected && !isUserTOSAccepted;
+
+  const shouldOnboardingBeOpened = isInMigrationMode
+    ? shouldOnboardingBeOpenedInMigrationMode
+    : shouldOnboardingBeOpenedOutsideMigrationMode;
 
   // For multisig users we refetch ToS in a setInterval, so isFetching here causes loop refreshes.
   const currentStep = useMemo(() => {

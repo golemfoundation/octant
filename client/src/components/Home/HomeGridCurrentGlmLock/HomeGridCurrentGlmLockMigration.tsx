@@ -23,9 +23,11 @@ const HomeGridCurrentGlmLockMigration: FC<HomeGridCurrentGlmLockMigrationProps> 
   const { data: userSablierStreams, isFetching: isFetchinguserSablierStreams } =
     useUserSablierStreams();
 
-  const userSablierStreamsValue =
+  const doesUserHaveOpenSablierStreams =
+    !isFetchinguserSablierStreams &&
+    !!userSablierStreams?.sablierStreams.length &&
     !userSablierStreams?.sablierStreams.some(({ isCancelled }) => isCancelled) &&
-    userSablierStreams?.sumAvailable;
+    !!userSablierStreams?.sumAvailable;
 
   const lockValue = depositsValue || 0n;
 
@@ -46,7 +48,7 @@ const HomeGridCurrentGlmLockMigration: FC<HomeGridCurrentGlmLockMigrationProps> 
           {t('migration.buttonLabel')}
         </Button>
       )}
-      {userSablierStreamsValue !== 0n && (
+      {doesUserHaveOpenSablierStreams && (
         <Button
           className={className}
           dataTest="HomeGridCurrentGlmLockMigration__ButtonSablier"
