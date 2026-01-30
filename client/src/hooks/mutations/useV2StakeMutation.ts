@@ -38,7 +38,7 @@ export default function useStakeMutation() {
           const allowance = await publicClient.readContract({
             abi: erc20Abi,
             address: stakeTokenAddress,
-            args: [walletClient.account.address, contractRegenStakerAddress as `0x{string}`],
+            args: [walletClient.account.address, contractRegenStakerAddress as Hash],
             functionName: 'allowance',
           });
 
@@ -46,7 +46,7 @@ export default function useStakeMutation() {
             await walletClient.writeContract({
               abi: erc20Abi,
               address: stakeTokenAddress,
-              args: [contractRegenStakerAddress as `0x{string}`, depositAmount],
+              args: [contractRegenStakerAddress as Hash, depositAmount],
               functionName: 'approve',
             });
           }

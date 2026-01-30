@@ -1,6 +1,6 @@
 import { UseMutationResult, useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { TransactionReceipt } from 'viem';
+import { TransactionReceipt, Hash } from 'viem';
 import { useAccount } from 'wagmi';
 
 import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
@@ -134,7 +134,7 @@ export default function useMigrateDepositToV2({
 
       return stakeMutationAsync({
         depositAmount: depositsValue,
-        stakeTokenAddress: contractGlmAddress as `0x{string}`,
+        stakeTokenAddress: contractGlmAddress as Hash,
       });
     },
   });

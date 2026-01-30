@@ -21,7 +21,7 @@ export function writeContractERC20({
 }: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: ERC20.abi,
-    address: env.contractGlmAddress as `0x{string}`,
+    address: env.contractGlmAddress as Hash,
     args,
     functionName,
   });
@@ -34,7 +34,7 @@ export function writeContractDeposits({
 }: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: Deposits.abi,
-    address: env.contractDepositsAddress as `0x{string}`,
+    address: env.contractDepositsAddress as Hash,
     args,
     functionName,
   });
@@ -47,7 +47,7 @@ export function writeContractVault({
 }: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: Vault.abi,
-    address: env.contractVaultAddress as `0x{string}`,
+    address: env.contractVaultAddress as Hash,
     args,
     functionName,
   });
@@ -60,7 +60,7 @@ export function writeContractRegenStaker({
 }: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: RegenStaker.abi,
-    address: env.contractRegenStakerAddress as `0x{string}`,
+    address: env.contractRegenStakerAddress as Hash,
     args,
     functionName,
   });
