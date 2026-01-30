@@ -6,11 +6,11 @@ import { VerificationResult } from "../runner";
 
 const PROPOSALS_NO = 30;
 
-// Configuration: epochs that reserve staking for v2
-const EPOCHS_RESERVING_STAKING_FOR_V2 = new Set([11]);
+// Minimum epoch number from which staking is reserved for v2
+const FIRST_EPOCH_RESERVING_STAKING_FOR_V2 = 11;
 
 function shouldReserveStakingForV2(epochNumber: number): boolean {
-  return EPOCHS_RESERVING_STAKING_FOR_V2.has(epochNumber);
+  return epochNumber >= FIRST_EPOCH_RESERVING_STAKING_FOR_V2;
 }
 
 
