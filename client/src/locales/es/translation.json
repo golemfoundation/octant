@@ -31,7 +31,7 @@
     "copy": "Copiar enlace",
     "days": "Días",
     "donations": "Donaciones",
-    "withdrawlas": "Retiros",
+    "withdrawals": "Retiros",
     "done": "Hecho",
     "gettingStarted": "Empezando",
     "lockGlm": "Bloquea tus GLM",
@@ -59,6 +59,35 @@
     "update": "Actualizar"
   },
   "components": {
+    "migrationModal": {
+      "steps": {
+        "step1": {
+          "title": "Octant está evolucionando",
+          "text": "Octant v2 ya está disponible.<br /><br />Hemos rediseñado el protocolo para admitir nuevas funcionalidades, futuras epochs y un sistema más escalable.<br /><br />Para continuar usando Octant, debes migrar tu cuenta a la nueva versión.<br /><br />Ésta es una transición de una sola vez y solo tomará un momento."
+        },
+        "step2": {
+          "title": "Migra tu cuenta a Octant v2",
+          "text": {
+            "migrationLockTooSmallForV2": "No cumples los requisitos para la migración automática ya que Octant v2 requiere un depósito mínimo de 100 GLM y tienes bloqueado menos que esa cantidad en v1.<br /><br />Cuando hagas click en \"iniciar migración\" abajo, desbloquearás tus GLM y serás redirigido a glm.octant.app (Octant v2) donde podrás bloquear 100 GLM para comenzar a ganar Recompensas Individuales (IR) para participar en rondas futuras.",
+            "migrationRequired": "Para acceder a Octant v2 y participar en epochs futuras, deberás completar una breve migración.<br /><br />Durante este paso, se te pedirá que confirmes 2 transacciones en tu billetera. Una vez completadas, tu cuenta estará lista y no necesitarás hacer esto de nuevo."
+          },
+          "consent": "Al hacer click en \"Iniciar migración\", reconoces que al migrar la dirección de tu billetera y su historial serán transferidos a Octant Labs y que aceptas sus <0>Términos de Servicio</0> y <1>Política de Privacidad</1>.",
+          "acknowledgment": "He leído, entiendo y acepto lo mencionado arriba",
+          "error": "Este consentimiento es obligatorio"
+        }
+      },
+      "sablierText": "Tienes streams de Sablier. Haz click aquí para verificarlos",
+      "buttons": {
+        "ok": "OK",
+        "later": "Lo haré más tarde",
+        "startMigration": "Iniciar migración",
+        "migrationDone": "Ir a Octant v2"
+      },
+      "migrationNotifications": {
+        "error": "La migración a v2 ha fallado, por favor inténtalo de nuevo más tarde.",
+        "success": "Migración completada con éxito"
+      }
+    },
     "allocation": {
       "emptyState": "Bloquea 100 GLM o más para ganar recompensas, luego asigna una parte<br />para apoyar proyectos dentro de la Ventana de Asignación.<br /><0>Ver proyectos ↗</0>",
       "emptyStateAWOpen": "Visita la <0>vista Proyectos</0> para agregar tus proyectos favoritos <br/> y donarles recompensas aquí",
@@ -89,6 +118,10 @@
         "simulateLoading": "Calculando..."
       }
     },
+    "migration": {
+      "title": "Donar a Protocol Guild",
+      "note": "En esta Epoch, las donaciones no son amplificadas, ya que el fondo de matching está reservado para rondas futuras en v2. Protocol Guild solo recibirá tu IR."
+    },
     "shared": {
       "onboardingStepper": {
         "reopenOnboarding": "Reabrir la incorporación"
@@ -108,6 +141,21 @@
       "homeGridVideoBar": {
         "learnHowToUseOctant": "Aprende a usar Octant",
         "closeVideoWithArrow": "Cerrar vídeo ->"
+      },
+      "homeGridMigrate": {
+        "title": "Migrar a v2",
+        "text": {
+          "migrationRequired": "Migra tus GLM bloqueados a v2. Este es un proceso de una sola vez y toma menos de un minuto",
+          "migrationDone": "Migración exitosa, visita glm.octant.app para participar en rondas futuras.",
+          "migrationNotRequired": "Visita glm.octant.app para bloquear tokens y comenzar tu camino con Octant.",
+          "migrationLockTooSmallForV2": "Octant v2 requiere 100 GLM, por favor desbloquea tus GLM para comenzar tu migración."
+        },
+        "buttonLabel": {
+          "migrationRequired": "Migrar ahora",
+          "migrationDone": "Migración completa",
+          "migrationNotRequired": "No necesita migración",
+          "migrationLockTooSmallForV2": "Desbloquear ahora"
+        }
       },
       "homeGridCurrentGlmLock": {
         "currentGlmLock": "Bloqueo GLM",
@@ -131,6 +179,10 @@
           "tooltipWinningRow": "{{value}} GLM bloqueados en Sablier hasta {{date}}",
           "tooltipStreamCancelled": "Tu transmisión en Sablier fue cancelada debido a tu inactividad en la última ventana de asignación. Si crees que esto es un error, por favor abre un ticket de ayuda en Discord.",
           "tooltipCurrentBalanceRow": "{{value}} tu saldo bloqueado"
+        },
+        "migration": {
+          "buttonLabel": "Tienes GLM bloqueados. Haz click aquí para desbloquearlos sin migrar",
+          "sablierStreams": "Tienes streams de Sablier. Haz click aquí para verificarlos"
         }
       },
       "homeGridPersonalAllocation": {
@@ -141,6 +193,16 @@
           "withdrawETH": "Retirar ETH",
           "estimatedGasPrice": "Precio estimado del combustible",
           "withdrawAll": "Retirar todo"
+        },
+        "migration": {
+          "text": "Retirar Recompensas"
+        }
+      },
+      "homeGridAllocate": {
+        "title": "Recompensas Individuales",
+        "button": {
+          "beforeAllocation": "Asignar",
+          "afterAllocation": "Cambiar Asignación"
         }
       },
       "homeGridUQScore": {
@@ -330,6 +392,9 @@
               }
             }
           }
+        },
+        "migration": {
+          "buttonLabel": "Desbloquear todo"
         }
       },
       "modalConnectWallet": {
@@ -395,7 +460,25 @@
       "minutes_one": "minuto",
       "minutes_other": "minutos",
       "minutesShort": "mín.",
-      "calendar": "Calendario"
+      "calendar": "Calendario",
+      "migration": {
+        "calendar": {
+          "text": {
+            "migrationRequired": "¡Estamos evolucionando! Migra ahora",
+            "migrationDone": "¡Estamos evolucionando! Has migrado",
+            "migrationNotRequired": "¡Estamos evolucionando! Visita Octant v2 para participar",
+            "migrationLockTooSmallForV2": "¡Estamos evolucionando! Inicia el proceso de migración abajo"
+          }
+        },
+        "topBar": {
+          "buttonMigrate": {
+            "migrationRequired": "Migrar ahora",
+            "migrationDone": "Migración completa",
+            "migrationNotRequired": "Visita Octant v2",
+            "migrationLockTooSmallForV2": "Desbloquear ahora"
+          }
+        }
+      }
     },
     "footer": {
       "newsletterText": "Recibe noticias y actualizaciones de PGF de Octant. Sin spam",
@@ -427,6 +510,7 @@
   "views": {
     "home": {
       "title": {
+        "migration": "Bienvenido al Centro de Migración de Octant",
         "isDecisionWindowOpenFalse": "Bienvenido a la Época {{epoch}}",
         "isDecisionWindowOpenTrue": {
           "desktop": "Bienvenido a la ventana de asignación de la Época {{epoch}}",
@@ -590,7 +674,10 @@
       "enablePatronMode": "Habilitar modo mecenas",
       "patronModeTooltip": "Asigna automáticamente todas tus recompensas entre todos los proyectos en cada época.",
       "docs": "Documentos",
-      "language": "Idioma"
+      "language": "Idioma",
+      "migration": {
+        "title": "Migración a v2"
+      }
     },
     "syncStatus": {
       "information": "Estamos sincronizando el sistema para preparar la<br/>siguiente época. La aplicación no estará disponible<br/>por un breve período. Por favor, vuelve pronto."
