@@ -28,6 +28,14 @@
   width: 100%;
 }
 
+.successMessage {
+  color: $color-octant-green;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  text-align: center;
+  width: 100%;
+}
+
 .checkboxWrapper {
   display: flex;
   align-items: center;

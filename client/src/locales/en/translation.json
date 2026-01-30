@@ -80,7 +80,12 @@
       "buttons": {
         "ok": "OK",
         "later": "I'll do it later",
-        "startMigration": "Start migration"
+        "startMigration": "Start migration",
+        "migrationDone": "Go to Octant v2"
+      },
+      "migrationNotifications": {
+        "error": "Migration to v2 failed, please try again later.",
+        "success": "Migration successful"
       }
     },
     "allocation": {

@@ -43,15 +43,16 @@ export default function useStakeMutation() {
           });
 
           if (depositAmount > allowance) {
-            await walletClient.writeContract({
+            const hash = await walletClient.writeContract({
               abi: erc20Abi,
               address: stakeTokenAddress,
               args: [contractRegenStakerAddress as Hash, depositAmount],
               functionName: 'approve',
             });
-          }
 
-          // const stakeTransactionHash = await regenStakerService.stake(depositAmount, delegatee);
+            // Await allowance to be included in a block.
+            await publicClient.waitForTransactionReceipt({ hash });
+          }
 
           const stakeTransactionHash = await writeContractRegenStaker({
             args: [depositAmount, delegatee],

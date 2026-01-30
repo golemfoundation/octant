@@ -2,9 +2,8 @@ import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useRegenStakerMinimumStakeAmount from 'hooks/queries/useRegenStakerMinimumStakeAmount';
 import useV2Deposits from 'hooks/subgraphRegenStaker/useV2Deposits';
-
-const GLM_100 = 100000000000000000000n;
 
 type UserMigrationStatus =
   | 'migration_done'
@@ -22,23 +21,31 @@ function useUserMigrationStatus(): {
 } {
   const { address } = useAccount();
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
+  const {
+    data: regenStakerMinimumStakeAmount,
+    isFetching: isFetchingRegenStakerMinimumStakeAmount,
+  } = useRegenStakerMinimumStakeAmount();
   const { data: v2Deposits, isFetching: isFetchingV2Deposits } = useV2Deposits(address!);
 
   const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
   const doesUserHaveV2Deposits = v2Deposits !== undefined && v2Deposits.length > 0;
 
   const status = useMemo(() => {
+    if (!depositsValue || !regenStakerMinimumStakeAmount) {
+      // Does not matter, isFetching won't show status in UI anyway.
+      return 'migration_required';
+    }
     if (!doesUserHaveV1Lock && doesUserHaveV2Deposits) {
       return 'migration_done';
     }
-    if (doesUserHaveV1Lock && depositsValue! >= GLM_100) {
+    if (doesUserHaveV1Lock && depositsValue >= regenStakerMinimumStakeAmount) {
       return 'migration_required';
     }
-    if (doesUserHaveV1Lock && depositsValue! < GLM_100) {
+    if (doesUserHaveV1Lock && depositsValue < regenStakerMinimumStakeAmount) {
       return 'lock_too_small_for_v2';
     }
     return 'migration_not_required';
-  }, [doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue]);
+  }, [doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue, regenStakerMinimumStakeAmount]);
 
   const translationSuffix = useMemo(() => {
     if (status === 'migration_required') {
@@ -60,7 +67,8 @@ function useUserMigrationStatus(): {
       translationSuffix,
       userMigrationStatus: status,
     },
-    isFetching: isFetchingDepositValue || isFetchingV2Deposits,
+    isFetching:
+      isFetchingDepositValue || isFetchingV2Deposits || isFetchingRegenStakerMinimumStakeAmount,
   };
 }
 

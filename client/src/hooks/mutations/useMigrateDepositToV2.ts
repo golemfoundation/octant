@@ -1,4 +1,4 @@
-import { UseMutationResult, useMutation } from '@tanstack/react-query';
+import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { TransactionReceipt, Hash } from 'viem';
 import { useAccount } from 'wagmi';
@@ -18,8 +18,10 @@ type ActionAfterUnlock = 'deposit_in_v2' | 'redirect_to_v2';
 
 export default function useMigrateDepositToV2({
   actionAfterUnlock,
+  options,
 }: {
   actionAfterUnlock: ActionAfterUnlock;
+  options?: UseMutationOptions<TransactionReceipt | null, unknown, unknown>;
 }): UseMutationResult<TransactionReceipt | null, Error, void, unknown> {
   const { contractGlmAddress, regenStakerUrl } = env;
   const { address } = useAccount();
@@ -112,30 +114,51 @@ export default function useMigrateDepositToV2({
           setTimeout(tick, intervalMs);
         });
 
-      // Reset safe readiness flag before starting a new flow
-      setIsSafeReady(false);
+      // Ensure we reset state and properly propagate any error so react-query exposes it
+      try {
+        // Reset safe readiness flag before starting a new flow
+        setIsSafeReady(false);
 
-      await unlockMutation.mutateAsync(depositsValue);
+        await unlockMutation.mutateAsync(depositsValue);
 
-      if (isGnosisSafeMultisig) {
-        // For multisig: proceed only after Safe tx has an on-chain transaction hash (set in onSuccess)
-        await waitUntil(() => isSafeReady);
-      } else {
-        // For EOA: wait until the app finishes indexing the unlock (flag flips to false)
-        await waitUntil(
-          () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
-        );
+        if (isGnosisSafeMultisig) {
+          // For multisig: proceed only after Safe tx has an on-chain transaction hash (set in onSuccess)
+          await waitUntil(() => isSafeReady);
+        } else {
+          // For EOA: wait until the app finishes indexing the unlock (flag flips to false)
+          await waitUntil(
+            () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
+          );
+        }
+
+        if (actionAfterUnlock === 'redirect_to_v2') {
+          window.open(regenStakerUrl, '_blank');
+          return null;
+        }
+
+        return await stakeMutationAsync({
+          depositAmount: depositsValue,
+          stakeTokenAddress: contractGlmAddress as Hash,
+        });
+      } catch (err) {
+        // Clear any polling interval if present and ensure error is propagated
+        if (intervalId) {
+          clearInterval(intervalId);
+          setIntervalId(null);
+        }
+        // Rethrow as Error so react-query exposes it to the caller
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw new Error('Migration to V2 failed');
+      } finally {
+        // Best-effort cleanup of interval on normal completion as well
+        if (intervalId) {
+          clearInterval(intervalId);
+          setIntervalId(null);
+        }
       }
-
-      if (actionAfterUnlock === 'redirect_to_v2') {
-        window.open(regenStakerUrl, '_blank');
-        return null;
-      }
-
-      return stakeMutationAsync({
-        depositAmount: depositsValue,
-        stakeTokenAddress: contractGlmAddress as Hash,
-      });
     },
+    ...options,
   });
 }

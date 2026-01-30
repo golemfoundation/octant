@@ -23,6 +23,7 @@ export type Root = {
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  regenStakerMinimumStakeAmount: 'regenStakerMinimumStakeAmount';
   rewardsRate: 'rewardsRate';
   sablierStreams: 'sablierStreams';
   searchResultsDetails: 'searchResultsDetails';
@@ -79,6 +80,7 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
+  regenStakerMinimumStakeAmount: ['regenStakerMinimumStakeAmount'];
   rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
   sablierStreams: (userAddress: string) => [Root['sablierStreams'], string];
   searchResults: ['searchResults'];

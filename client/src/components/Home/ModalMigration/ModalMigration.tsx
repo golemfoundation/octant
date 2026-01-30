@@ -6,6 +6,7 @@ import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { SABLIER_APP_LINK, V2_PRIVACY_POLICY_URL, V2_TERMS_OF_SERVICE_URL } from 'constants/urls';
+import env from 'env';
 import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
@@ -15,12 +16,14 @@ import { getSteps } from './steps';
 import ModalMigrationProps from './types';
 
 const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
+  const { regenStakerUrl } = env;
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.migrationModal',
   });
   const [currentStep, setCurrentStep] = useState<0 | 1>(0);
   const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
 
   const {
     data: { userMigrationStatus },
@@ -28,14 +31,28 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
 
   const shouldV2DepositBeTriggered = userMigrationStatus === 'migration_required';
 
-  const { mutateAsync: migrateDepositToV2MutateAsync, isPending: isPendingMigrateDepositToV2 } =
-    useMigrateDepositToV2({ actionAfterUnlock: shouldV2DepositBeTriggered ? 'deposit_in_v2' : 'redirect_to_v2' });
+  const {
+    mutateAsync: migrateDepositToV2MutateAsync,
+    isPending: isPendingMigrateDepositToV2,
+    reset: resetMigrateDeposit,
+  } = useMigrateDepositToV2({
+    actionAfterUnlock: shouldV2DepositBeTriggered ? 'deposit_in_v2' : 'redirect_to_v2',
+    options: {
+      onError: () => {
+        setError(t('migrationNotifications.error'));
+      },
+      onSuccess: () => {
+        setSuccessMessage(t('migrationNotifications.success'));
+      },
+    },
+  });
 
   useEffect(() => {
     if (!modalProps.isOpen) {
       setCurrentStep(0);
       setIsConsentGiven(false);
       setError('');
+      setSuccessMessage('');
     }
   }, [modalProps.isOpen]);
 
@@ -68,7 +85,7 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
       {...modalProps}
     >
       <Trans i18nKey={step.text} />
-      {shouldV2DepositBeTriggered && (
+      {!successMessage && shouldV2DepositBeTriggered && (
         <>
           {step.textConsent && (
             <div className={styles.consent}>
@@ -99,7 +116,6 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
               />
               <label className={styles.checkboxLabel} htmlFor="modal-migration-consent">
                 {step.acknowledgment}
-
                 {error && <div className={styles.error}>{error}</div>}
               </label>
             </div>
@@ -116,36 +132,56 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
           {t('sablierText')}
         </Button>
       )}
+      {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
       <div className={styles.buttons}>
-        {currentStep === 1 && (
+        {successMessage && (
           <Button
             className={styles.button}
             isHigh
-            label={t('buttons.later')}
-            onClick={modalProps.onClosePanel}
-            variant="secondary"
+            label={t('buttons.migrationDone')}
+            onClick={() => window.open(regenStakerUrl, '_blank')}
+            variant="cta"
           />
         )}
-        <Button
-          className={styles.button}
-          isHigh
-          isLoading={isPendingMigrateDepositToV2}
-          label={currentStep === 0 ? t('buttons.ok') : t('buttons.startMigration')}
-          onClick={
-            currentStep === 0
-              ? () => setCurrentStep(1)
-              : () => {
-                  if ((userMigrationStatus === 'migration_required' && isConsentGiven) || userMigrationStatus === 'lock_too_small_for_v2') {
-                    migrateDepositToV2MutateAsync();
-                    return;
-                  }
-                  if (step.error) {
-                    setError(step.error);
-                  }
-                }
-          }
-          variant="cta"
-        />
+        {!successMessage && (
+          <>
+            {currentStep === 1 && (
+              <Button
+                className={styles.button}
+                isHigh
+                label={t('buttons.later')}
+                onClick={modalProps.onClosePanel}
+                variant="secondary"
+              />
+            )}
+            <Button
+              className={styles.button}
+              isHigh
+              isLoading={isPendingMigrateDepositToV2}
+              label={currentStep === 0 ? t('buttons.ok') : t('buttons.startMigration')}
+              onClick={
+                currentStep === 0
+                  ? () => setCurrentStep(1)
+                  : () => {
+                      if (
+                        (userMigrationStatus === 'migration_required' && isConsentGiven) ||
+                        userMigrationStatus === 'lock_too_small_for_v2'
+                      ) {
+                        // Clear previous inline errors and retry the mutation
+                        setError('');
+                        resetMigrateDeposit();
+                        migrateDepositToV2MutateAsync().catch(() => undefined);
+                        return;
+                      }
+                      if (step.error) {
+                        setError(step.error);
+                      }
+                    }
+              }
+              variant="cta"
+            />
+          </>
+        )}
       </div>
     </Modal>
   );
