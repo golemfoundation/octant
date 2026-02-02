@@ -17,6 +17,7 @@ import { TOURGUIDE_ELEMENT_3 } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
 import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useNavigationTabs from 'hooks/helpers/useNavigationTabs';
@@ -40,6 +41,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'layout.topBar' });
   const { isDesktop, isMobile } = useMediaQuery();
   const { isConnected, address } = useAccount();
+  const isInMigrationMode = useIsMigrationMode();
   const {
     data: {
       userMigrationStatus,
@@ -232,28 +234,30 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         )}
         {isDesktop && <LayoutTopBarCalendar />}
         <div className={styles.buttons}>
-          <Button
-            className={styles.buttonMigrate}
-            dataTest={`${dataTestRoot}__ButtonMigrate`}
-            isDisabled={!isConnected}
-            isLoading={isFetchingIsUserMigrationDoneOrRequired}
-            onClick={shouldButtonMigrateOpenModal ? () => setIsModalMigrateOpen(true) : undefined}
-            to={shouldButtonMigrateOpenModal ? undefined : regenStakerUrl}
-            variant="cta"
-          >
-            <div
-              className={cx(
-                styles.dot,
-                userMigrationStatus === 'migration_required' && styles.isUserMigrationRequired,
-                (userMigrationStatus === 'migration_done' ||
-                  userMigrationStatus === 'lock_too_small_for_v2') &&
-                  styles.isGreen,
-                (!isConnected || userMigrationStatus === 'migration_not_required') &&
-                  styles.noMigration,
-              )}
-            />
-            {t(`migration.topBar.buttonMigrate.${translationSuffix}`)}
-          </Button>
+          {isInMigrationMode && (
+            <Button
+              className={styles.buttonMigrate}
+              dataTest={`${dataTestRoot}__ButtonMigrate`}
+              isDisabled={!isConnected}
+              isLoading={isFetchingIsUserMigrationDoneOrRequired}
+              onClick={shouldButtonMigrateOpenModal ? () => setIsModalMigrateOpen(true) : undefined}
+              to={shouldButtonMigrateOpenModal ? undefined : regenStakerUrl}
+              variant="cta"
+            >
+              <div
+                className={cx(
+                  styles.dot,
+                  userMigrationStatus === 'migration_required' && styles.isUserMigrationRequired,
+                  (userMigrationStatus === 'migration_done' ||
+                    userMigrationStatus === 'lock_too_small_for_v2') &&
+                    styles.isGreen,
+                  (!isConnected || userMigrationStatus === 'migration_not_required') &&
+                    styles.noMigration,
+                )}
+              />
+              {t(`migration.topBar.buttonMigrate.${translationSuffix}`)}
+            </Button>
+          )}
           <Button
             className={cx(
               styles.buttonWallet,
