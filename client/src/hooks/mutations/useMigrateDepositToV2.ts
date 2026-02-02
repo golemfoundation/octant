@@ -152,12 +152,9 @@ export default function useMigrateDepositToV2({
           chainId &&
           isAtomicBatchSupported &&
           actionAfterUnlock !== 'redirect_to_v2' &&
-          !isGnosisSafeMultisig
+          !isGnosisSafeMultisig &&
+          connectorClient
         ) {
-          if (!connectorClient) {
-            throw new Error('Connector client not available');
-          }
-
           const calls = [
             {
               abi: Deposits.abi,
@@ -177,38 +174,28 @@ export default function useMigrateDepositToV2({
               args: [depositsValue, address!],
               functionName: 'stake',
             },
-          ];
+          ].map(call => ({
+            // @ts-expect-error string to enum mapping.
+            data: encodeFunctionData(call),
+            to: call.address,
+          }));
 
-          let callId: string;
-          try {
-            callId = await connectorClient.request(
-              {
-                method: 'wallet_sendCalls',
-                params: [
-                  {
-                    atomicRequired: true,
-                    calls: calls.map(call => ({
-                      data: encodeFunctionData({
-                        abi: call.abi,
-                        args: call.args,
-                        functionName: call.functionName,
-                      }),
-                      to: call.address,
-                    })),
-                    chainId: numberToHex(chainId),
-                    from: address!,
-                    version: '2.0.0',
-                  },
-                ],
-              } as any,
-              { retryCount: 0 },
-            );
-          } catch (err) {
-            if (err instanceof Error) {
-              throw err;
-            }
-            throw new Error('Migration to V2 failed');
-          }
+          const callId = (await connectorClient.request(
+            {
+              method: 'wallet_sendCalls',
+              params: [
+                {
+                  atomicRequired: true,
+                  calls,
+                  chainId: numberToHex(chainId),
+                  from: address!,
+                  version: '2.0.0',
+                },
+              ],
+            } as any,
+            { retryCount: 0 },
+          )) as string;
+
           await handleAsyncSuccess({
             hash: callId as Hash,
             type: 'migrate',
