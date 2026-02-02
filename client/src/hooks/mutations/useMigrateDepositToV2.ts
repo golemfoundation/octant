@@ -1,8 +1,8 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { TransactionReceipt, Hash, erc20Abi } from 'viem';
-import { useAccount } from 'wagmi';
-import { useCapabilities, useWriteContracts } from 'wagmi/experimental';
+import { TransactionReceipt, Hash, erc20Abi, encodeFunctionData, numberToHex } from 'viem';
+import { useAccount, useConnectorClient } from 'wagmi';
+import { useCapabilities } from 'wagmi/experimental';
 
 import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
 import env from 'env';
@@ -46,7 +46,7 @@ export default function useMigrateDepositToV2({
   }));
 
   const { data: capabilities } = useCapabilities({ account: address });
-  const { writeContractsAsync } = useWriteContracts();
+  const { data: connectorClient } = useConnectorClient();
 
   const handleAsyncSuccess = async ({
     hash,
@@ -142,12 +142,22 @@ export default function useMigrateDepositToV2({
         // Reset safe readiness flag before starting a new flow
         setIsSafeReady(false);
 
+        const chainCapabilities = chainId ? capabilities?.[chainId] : undefined;
+        const isAtomicBatchSupported =
+          chainCapabilities?.atomic?.status === 'supported' ||
+          chainCapabilities?.atomic?.status === 'ready' ||
+          !!chainCapabilities?.atomic?.enabled;
+
         if (
           chainId &&
-          capabilities?.[chainId]?.atomicBatch?.supported &&
+          isAtomicBatchSupported &&
           actionAfterUnlock !== 'redirect_to_v2' &&
           !isGnosisSafeMultisig
         ) {
+          if (!connectorClient) {
+            throw new Error('Connector client not available');
+          }
+
           const calls = [
             {
               abi: Deposits.abi,
@@ -169,14 +179,36 @@ export default function useMigrateDepositToV2({
             },
           ];
 
-          const callId = await writeContractsAsync({
-            capabilities: {
-              atomicBatch: {
-                supported: true,
-              },
-            },
-            contracts: calls,
-          });
+          let callId: string;
+          try {
+            callId = await connectorClient.request(
+              {
+                method: 'wallet_sendCalls',
+                params: [
+                  {
+                    atomicRequired: true,
+                    calls: calls.map(call => ({
+                      data: encodeFunctionData({
+                        abi: call.abi,
+                        args: call.args,
+                        functionName: call.functionName,
+                      }),
+                      to: call.address,
+                    })),
+                    chainId: numberToHex(chainId),
+                    from: address!,
+                    version: '2.0.0',
+                  },
+                ],
+              } as any,
+              { retryCount: 0 },
+            );
+          } catch (err) {
+            if (err instanceof Error) {
+              throw err;
+            }
+            throw new Error('Migration to V2 failed');
+          }
           await handleAsyncSuccess({
             hash: callId as Hash,
             type: 'migrate',

@@ -38,12 +38,11 @@ function useUserMigrationStatus(): {
 
   const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
   /**
-   * For some reason when there is no deposit, it's an array of 1 element.
-   * 1 element with balanceWei 0. So check for that.
+   * For some the first element is there even when there is no deposit.
+   * Check for 2nd ([1]) elemnet wand its balanceWei.
    */
-  //
   const doesUserHaveV2Deposits =
-    v2Deposits !== undefined && v2Deposits.length > 0 && v2Deposits[0].balanceWei !== '0';
+    v2Deposits !== undefined && v2Deposits.length > 1 && v2Deposits[1].balanceWei !== '0';
 
   const status = useMemo(() => {
     if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
