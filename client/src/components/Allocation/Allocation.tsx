@@ -182,6 +182,10 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
       }),
     ]);
     setCurrentView('summary');
+
+    if (shouldButtonMigrateOpenModal) {
+      setIsModalMigrateOpen(true);
+    }
   };
 
   const allocateEvent = useAllocate({
@@ -347,10 +351,6 @@ const Allocation: FC<AllocationProps> = ({ dataTest }) => {
       });
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
-
-    if (shouldButtonMigrateOpenModal) {
-      setIsModalMigrateOpen(true);
-    }
   };
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useAllocationsStore from 'store/allocations/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
@@ -30,6 +31,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochLeverage } = useEpochLeverage(currentEpoch! - 1);
+  const isInMigrationMode = useIsMigrationMode();
   const { rewardsForProjects } = useAllocationsStore(state => ({
     rewardsForProjects: state.data.rewardsForProjects,
   }));
@@ -146,7 +148,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
               />
             ))}
           </div>
-          <Sections sections={sections} variant="small" />
+          {!isInMigrationMode && <Sections sections={sections} variant="small" />}
         </BoxRounded>
       )}
       {personalAllocation !== 0n && (
