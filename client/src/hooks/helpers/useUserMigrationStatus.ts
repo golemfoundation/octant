@@ -39,10 +39,13 @@ function useUserMigrationStatus(): {
   const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
   /**
    * For some the first element is there even when there is no deposit.
-   * Check for 2nd ([1]) elemnet wand its balanceWei.
+   * Check the last element, which represents current deposit value.
    */
   const doesUserHaveV2Deposits =
-    v2Deposits !== undefined && v2Deposits.length > 1 && v2Deposits[1].balanceWei !== '0';
+    v2Deposits !== undefined &&
+    v2Deposits.length > 1 &&
+    v2Deposits.at(-1) &&
+    v2Deposits.at(-1)?.balanceWei !== '0';
 
   const status = useMemo(() => {
     if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
