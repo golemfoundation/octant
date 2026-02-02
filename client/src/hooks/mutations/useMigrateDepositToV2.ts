@@ -145,7 +145,6 @@ export default function useMigrateDepositToV2({
         const chainCapabilities = chainId ? capabilities?.[chainId] : undefined;
         const isAtomicBatchSupported =
           chainCapabilities?.atomic?.status === 'supported' ||
-          chainCapabilities?.atomic?.status === 'ready' ||
           !!chainCapabilities?.atomic?.enabled;
 
         if (
