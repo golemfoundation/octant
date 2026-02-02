@@ -5,7 +5,7 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import useRegenStakerMinimumStakeAmount from 'hooks/queries/useRegenStakerMinimumStakeAmount';
 import useV2Deposits from 'hooks/subgraphRegenStaker/useV2Deposits';
 
-type UserMigrationStatus =
+export type UserMigrationStatus =
   | 'migration_done'
   | 'migration_required'
   | 'migration_not_required'
@@ -18,17 +18,32 @@ function useUserMigrationStatus(): {
     userMigrationStatus: UserMigrationStatus;
   };
   isFetching: boolean;
+  refetch: () => Promise<any>;
 } {
   const { address } = useAccount();
-  const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
+  const {
+    data: depositsValue,
+    isFetching: isFetchingDepositValue,
+    refetch: refetchDepositValue,
+  } = useDepositValue();
   const {
     data: regenStakerMinimumStakeAmount,
     isFetching: isFetchingRegenStakerMinimumStakeAmount,
   } = useRegenStakerMinimumStakeAmount();
-  const { data: v2Deposits, isFetching: isFetchingV2Deposits } = useV2Deposits(address!);
+  const {
+    data: v2Deposits,
+    isFetching: isFetchingV2Deposits,
+    refetch: refetchV2Deposits,
+  } = useV2Deposits(address!);
 
   const doesUserHaveV1Lock = depositsValue !== undefined && depositsValue !== 0n;
-  const doesUserHaveV2Deposits = v2Deposits !== undefined && v2Deposits.length > 0;
+  /**
+   * For some reason when there is no deposit, it's an array of 1 element.
+   * 1 element with balanceWei 0. So check for that.
+   */
+  //
+  const doesUserHaveV2Deposits =
+    v2Deposits !== undefined && v2Deposits.length > 0 && v2Deposits[0].balanceWei !== '0';
 
   const status = useMemo(() => {
     if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
@@ -69,6 +84,9 @@ function useUserMigrationStatus(): {
     },
     isFetching:
       isFetchingDepositValue || isFetchingV2Deposits || isFetchingRegenStakerMinimumStakeAmount,
+    refetch: () => {
+      return Promise.all([refetchDepositValue(), refetchV2Deposits()]);
+    },
   };
 }
 

@@ -1,10 +1,13 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { TransactionReceipt, Hash } from 'viem';
+import { TransactionReceipt, Hash, erc20Abi } from 'viem';
 import { useAccount } from 'wagmi';
+import { useCapabilities, useWriteContracts } from 'wagmi/experimental';
 
 import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
 import env from 'env';
+import Deposits from 'hooks/contracts/abi/Deposits.json';
+import RegenStaker from 'hooks/contracts/abi/RegenStaker.json';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useV2StakeMutation from 'hooks/mutations/useV2StakeMutation';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -23,8 +26,13 @@ export default function useMigrateDepositToV2({
   actionAfterUnlock: ActionAfterUnlock;
   options?: UseMutationOptions<TransactionReceipt | null, unknown, unknown>;
 }): UseMutationResult<TransactionReceipt | null, Error, void, unknown> {
-  const { contractGlmAddress, regenStakerUrl } = env;
-  const { address } = useAccount();
+  const {
+    contractGlmAddress,
+    contractDepositsAddress,
+    contractRegenStakerAddress,
+    regenStakerUrl,
+  } = env;
+  const { address, chainId } = useAccount();
   const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
@@ -37,7 +45,18 @@ export default function useMigrateDepositToV2({
     addTransactionPending: state.addTransactionPending,
   }));
 
-  const onSuccess = async ({ hash, value }): Promise<void> => {
+  const { data: capabilities } = useCapabilities({ account: address });
+  const { writeContractsAsync } = useWriteContracts();
+
+  const handleAsyncSuccess = async ({
+    hash,
+    value,
+    type,
+  }: {
+    hash: Hash;
+    type: 'unlock' | 'migrate';
+    value: bigint;
+  }): Promise<void> => {
     if (isGnosisSafeMultisig) {
       const id = setInterval(async () => {
         const nextSafeTransactions = await apiGetSafeTransactions(address!);
@@ -67,8 +86,12 @@ export default function useMigrateDepositToV2({
       isMultisig: !!isGnosisSafeMultisig,
       // GET /history uses seconds. Normalization here.
       timestamp: Math.floor(Date.now() / 1000).toString(),
-      type: 'unlock',
+      type: type === 'migrate' ? 'unlock' : type,
     });
+  };
+
+  const onSuccess = async ({ hash, value }): Promise<void> => {
+    handleAsyncSuccess({ hash, type: 'unlock', value });
   };
 
   useEffect(() => {
@@ -118,6 +141,49 @@ export default function useMigrateDepositToV2({
       try {
         // Reset safe readiness flag before starting a new flow
         setIsSafeReady(false);
+
+        if (
+          chainId &&
+          capabilities?.[chainId]?.atomicBatch?.supported &&
+          actionAfterUnlock !== 'redirect_to_v2' &&
+          !isGnosisSafeMultisig
+        ) {
+          const calls = [
+            {
+              abi: Deposits.abi,
+              address: contractDepositsAddress as Hash,
+              args: [depositsValue],
+              functionName: 'unlock',
+            },
+            {
+              abi: erc20Abi,
+              address: contractGlmAddress as Hash,
+              args: [contractRegenStakerAddress as Hash, depositsValue],
+              functionName: 'approve',
+            },
+            {
+              abi: RegenStaker.abi,
+              address: contractRegenStakerAddress as Hash,
+              args: [depositsValue, address!],
+              functionName: 'stake',
+            },
+          ];
+
+          const callId = await writeContractsAsync({
+            capabilities: {
+              atomicBatch: {
+                supported: true,
+              },
+            },
+            contracts: calls,
+          });
+          await handleAsyncSuccess({
+            hash: callId as Hash,
+            type: 'migrate',
+            value: depositsValue,
+          });
+          return null;
+        }
 
         await unlockMutation.mutateAsync(depositsValue);
 

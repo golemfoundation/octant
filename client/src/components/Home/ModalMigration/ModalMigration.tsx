@@ -7,7 +7,7 @@ import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
 import { SABLIER_APP_LINK, V2_PRIVACY_POLICY_URL, V2_TERMS_OF_SERVICE_URL } from 'constants/urls';
 import env from 'env';
-import useUserMigrationStatus from 'hooks/helpers/useUserMigrationStatus';
+import useUserMigrationStatus, { UserMigrationStatus } from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 
@@ -15,7 +15,9 @@ import styles from './ModalMigration.module.scss';
 import { getSteps } from './steps';
 import ModalMigrationProps from './types';
 
-const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
+const ModalMigration: FC<ModalMigrationProps> = ({
+  modalProps: { onClosePanel, ...modalPropsRest },
+}) => {
   const { regenStakerUrl } = env;
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.migrationModal',
@@ -27,9 +29,14 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
 
   const {
     data: { userMigrationStatus },
+    refetch: refetchUserMigrationStatus,
   } = useUserMigrationStatus();
 
-  const shouldV2DepositBeTriggered = userMigrationStatus === 'migration_required';
+  const [initialUserMigrationStatus] = useState<UserMigrationStatus | undefined>(
+    userMigrationStatus,
+  );
+
+  const shouldV2DepositBeTriggered = initialUserMigrationStatus === 'migration_required';
 
   const {
     mutateAsync: migrateDepositToV2MutateAsync,
@@ -48,13 +55,13 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
   });
 
   useEffect(() => {
-    if (!modalProps.isOpen) {
+    if (!modalPropsRest.isOpen) {
       setCurrentStep(0);
       setIsConsentGiven(false);
       setError('');
       setSuccessMessage('');
     }
-  }, [modalProps.isOpen]);
+  }, [modalPropsRest.isOpen]);
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const onSetIsConsentGiven = (newValue: boolean): void => {
@@ -76,13 +83,19 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
     !userSablierStreams?.sablierStreams.some(({ isCancelled }) => isCancelled) &&
     userSablierStreams?.sumAvailable;
 
+  const _onClosePanel = () => {
+    onClosePanel();
+    refetchUserMigrationStatus();
+  };
+
   return (
     <Modal
       bodyClassName={styles.modalBody}
       dataTest="ModalMigration"
       header={step.title}
       Image={<Img src={step.imgPath} />}
-      {...modalProps}
+      onClosePanel={_onClosePanel}
+      {...modalPropsRest}
     >
       <Trans i18nKey={step.text} />
       {!successMessage && shouldV2DepositBeTriggered && (
@@ -150,7 +163,7 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
                 className={styles.button}
                 isHigh
                 label={t('buttons.later')}
-                onClick={modalProps.onClosePanel}
+                onClick={onClosePanel}
                 variant="secondary"
               />
             )}
@@ -164,10 +177,9 @@ const ModalMigration: FC<ModalMigrationProps> = ({ modalProps }) => {
                   ? () => setCurrentStep(1)
                   : () => {
                       if (
-                        (userMigrationStatus === 'migration_required' && isConsentGiven) ||
-                        userMigrationStatus === 'lock_too_small_for_v2'
+                        (initialUserMigrationStatus === 'migration_required' && isConsentGiven) ||
+                        initialUserMigrationStatus === 'lock_too_small_for_v2'
                       ) {
-                        // Clear previous inline errors and retry the mutation
                         setError('');
                         resetMigrateDeposit();
                         migrateDepositToV2MutateAsync().catch(() => undefined);
