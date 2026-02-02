@@ -7,12 +7,12 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useAllocationsStore from 'store/allocations/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
