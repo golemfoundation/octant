@@ -89,9 +89,9 @@ EPOCH0_SYBILS = [
     "0xea809d3fb969d1d4de90c022c34b075b1fa5ec50",
 ]
 
-GUEST_LIST = {}
+GUEST_LIST = set()
 
-TIMEOUT_LIST = {}
+TIMEOUT_LIST = set()
 
 GUEST_LIST_NOT_MAINNET = {
     "0xfe8076f61ffe6a01035919a20e8c8afe3dae6d6c",
