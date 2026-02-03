@@ -156,7 +156,7 @@ env:
   SKIP_LOCAL_SUBGRAPH_UPDATE: ${{ inputs.skip-local-subgraph-update }}
   ANVIL_BLOCK_TIME: ${{ inputs.anvil-block-time }}
   SECRET_WORDS: test test test test test test test test test test test junk
-  PROPOSALS_ADDRESSES: 0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79
+  PROPOSALS_ADDRESSES: "0xdddd576bAF106bAAe54bDE40BCac602bB4a7cf79"
   PROPOSALS_CID: bafybeieler566kesgg7dkke4r2mpxf5bhzcv2eaz44bfqlk7j44nh5l4va
   MULTISIG_ADDRESS: "${{ vars.MULTISIG_ADDRESS }}"
   TESTNET_DEPLOYER_PRIVATE_KEY: "${{ secrets.TESTNET_DEPLOYER_PRIVATE_KEY }}"
