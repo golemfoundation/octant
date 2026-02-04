@@ -1,5 +1,4 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
 import {
   TransactionReceipt,
   Hash,
@@ -43,19 +42,9 @@ export default function useMigrateDepositToV2({
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { mutateAsync: stakeMutationAsync } = useV2StakeMutation();
-  const [intervalId, setIntervalId] = useState<null | NodeJS.Timeout>(null);
 
   // const { data: capabilities } = useCapabilities({ account: address });
   // const { data: connectorClient } = useConnectorClient();
-
-  useEffect(() => {
-    return () => {
-      if (!intervalId) {
-        return;
-      }
-      clearInterval(intervalId);
-    };
-  }, [intervalId]);
 
   const unlockMutation = useUnlock();
 
@@ -145,11 +134,6 @@ export default function useMigrateDepositToV2({
           stakeTokenAddress: contractGlmAddress as Hash,
         });
       } catch (err) {
-        // Clear any polling interval if present and ensure error is propagated
-        if (intervalId) {
-          clearInterval(intervalId);
-          setIntervalId(null);
-        }
         // Rethrow as Error so react-query exposes it to the caller
         if (err instanceof Error) {
           throw err;
@@ -158,11 +142,6 @@ export default function useMigrateDepositToV2({
       } finally {
         refetchDeposit();
         refetchEstimatedEffectiveDeposit();
-        // Best-effort cleanup of interval on normal completion as well
-        if (intervalId) {
-          clearInterval(intervalId);
-          setIntervalId(null);
-        }
       }
     },
     ...options,
