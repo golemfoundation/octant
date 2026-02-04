@@ -90,7 +90,6 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
                     <div>
                       <div>{t('pendingFundsAvailableAfter')}</div>
                       <div>
-                        {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
                         {currentEpochProps && timeCurrentEpochStart && timeCurrentAllocationEnd
                           ? format(
                               new Date(
@@ -111,14 +110,14 @@ const HomeGridPersonalAllocation: FC<HomeGridPersonalAllocationProps> = ({ class
             variant="standard"
           />
           <Button
-            className={styles.withdrawEthButton}
+            className={styles.button}
             dataTest="HomeGridPersonalAllocation__Button"
             isDisabled={
               isPreLaunch ||
               !isConnected ||
               isFetchingWithdrawals ||
               isAppWaitingForTransactionToBeIndexed ||
-              !!(withdrawals?.sums.available && withdrawals.sums.available === 0n)
+              withdrawals?.sums.available === 0n
             }
             isHigh
             onClick={() => setIsModalWithdrawEthOpen(true)}

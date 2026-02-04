@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import datetime
 import json
 import os
@@ -14,6 +13,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import gql
 import pytest
+import pytest_asyncio
 from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
@@ -444,8 +444,8 @@ def random_string() -> str:
     return "".join(random.choices(characters, k=length_of_string))
 
 
-@pytest.fixture(scope="function")
-def fastapi_app(deployment) -> FastAPI:
+@pytest_asyncio.fixture(scope="function")
+async def fastapi_app(deployment) -> FastAPI:
     # take SQLALCHEMY_DATABASE_URI and use as DB_URI
     os.environ["DB_URI"] = deployment.SQLALCHEMY_DATABASE_URI
     os.environ["PROPOSALS_CONTRACT_ADDRESS"] = deployment.PROJECTS_CONTRACT_ADDRESS
@@ -484,13 +484,13 @@ def fastapi_app(deployment) -> FastAPI:
     BaseModel.metadata.drop_all(bind=engine)
 
 
-@pytest.fixture(scope="function")
-def fastapi_client(fastapi_app: FastAPI) -> TestClient:
+@pytest_asyncio.fixture(scope="function")
+async def fastapi_client(fastapi_app: FastAPI) -> TestClient:
     return TestClient(fastapi_app)
 
 
-@pytest.fixture
-def flask_client(deployment) -> FlaskClient:
+@pytest_asyncio.fixture(scope="function")
+async def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
     _app = create_app(deployment)
 
@@ -504,45 +504,39 @@ def flask_client(deployment) -> FlaskClient:
             db.drop_all()
 
 
-@pytest.fixture(scope="function")
-def deployment(pytestconfig, request):
+@pytest_asyncio.fixture(scope="function")
+async def deployment(pytestconfig, request):
     """
     Deploy contracts and a subgraph under a single-use name.
     """
 
-    async def reset_timestamp():
-        w3 = get_w3(get_web3_provider_settings())
+    w3 = get_w3(get_web3_provider_settings())
 
-        # Get the difference between now and the last block timestamp
-        now_timestamp = int(time.time())
-        last_block = await w3.eth.get_block("latest")
-        last_block_timestamp = last_block.timestamp
-        time_diff = now_timestamp - last_block_timestamp
+    # Get the difference between now and the last block timestamp
+    now_timestamp = int(time.time())
+    last_block = await w3.eth.get_block("latest")
+    last_block_timestamp = last_block.timestamp
+    time_diff = now_timestamp - last_block_timestamp
 
-        logger.info(
-            f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})"
-        )
-        logger.info(f"Last block height: {last_block.number}")
+    logger.info(
+        f"Time difference: {time_diff} seconds (now: {now_timestamp}, last block: {last_block_timestamp})"
+    )
+    logger.info(f"Last block height: {last_block.number}")
 
-        # First set the current time
-        await w3.provider.make_request("evm_setTime", [now_timestamp])
-        # Then set the next block's timestamp
-        await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
-        # Mine the block
-        await w3.provider.make_request("evm_mine", [])
+    # First set the current time
+    await w3.provider.make_request("evm_setTime", [now_timestamp])
+    # Then set the next block's timestamp
+    await w3.provider.make_request("evm_setNextBlockTimestamp", [now_timestamp])
+    # Mine the block
+    await w3.provider.make_request("evm_mine", [])
 
-        # Verify the change
-        latest_block = await w3.eth.get_block("latest")
-        logger.info(f"Latest block height: {latest_block.number}")
-        logger.info(
-            f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}"
-        )
-        logger.info("Timestamp reset complete")
-
-    # Run the async functions
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(reset_timestamp())
+    # Verify the change
+    latest_block = await w3.eth.get_block("latest")
+    logger.info(f"Latest block height: {latest_block.number}")
+    logger.info(
+        f"New block timestamp: {datetime.datetime.fromtimestamp(latest_block.timestamp)}"
+    )
+    logger.info("Timestamp reset complete")
 
     envs = setup_deployment(request.node.name)
     graph_name = envs["SUBGRAPH_NAME"]
@@ -567,8 +561,6 @@ def deployment(pytestconfig, request):
     yield conf
 
     # Revert after the test
-    loop.close()
-
     teardown_deployment(request.node.name, graph_name)
 
 

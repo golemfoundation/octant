@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
-import { graphql } from 'gql/gql';
+import { graphql } from 'gql/v1/gql';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type Withdrawals = {

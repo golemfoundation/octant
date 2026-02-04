@@ -23,6 +23,7 @@ export type Root = {
   projectsDonors: 'projectsDonors';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  regenStakerMinimumStakeAmount: 'regenStakerMinimumStakeAmount';
   rewardsRate: 'rewardsRate';
   sablierStreams: 'sablierStreams';
   searchResultsDetails: 'searchResultsDetails';
@@ -31,6 +32,7 @@ export type Root = {
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
+  v2Deposits: 'v2Deposits';
 };
 
 export type QueryKeys = {
@@ -78,6 +80,7 @@ export type QueryKeys = {
   ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
+  regenStakerMinimumStakeAmount: ['regenStakerMinimumStakeAmount'];
   rewardsRate: (epochNumber: number) => [Root['rewardsRate'], string];
   sablierStreams: (userAddress: string) => [Root['sablierStreams'], string];
   searchResults: ['searchResults'];
@@ -94,6 +97,10 @@ export type QueryKeys = {
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];
+  v2Deposits: (
+    regenStakerAddress: string,
+    userAddress: string,
+  ) => [Root['v2Deposits'], string, string];
   vimeoVideos: ['vimeoVideos'];
   withdrawals: ['withdrawals'];
 };

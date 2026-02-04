@@ -6,8 +6,8 @@ import { request } from 'graphql-request';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
-import { graphql } from 'gql/gql';
-import { GetEpochesQuery } from 'gql/graphql';
+import { graphql } from 'gql/v1/gql';
+import { GetEpochesQuery } from 'gql/v1/graphql';
 
 const GET_EPOCHS = graphql(`
   query GetEpoches {

@@ -23,6 +23,7 @@ export const ROOTS: Root = {
   projectsDonors: 'projectsDonors',
   projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
+  regenStakerMinimumStakeAmount: 'regenStakerMinimumStakeAmount',
   rewardsRate: 'rewardsRate',
   sablierStreams: 'sablierStreams',
   searchResultsDetails: 'searchResultsDetails',
@@ -31,6 +32,7 @@ export const ROOTS: Root = {
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
   userTOS: 'userTOS',
+  v2Deposits: 'v2Deposits',
 };
 
 export const QUERY_KEYS: QueryKeys = {
@@ -78,6 +80,7 @@ export const QUERY_KEYS: QueryKeys = {
   ],
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'],
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'],
+  regenStakerMinimumStakeAmount: ['regenStakerMinimumStakeAmount'],
   rewardsRate: epochNumber => [ROOTS.rewardsRate, epochNumber.toString()],
   sablierStreams: userAddress => [ROOTS.sablierStreams, userAddress],
   searchResults: ['searchResults'],
@@ -91,6 +94,11 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
+  v2Deposits: (regenStakerAddress, userAddress) => [
+    ROOTS.v2Deposits,
+    regenStakerAddress,
+    userAddress,
+  ],
   vimeoVideos: ['vimeoVideos'],
   withdrawals: ['withdrawals'],
 };

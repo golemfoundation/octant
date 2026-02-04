@@ -6,6 +6,13 @@ import { VerificationResult } from "../runner";
 
 const PROPOSALS_NO = 30;
 
+// Minimum epoch number from which staking is reserved for v2
+const FIRST_EPOCH_RESERVING_STAKING_FOR_V2 = 11;
+
+function shouldReserveStakingForV2(epochNumber: number): boolean {
+  return epochNumber >= FIRST_EPOCH_RESERVING_STAKING_FOR_V2;
+}
+
 
 function _groupAllocationsByProjects(aggregatedDonations: Map<Address, UserDonation[]>): [Map<Address, bigint>, bigint] {
   const result = new Map<Address, bigint>();
@@ -104,13 +111,30 @@ export function verifyMatchedFunds(context: Context): VerificationResult {
 }
 
 export function verifyMatchingFundFromEpochInfo(context: Context): VerificationResult {
+  // For epochs reserving staking: matched rewards = patron rewards only
+  if (shouldReserveStakingForV2(context.epochInfo.epochNumber)) {
+    // matchedRewards should equal patronsRewards (no staking portion)
+    return assertEq(
+      context.epochInfo.matchedRewards,
+      context.epochInfo.patronsRewards
+    );
+  }
+
+  // Standard epochs: original formula
   const verifyMatchedRewards = [context.epochInfo.totalRewards - context.epochInfo.ppf - context.epochInfo.individualRewards + context.epochInfo.patronsRewards, context.epochInfo.matchedRewards];
 
   return assertAll([verifyMatchedRewards], ([value, expected]) => assertEq(value, expected));
 }
 
 export function verifyAllEpochRewards(context: Context): VerificationResult {
-  const allBudgets = context.epochInfo.individualRewards + context.epochInfo.ppf - context.epochInfo.patronsRewards + context.epochInfo.matchedRewards + context.epochInfo.communityFund + context.epochInfo.operationalCost;
+  let allBudgets = context.epochInfo.individualRewards + context.epochInfo.ppf - context.epochInfo.patronsRewards + context.epochInfo.matchedRewards + context.epochInfo.communityFund + context.epochInfo.operationalCost;
+
+  // For epochs reserving staking: add back the staking matched portion (not distributed)
+  if (shouldReserveStakingForV2(context.epochInfo.epochNumber) &&
+      context.epochInfo.stakingMatchedReservedForV2) {
+    allBudgets += context.epochInfo.stakingMatchedReservedForV2;
+  }
+
   return assertEq(allBudgets, context.epochInfo.stakingProceeds, BigInt(100));
 }
 

@@ -1,0 +1,60 @@
+.image {
+  width: 14rem;
+  height: 12.6rem;
+  margin: 3.5rem auto;
+
+  @media #{$desktop-up} {
+    margin: 3.8rem auto;
+    width: 21.8rem;
+    height: 19.6rem;
+  }
+}
+
+.buttonSablier {
+  margin-top: 2.4rem;
+}
+
+.consent {
+  border-top: 0.1rem solid $color-black;
+  border-bottom: 0.1rem solid $color-black;
+  margin: 2.4rem 0;
+  padding: 2.4rem 0;
+}
+
+.error {
+  color: $color-octant-orange2;
+  font-size: $font-size-12;
+  text-align: left;
+  width: 100%;
+}
+
+.successMessage {
+  color: $color-octant-green;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  text-align: center;
+  width: 100%;
+  margin: 1.6rem 0 0;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+
+  .checkboxLabel {
+    margin-left: 0.8rem;
+    cursor: pointer;
+  }
+}
+
+.buttons {
+  margin-top: 2.4rem;
+  gap: 1.2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .button {
+    width: 100%;
+  }
+}

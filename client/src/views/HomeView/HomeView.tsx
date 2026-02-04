@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import HomeGrid from 'components/Home/HomeGrid/HomeGrid';
 import HomeRewards from 'components/Home/HomeRewards/HomeRewards';
 import ViewTitle from 'components/shared/ViewTitle/ViewTitle';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -15,9 +16,13 @@ const HomeView = (): ReactElement => {
   const { isMobile } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const isInMigrationMode = useIsMigrationMode();
   const dataTestRoot = 'HomeView';
 
   const title = useMemo(() => {
+    if (isInMigrationMode) {
+      return t('title.migration');
+    }
     if (isDecisionWindowOpen && isMobile) {
       return t('title.isDecisionWindowOpenTrue.mobile', { epoch: currentEpoch! - 1 });
     }

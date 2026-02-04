@@ -109,6 +109,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
         functionName: 'approve',
         walletClient,
       });
+      // Await allowance to be included in a block.
       await publicClient.waitForTransactionReceipt({ hash });
     }
   };

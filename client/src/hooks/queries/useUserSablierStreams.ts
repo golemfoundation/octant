@@ -16,7 +16,7 @@ export default function useUserSablierStreams(): UseQueryResult<ReturnType, unkn
 
   return useQuery({
     enabled: !!address,
-    queryFn: () => apiGetUserSablierStreams(address!),
+    queryFn: () => apiGetUserSablierStreams('0x208de0d42a5f3f6e3bbd0e6121bd30a768824fc7'!),
     queryKey: QUERY_KEYS.sablierStreams(address!),
     select: response => ({
       sablierStreams: response.sablierStreams,

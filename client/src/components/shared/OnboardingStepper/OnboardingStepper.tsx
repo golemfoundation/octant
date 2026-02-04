@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Img from 'components/ui/Img';
 import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -24,6 +25,7 @@ const OnboardingStepper = (): ReactElement => {
 
   const { isDesktop } = useMediaQuery();
   const { data: isUserTOSAccepted } = useUserTOS();
+  const isInMigrationMode = useIsMigrationMode();
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
   const cxcy = 28;
@@ -54,6 +56,10 @@ const OnboardingStepper = (): ReactElement => {
     }
     return four;
   }, [lastSeenStep]);
+
+  if (isInMigrationMode) {
+    return <div />;
+  }
 
   return (
     <motion.div

@@ -3,6 +3,7 @@ import Joyride, { EVENTS, ACTIONS, CallBackProps, TooltipRenderProps } from 'rea
 
 import StepContent from 'components/shared/QuickTour/StepContent';
 import TooltipComponent from 'components/shared/QuickTour/TooltipComponent';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useQuickTourSteps from 'hooks/helpers/useQuickTourSteps';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -13,6 +14,7 @@ const Handler = (): ReactElement | null => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
+  const isInMigrationMode = useIsMigrationMode();
 
   const { isQuickTourVisible, setIsQuickTourVisible } = useSettingsStore(state => ({
     isQuickTourVisible: state.data.isQuickTourVisible,
@@ -67,6 +69,7 @@ const Handler = (): ReactElement | null => {
     isPatronMode ||
     !isQuickTourVisible ||
     isOnboardingModalOpen ||
+    isInMigrationMode ||
     window.Cypress
   ) {
     return null;
