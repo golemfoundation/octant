@@ -1,4 +1,4 @@
-"""E10: Add project details for search
+"""E11: Add project details for search
 
 Revision ID: 8c5e2a1f4b7d
 Revises: e2f4c1a7b8d9

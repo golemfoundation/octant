@@ -1,4 +1,4 @@
-"""E10: Truncate existing delegations and GP stamps
+"""E11: Truncate existing delegations and GP stamps
 
 Revision ID: 3f7a9c2e5b1d
 Revises: 8c5e2a1f4b7d
