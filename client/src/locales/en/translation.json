@@ -119,7 +119,7 @@
       },
       "migration": {
         "title": "Donate to Protocol Guild",
-        "note": "In this Epoch, donations are not matched, as the matching fund is reserved for future rounds on v2. Protocol Guild will only receive your IR."
+        "note": "In this Epoch, donations are not matched, as the matching fund is reserved for future rounds on v2. Protocol Guild will only receive your Individual Rewards."
       }
     },
     "shared": {

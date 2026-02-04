@@ -51,15 +51,15 @@ const HomeGrid = (): ReactElement => {
       {!isProjectAdminMode && !isInMigrationMode && (
         <HomeGridCurrentGlmLock className={styles.gridTile} />
       )}
+      {!isProjectAdminMode && isInMigrationMode && (
+        <HomeGridMigrate className={cx(styles.gridTile, styles.isHigher)} />
+      )}
       {!isPatronMode &&
         (isInMigrationMode ? (
           <HomeGridPersonalAllocationMigration className={cx(styles.gridTile, styles.isHigher)} />
         ) : (
           <HomeGridPersonalAllocation className={styles.gridTile} />
         ))}
-      {!isProjectAdminMode && isInMigrationMode && (
-        <HomeGridMigrate className={cx(styles.gridTile, styles.isHigher)} />
-      )}
       {!isInMigrationMode && (
         <>
           {!isProjectAdminMode && <HomeGridUQScore className={styles.gridTile} />}

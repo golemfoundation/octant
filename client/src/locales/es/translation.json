@@ -120,7 +120,7 @@
     },
     "migration": {
       "title": "Donar a Protocol Guild",
-      "note": "En esta Epoch, las donaciones no son amplificadas, ya que el fondo de matching está reservado para rondas futuras en v2. Protocol Guild solo recibirá tu IR."
+      "note": "En esta Epoch, las donaciones no son amplificadas, ya que el fondo de matching está reservado para rondas futuras en v2. Protocol Guild solo recibirá tu Recompensas Individuales."
     },
     "shared": {
       "onboardingStepper": {
