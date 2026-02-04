@@ -52,7 +52,6 @@ export default function useMigrateDepositToV2({
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchHistory } = useHistory();
   const [intervalId, setIntervalId] = useState<null | NodeJS.Timeout>(null);
-  const [isSafeReady, setIsSafeReady] = useState(false);
   const { addTransactionPending } = useTransactionLocalStore(state => ({
     addTransactionPending: state.addTransactionPending,
   }));
@@ -78,7 +77,6 @@ export default function useMigrateDepositToV2({
 
         if (safeTransaction) {
           clearInterval(id);
-          setIsSafeReady(true);
           Promise.all([
             refetchDeposit(),
             refetchEstimatedEffectiveDeposit(),
@@ -123,36 +121,8 @@ export default function useMigrateDepositToV2({
         throw new Error('depositsValue is undefined');
       }
 
-      // helper: wait until predicate returns true or time out
-      const waitUntil = async (
-        predicate: () => boolean,
-        { intervalMs = 1000, timeoutMs = 180000 }: { intervalMs?: number; timeoutMs?: number } = {},
-      ): Promise<void> =>
-        new Promise((resolve, reject) => {
-          const start = Date.now();
-          const tick = (): void => {
-            try {
-              if (predicate()) {
-                resolve();
-                return;
-              }
-            } catch (e) {
-              reject(e);
-              return;
-            }
-            if (Date.now() - start >= timeoutMs) {
-              reject(new Error('Timed out waiting for condition'));
-              return;
-            }
-            setTimeout(tick, intervalMs);
-          };
-          setTimeout(tick, intervalMs);
-        });
-
       // Ensure we reset state and properly propagate any error so react-query exposes it
       try {
-        // Reset safe readiness flag before starting a new flow
-        setIsSafeReady(false);
 
         /**
          * Logic for batch migration transactions.
@@ -220,16 +190,6 @@ export default function useMigrateDepositToV2({
         // }
 
         await unlockMutation.mutateAsync(depositsValue);
-
-        // if (isGnosisSafeMultisig) {
-        //   // For multisig: proceed only after Safe tx has an on-chain transaction hash (set in onSuccess)
-        //   await waitUntil(() => isSafeReady);
-        // } else {
-        //   // For EOA: wait until the app finishes indexing the unlock (flag flips to false)
-        //   await waitUntil(
-        //     () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
-        //   );
-        // }
 
         if (actionAfterUnlock === 'redirect_to_v2') {
           window.open(regenStakerUrl, '_blank');
