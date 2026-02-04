@@ -69,7 +69,7 @@
           "title": "Migra tu cuenta a Octant v2",
           "text": {
             "migrationLockTooSmallForV2": "No cumples los requisitos para la migración automática ya que Octant v2 requiere un depósito mínimo de 100 GLM y tienes bloqueado menos que esa cantidad en v1.<br /><br />Cuando hagas click en \"iniciar migración\" abajo, desbloquearás tus GLM y serás redirigido a glm.octant.app (Octant v2) donde podrás bloquear 100 GLM para comenzar a ganar Recompensas Individuales (IR) para participar en rondas futuras.",
-            "migrationRequired": "Para acceder a Octant v2 y participar en epochs futuras, deberás completar una breve migración.<br /><br />Durante este paso, se te pedirá que confirmes 2-3 transacciones en tu billetera. Una vez completadas, tu cuenta estará lista y no necesitarás hacer esto de nuevo."
+            "migrationRequired": "Para acceder a Octant v2 y participar en futuras épocas, deberás completar una breve migración.<br /><br />Durante este paso, se te pedirá realizar hasta 3 transacciones en tu billetera. Una vez completado, tu cuenta estará lista y no tendrás que hacerlo de nuevo. Las tres transacciones son las siguientes: desbloquear GLM de v1, permitir GLM, bloquear GLM en glm.octant.app (v2)."
           },
           "consent": "Al hacer click en \"Iniciar migración\", reconoces que al migrar la dirección de tu billetera y su historial serán transferidos a Octant Labs y que aceptas sus <0>Términos de Servicio</0> y <1>Política de Privacidad</1>.",
           "acknowledgment": "He leído, entiendo y acepto lo mencionado arriba",
@@ -116,11 +116,11 @@
         "standard": "{{sum}} / {{threshold}}",
         "simulate": "Tu impacto {{value}}",
         "simulateLoading": "Calculando..."
+      },
+      "migration": {
+        "title": "Donar a Protocol Guild",
+        "note": "En esta Epoch, las donaciones no son amplificadas, ya que el fondo de matching está reservado para rondas futuras en v2. Protocol Guild solo recibirá tu Recompensas Individuales."
       }
-    },
-    "migration": {
-      "title": "Donar a Protocol Guild",
-      "note": "En esta Epoch, las donaciones no son amplificadas, ya que el fondo de matching está reservado para rondas futuras en v2. Protocol Guild solo recibirá tu Recompensas Individuales."
     },
     "shared": {
       "onboardingStepper": {

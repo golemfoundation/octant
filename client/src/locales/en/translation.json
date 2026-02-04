@@ -69,7 +69,7 @@
           "title": "Migrate your account to Octant  v2",
           "text": {
             "migrationLockTooSmallForV2": "You are not eligible for automatic migration as Octant v2 requires minimum deposit of 100 GLM and you have locked less than that in v1.<br /><br />When you click \"start migration\" below you will unlock your GLM and be redirected to glm.octant.app (Octant v2) where you can lock 100 GLM to start earning I.R. for participation in future rounds.",
-            "migrationRequired": "To access Octant v2 and participate in future epochs, you'll need to complete a short migration.<br /><br />During this step, you'll be asked to confirm 2-3 transactions in your wallet. Once completed, your account will be ready and you won't need to do this again."
+            "migrationRequired": "To access Octant v2 and participate in future epochs, you'll need to complete a short migration.<br /><br />During this step, you'll be asked to up to 3 transactions in your wallet. Once completed, your account will be ready and you won't need to do this again. The three transactions are as follows: unlock GLM from v1, allow GLM, lock GLM in glm.octant.app (v2)."
           },
           "consent": "By clicking \"Start migration\", you acknowledge that upon migration your wallet address and history will be transferred to Octant Labs and agree to their <0>Terms of Service</0> and <1>Privacy Policy</1>.",
           "acknowledgment": "I read, understood and agree to the above",
