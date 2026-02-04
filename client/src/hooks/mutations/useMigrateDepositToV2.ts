@@ -13,7 +13,6 @@ import {
 } from 'wagmi';
 // import { useCapabilities } from 'wagmi/experimental';
 
-import { apiGetSafeTransactions } from 'api/calls/safeTransactions';
 import env from 'env';
 // import Deposits from 'hooks/contracts/abi/Deposits.json';
 // import RegenStaker from 'hooks/contracts/abi/RegenStaker.json';
@@ -21,10 +20,6 @@ import useUnlock from 'hooks/mutations/useUnlock';
 import useV2StakeMutation from 'hooks/mutations/useV2StakeMutation';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
-import useHistory from 'hooks/queries/useHistory';
-import useIsGnosisSafeMultisig from 'hooks/queries/useIsGnosisSafeMultisig';
-import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
-import useTransactionLocalStore from 'store/transactionLocal/store';
 
 type ActionAfterUnlock = 'deposit_in_v2' | 'redirect_to_v2';
 
@@ -41,68 +36,17 @@ export default function useMigrateDepositToV2({
     // contractRegenStakerAddress,
     regenStakerUrl,
   } = env;
+  // eslint-disable-next-line no-empty-pattern
   const {
-    address,
     // chainId
   } = useAccount();
-  const { data: isGnosisSafeMultisig } = useIsGnosisSafeMultisig();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { mutateAsync: stakeMutationAsync } = useV2StakeMutation();
-  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchHistory } = useHistory();
   const [intervalId, setIntervalId] = useState<null | NodeJS.Timeout>(null);
-  const { addTransactionPending } = useTransactionLocalStore(state => ({
-    addTransactionPending: state.addTransactionPending,
-  }));
 
   // const { data: capabilities } = useCapabilities({ account: address });
   // const { data: connectorClient } = useConnectorClient();
-
-  const handleAsyncSuccess = async ({
-    hash,
-    value,
-    type,
-  }: {
-    hash: Hash;
-    type: 'unlock' | 'migrate';
-    value: bigint;
-  }): Promise<void> => {
-    if (isGnosisSafeMultisig) {
-      const id = setInterval(async () => {
-        const nextSafeTransactions = await apiGetSafeTransactions(address!);
-        const safeTransaction = nextSafeTransactions.results.find(
-          t => t.safeTxHash === hash && t.transactionHash,
-        );
-
-        if (safeTransaction) {
-          clearInterval(id);
-          Promise.all([
-            refetchDeposit(),
-            refetchEstimatedEffectiveDeposit(),
-            refetchLockedSummaryLatest(),
-            refetchHistory(),
-          ]);
-        }
-      }, 2000);
-      setIntervalId(id);
-      return;
-    }
-    addTransactionPending({
-      eventData: {
-        amount: value,
-        transactionHash: hash,
-      },
-      isMultisig: !!isGnosisSafeMultisig,
-      // GET /history uses seconds. Normalization here.
-      timestamp: Math.floor(Date.now() / 1000).toString(),
-      type: type === 'migrate' ? 'unlock' : type,
-    });
-  };
-
-  const onSuccess = async ({ hash, value }): Promise<void> => {
-    handleAsyncSuccess({ hash, type: 'unlock', value });
-  };
 
   useEffect(() => {
     return () => {
@@ -113,7 +57,7 @@ export default function useMigrateDepositToV2({
     };
   }, [intervalId]);
 
-  const unlockMutation = useUnlock({ onSuccess });
+  const unlockMutation = useUnlock();
 
   return useMutation<TransactionReceipt | null, Error, void, unknown>({
     mutationFn: async () => {
@@ -212,6 +156,8 @@ export default function useMigrateDepositToV2({
         }
         throw new Error('Migration to V2 failed');
       } finally {
+        refetchDeposit();
+        refetchEstimatedEffectiveDeposit();
         // Best-effort cleanup of interval on normal completion as well
         if (intervalId) {
           clearInterval(intervalId);
