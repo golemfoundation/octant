@@ -1,7 +1,7 @@
 """add_staking_matched_reserved_for_v2
 
 Revision ID: a1f2e3b4c5d6
-Revises: e2f4c1a7b8d9
+Revises: 3f7a9c2e5b1d
 Create Date: 2026-01-15 10:00:00.000000
 
 """
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 revision = "a1f2e3b4c5d6"
-down_revision = "e2f4c1a7b8d9"
+down_revision = "3f7a9c2e5b1d"
 branch_labels = None
 depends_on = None
 
