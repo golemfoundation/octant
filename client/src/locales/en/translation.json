@@ -153,7 +153,7 @@
         "buttonLabel": {
           "migrationRequired": "Migrate Now",
           "migrationDone": "Migration Complete",
-          "migrationNotRequired": "No Migration Needed",
+          "migrationNotRequired": "Visit v2 to participate",
           "migrationLockTooSmallForV2": "Unlock now"
         }
       },
