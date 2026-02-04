@@ -221,15 +221,15 @@ export default function useMigrateDepositToV2({
 
         await unlockMutation.mutateAsync(depositsValue);
 
-        if (isGnosisSafeMultisig) {
-          // For multisig: proceed only after Safe tx has an on-chain transaction hash (set in onSuccess)
-          await waitUntil(() => isSafeReady);
-        } else {
-          // For EOA: wait until the app finishes indexing the unlock (flag flips to false)
-          await waitUntil(
-            () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
-          );
-        }
+        // if (isGnosisSafeMultisig) {
+        //   // For multisig: proceed only after Safe tx has an on-chain transaction hash (set in onSuccess)
+        //   await waitUntil(() => isSafeReady);
+        // } else {
+        //   // For EOA: wait until the app finishes indexing the unlock (flag flips to false)
+        //   await waitUntil(
+        //     () => !useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed,
+        //   );
+        // }
 
         if (actionAfterUnlock === 'redirect_to_v2') {
           window.open(regenStakerUrl, '_blank');
