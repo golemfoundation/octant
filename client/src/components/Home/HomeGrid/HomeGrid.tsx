@@ -46,7 +46,7 @@ const HomeGrid = (): ReactElement => {
     (isPatronMode && !showHelpVideos && (isLargeDesktop || isTablet));
 
   return (
-    <Grid dataTest={dataTestRoot} isFourInARowEnabled={false}>
+    <Grid dataTest={dataTestRoot} isFourInARowEnabled={!isInMigrationMode}>
       {isInMigrationMode && <HomeGridAllocate className={cx(styles.gridTile, styles.isHigher)} />}
       {!isProjectAdminMode && !isInMigrationMode && (
         <HomeGridCurrentGlmLock className={styles.gridTile} />
@@ -76,11 +76,11 @@ const HomeGrid = (): ReactElement => {
               )}
             />
           )}
-          {showDivider2 && (
-            <HomeGridDivider className={styles.divider2} dataTest={`${dataTestRoot}__divider--2`} />
-          )}
           {!isProjectAdminMode && !isPatronMode && (
             <HomeGridDonations className={styles.gridTile} />
+          )}
+          {showDivider2 && (
+            <HomeGridDivider className={styles.divider2} dataTest={`${dataTestRoot}__divider--2`} />
           )}
           <HomeGridTransactions
             className={cx(

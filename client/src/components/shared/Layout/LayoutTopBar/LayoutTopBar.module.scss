@@ -142,8 +142,16 @@
 
     .buttonWalletArrow {
       margin: 1.1rem;
-      path {
-        stroke: $color-black;
+
+      &.isInMigrationMode {
+        path {
+          stroke: $color-black;
+        }
+      }
+      &:not(.isInMigrationMode) {
+        path {
+          stroke: $color-white;
+        }
       }
     }
 

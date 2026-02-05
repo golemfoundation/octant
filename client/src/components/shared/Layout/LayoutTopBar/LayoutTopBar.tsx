@@ -269,11 +269,15 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             onClick={() =>
               isConnected ? setIsWalletModalOpen(true) : setIsConnectWalletModalOpen(true)
             }
-            variant="secondary"
+            variant={isInMigrationMode ? 'secondary' : 'cta'}
           >
             {buttonWalletText}
             {isConnected && (
-              <Svg classNameSvg={styles.buttonWalletArrow} img={chevronBottom} size={1} />
+              <Svg
+                classNameSvg={cx(styles.buttonWalletArrow, isInMigrationMode && styles.isInMigrationMode)}
+                img={chevronBottom}
+                size={1}
+              />
             )}
           </Button>
         </div>
