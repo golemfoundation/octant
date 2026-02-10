@@ -43,7 +43,7 @@ function useUserMigrationStatus(): {
    */
   const doesUserHaveV2Deposits =
     v2Deposits !== undefined &&
-    v2Deposits.length > 1 &&
+    v2Deposits.length > 0 &&
     v2Deposits.at(-1) &&
     v2Deposits.at(-1)?.balanceWei !== '0';
 
