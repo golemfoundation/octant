@@ -52,14 +52,14 @@ jobs:
       uses: docker/setup-buildx-action@v3
       with:
         buildkitd-flags: --debug
-        driver: docker
+        driver-opts: network=host
+        driver: docker-container
         buildkitd-config-inline: |
           debug = true
-          insecure-entitlements = [ "network.host", "security.insecure" ]
+          insecure-entitlements = [ "network.host" ]
 
           [registry."local-docker-registry.wildland.dev:80"]
           http = true
-          insecure = true
 
     - name: set variables
       env:
@@ -73,7 +73,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: network.host
         context: __local/${{ matrix.SERVICE }}
         file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
         push: true
@@ -109,14 +109,13 @@ jobs:
       uses: docker/setup-buildx-action@v3
       with:
         buildkitd-flags: --debug
-        driver: docker
+        driver: docker-container
+        driver-opts: network=host
         buildkitd-config-inline: |
           debug = true
-          insecure-entitlements = [ "network.host", "security.insecure" ]
-
+          insecure-entitlements = [ "network.host" ]
           [registry."local-docker-registry.wildland.dev:80"]
-          http = true
-          insecure = true
+            http = true
 
     - name: replace placeholders
       run: |
@@ -127,7 +126,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: network.host
         context: __local/localenv/multideployer
         file: __local/ci/Dockerfile.multideployer
         push: true
