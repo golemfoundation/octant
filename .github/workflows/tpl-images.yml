@@ -73,7 +73,9 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: |
+          network.host
+          security.insecure
         context: __local/${{ matrix.SERVICE }}
         file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
         push: true
@@ -127,7 +129,9 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: |
+          network.host
+          security.insecure
         context: __local/localenv/multideployer
         file: __local/ci/Dockerfile.multideployer
         push: true
