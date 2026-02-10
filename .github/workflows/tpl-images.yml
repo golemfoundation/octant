@@ -51,9 +51,12 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
-        buildkitd-flags: --debug --allow-insecure-entitlement=network.host --allow-insecure-entitlement=security.insecure
-        driver: docker-container
+        buildkitd-flags: --debug
+        driver: docker
         buildkitd-config-inline: |
+          debug = true
+          insecure-entitlements = [ "network.host", "security.insecure" ]
+
           [registry."local-docker-registry.wildland.dev:80"]
           http = true
           insecure = true
@@ -70,7 +73,9 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: |
+          network.host
+          security.insecure
         context: __local/${{ matrix.SERVICE }}
         file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
         push: true
@@ -105,10 +110,11 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
-        buildkitd-flags: --debug --allow-insecure-entitlement=network.host --allow-insecure-entitlement=security.insecure
-        driver: docker-container
+        buildkitd-flags: --debug
+        driver: docker
         buildkitd-config-inline: |
           debug = true
+          insecure-entitlements = [ "network.host", "security.insecure" ]
 
           [registry."local-docker-registry.wildland.dev:80"]
           http = true
@@ -123,7 +129,9 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
-        allow: network.host,security.insecure
+        allow: |
+          network.host
+          security.insecure
         context: __local/localenv/multideployer
         file: __local/ci/Dockerfile.multideployer
         push: true
