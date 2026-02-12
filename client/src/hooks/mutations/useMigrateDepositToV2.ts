@@ -17,8 +17,10 @@ import env from 'env';
 // import RegenStaker from 'hooks/contracts/abi/RegenStaker.json';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useV2StakeMutation from 'hooks/mutations/useV2StakeMutation';
+import useV2StakeMoreMutation from 'hooks/mutations/useV2StakeMoreMutation';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useV2Deposits from 'hooks/subgraphRegenStaker/useV2Deposits';
 
 type ActionAfterUnlock = 'deposit_in_v2' | 'redirect_to_v2';
 
@@ -38,10 +40,13 @@ export default function useMigrateDepositToV2({
   // eslint-disable-next-line no-empty-pattern
   const {
     // chainId
+    address,
   } = useAccount();
+  const { data: v2Deposits } = useV2Deposits(address!);
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { mutateAsync: stakeMutationAsync } = useV2StakeMutation();
+  const { mutateAsync: stakeMoreMutationAsync } = useV2StakeMoreMutation();
 
   // const { data: capabilities } = useCapabilities({ account: address });
   // const { data: connectorClient } = useConnectorClient();
@@ -56,7 +61,6 @@ export default function useMigrateDepositToV2({
 
       // Ensure we reset state and properly propagate any error so react-query exposes it
       try {
-
         /**
          * Logic for batch migration transactions.
          * Removed due to MetaMask warning strongly against it,
@@ -127,6 +131,17 @@ export default function useMigrateDepositToV2({
         if (actionAfterUnlock === 'redirect_to_v2') {
           window.open(regenStakerUrl, '_blank');
           return null;
+        }
+
+        const doesUserHaveV2Deposit = v2Deposits !== undefined && v2Deposits.length > 0;
+
+        if (doesUserHaveV2Deposit) {
+          return await stakeMoreMutationAsync({
+            depositAmount: depositsValue,
+            // Use the last one deposit
+            depositId: BigInt(v2Deposits.at(-1)!.depositId),
+            stakeTokenAddress: contractGlmAddress as Hash,
+          });
         }
 
         return await stakeMutationAsync({
