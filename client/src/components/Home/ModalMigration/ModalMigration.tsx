@@ -5,7 +5,12 @@ import Button from 'components/ui/Button';
 import Img from 'components/ui/Img';
 import InputCheckbox from 'components/ui/InputCheckbox';
 import Modal from 'components/ui/Modal';
-import { SABLIER_APP_LINK, V2_PRIVACY_POLICY_URL, V2_TERMS_OF_SERVICE_URL } from 'constants/urls';
+import {
+  SABLIER_APP_LINK,
+  SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK,
+  V2_PRIVACY_POLICY_URL,
+  V2_TERMS_OF_SERVICE_URL,
+} from 'constants/urls';
 import env from 'env';
 import useUserMigrationStatus, { UserMigrationStatus } from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
@@ -97,7 +102,7 @@ const ModalMigration: FC<ModalMigrationProps> = ({
       onClosePanel={_onClosePanel}
       {...modalPropsRest}
     >
-      <Trans i18nKey={step.text} />
+      {!successMessage && <Trans i18nKey={step.text} />}
       {!successMessage && shouldV2DepositBeTriggered && (
         <>
           {step.textConsent && (
@@ -136,14 +141,28 @@ const ModalMigration: FC<ModalMigrationProps> = ({
         </>
       )}
       {userSablierStreamsValue !== 0n && (
-        <Button
-          className={styles.buttonSablier}
-          dataTest="HomeGridCurrentGlmLockMigration__ButtonSablier"
-          href={SABLIER_APP_LINK}
-          variant="link"
-        >
-          {t('sablierText')}
-        </Button>
+        <>
+          <Button
+            className={styles.buttonSablier}
+            dataTest="HomeGridCurrentGlmLockMigration__ButtonSablier"
+            href={SABLIER_APP_LINK}
+            variant="link"
+          >
+            {t('sablierText')}
+          </Button>
+          <div className={styles.sablierMigrationInstruction}>
+            <Trans
+              components={[
+                <Button
+                  className={styles.sablierMigrationInstructionLink}
+                  href={SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK}
+                  variant="link3"
+                />,
+              ]}
+              i18nKey={t('sablierMigrationInstruction')}
+            />
+          </div>
+        </>
       )}
       {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
       <div className={styles.buttons}>

@@ -76,6 +76,7 @@
           "error": "Este consentimiento es obligatorio"
         }
       },
+      "sablierMigrationInstruction": "Las instrucciones sobre cómo migrar los fondos bloqueados en Sablier se pueden encontrar <0>aquí</0>.",
       "sablierText": "Tienes streams de Sablier. Haz click aquí para verificarlos",
       "buttons": {
         "ok": "OK",
@@ -85,7 +86,7 @@
       },
       "migrationNotifications": {
         "error": "La migración a v2 ha fallado, por favor inténtalo de nuevo más tarde.",
-        "success": "Migración completada con éxito"
+        "success": "Migración completada con éxito!"
       }
     },
     "allocation": {

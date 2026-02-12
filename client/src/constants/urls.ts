@@ -19,3 +19,5 @@ export const KARMA_GAP = 'https://gap.karmahq.xyz';
 export const SABLIER_APP_LINK = 'https://app.sablier.com/';
 export const V2_TERMS_OF_SERVICE_URL = 'https://octant.build/en/legal/terms-of-service';
 export const V2_PRIVACY_POLICY_URL = 'https://octant.build/en/legal/privacy-policy';
+export const SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK =
+  'https://docs.octant.app/en-EN/epoch11-and-migration-to-v2.html#migrate-funds-locked-in-sablier';
