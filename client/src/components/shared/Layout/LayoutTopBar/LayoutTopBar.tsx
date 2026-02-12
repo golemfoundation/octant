@@ -274,7 +274,10 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             {buttonWalletText}
             {isConnected && (
               <Svg
-                classNameSvg={cx(styles.buttonWalletArrow, isInMigrationMode && styles.isInMigrationMode)}
+                classNameSvg={cx(
+                  styles.buttonWalletArrow,
+                  isInMigrationMode && styles.isInMigrationMode,
+                )}
                 img={chevronBottom}
                 size={1}
               />
