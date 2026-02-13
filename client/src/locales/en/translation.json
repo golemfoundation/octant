@@ -59,7 +59,7 @@
     "update": "Update"
   },
   "components": {
-    "migrationModal":  {
+    "migrationModal": {
       "steps": {
         "step1": {
           "title": "Octant is evolving",
@@ -76,6 +76,7 @@
           "error": "This consent is required"
         }
       },
+      "sablierMigrationInstruction": "Instructions on how to migrate funds locked in Sablier can be found <0>here</0>.",
       "sablierText": "You have Sablier streams. Click here to check them",
       "buttons": {
         "ok": "OK",
@@ -85,7 +86,7 @@
       },
       "migrationNotifications": {
         "error": "Migration to v2 failed, please try again later.",
-        "success": "Migration successful"
+        "success": "Migration successful!"
       }
     },
     "allocation": {
@@ -461,7 +462,7 @@
       "minutes_other": "minutes",
       "minutesShort": "min",
       "calendar": "Calendar",
-      "migration":  {
+      "migration": {
         "calendar": {
           "text": {
             "migrationRequired": "We are evolving! Migrate now",

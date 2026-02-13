@@ -11,7 +11,7 @@
 }
 
 .buttonSablier {
-  margin-top: 2.4rem;
+  margin-top: 1.2rem;
 }
 
 .consent {
@@ -30,11 +30,11 @@
 
 .successMessage {
   color: $color-octant-green;
-  font-size: $font-size-14;
+  font-size: $font-size-20;
   font-weight: $font-weight-bold;
   text-align: center;
   width: 100%;
-  margin: 1.6rem 0 0;
+  margin: 3.2rem 0;
 }
 
 .checkboxWrapper {
@@ -57,4 +57,13 @@
   .button {
     width: 100%;
   }
+}
+
+.sablierMigrationInstruction {
+  margin-top: 1.2rem;
+  font-size: $font-size-14;
+}
+
+.sablierMigrationInstructionLink {
+  font-size: $font-size-14;
 }
