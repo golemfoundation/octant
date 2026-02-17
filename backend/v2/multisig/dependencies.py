@@ -12,10 +12,14 @@ from v2.core.dependencies import GetChainSettings, Web3
 from v2.multisig.contracts import SafeContractsFactory
 
 
-def get_safe_client(chain_settings: GetChainSettings) -> SafeClient:
-    return SafeClient(
+async def get_safe_client(chain_settings: GetChainSettings):
+    client = SafeClient(
         SAFE_API_MAINNET if chain_settings.is_mainnet else SAFE_API_SEPOLIA
     )
+    try:
+        yield client
+    finally:
+        await client.close()
 
 
 def get_safe_contracts_factory(

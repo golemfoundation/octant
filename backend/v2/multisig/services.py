@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import traceback
 
@@ -68,7 +69,7 @@ async def _add_tos_signature(
         user_address, safe_message_hash
     )
 
-    message_details = await safe_client.get_message_details(message_hash, retries=3)
+    message_details = await safe_client.get_message_details(message_hash)
     if user_address != message_details["safe"]:
         raise InvalidMultisigAddress()
 
@@ -121,7 +122,7 @@ async def _add_allocation_signature(
     msg_to_save = payload.model_dump_json(by_alias=True)
 
     # Verify owner
-    message_details = await safe_client.get_message_details(message_hash, retries=3)
+    message_details = await safe_client.get_message_details(message_hash)
     if user_address != message_details["safe"]:
         raise InvalidMultisigAddress()
 
@@ -168,7 +169,10 @@ async def try_approve_tos_signatures(
 ) -> None:
     signatures = await get_multisigs_for_tos(session)
 
-    for signature in signatures:
+    for i, signature in enumerate(signatures):
+        if i > 0:
+            await asyncio.sleep(1.0)
+
         try:
             await _approve_tos_signature(
                 session,
@@ -262,7 +266,10 @@ async def try_approve_allocation_signatures(
 
     signatures = await get_multisigs_for_allocation(session)
 
-    for signature in signatures:
+    for i, signature in enumerate(signatures):
+        if i > 0:
+            await asyncio.sleep(1.0)
+
         try:
             await _approve_allocation_signature(
                 safe_client,
