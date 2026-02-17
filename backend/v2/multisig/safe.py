@@ -1,57 +1,73 @@
 import asyncio
-import random
+import logging
+
 import aiohttp
 from app.exceptions import ExternalApiException
-from v2.epochs.subgraphs import BackoffParams
 
 
 class SafeClient:
-    def __init__(self, url: str, backoff_params: BackoffParams | None = None):
+    def __init__(self, url: str):
         self.url = url
-        self.backoff_params = backoff_params
+        self._session: aiohttp.ClientSession | None = None
 
-    async def get_message_details(self, message_hash: str, retries: int = 0) -> dict:
-        assert retries >= 0, "Retries must be greater than or equal to 0"
+    async def _get_session(self) -> aiohttp.ClientSession:
+        if self._session is None or self._session.closed:
+            self._session = aiohttp.ClientSession()
+        return self._session
 
-        api_url = f"{self.url}/messages/{message_hash}"
+    async def close(self) -> None:
+        if self._session is not None and not self._session.closed:
+            await self._session.close()
+            self._session = None
 
-        try:
-            async with aiohttp.ClientSession() as session:
-                for _ in range(retries):
-                    async with session.get(api_url) as response:
-                        if response.ok:
-                            return await response.json()
+    async def _request_with_retry(self, url: str, max_retries: int = 5) -> dict | None:
+        session = await self._get_session()
+        backoff = 1.0
 
-                        await asyncio.sleep(random.uniform(0.75, 1.25))
-
-                async with session.get(api_url) as response:
-                    response.raise_for_status()
-                    return await response.json()
-
-        except aiohttp.ClientResponseError as e:
-            raise ExternalApiException(e)
-
-    async def get_user_details(self, address: str) -> dict | None:
-        api_url = f"{self.url}/safes/{address}"
-
-        async with aiohttp.ClientSession() as session:
+        for attempt in range(max_retries + 1):
             try:
-                async with session.get(api_url) as response:
+                async with session.get(url) as response:
+                    if response.ok:
+                        return await response.json()
+
+                    if response.status == 429:
+                        if attempt == max_retries:
+                            response.raise_for_status()
+                        retry_after = response.headers.get("Retry-After")
+                        delay = float(retry_after) if retry_after else backoff
+                        logging.warning(
+                            f"Safe API 429 rate limited, retrying in {delay}s "
+                            f"(attempt {attempt + 1}/{max_retries + 1})"
+                        )
+                        await asyncio.sleep(delay)
+                        backoff *= 2
+                        continue
+
                     if response.status == 404:
                         return None
 
                     response.raise_for_status()
-                    return await response.json()
 
             except aiohttp.ClientResponseError as e:
                 raise ExternalApiException(e)
 
-    async def get_signature_if_confirmed(
-        self, message_hash: str, address: str, retries: int = 0
-    ) -> str | None:
-        assert retries >= 0, "Retries must be greater than or equal to 0"
+        raise ExternalApiException(Exception(f"Max retries exceeded for {url}"))
 
-        message_details = await self.get_message_details(message_hash, retries)
+    async def get_message_details(self, message_hash: str) -> dict:
+        api_url = f"{self.url}/messages/{message_hash}"
+        result = await self._request_with_retry(api_url)
+        if result is None:
+            raise ExternalApiException(Exception(f"Message not found: {message_hash}"))
+        return result
+
+    async def get_user_details(self, address: str) -> dict | None:
+        api_url = f"{self.url}/safes/{address}"
+        return await self._request_with_retry(api_url)
+
+    async def get_signature_if_confirmed(
+        self, message_hash: str, address: str
+    ) -> str | None:
+        message_details = await self.get_message_details(message_hash)
         if message_details is None:
             return None
 
