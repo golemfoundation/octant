@@ -1,7 +1,9 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
+import ModalMigration from 'components/Home/ModalMigration';
 import env from 'env';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -24,6 +26,9 @@ const RootRoutes = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
   const { pathname } = useLocation();
+  const isInMigrationMode = useIsMigrationMode();
+
+  const [isModalMigrationOpen, setIsModalMigrationOpen] = useState(false);
 
   const lastSeenPathRef = useRef(ROOT_ROUTES.home.absolute);
 
@@ -37,37 +42,63 @@ const RootRoutes = (): ReactElement => {
     lastSeenPathRef.current = pathname;
   }, [pathname]);
 
+  useEffect(() => {
+    if (!isInMigrationMode) {
+      return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('isModalMigrationOpen') === 'true') {
+      setIsModalMigrationOpen(true);
+      // Remove the parameter from URL
+      urlParams.delete('isModalMigrationOpen');
+      const newUrl = `${window.location.pathname}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [isInMigrationMode]);
+
   return (
-    <Routes>
-      {!isPreLaunch && (
-        <>
+    <>
+      <Routes>
+        {!isPreLaunch && (
           <>
-            {!(isPatronMode || isProjectAdminMode) && (
+            <>
+              {!(isPatronMode || isProjectAdminMode) && (
+                <Route
+                  element={isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <AllocationView />}
+                  path={`${ROOT_ROUTES.allocation.relative}/*`}
+                />
+              )}
+              <Route element={<HomeView />} path={`${ROOT_ROUTES.home.relative}/*`} />
+              <Route element={<MetricsView />} path={`${ROOT_ROUTES.metrics.relative}/*`} />
+              <Route element={<ProjectsView />} path={`${ROOT_ROUTES.projects.relative}/*`} />
               <Route
-                element={isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <AllocationView />}
-                path={`${ROOT_ROUTES.allocation.relative}/*`}
+                element={<ProjectView />}
+                path={`${ROOT_ROUTES.projectWithAddress.relative}/*`}
               />
-            )}
-            <Route element={<HomeView />} path={`${ROOT_ROUTES.home.relative}/*`} />
-            <Route element={<MetricsView />} path={`${ROOT_ROUTES.metrics.relative}/*`} />
-            <Route element={<ProjectsView />} path={`${ROOT_ROUTES.projects.relative}/*`} />
+            </>
+
             <Route
-              element={<ProjectView />}
-              path={`${ROOT_ROUTES.projectWithAddress.relative}/*`}
+              element={isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <SettingsView />}
+              path={`${ROOT_ROUTES.settings.relative}/*`}
             />
           </>
-
-          <Route
-            element={isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <SettingsView />}
-            path={`${ROOT_ROUTES.settings.relative}/*`}
-          />
-        </>
+        )}
+        {(window.Cypress || env.network === 'Local') && (
+          <Route element={<PlaygroundView />} path={`${ROOT_ROUTES.playground.relative}/*`} />
+        )}
+        <Route element={<Navigate to={ROOT_ROUTES.home.absolute} />} path="*" />
+      </Routes>
+      {isInMigrationMode && (
+        <ModalMigration
+          modalProps={{
+            dataTest: 'ModalMigration',
+            isOpen: isModalMigrationOpen,
+            onClosePanel: () => setIsModalMigrationOpen(false),
+          }}
+        />
       )}
-      {(window.Cypress || env.network === 'Local') && (
-        <Route element={<PlaygroundView />} path={`${ROOT_ROUTES.playground.relative}/*`} />
-      )}
-      <Route element={<Navigate to={ROOT_ROUTES.home.absolute} />} path="*" />
-    </Routes>
+    </>
   );
 };
 
