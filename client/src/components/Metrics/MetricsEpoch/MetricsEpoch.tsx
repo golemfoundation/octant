@@ -105,7 +105,12 @@ const MetricsEpoch = (): ReactElement => {
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
         <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />
-        <MetricsEpochGridAverageLeverage className={styles.averageLeverage} isLoading={isLoading} />
+        {epoch < 11 && (
+          <MetricsEpochGridAverageLeverage
+            className={styles.averageLeverage}
+            isLoading={isLoading}
+          />
+        )}
         <MetricsEpochGridRewardsUnused className={styles.rewardsUnused} isLoading={isLoading} />
         <MetricsEpochGridUnallocatedValue
           className={styles.unallocatedValue}
@@ -116,17 +121,21 @@ const MetricsEpoch = (): ReactElement => {
           isLoading={isLoading}
           totalUserDonations={sumOfDonations}
         />
-        <MetricsEpochGridTotalMatchingFund
-          className={styles.totalMatching}
-          isLoading={isLoading}
-          matchingFund={matchedRewards}
-        />
-        <MetricsEpochGridDonationsVsMatching
-          className={styles.donationsVsMatching}
-          isLoading={isLoading}
-          matchingFund={matchedRewards}
-          totalUserDonations={sumOfDonations}
-        />
+        {epoch < 11 && (
+          <>
+            <MetricsEpochGridTotalMatchingFund
+              className={styles.totalMatching}
+              isLoading={isLoading}
+              matchingFund={matchedRewards}
+            />
+            <MetricsEpochGridDonationsVsMatching
+              className={styles.donationsVsMatching}
+              isLoading={isLoading}
+              matchingFund={matchedRewards}
+              totalUserDonations={sumOfDonations}
+            />
+          </>
+        )}
         <MetricsEpochGridDonationsVsPersonalAllocations
           className={styles.donationsVsPersonal}
           isLoading={isLoading}

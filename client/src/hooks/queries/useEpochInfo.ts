@@ -14,6 +14,7 @@ type EpochInfo = {
   patronsRewards: bigint;
   ppf: bigint;
   staking: bigint;
+  stakingMatchedReservedForV2: bigint;
   stakingProceeds: bigint;
   totalEffectiveDeposit: bigint;
   totalRewards: bigint;
@@ -63,6 +64,9 @@ export default function useEpochInfo(
         ? parseUnitsBigInt(response.patronsRewards, 'wei')
         : BigInt(0),
       ppf: response.ppf ? parseUnitsBigInt(response.ppf, 'wei') : BigInt(0),
+      stakingMatchedReservedForV2: response.stakingMatchedReservedForV2
+        ? parseUnitsBigInt(response.stakingMatchedReservedForV2, 'wei')
+        : BigInt(0),
       stakingProceeds: parseUnitsBigInt(response.stakingProceeds, 'wei'),
       totalEffectiveDeposit: parseUnitsBigInt(response.totalEffectiveDeposit, 'wei'),
       totalRewards: parseUnitsBigInt(response.totalRewards, 'wei'),

@@ -29,6 +29,9 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     Number(Number(formatUnitsBigInt(value, 'wei')).toFixed(3));
 
   const leftover = epochInfo ? epochInfo.leftover : BigInt(0);
+  const stakingMatchedReservedForV2 = epochInfo ? epochInfo.stakingMatchedReservedForV2 : BigInt(0);
+
+  const leftoverToUse = epoch === 11 ? leftover - stakingMatchedReservedForV2 : leftover;
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
   const donatedToProjects = epochInfo ? epochInfo.donatedToProjects : BigInt(0);
@@ -72,7 +75,8 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     staking +
     ppf / 2n +
     communityFund +
-    leftover;
+    stakingMatchedReservedForV2 +
+    leftoverToUse;
 
   const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
@@ -98,13 +102,13 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       }).primary,
     },
     {
-      label: t('leftover', { epochNumber: epoch + 1 }),
-      value: getNumberValue(leftover),
+      label: t('leftover'),
+      value: getNumberValue(leftoverToUse),
       valueLabel: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         getFormattedEthValueProps,
         showCryptoSuffix: true,
-        valueCrypto: leftover,
+        valueCrypto: leftoverToUse,
       }).primary,
     },
     {
@@ -155,6 +159,16 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
         getFormattedEthValueProps,
         showCryptoSuffix: true,
         valueCrypto: ppf / 2n,
+      }).primary,
+    },
+    {
+      label: t('stakingMatchedReservedForV2'),
+      value: getNumberValue(stakingMatchedReservedForV2),
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: stakingMatchedReservedForV2,
       }).primary,
     },
   ].filter(({ value }) => value > 0);

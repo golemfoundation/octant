@@ -11,6 +11,7 @@ export type Response = {
   operationalCost: string;
   patronsRewards: string | null;
   ppf: string | null;
+  stakingMatchedReservedForV2: string | null;
   stakingProceeds: string;
   totalEffectiveDeposit: string;
   totalRewards: string;
