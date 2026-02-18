@@ -65,7 +65,9 @@ const RootRoutes = (): ReactElement => {
             <>
               {!(isPatronMode || isProjectAdminMode) && (
                 <Route
-                  element={isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <AllocationView />}
+                  element={
+                    isDesktop ? <Navigate to={lastSeenPathRef.current} /> : <AllocationView />
+                  }
                   path={`${ROOT_ROUTES.allocation.relative}/*`}
                 />
               )}

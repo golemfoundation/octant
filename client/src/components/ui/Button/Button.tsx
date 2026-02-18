@@ -106,7 +106,11 @@ const Button = <T extends ButtonProps>(
               }
             }
       }
-      target={target}
+      /**
+       * When it's a Link, don't set.
+       * Otherwise, target set explicitly -- it was not spread in filteredProps.
+       */
+      target={to ? undefined : target}
       // eslint-disable-next-line react/button-has-type
       {...filteredProps}
     >
