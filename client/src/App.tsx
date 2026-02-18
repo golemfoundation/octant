@@ -1,7 +1,8 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { ReactElement, useState, Fragment } from 'react';
+import React, { ReactElement, useState, Fragment, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
+import ModalMigration from 'components/Home/ModalMigration';
 import AppLoader from 'components/shared/AppLoader';
 import Layout from 'components/shared/Layout';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
@@ -26,6 +27,8 @@ const App = (): ReactElement => {
   useAppPopulateState();
 
   const [isFlushRequired, setIsFlushRequired] = useState(false);
+  const [isModalMigrationOpen, setIsModalMigrationOpen] = useState(false);
+
   const { isSyncingInProgress, isLocalStorageInitialized } = useAppConnectManager(
     isFlushRequired,
     setIsFlushRequired,
@@ -40,6 +43,17 @@ const App = (): ReactElement => {
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('isModalMigrationOpen') === 'true') {
+      setIsModalMigrationOpen(true);
+      // Optionally remove the parameter from URL
+      urlParams.delete('isModalMigrationOpen');
+      const newUrl = `${window.location.pathname}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
 
   if ((isLoading || !isLocalStorageInitialized) && !isSyncingInProgress) {
     return <AppLoader />;
@@ -56,6 +70,13 @@ const App = (): ReactElement => {
         {isConnected && !isOnboardingDone && !isOnboardingModalOpen && <OnboardingStepper />}
       </AnimatePresence>
       <QuickTourHandler />
+      <ModalMigration
+        modalProps={{
+          dataTest: 'ModalMigration',
+          isOpen: isModalMigrationOpen,
+          onClosePanel: () => setIsModalMigrationOpen(false),
+        }}
+      />
     </Fragment>
   );
 };
