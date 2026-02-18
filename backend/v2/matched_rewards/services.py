@@ -174,6 +174,9 @@ async def get_estimated_project_matched_rewards_pending(
         session, epoch_details.finalized_timestamp.datetime(), epoch_number
     )
 
+    if should_reserve_staking_for_v2(epoch_number):
+        return patrons_rewards
+
     return _calculate_percentage_matched_rewards(
         locked_ratio=Decimal(pending_snapshot.locked_ratio),
         tr_percent=tr_percent,
