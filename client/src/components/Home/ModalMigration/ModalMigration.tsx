@@ -201,6 +201,7 @@ const ModalMigration: FC<ModalMigrationProps> = ({
                         (initialUserMigrationStatus === 'migration_required' && isConsentGiven) ||
                         initialUserMigrationStatus === 'lock_too_small_for_v2'
                       ) {
+                        trackEventSafe('Migration', 'Button', 'Start Migration');
                         setError('');
                         resetMigrateDeposit();
                         migrateDepositToV2MutateAsync().catch(() => undefined);
