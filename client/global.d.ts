@@ -8,6 +8,8 @@ import {
 
 export declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    _paq?: [string, ...unknown[]][];
     [CYPRESS_IS_PROJECT_ADMIN]?: boolean;
     Cypress?: Cypress.Cypress;
     [WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER]?: number;
