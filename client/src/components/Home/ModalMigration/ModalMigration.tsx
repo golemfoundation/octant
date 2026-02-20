@@ -12,10 +12,10 @@ import {
   V2_TERMS_OF_SERVICE_URL,
 } from 'constants/urls';
 import env from 'env';
-import { trackEventSafe } from 'utils/trackEvent';
 import useUserMigrationStatus, { UserMigrationStatus } from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
+import { trackEventSafe } from 'utils/trackEvent';
 
 import styles from './ModalMigration.module.scss';
 import { getSteps } from './steps';
@@ -90,7 +90,6 @@ const ModalMigration: FC<ModalMigrationProps> = ({
     userSablierStreams?.sumAvailable;
 
   const _onClosePanel = () => {
-    trackEventSafe('Migration', 'ModalClosed');
     onClosePanel();
     refetchUserMigrationStatus();
   };
