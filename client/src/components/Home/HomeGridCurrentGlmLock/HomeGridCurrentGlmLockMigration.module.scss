@@ -1,0 +1,22 @@
+.sablierStreams {
+  color: $color-octant-green;
+  font-size: $font-size-16;
+  font-weight: $font-weight-semibold;
+  line-height: 1.5;
+  margin-top: 1.6rem;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-18;
+  }
+
+  .sablierStreamsLink {
+    color: $color-octant-green;
+    font-size: inherit;
+    font-weight: $font-weight-semibold;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-octant-green2;
+    }
+  }
+}

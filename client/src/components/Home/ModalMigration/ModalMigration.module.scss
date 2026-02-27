@@ -14,6 +14,30 @@
   margin-top: 1.2rem;
 }
 
+.sablierText {
+  color: $color-octant-green;
+  font-size: $font-size-16;
+  font-weight: $font-weight-semibold;
+  line-height: 1.5;
+  margin-top: 1.6rem;
+  text-align: center;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-18;
+  }
+
+  .sablierTextLink {
+    color: $color-octant-green;
+    font-size: inherit;
+    font-weight: $font-weight-semibold;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-octant-green2;
+    }
+  }
+}
+
 .consent {
   border-top: 0.1rem solid $color-black;
   border-bottom: 0.1rem solid $color-black;
