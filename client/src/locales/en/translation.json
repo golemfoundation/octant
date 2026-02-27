@@ -77,7 +77,7 @@
         }
       },
       "sablierMigrationInstruction": "Instructions on how to migrate funds locked in Sablier can be found <0>here</0>.",
-      "sablierText": "You have Sablier streams. Click here to check them",
+      "sablierText": "You still have GLM to claim - <0>click here to withdraw</0>. <1>Follow the instructions in the v1 docs to migrate to v2</1>",
       "buttons": {
         "ok": "OK",
         "later": "I'll do it later",
@@ -183,7 +183,7 @@
         },
         "migration": {
           "buttonLabel": "You have GLM locked. Click here to unlock without migration",
-          "sablierStreams": "You have Sablier streams. Click here to check them"
+          "sablierStreams": "You still have GLM to claim - <0>click here to withdraw</0>. <1>Follow the instructions in the v1 docs to migrate to v2</1>"
         }
       },
       "homeGridPersonalAllocation": {

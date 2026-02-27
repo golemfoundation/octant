@@ -142,14 +142,23 @@ const ModalMigration: FC<ModalMigrationProps> = ({
       )}
       {userSablierStreamsValue !== 0n && (
         <>
-          <Button
-            className={styles.buttonSablier}
-            dataTest="HomeGridCurrentGlmLockMigration__ButtonSablier"
-            href={SABLIER_APP_LINK}
-            variant="link"
-          >
-            {t('sablierText')}
-          </Button>
+          <div className={styles.sablierText}>
+            <Trans
+              components={[
+                <Button
+                  className={styles.sablierTextLink}
+                  href={SABLIER_APP_LINK}
+                  variant="link3"
+                />,
+                <Button
+                  className={styles.sablierTextLink}
+                  href={SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK}
+                  variant="link3"
+                />,
+              ]}
+              i18nKey={t('sablierText')}
+            />
+          </div>
           <div className={styles.sablierMigrationInstruction}>
             <Trans
               components={[

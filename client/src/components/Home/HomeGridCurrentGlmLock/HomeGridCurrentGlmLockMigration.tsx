@@ -1,13 +1,15 @@
+import cx from 'classnames';
 import React, { FC, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import ModalLockGlm from 'components/Home/HomeGridCurrentGlmLock/ModalLockGlm';
 import Button from 'components/ui/Button';
-import { SABLIER_APP_LINK } from 'constants/urls';
+import { SABLIER_APP_LINK, SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK } from 'constants/urls';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 
+import styles from './HomeGridCurrentGlmLockMigration.module.scss';
 import HomeGridCurrentGlmLockMigrationProps from './types';
 
 const HomeGridCurrentGlmLockMigration: FC<HomeGridCurrentGlmLockMigrationProps> = ({
@@ -49,15 +51,23 @@ const HomeGridCurrentGlmLockMigration: FC<HomeGridCurrentGlmLockMigrationProps> 
         </Button>
       )}
       {doesUserHaveOpenSablierStreams && (
-        <Button
-          className={className}
-          dataTest="HomeGridCurrentGlmLockMigration__ButtonSablier"
-          href={SABLIER_APP_LINK}
-          isDisabled={!isConnected}
-          variant="link5"
-        >
-          {t('migration.sablierStreams')}
-        </Button>
+        <div className={cx(styles.sablierStreams, className)}>
+          <Trans
+            components={[
+              <Button
+                className={styles.sablierStreamsLink}
+                href={SABLIER_APP_LINK}
+                variant="link3"
+              />,
+              <Button
+                className={styles.sablierStreamsLink}
+                href={SABLIER_FUNDS_MIGRATION_INSTRUCTION_LINK}
+                variant="link3"
+              />,
+            ]}
+            i18nKey={t('migration.sablierStreams')}
+          />
+        </div>
       )}
       <ModalLockGlm
         modalProps={{
