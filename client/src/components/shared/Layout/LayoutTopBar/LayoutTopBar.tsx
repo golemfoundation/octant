@@ -286,14 +286,16 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
         </div>
         {isDesktop && (
           <Fragment>
-            <div
-              className={cx(styles.settingsButton, isTestnet && styles.isTestnet)}
-              data-test={`${dataTestRoot}__settingsButton`}
-              onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
-            >
-              <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
-            </div>
-            {!(isProjectAdminMode || isPatronMode) && (
+            {!isInMigrationMode && (
+              <div
+                className={cx(styles.settingsButton, isTestnet && styles.isTestnet)}
+                data-test={`${dataTestRoot}__settingsButton`}
+                onClick={() => setIsSettingsDrawerOpen(!isSettingsDrawerOpen)}
+              >
+                <Svg classNameSvg={styles.settingsButtonIcon} img={settings} size={2} />
+              </div>
+            )}
+            {!isInMigrationMode && !(isProjectAdminMode || isPatronMode) && (
               <div
                 className={cx(styles.allocateButton, isTestnet && styles.isTestnet)}
                 data-test={`${dataTestRoot}__allocationButton`}
@@ -314,7 +316,7 @@ const LayoutTopBar: FC<LayoutTopBarProps> = ({ className }) => {
             )}
           </Fragment>
         )}
-        {isDesktop && (
+        {isDesktop && !isInMigrationMode && (
           <>
             <Drawer
               dataTest="SettingsDrawer"

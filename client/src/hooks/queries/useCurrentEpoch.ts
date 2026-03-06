@@ -2,15 +2,19 @@ import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query
 
 import { apiGetCurrentEpoch, Response } from 'api/calls/epochs';
 import { QUERY_KEYS } from 'api/queryKeys';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 
 export default function useCurrentEpoch(
   options?: Omit<UseQueryOptions<Response, unknown, number, any>, 'queryKey'>,
 ): UseQueryResult<number, unknown> {
+  const isInMigrationMode = useIsMigrationMode();
+
   return useQuery({
     queryFn: () => apiGetCurrentEpoch(),
     queryKey: QUERY_KEYS.currentEpoch,
     select: ({ currentEpoch }) => currentEpoch,
     staleTime: Infinity,
     ...options,
+    enabled: !isInMigrationMode,
   });
 }
