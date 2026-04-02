@@ -1,17 +1,20 @@
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+// import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 export default function useIsMigrationMode(): boolean {
-  const { data: currentEpoch } = useCurrentEpoch();
+  // Following closing of E11 AW we are in permanent state of migration.
+  return true;
 
-  const migrationModeBypass = JSON.parse(localStorage.getItem('DEBUG_MIGRATION_MODE') || 'null');
-
-  if (migrationModeBypass === 'off') {
-    return false;
-  }
-
-  if (migrationModeBypass === 'on') {
-    return true;
-  }
-
-  return currentEpoch! >= 12;
+  // const { data: currentEpoch } = useCurrentEpoch();
+  //
+  // const migrationModeBypass = JSON.parse(localStorage.getItem('DEBUG_MIGRATION_MODE') || 'null');
+  //
+  // if (migrationModeBypass === 'off') {
+  //   return false;
+  // }
+  //
+  // if (migrationModeBypass === 'on') {
+  //   return true;
+  // }
+  //
+  // return currentEpoch! >= 12;
 }

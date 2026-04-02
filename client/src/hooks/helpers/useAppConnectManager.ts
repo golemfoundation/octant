@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
@@ -35,6 +36,7 @@ export default function useAppConnectManager(
   const { address, isConnected, chainId } = useAccount();
   const { reset } = useConnect();
 
+  const isInMigrationMode = useIsMigrationMode();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: projectsEpoch } = useProjectsEpoch();
@@ -45,8 +47,9 @@ export default function useAppConnectManager(
   const isTestnet = window.Cypress ? !!window.isTestnetCypress : networkConfig.isTestnet;
 
   const [isTimeDifferenceBelowZero, setIsTimeDifferenceBelowZero] = useState(false);
-  const isSyncingInProgress =
-    syncStatusLocal?.pendingSnapshot === 'in_progress' || isTimeDifferenceBelowZero;
+  const isSyncingInProgress = isInMigrationMode
+    ? false
+    : syncStatusLocal?.pendingSnapshot === 'in_progress' || isTimeDifferenceBelowZero;
 
   const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
@@ -132,12 +135,18 @@ export default function useAppConnectManager(
   }, [chainId]);
 
   useEffect(() => {
+    if (isInMigrationMode) {
+      return;
+    }
     if (isSyncingInProgress) {
       setIsLocalStorageInitialized(false);
     }
-  }, [isSyncingInProgress]);
+  }, [isSyncingInProgress, isInMigrationMode]);
 
   useEffect(() => {
+    if (isInMigrationMode) {
+      return;
+    }
     /**
      * Possible solution for invalid cached `isConnect` value.
      * This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm)
@@ -154,7 +163,7 @@ export default function useAppConnectManager(
       projectsEpoch,
     });
     // eslint-disable-next-line
-  }, [isDecisionWindowOpen, currentEpoch, projectsEpoch]);
+  }, [isDecisionWindowOpen, currentEpoch, projectsEpoch, isInMigrationMode]);
 
   useEffect(() => {
     if (syncStatus && !isEqual(syncStatus, syncStatusLocal)) {
@@ -175,6 +184,9 @@ export default function useAppConnectManager(
   }, [address, currentAddressLocal, setCurrentAddressLocal]);
 
   useEffect(() => {
+    if (isInMigrationMode) {
+      return;
+    }
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
@@ -202,6 +214,7 @@ export default function useAppConnectManager(
     isDecisionWindowOpen,
     currentEpoch,
     projectsEpoch,
+    isInMigrationMode,
   ]);
 
   useEffect(() => {
@@ -214,7 +227,12 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+    if (
+      isInMigrationMode ||
+      isDecisionWindowOpen === undefined ||
+      !timeCurrentAllocationEnd ||
+      !timeCurrentEpochEnd
+    ) {
       return;
     }
     const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
@@ -234,6 +252,10 @@ export default function useAppConnectManager(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
+  if (isInMigrationMode) {
+    return { isLocalStorageInitialized: true, isSyncingInProgress: false };
+  }
 
   return { isLocalStorageInitialized, isSyncingInProgress };
 }

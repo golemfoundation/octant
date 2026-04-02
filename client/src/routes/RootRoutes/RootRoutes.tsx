@@ -60,7 +60,7 @@ const RootRoutes = (): ReactElement => {
   return (
     <>
       <Routes>
-        {!isPreLaunch && (
+        {!isPreLaunch && !isInMigrationMode && (
           <>
             <>
               {!(isPatronMode || isProjectAdminMode) && (
@@ -85,6 +85,9 @@ const RootRoutes = (): ReactElement => {
               path={`${ROOT_ROUTES.settings.relative}/*`}
             />
           </>
+        )}
+        {isInMigrationMode && (
+          <Route element={<HomeView />} path={`${ROOT_ROUTES.home.relative}/*`} />
         )}
         {(window.Cypress || env.network === 'Local') && (
           <Route element={<PlaygroundView />} path={`${ROOT_ROUTES.playground.relative}/*`} />

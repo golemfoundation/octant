@@ -8,6 +8,7 @@ import Tooltip from 'components/ui/Tooltip';
 import useEpochPatronsAllEpochs from 'hooks/helpers/useEpochPatronsAllEpochs';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualRewardAllEpochs from 'hooks/helpers/useIndividualRewardAllEpochs';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserAllocationsAllEpochs from 'hooks/helpers/useUserAllocationsAllEpochs';
@@ -24,6 +25,7 @@ import styles from './HomeRewards.module.scss';
 const HomeRewards = (): ReactElement => {
   const { i18n, t } = useTranslation('translation', { keyPrefix: 'components.home.homeRewards' });
   const { address, isConnected } = useAccount();
+  const isInMigrationMode = useIsMigrationMode();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: individualRewardAllEpochs, isFetching: isFetchingIndividualRewardAllEpochs } =
     useIndividualRewardAllEpochs();
@@ -36,7 +38,9 @@ const HomeRewards = (): ReactElement => {
   const { data: isPatronMode } = useIsPatronMode();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: rewardsRate, isFetching: isFetchingRewardsRate } = useRewardsRate(currentEpoch!);
+  const { data: rewardsRate, isFetching: isFetchingRewardsRate } = useRewardsRate(
+    isInMigrationMode ? 11 : currentEpoch!,
+  );
   const dataTestRoot = 'HomeRewards';
 
   const { isMobile } = useMediaQuery();
@@ -152,17 +156,23 @@ const HomeRewards = (): ReactElement => {
       label: totalRewardsLabel,
       value: isProjectAdminMode ? currentMatchFundingToDisplay : totalRewardsToDisplay,
     },
-    {
-      isLoadingValue:
-        isProjectAdminMode || isPatronMode
-          ? isFetchingMatchedProjectRewards
-          : isFetchingRewardsRate,
-      key: 'rewardsRate',
-      label: rewardsRateLabel,
-      tooltipText: t('rewardsRateTooltip'),
-      value:
-        isProjectAdminMode || isPatronMode ? epochTotalMatchFundingToDisplay : `${rewardsRate} %`,
-    },
+    ...(!isInMigrationMode
+      ? [
+          {
+            isLoadingValue:
+              isProjectAdminMode || isPatronMode
+                ? isFetchingMatchedProjectRewards
+                : isFetchingRewardsRate,
+            key: 'rewardsRate',
+            label: rewardsRateLabel,
+            tooltipText: t('rewardsRateTooltip'),
+            value:
+              isProjectAdminMode || isPatronMode
+                ? epochTotalMatchFundingToDisplay
+                : `${rewardsRate} %`,
+          },
+        ]
+      : []),
   ];
 
   return (

@@ -1,3 +1,11 @@
+$gridGap: 1.6rem;
+
+.migrationGrid {
+  @media #{$desktop-up} {
+    grid-template-columns: repeat(2, calc(50% - calc($gridGap / 2))) !important;
+  }
+}
+
 .gridTile {
   height: 32.8rem;
 

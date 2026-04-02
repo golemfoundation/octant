@@ -12,6 +12,7 @@ import { allocate, metrics, project, settings } from 'svg/navigation';
 import { NavigationTab } from 'types/navigationTabs';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
+import useIsMigrationMode from './useIsMigrationMode';
 import useIsProjectAdminMode from './useIsProjectAdminMode';
 
 const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
@@ -23,6 +24,7 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
+  const isInMigrationMode = useIsMigrationMode();
 
   const navigationTabs: NavigationTab[] = [
     {
@@ -69,6 +71,10 @@ const useNavigationTabs = (isTopBar?: boolean): NavigationTab[] => {
     ...tab,
     isDisabled: (isConnected && !isUserTOSAccepted) || tab.key === 'home' ? false : isPreLaunch,
   }));
+
+  if (isInMigrationMode) {
+    return navigationTabs.filter(({ key }) => key === 'home');
+  }
 
   if (isTopBar) {
     return navigationTabs.filter(({ key }) => key !== 'allocate' && key !== 'settings');

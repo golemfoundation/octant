@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import React, { memo, ReactElement } from 'react';
 
-import HomeGridAllocate from 'components/Home/HomeGridAllocate';
 import HomeGridCurrentGlmLock from 'components/Home/HomeGridCurrentGlmLock';
 import HomeGridCurrentGlmLockMigration from 'components/Home/HomeGridCurrentGlmLock/HomeGridCurrentGlmLockMigration';
 import HomeGridDivider from 'components/Home/HomeGridDivider';
@@ -46,8 +45,11 @@ const HomeGrid = (): ReactElement => {
     (isPatronMode && !showHelpVideos && (isLargeDesktop || isTablet));
 
   return (
-    <Grid dataTest={dataTestRoot} isFourInARowEnabled={!isInMigrationMode}>
-      {isInMigrationMode && <HomeGridAllocate className={cx(styles.gridTile, styles.isHigher)} />}
+    <Grid
+      className={isInMigrationMode ? styles.migrationGrid : undefined}
+      dataTest={dataTestRoot}
+      isFourInARowEnabled={!isInMigrationMode}
+    >
       {!isProjectAdminMode && !isInMigrationMode && (
         <HomeGridCurrentGlmLock className={styles.gridTile} />
       )}

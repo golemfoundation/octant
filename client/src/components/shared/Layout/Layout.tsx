@@ -10,6 +10,7 @@ import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
 import Loader from 'components/ui/Loader';
 import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
 import networkConfig from 'constants/networkConfig';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -32,6 +33,7 @@ const Layout: FC<LayoutProps> = ({
 
   const { isMobile, isDesktop } = useMediaQuery();
   const isProjectAdminMode = useIsProjectAdminMode();
+  const isInMigrationMode = useIsMigrationMode();
   const { data: isPatronMode } = useIsPatronMode();
 
   const ref = useRef(null);
@@ -139,7 +141,7 @@ const Layout: FC<LayoutProps> = ({
         >
           {isLoading ? <Loader dataTest="Layout__Loader" /> : children}
         </div>
-        {!isDesktop && isNavigationVisible && (
+        {!isDesktop && !isInMigrationMode && isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} />
         )}
         <div className={styles.footerWrapper}>
