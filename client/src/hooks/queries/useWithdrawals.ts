@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { apiGetWithdrawals, Response } from 'api/calls/withdrawableRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
@@ -20,9 +21,10 @@ export default function useWithdrawals(
 ): UseQueryResult<Withdrawals, unknown> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
+  const isInMigrationMode = useIsMigrationMode();
 
   return useQuery({
-    enabled: !!address && !!currentEpoch && currentEpoch > 1,
+    enabled: !!address && (isInMigrationMode || (!!currentEpoch && currentEpoch > 1)),
     queryFn: () => apiGetWithdrawals(address as string),
     queryKey: QUERY_KEYS.withdrawals,
     select: data => {
