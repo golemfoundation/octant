@@ -20,7 +20,7 @@ function useUserMigrationStatus(): {
   isFetching: boolean;
   refetch: () => Promise<any>;
 } {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const {
     data: depositsValue,
     isFetching: isFetchingDepositValue,
@@ -48,6 +48,9 @@ function useUserMigrationStatus(): {
     v2Deposits.at(-1)?.balanceWei !== '0';
 
   const status = useMemo(() => {
+    if (!isConnected) {
+      return 'migration_not_required';
+    }
     if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
       // Does not matter, isFetching won't show status in UI anyway.
       return 'migration_required';
