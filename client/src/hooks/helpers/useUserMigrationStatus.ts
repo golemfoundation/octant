@@ -65,7 +65,7 @@ function useUserMigrationStatus(): {
       return 'lock_too_small_for_v2';
     }
     return 'migration_not_required';
-  }, [doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue, regenStakerMinimumStakeAmount]);
+  }, [isConnected, doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue, regenStakerMinimumStakeAmount]);
 
   const translationSuffix = useMemo(() => {
     if (status === 'migration_required') {
