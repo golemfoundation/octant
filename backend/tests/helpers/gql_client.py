@@ -187,16 +187,16 @@ class MockSablierGQLClient:
         recipient = variable_values.get("recipient")
         if recipient is None:
             payload = self._prepare_payload(ALICE_SABLIER_LOCKING_ADDRESS)
-            payload["streams"] += self._prepare_payload(BOB_SABLIER_LOCKING_ADDRESS)[
-                "streams"
-            ]
+            payload["lockupStreams"] += self._prepare_payload(
+                BOB_SABLIER_LOCKING_ADDRESS
+            )["lockupStreams"]
         else:
             payload = self._prepare_payload(recipient)
 
         return payload
 
     def _prepare_payload(self, recipient):
-        result = {"streams": []}
+        result = {"lockupStreams": []}
 
         actions = [
             {
@@ -239,7 +239,7 @@ class MockSablierGQLClient:
 
         if recipient in [ALICE_SABLIER_LOCKING_ADDRESS, BOB_SABLIER_LOCKING_ADDRESS]:
             result = {
-                "streams": [
+                "lockupStreams": [
                     {
                         "actions": actions,
                         "id": "0x3962f6585946823440d274ad7c719b02b49de51e-1-1147",

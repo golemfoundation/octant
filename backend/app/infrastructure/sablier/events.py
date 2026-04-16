@@ -59,7 +59,7 @@ def fetch_streams(query: str, variables: Dict) -> List[SablierStream]:
             gql(query), variable_values=variables
         )
 
-        streams = result.get("streams", [])
+        streams = result.get("lockupStreams", [])
 
         app.logger.debug(f"[Sablier Subgraph] Received {len(streams)} streams.")
 
@@ -108,7 +108,7 @@ def get_user_events_history(user_address: str) -> List[SablierStream]:
 
     query = """
         query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-          streams(
+          lockupStreams(
             where: {
               sender: $sender
               recipient: $recipient
@@ -158,7 +158,7 @@ def get_all_streams_history() -> List[SablierStream]:
 
     query = """
         query GetAllEvents($sender: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-          streams(
+          lockupStreams(
             where: {
               sender: $sender
               asset_: {address: $tokenAddress}
