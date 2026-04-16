@@ -80,7 +80,7 @@ class SablierSubgraph:
                 gql(query), variable_values=variables
             )
 
-            streams = result.get("streams", [])
+            streams = result.get("lockupStreams", [])
 
             for stream in streams:
                 stream_id = stream.get("id")
@@ -127,7 +127,7 @@ class SablierSubgraph:
 
         query = """
             query GetAllEvents($sender: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-                streams(
+                lockupStreams(
                     where: {
                         sender: $sender
                         asset_: {address: $tokenAddress}
@@ -179,7 +179,7 @@ class SablierSubgraph:
 
         query = """
             query GetEvents($sender: String!, $recipient: String!, $tokenAddress: String!, $limit: Int!, $skip: Int!) {
-                streams(
+                lockupStreams(
                     where: {
                         sender: $sender
                         recipient: $recipient
