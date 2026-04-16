@@ -187,9 +187,9 @@ class MockSablierGQLClient:
         recipient = variable_values.get("recipient")
         if recipient is None:
             payload = self._prepare_payload(ALICE_SABLIER_LOCKING_ADDRESS)
-            payload["lockupStreams"] += self._prepare_payload(BOB_SABLIER_LOCKING_ADDRESS)[
-                "lockupStreams"
-            ]
+            payload["lockupStreams"] += self._prepare_payload(
+                BOB_SABLIER_LOCKING_ADDRESS
+            )["lockupStreams"]
         else:
             payload = self._prepare_payload(recipient)
 
