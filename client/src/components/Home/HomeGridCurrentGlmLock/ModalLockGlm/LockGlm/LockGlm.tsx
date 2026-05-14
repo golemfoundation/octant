@@ -12,6 +12,7 @@ import networkConfig from 'constants/networkConfig';
 import env from 'env';
 import { writeContractERC20 } from 'hooks/contracts/writeContracts';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
+import useIsMigrationMode from 'hooks/helpers/useIsMigrationMode';
 import useApprovalState, { ApprovalState } from 'hooks/helpers/useMaxApproveCallback';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
@@ -60,6 +61,7 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState<boolean>(true);
   const buttonUseMaxRef = useRef<HTMLButtonElement>(null);
 
+  const isInMigrationMode = useIsMigrationMode();
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: projectsEpoch } = useProjectsEpoch();
   const { refetch: refetchHistory } = useHistory();
@@ -167,15 +169,19 @@ const LockGlm: FC<LockGlmProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
-    const isSignedInAsAProject = projectsEpoch!.projectsAddresses.includes(address!);
+    if (!isInMigrationMode) {
+      // This checks only for the previous / current epoch - does not check all previous ones.
+      // It will fail if there are no projects for the previous epoch - projectsEpoch is undefined.
+      const isSignedInAsAProject = projectsEpoch!.projectsAddresses.includes(address!);
 
-    if (isSignedInAsAProject) {
-      toastService.showToast({
-        name: 'projectForbiddenOperation',
-        title: i18n.t('common.projectForbiddenOperation'),
-        type: 'error',
-      });
-      return;
+      if (isSignedInAsAProject) {
+        toastService.showToast({
+          name: 'projectForbiddenOperation',
+          title: i18n.t('common.projectForbiddenOperation'),
+          type: 'error',
+        });
+        return;
+      }
     }
 
     const valueToDeposeOrWithdrawBigInt = parseUnitsBigInt(valueToDeposeOrWithdraw);
