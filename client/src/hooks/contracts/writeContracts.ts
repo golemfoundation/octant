@@ -14,6 +14,36 @@ type WriteContract = {
   walletClient: any; // UseWalletClientReturnType<any, any, any>;
 };
 
+/**
+ * Reason carried by {@link walletNotAvailableError}. Mapped to a user-facing
+ * message in `api/errorMessages`.
+ */
+export const WALLET_NOT_AVAILABLE_REASON = 'wallet/not-available';
+
+/**
+ * Error surfaced when the wagmi wallet client is unavailable (wallet
+ * disconnected / locked / on an unsupported network). It carries a `reason` so
+ * the global error handler shows an actionable message instead of the generic
+ * "something went wrong" toast or an opaque "cannot read properties of
+ * undefined" TypeError.
+ */
+export function walletNotAvailableError(): Error {
+  return Object.assign(new Error('Wallet client is not available'), {
+    reason: WALLET_NOT_AVAILABLE_REASON,
+  });
+}
+
+/**
+ * Narrows the wagmi wallet client to a defined value, throwing a mapped error
+ * when it is missing instead of letting `walletClient!.writeContract` blow up.
+ */
+export function assertWalletClient<T>(walletClient: T | undefined | null): NonNullable<T> {
+  if (!walletClient) {
+    throw walletNotAvailableError();
+  }
+  return walletClient as NonNullable<T>;
+}
+
 export function writeContractERC20({
   walletClient,
   functionName,
