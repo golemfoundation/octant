@@ -14,6 +14,7 @@ import {
 import env from 'env';
 import useUserMigrationStatus, { UserMigrationStatus } from 'hooks/helpers/useUserMigrationStatus';
 import useMigrateDepositToV2 from 'hooks/mutations/useMigrateDepositToV2';
+import useDepositValue from 'hooks/queries/useDepositValue';
 import useUserSablierStreams from 'hooks/queries/useUserSablierStreams';
 
 import styles from './ModalMigration.module.scss';
@@ -36,6 +37,10 @@ const ModalMigration: FC<ModalMigrationProps> = ({
     data: { userMigrationStatus },
     refetch: refetchUserMigrationStatus,
   } = useUserMigrationStatus();
+
+  // Live v1 deposit value. The migration status below is frozen on open, so we
+  // rely on this to detect when there is nothing left in v1 to migrate.
+  const { data: depositsValue } = useDepositValue();
 
   const [initialUserMigrationStatus] = useState<UserMigrationStatus | undefined>(
     userMigrationStatus,
@@ -204,6 +209,14 @@ const ModalMigration: FC<ModalMigrationProps> = ({
                 currentStep === 0
                   ? () => setCurrentStep(1)
                   : () => {
+                      if (depositsValue === 0n) {
+                        // Nothing left in v1 to migrate (e.g. the user already
+                        // migrated in this session). Reflect the done state
+                        // instead of firing the migration.
+                        setError('');
+                        setSuccessMessage(t('migrationNotifications.success'));
+                        return;
+                      }
                       if (
                         (initialUserMigrationStatus === 'migration_required' && isConsentGiven) ||
                         initialUserMigrationStatus === 'lock_too_small_for_v2'
