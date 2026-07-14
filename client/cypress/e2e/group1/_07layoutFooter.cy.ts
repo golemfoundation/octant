@@ -70,7 +70,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
       cy.get('[data-test=LayoutFooter__link--docs]').invoke('text').should('eq', '→ Docs');
       cy.get('[data-test=LayoutFooter__link--docs]')
         .invoke('attr', 'href')
-        .should('eq', 'https://docs.octant.app/');
+        .should('eq', 'https://v1.docs.octant.app/');
       cy.get('[data-test=LayoutFooter__link--docs]')
         .invoke('attr', 'target')
         .should('eq', '_blank');
@@ -107,7 +107,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         .should('eq', '→ Privacy policy');
       cy.get('[data-test=LayoutFooter__link--privacyPolicy]')
         .invoke('attr', 'href')
-        .should('eq', 'https://docs.octant.app/privacy-policy.html');
+        .should('eq', 'https://v1.docs.octant.app/privacy-policy.html');
       cy.get('[data-test=LayoutFooter__link--privacyPolicy]')
         .invoke('attr', 'target')
         .should('eq', '_blank');
@@ -120,7 +120,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isMob
         .should('eq', '→ Terms of use');
       cy.get('[data-test=LayoutFooter__link--termsOfUse]')
         .invoke('attr', 'href')
-        .should('eq', 'https://docs.octant.app/terms-of-use.html');
+        .should('eq', 'https://v1.docs.octant.app/terms-of-use.html');
       cy.get('[data-test=LayoutFooter__link--termsOfUse]')
         .invoke('attr', 'target')
         .should('eq', '_blank');

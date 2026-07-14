@@ -6,7 +6,7 @@ Developed by the [Golem Foundation](https://golem.foundation/) to test various h
 user control, voter engagement, and community funding, the platform allows for running various
 governance experiments in a real-life environment and rewards user participation with ETH.
 
-Documentation is available [here](https://docs.octant.app/).
+Documentation is available [here](https://v1.docs.octant.app/).
 
 ## Architecture Overview
 
