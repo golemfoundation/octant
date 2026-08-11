@@ -23,11 +23,6 @@ jobs:
     - build
     runs-on:
     - general
-    container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
-      credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
     steps:
       - uses: actions/checkout@v4.1.0
       - run : |
@@ -41,7 +36,7 @@ jobs:
 
           pushd $GIT_DIR
 
-          yq -y -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
+          yq -i -e '.[].value.value = strenv(IMAGE_TAG)' mainnet/octant-image.values.yaml
 
           git add mainnet/octant-image.values.yaml
           git commit -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
