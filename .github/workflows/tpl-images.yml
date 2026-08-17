@@ -32,11 +32,6 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        # use some obscure path to checkout the code with service account perms
-        # this is possible as $GITHUB_WORKSPACE is owned by the same service
-        # account
-        # see: https://github.com/actions/checkout/issues/211
-        path: __local
         ref: ${{ inputs.git-ref }}
 
     - name: set variables
@@ -54,7 +49,7 @@ jobs:
         registry: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}
         image-name: ${{ env.NORMALIZED_NAME }}
         image-tag: ${{ inputs.image-tag }}
-        context: __local/${{ matrix.SERVICE }}
+        context: ${{ matrix.SERVICE }}
         dockerfile: ../ci/Dockerfile.${{ env.NORMALIZED_NAME }}
         wif-provider: ${{ vars.GCP_WIF_PROVIDER_DEV }}
         wif-service-account: ${{ vars.GCP_WIF_SA_DEV_WRITER }}
@@ -68,13 +63,12 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        path: __local
         ref: ${{ inputs.git-ref }}
 
     - name: replace placeholders
       run: |
-        sed -i 's|_CONTRACTS_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/contracts-v1:${{ inputs.image-tag }}|g' __local/ci/Dockerfile.multideployer
-        sed -i 's|_SUBGRAPH_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/subgraph:${{ inputs.image-tag }}|g' __local/ci/Dockerfile.multideployer
+        sed -i 's|_CONTRACTS_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/contracts-v1:${{ inputs.image-tag }}|g' ci/Dockerfile.multideployer
+        sed -i 's|_SUBGRAPH_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/subgraph:${{ inputs.image-tag }}|g' ci/Dockerfile.multideployer
       shell: bash
 
     - name: Build and sign image
@@ -83,7 +77,7 @@ jobs:
         registry: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}
         image-name: multideployer
         image-tag: ${{ inputs.image-tag }}
-        context: __local/localenv/multideployer
+        context: localenv/multideployer
         dockerfile: ../../ci/Dockerfile.multideployer
         wif-provider: ${{ vars.GCP_WIF_PROVIDER_DEV }}
         wif-service-account: ${{ vars.GCP_WIF_SA_DEV_WRITER }}
