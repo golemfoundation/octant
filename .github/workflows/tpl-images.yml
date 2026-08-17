@@ -21,6 +21,7 @@ jobs:
   build-images:
     name: Build Docker Image
     runs-on: ubuntu-latest
+    environment: actions
     strategy:
       matrix:
         SERVICE:
@@ -60,6 +61,7 @@ jobs:
     needs:
       - build-images
     runs-on: ubuntu-latest
+    environment: actions
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
