@@ -8,15 +8,6 @@ OCTANT_ROOT=$(readlink -f "${SCRIPT_DIR}/../..")
 DOCKER_IMAGE_PREFIX="octant"
 DOCKER_TAG="latest"
 
-create_tmp_dockerfile(){
-  service="${1}"
-  tmp_dockerfile=$(mktemp -t "octant-dockerfile-${service}.XXXXXXXX")
-
-  sed "s/local-docker-registry.wildland.dev:80\///g" "${OCTANT_ROOT}/ci/Dockerfile.${service}" >$tmp_dockerfile
-
-  echo $tmp_dockerfile
-}
-
 build_image(){
 
   image=$1
@@ -40,8 +31,7 @@ build_anvil(){
 build_contracts_base(){
   echo Building contracts images ...
 
-  dockerfile=$(create_tmp_dockerfile contracts-v1)
-  build_image contracts ${dockerfile} "${OCTANT_ROOT}/contracts-v1"
+  build_image contracts "${OCTANT_ROOT}/ci/Dockerfile.contracts-v1" "${OCTANT_ROOT}/contracts-v1"
 
   echo Finished building contracts images!
 
@@ -50,16 +40,14 @@ build_contracts_base(){
 build_subgraph_base(){
   echo Building subgraph images ...
 
-  dockerfile=$(create_tmp_dockerfile subgraph)
-  build_image subgraph ${dockerfile} "${OCTANT_ROOT}/subgraph"
+  build_image subgraph "${OCTANT_ROOT}/ci/Dockerfile.subgraph" "${OCTANT_ROOT}/subgraph"
 
   echo Finished building subgraph image!
 }
 
 build_backend(){
   echo Building backend-base image ...
-  dockerfile=$(create_tmp_dockerfile backend)
-  build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend" "--platform linux/amd64"
+  build_image backend-base "${OCTANT_ROOT}/ci/Dockerfile.backend" "${OCTANT_ROOT}/backend" "--platform linux/amd64"
   echo Finished building backend-base image!
 
   echo Building backend image ...
@@ -75,8 +63,7 @@ build_client(){
 
   echo Building client image ...
 
-  dockerfile=$(create_tmp_dockerfile client)
-  build_image client ${dockerfile} "${OCTANT_ROOT}/client"
+  build_image client "${OCTANT_ROOT}/ci/Dockerfile.client" "${OCTANT_ROOT}/client"
 
   echo Finished building client image!
 }
