@@ -8,8 +8,7 @@ on:
 jobs:
   run-deployment:
     name: Run Deployment
-    runs-on:
-    - general
+    runs-on: ubuntu-latest
     steps:
       - name: Sanitise variables
         id: sanitise-vars
@@ -24,7 +23,7 @@ jobs:
         shell: bash
 
       - name: Invoke octant-pipelines workflow
-        uses: benc-uk/workflow-dispatch@v1
+        uses: benc-uk/workflow-dispatch@31e2b3319479a63f0ab15bf800eff9e913504e26 # v1.3.2
         with:
           workflow: deploy-prod.yml
           repo: golemfoundation/octant-pipelines
