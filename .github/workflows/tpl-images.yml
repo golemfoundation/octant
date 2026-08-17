@@ -13,6 +13,10 @@ concurrency:
   group: "${{ github.ref }}-images"
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build-images:
     name: Build Docker Image
@@ -41,12 +45,25 @@ jobs:
         echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.SERVICE }}" >> "$GITHUB_ENV"
       shell: bash
 
+    - name: Authenticate to GCP (WIF)
+      id: gcp-auth
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+      with:
+        workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_DEV }}
+        service_account: ${{ vars.GCP_WIF_SA_DEV_WRITER }}
+        token_format: access_token
+
     - name: Login to Docker registry
       uses: docker/login-action@v3
       with:
         registry: europe-docker.pkg.dev
-        username: _json_key_base64
-        password: ${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}
+        username: oauth2accesstoken
+        password: ${{ steps.gcp-auth.outputs.access_token }}
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      with:
+        cosign-release: 'v2.6.3'
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -71,6 +88,7 @@ jobs:
       shell: bash
 
     - name: Build and push
+      id: build
       uses: docker/build-push-action@v5
       with:
         allow: network.host
@@ -80,6 +98,13 @@ jobs:
         tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/${{ env.NORMALIZED_NAME }}:${{ inputs.image-tag }}
         # cache-from: type=local,src=/mnt/storage/kaniko-cache
         # cache-to: type=local,dest=/mnt/storage/kaniko-cache
+
+    - name: Sign the image with GitHub OIDC Token
+      env:
+        DIGEST: ${{ steps.build.outputs.digest }}
+        TAG: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/${{ env.NORMALIZED_NAME }}:${{ inputs.image-tag }}
+      run: cosign sign --yes "${TAG}@${DIGEST}"
+      shell: bash
 
   build-multideployer:
     name: Build Multideployer (special case)
@@ -98,12 +123,25 @@ jobs:
         echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${GITHUB_JOB}" >> "$GITHUB_ENV"
       shell: bash
 
+    - name: Authenticate to GCP (WIF)
+      id: gcp-auth
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+      with:
+        workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER_DEV }}
+        service_account: ${{ vars.GCP_WIF_SA_DEV_WRITER }}
+        token_format: access_token
+
     - name: Login to Docker registry
       uses: docker/login-action@v3
       with:
         registry: europe-docker.pkg.dev
-        username: _json_key_base64
-        password: ${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}
+        username: oauth2accesstoken
+        password: ${{ steps.gcp-auth.outputs.access_token }}
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      with:
+        cosign-release: 'v2.6.3'
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -124,6 +162,7 @@ jobs:
       shell: bash
 
     - name: Build and push
+      id: build
       uses: docker/build-push-action@v5
       with:
         allow: network.host
@@ -131,3 +170,10 @@ jobs:
         file: __local/ci/Dockerfile.multideployer
         push: true
         tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/multideployer:${{ inputs.image-tag }}
+
+    - name: Sign the image with GitHub OIDC Token
+      env:
+        DIGEST: ${{ steps.build.outputs.digest }}
+        TAG: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/multideployer:${{ inputs.image-tag }}
+      run: cosign sign --yes "${TAG}@${DIGEST}"
+      shell: bash
