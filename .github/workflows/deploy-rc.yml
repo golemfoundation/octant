@@ -21,8 +21,7 @@ jobs:
     name: Deploy
     needs:
     - build
-    runs-on:
-    - general
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.0
       - run : |
