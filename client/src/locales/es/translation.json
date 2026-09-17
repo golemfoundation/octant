@@ -14,6 +14,10 @@
         "loadingEncounteredAnError": "Se ha producido un problema al cargar el historial de operaciones. Por favor, inténtalo nuevamente más tarde."
       },
       "userRejectedWalletOperation": "Cartera rechazó la operación",
+      "walletNotAvailable": {
+        "title": "Cartera no disponible",
+        "message": "Vuelve a conectar tu cartera, cámbiala a la red principal de Ethereum y vuelve a intentarlo."
+      },
       "default": {
         "title": "Lo siento, algo ha fallado.",
         "message": "Por favor, actualiza nuevamente la aplicación y vuelve a intentarlo."

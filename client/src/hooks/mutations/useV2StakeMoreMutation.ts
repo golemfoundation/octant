@@ -3,7 +3,7 @@ import { erc20Abi, Hash, TransactionReceipt } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import env from 'env';
-import { writeContractRegenStaker } from 'hooks/contracts/writeContracts';
+import { walletNotAvailableError, writeContractRegenStaker } from 'hooks/contracts/writeContracts';
 
 type UseStakeMoreMutationParams = {
   depositAmount: bigint;
@@ -24,7 +24,7 @@ export default function useStakeMoreMutation() {
       // eslint-disable-next-line no-async-promise-executor
       new Promise<TransactionReceipt>(async (resolve, reject) => {
         if (!walletClient) {
-          reject(new Error('walletClient is undefined'));
+          reject(walletNotAvailableError());
           return;
         }
 

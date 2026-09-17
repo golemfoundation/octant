@@ -52,8 +52,11 @@ function useUserMigrationStatus(): {
       return 'migration_not_required';
     }
     if (depositsValue === undefined || regenStakerMinimumStakeAmount === undefined) {
-      // Does not matter, isFetching won't show status in UI anyway.
-      return 'migration_required';
+      // Until the on-chain data is loaded we cannot know there is anything to
+      // migrate. Defaulting to 'migration_required' here previously opened the
+      // migration modal and let the user trigger a migration with no v1 deposit,
+      // which failed with a generic "something went wrong" toast.
+      return 'migration_not_required';
     }
     if (!doesUserHaveV1Lock && doesUserHaveV2Deposits) {
       return 'migration_done';
@@ -65,7 +68,13 @@ function useUserMigrationStatus(): {
       return 'lock_too_small_for_v2';
     }
     return 'migration_not_required';
-  }, [isConnected, doesUserHaveV1Lock, doesUserHaveV2Deposits, depositsValue, regenStakerMinimumStakeAmount]);
+  }, [
+    isConnected,
+    doesUserHaveV1Lock,
+    doesUserHaveV2Deposits,
+    depositsValue,
+    regenStakerMinimumStakeAmount,
+  ]);
 
   const translationSuffix = useMemo(() => {
     if (status === 'migration_required') {

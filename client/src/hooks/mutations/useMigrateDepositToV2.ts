@@ -55,8 +55,19 @@ export default function useMigrateDepositToV2({
 
   return useMutation<TransactionReceipt | null, Error, void, unknown>({
     mutationFn: async () => {
-      if (!depositsValue) {
+      if (depositsValue === undefined) {
         throw new Error('depositsValue is undefined');
+      }
+
+      if (depositsValue === 0n) {
+        /**
+         * No v1 deposit left to migrate (e.g. the user already migrated).
+         * Return early instead of attempting a pointless unlock(0).
+         * Previously the `!depositsValue` check treated 0n as falsy and threw
+         * a plain Error here, which the global mutation error handler surfaced
+         * as the generic "Sorry, something went wrong there" toast.
+         */
+        return null;
       }
 
       // Ensure we reset state and properly propagate any error so react-query exposes it

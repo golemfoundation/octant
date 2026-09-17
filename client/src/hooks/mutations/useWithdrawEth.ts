@@ -2,7 +2,7 @@ import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/re
 import { Hash } from 'viem';
 import { useWalletClient } from 'wagmi';
 
-import { writeContractVault } from 'hooks/contracts/writeContracts';
+import { assertWalletClient, writeContractVault } from 'hooks/contracts/writeContracts';
 
 export interface BatchWithdrawRequest {
   amount: BigInt;
@@ -28,7 +28,7 @@ export default function useWithdrawEth(
       writeContractVault({
         args: [value],
         functionName: 'batchWithdraw',
-        walletClient: walletClient!,
+        walletClient: assertWalletClient(walletClient),
       }).then(data => ({
         hash: data,
         value,

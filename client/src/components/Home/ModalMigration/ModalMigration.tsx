@@ -37,9 +37,12 @@ const ModalMigration: FC<ModalMigrationProps> = ({
     refetch: refetchUserMigrationStatus,
   } = useUserMigrationStatus();
 
-  const [initialUserMigrationStatus] = useState<UserMigrationStatus | undefined>(
-    userMigrationStatus,
-  );
+  // Snapshot of the migration status taken when the modal opens (see the effect
+  // below). It keeps the multi-step flow stable while the migration runs and the
+  // live status flips, without freezing a stale value captured during loading.
+  const [initialUserMigrationStatus, setInitialUserMigrationStatus] = useState<
+    UserMigrationStatus | undefined
+  >(undefined);
 
   const shouldV2DepositBeTriggered = initialUserMigrationStatus === 'migration_required';
 
@@ -60,12 +63,20 @@ const ModalMigration: FC<ModalMigrationProps> = ({
   });
 
   useEffect(() => {
-    if (!modalPropsRest.isOpen) {
+    if (modalPropsRest.isOpen) {
+      // The modal can only be opened when the live status says a migration is
+      // actionable, so the data is loaded by now. Snapshotting here (rather than
+      // on mount) avoids freezing the loading-time default and makes the modal
+      // act on the real status.
+      setInitialUserMigrationStatus(userMigrationStatus);
+    } else {
       setCurrentStep(0);
       setIsConsentGiven(false);
       setError('');
       setSuccessMessage('');
+      setInitialUserMigrationStatus(undefined);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalPropsRest.isOpen]);
 
   // eslint-disable-next-line @typescript-eslint/naming-convention

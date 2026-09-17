@@ -2,6 +2,7 @@
 import { Query } from '@tanstack/react-query';
 
 import { QUERY_KEYS, ROOTS } from 'api/queryKeys';
+import { WALLET_NOT_AVAILABLE_REASON } from 'hooks/contracts/writeContracts';
 import i18n from 'i18n';
 import toastService from 'services/toastService';
 
@@ -43,6 +44,11 @@ const errors: QueryMutationErrorConfig = {
   },
   'History/loading-encountered-an-error': {
     message: i18n.t('api.errorMessage.history.loadingEncounteredAnError'),
+    type: 'toast',
+  },
+  [WALLET_NOT_AVAILABLE_REASON]: {
+    message: i18n.t('api.errorMessage.walletNotAvailable.message'),
+    title: i18n.t('api.errorMessage.walletNotAvailable.title'),
     type: 'toast',
   },
 };
